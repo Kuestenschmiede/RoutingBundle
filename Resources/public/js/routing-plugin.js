@@ -198,7 +198,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2'){//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/68/4/' + fromCoord ;
+        url = 'con4gis/routeService/1/68/0.5/' + fromCoord ;
 
         if(overPoint){
           for(var i = 0;i<overCoord.length;i++)
@@ -216,6 +216,9 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             self.response = response;
             if (response) {
               self.showRoute(response);
+              if(response.features){
+                self.showFeatures(response.features);
+              }
             }
 
           })
@@ -246,8 +249,65 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
         return '';
       }
-
-
+    },
+    showFeatures: function(features){
+        const self = this;
+        self.routerFeaturesSource.clear();
+        const layer = self.options.mapController.proxy.layerController.arrLayers[68];
+        const unstyledFeatures = [];
+        const contentFeatures = [];
+        let missingStyles = [];
+        for(let i = 0; i < features.length; i++){
+          let feature = features[i]
+          let resultCoordinate = ol.proj.transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857')
+          let point = new ol.geom.Point(resultCoordinate);
+          let contentFeature = new ol.Feature(point);
+          contentFeature.setId(feature.id);
+          contentFeature.set('cluster_zoom', layer.cluster.zoom);
+          contentFeature.set('cluster_popup', layer.cluster.popup);
+          contentFeature.set('cluster_fillcolor', layer.cluster.fillcolor);
+          contentFeature.set('cluster_fontcolor', layer.cluster.fontcolor);
+          contentFeature.set('loc_linkurl', layer.loc_linkurl);
+          contentFeature.set('hover_location', layer.hover_location);
+          contentFeature.set('hover_style', layer.hover_style);
+          let popup = feature['popup'] ? feature['popup'] : Object.assign({},layer.popup);
+          if(popup && popup.content && popup.content.search && popup.content.search('itemId')){
+            popup.content = popup.content.replace('itemId',feature['id']);
+          }
+          if(feature['label']){
+            contentFeature.set('label',feature['label'])
+          }
+          if(feature['tooltip']){
+            contentFeature.set('tooltip',feature['tooltip'])
+          }
+          contentFeature.set('popup', popup);
+          contentFeature.set('zoom_onclick', layer.zoom_onclick);
+          contentFeature.set('tid', feature['id']);
+          let locstyle = feature['locstyle'] || layer.locstyle;
+          contentFeature.set('locationStyle', locstyle);
+          if(locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style){
+            contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
+            contentFeatures.push(contentFeature);
+          }
+          else{
+            contentFeature.set('styleId',locstyle);
+            unstyledFeatures.push(contentFeature);
+            missingStyles[locstyle] = locstyle;
+          }
+        }
+        if(missingStyles){
+          self.options.mapController.proxy.locationStyleController.loadLocationStyles(missingStyles, {done: function() {
+              for(let i = 0; i < unstyledFeatures.length; i++){
+                var styleId =unstyledFeatures[i].get('styleId');
+                unstyledFeatures[i].setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[styleId].style);
+                self.routerFeaturesSource.addFeature(unstyledFeatures[i]);
+              }
+              missingStyles = undefined;
+            }});
+        }
+      if(features.length > 0){
+        self.routerFeaturesSource.addFeatures(contentFeatures);
+      }
     }
 
   });
