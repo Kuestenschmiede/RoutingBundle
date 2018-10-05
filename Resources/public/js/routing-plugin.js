@@ -198,7 +198,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2'){//OSRM-API:5.x or ORS- API
-        url = 'con4gis/RouteService/1/' + fromCoord ;
+        url = 'con4gis/routeService/1/68/4/' + fromCoord ;
 
         if(overPoint){
           for(var i = 0;i<overCoord.length;i++)

@@ -23,8 +23,8 @@ class RouteService
         $polyline = new Polyline([]);
         $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
         $points = $polyline->tunePolyline($points)->getPoints();
-        $features = $this->getFeatures($layer, $detour, $points);
-        return $routeString;
+        $routeData['features'] = $this->getFeatures($layer, $detour, $points);
+        return \GuzzleHttp\json_encode($routeData);
     }
     public function getFeatures($layerId,$detour,$points){
         $features = [];
@@ -35,7 +35,7 @@ class RouteService
             $bounds = $point->getLatLngBounds($point,$detour);
             $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';
             $onClause = $objLayer->tabJoinclause ? ' ' . htmlspecialchars_decode($objLayer->tabJoinclause) : '';
-            $sqlLoc = " WHERE ". $arrConfig['geox'] . "BETWEEN" . $bounds['left']['lng'] . " AND ". $bounds['right']['lng'] . "AND" . $arrConfig['geoy'] . "BETWEEN" . $bounds['lower'] . " AND ". $bounds['upper'];
+            $sqlLoc = " WHERE ". $arrConfig['geox'] . " BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND " . $arrConfig['geoy'] . " BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
             $sqlSelect = $sourceTable.".". $arrConfig['geox']." AS geox,".$sourceTable.".".$arrConfig['geoy']." AS geoy";
             $sqlSelect = $arrConfig['locstyle'] ? $sqlSelect . ", " .$sourceTable."." . $arrConfig['locstyle'] . " AS locstyle" : $sqlSelect;
             $sqlSelect = $arrConfig['label'] ? $sqlSelect . ", " . $sourceTable.".". $arrConfig['label'] . " AS label" : $sqlSelect;
@@ -43,9 +43,9 @@ class RouteService
             $sqlWhere = $arrConfig['sqlwhere'] ? $arrConfig['sqlwhere'] : '';
             $sqlAnd = $sqlWhere ? ' AND ' : '';
             $strQuery = "SELECT ".$sourceTable.".id,". $sqlSelect ." FROM ".$sourceTable . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
-            $result = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
-
-            return $result;
+            $featurePoint = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
+            $features = array_merge($features,$featurePoint);
         }
+        return $features;
     }
 }
