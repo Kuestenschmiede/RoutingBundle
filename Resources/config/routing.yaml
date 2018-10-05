@@ -1,0 +1,13 @@
+routing_area:
+    path: /con4gis/routingbundle/area/{layerId}/{center}/{radius}
+    defaults:
+        _scope: frontend
+        _controller: "con4gisRoutingBundle:Routing:getArea"
+    methods: [GET]
+routing_route:
+    path: /con4gis/routeService/{profileId}/{layerId}/{detour}/{locations}
+    defaults:
+        _scope: frontend
+        _controller: "con4gisRoutingBundle:Routing:getRoute"
+    methods: [GET]
+
