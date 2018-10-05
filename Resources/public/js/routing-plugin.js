@@ -198,7 +198,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2'){//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/68/0.5/' + fromCoord ;
+        url = 'con4gis/routeService/1/4/5/' + fromCoord ;
 
         if(overPoint){
           for(var i = 0;i<overCoord.length;i++)
@@ -217,7 +217,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             if (response) {
               self.showRoute(response);
               if(response.features){
-                self.showFeatures(response.features);
+                self.showFeatures(response.features, response.type);
               }
             }
 
@@ -250,16 +250,22 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         return '';
       }
     },
-    showFeatures: function(features){
+    showFeatures: function(features, type){
         const self = this;
         self.routerFeaturesSource.clear();
-        const layer = self.options.mapController.proxy.layerController.arrLayers[68];
+        const layer = self.options.mapController.proxy.layerController.arrLayers[73];
         const unstyledFeatures = [];
         const contentFeatures = [];
         let missingStyles = [];
         for(let i = 0; i < features.length; i++){
           let feature = features[i]
-          let resultCoordinate = ol.proj.transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857')
+          let resultCoordinate;
+          if(type == "overpass"){
+            resultCoordinate = ol.proj.transform([parseFloat(feature['lon']), parseFloat(feature['lat'])], 'EPSG:4326', 'EPSG:3857');
+          }
+          else{
+            resultCoordinate = ol.proj.transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
+          }
           let point = new ol.geom.Point(resultCoordinate);
           let contentFeature = new ol.Feature(point);
           contentFeature.setId(feature.id);
