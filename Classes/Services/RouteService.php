@@ -64,8 +64,6 @@ class RouteService
             $strBBox .= '")';
             $query = $objLayer->ovp_request;
             $query = str_replace("(bbox)", $strBBox, $query);
-            $revert = array('%21'=>'!', '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')');
-//            $data = strtr(rawurlencode($query), $revert);
             $REQUEST = new \Request();
             $REQUEST->setHeader('Content-Type', 'POST');
             if ($_SERVER['HTTP_REFERER']) {
@@ -77,25 +75,6 @@ class RouteService
             $REQUEST->send($url,$query);
             $requestData =\GuzzleHttp\json_decode($REQUEST->response, true);
             $features =$requestData['elements'];
-//            foreach($points as $point){
-//                $bounds = $point->getLatLngBounds($point,$detour);
-//                $url = "https://osm.kartenkueste.de/api/interpreter?data=";
-//                $strBBox = '(' . $bounds['lower']->getLat() . ',' . $bounds['left']->getLng() . ',' . $bounds['upper']->getLat() . ',' . $bounds['right']->getLng() .')';
-//                $query = $objLayer->ovp_request;
-//                $query = str_replace("(bbox)", $strBBox, $query);
-//                $revert = array('%21'=>'!', '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')');
-//                $url .= strtr(rawurlencode($query), $revert);
-//                $REQUEST = new \Request();
-//                if ($_SERVER['HTTP_REFERER']) {
-//                    $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
-//                }
-//                if ($_SERVER['HTTP_USER_AGENT']) {
-//                    $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
-//                }
-//                $REQUEST->send($url);
-//                $requestData =\GuzzleHttp\json_decode($REQUEST->response, true);
-//                $features = array_merge($features,$requestData['elements']);
-//            }
         }
 
         return $features;
