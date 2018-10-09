@@ -178,6 +178,30 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         return true;
 
       },
+    preCloseFunction: function () {
+
+      this.routingWaySource.clear();
+      this.routingAltWaySource.clear();
+      this.routingHintSource.clear();
+      this.locationsSource.clear();
+      this.routerFeaturesSource.clear();
+
+      $(this.routerInstructionsWrapper).empty();
+      this.clearInput(this.$fromInput);
+      if(this.overValue){
+        for(var id in this.overValue){
+          this.clearOver(this.$overInput,id);
+          var elem = document.getElementById(id);
+          if(elem){
+            elem.parentNode.parentNode.removeChild(elem.parentNode);
+          }
+        }
+      }
+      this.clearInput(this.$toInput);
+
+      this.removeMapInputInteraction();
+
+    },
     performViaRoute: function (fromPoint, toPoint, overPoint) {
 
       var url,
@@ -301,7 +325,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             missingStyles[locstyle] = locstyle;
           }
         }
-        if(missingStyles){
+        if(missingStyles && missingStyles.length > 0){
           self.options.mapController.proxy.locationStyleController.loadLocationStyles(missingStyles, {done: function() {
               for(let i = 0; i < unstyledFeatures.length; i++){
                 var styleId =unstyledFeatures[i].get('styleId');
