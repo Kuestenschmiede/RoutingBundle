@@ -1,0 +1,6 @@
+services:
+  con4gis.route_service:
+    class: con4gis\RoutingBundle\Classes\Services\RouteService
+    public: true
+    arguments:
+    - "@event_dispatcher"

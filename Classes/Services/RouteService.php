@@ -14,6 +14,7 @@ use con4gis\MapsBundle\Resources\contao\modules\api\RoutingApi;
 use con4gis\RoutingBundle\Classes\LatLng;
 use con4gis\RoutingBundle\Classes\Polyline;
 
+include_once($_SERVER['DOCUMENT_ROOT']."../vendor/phayes/geophp/geoPHP.inc");
 class RouteService
 {
     public function getResponse($profileId, $layer, $locations, $detour, $profile){
@@ -26,7 +27,9 @@ class RouteService
 
         $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
         $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
-        $routeData['features'] = $this->getFeatures($layer, $detour, $points);
+        $objFeatures = $this->getFeatures($layer, $detour, $points);
+        $routeData['features'] = $objFeatures['features'];
+        $routeData['bbox'] = $objFeatures['bbox'];
 
         $routeData['type'] = $objLayer->location_type;
         return \GuzzleHttp\json_encode($routeData);
@@ -54,16 +57,28 @@ class RouteService
             }
         }
         else if($objLayer->location_type == "overpass"){
-            $buffer = $this->bufferLineString($points,$detour);
             $url = "https://osm.kartenkueste.de/api/interpreter";
-            $strBBox = '(poly:"';
-            foreach($buffer as $element){
-                $strBBox .= $element[1] . ' ' . $element[0] . ' ';
+            $lineStringWKT = 'LINESTRING (';
+            foreach($points as $point){
+                if($point){
+                    $lineStringWKT .= $point->getLng() . ' ' . $point->getLat() . ', ';
+                }
             }
-            $strBBox = rtrim($strBBox);
-            $strBBox .= '")';
+            $lineStringWKT = rtrim($lineStringWKT, ', ');
+            $lineStringWKT .= ')';
+            $selectBuffer = "SELECT ST_AsText(ST_Buffer(ST_GeomFromText('". $lineStringWKT. "'),". $detour/113.139 .",ST_Buffer_Strategy('end_flat'),ST_Buffer_Strategy('join_round', 10)))";
+            $db = \Database::getInstance();
+            $result = array_shift($db->prepare($selectBuffer)->execute()->fetchAssoc());
+            $polygon = \geoPHP::load($result,'wkt');
+            $jsonPolygon = \GuzzleHttp\json_decode($polygon->out('json'));
+            $strBBox = 'poly:"';
+            foreach($jsonPolygon->coordinates[0] as $coordinate){
+                $strBBox .= $coordinate[1] . ' ' .$coordinate[0]. ' ';
+            }
+            $strBBox = rtrim($strBBox).'"';
             $query = $objLayer->ovp_request;
-            $query = str_replace("(bbox)", $strBBox, $query);
+            $strSearch = strrpos($query, "(bbox)") ? "(bbox)" : "{{bbox}}";
+            $query = str_replace($strSearch, $strBBox, $query);
             $REQUEST = new \Request();
             $REQUEST->setHeader('Content-Type', 'POST');
             if ($_SERVER['HTTP_REFERER']) {
@@ -73,11 +88,11 @@ class RouteService
                 $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
             }
             $REQUEST->send($url,$query);
-            $requestData =\GuzzleHttp\json_decode($REQUEST->response, true);
-            $features =$requestData['elements'];
+            $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
+            $features = $requestData['elements'];
         }
 
-        return $features;
+        return ['features'=>$features,'bbox'=>$jsonPolygon];
     }
     public function bufferLineString($points,$detour){
         $latLng = new LatLng();
