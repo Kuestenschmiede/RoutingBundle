@@ -219,10 +219,9 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         for(var propt in overPoint){
           overCoord.push([overPoint[propt].getCoordinates()[1], overPoint[propt].getCoordinates()[0]]);
         }
-
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2'){//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/4/0.5/' + fromCoord ;
+        url = 'con4gis/routeService/1/74/2/' + fromCoord ;
 
         if(overPoint){
           for(var i = 0;i<overCoord.length;i++)
@@ -254,30 +253,16 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         return '';
 
       } else{//OSRM-API:<5
-        url = self.routingApi + '?output=json&instructions=true&alt=false&loc_from=' + fromCoord + '&loc_to=' + toCoord;
-        this.spinner.show();
-
-        jQuery.ajax({
-          'url': url})
-          .done(function (response) {
-
-            if (response) {
-              self.showRoute(response);
-            }
-
-          })
-          .always(function () {
-            self.spinner.hide();
-            self.update();
-          });
-
-        return '';
+        console.log("Please use a more modern API-Version for the Routeservice")
       }
     },
     showFeatures: function(features, type){
         const self = this;
         self.routerFeaturesSource.clear();
-        const layer = self.options.mapController.proxy.layerController.arrLayers[73];
+        const layer = self.options.mapController.proxy.layerController.arrLayers[74];
+        if(layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup){
+          self.routerFeaturesLayer.popup = layer.content[0].data.popup;
+        }
         const unstyledFeatures = [];
         const contentFeatures = [];
         let missingStyles = [];
@@ -300,17 +285,6 @@ this.c4g.maps.control = this.c4g.maps.control || {};
           contentFeature.set('loc_linkurl', layer.loc_linkurl);
           contentFeature.set('hover_location', layer.hover_location);
           contentFeature.set('hover_style', layer.hover_style);
-          let popup = feature['popup'] ? feature['popup'] : Object.assign({},layer.popup);
-          if(popup && popup.content && popup.content.search && popup.content.search('itemId')){
-            popup.content = popup.content.replace('itemId',feature['id']);
-          }
-          if(feature['label']){
-            contentFeature.set('label',feature['label'])
-          }
-          if(feature['tooltip']){
-            contentFeature.set('tooltip',feature['tooltip'])
-          }
-          contentFeature.set('popup', popup);
           contentFeature.set('zoom_onclick', layer.zoom_onclick);
           contentFeature.set('tid', feature['id']);
           let locstyle = feature['locstyle'] || layer.locstyle;
@@ -323,6 +297,9 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             contentFeature.set('styleId',locstyle);
             unstyledFeatures.push(contentFeature);
             missingStyles[locstyle] = locstyle;
+          }
+          for(let tags in feature.tags){
+            contentFeature.set(tags, feature.tags[tags]);
           }
         }
         if(missingStyles && missingStyles.length > 0){
