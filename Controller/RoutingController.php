@@ -18,15 +18,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoutingController extends BaseController
 {
-    public function getAreaAction(Request $request, $profileId, $layerId, $center, $radius)
+    public function getAreaAction(Request $request, $profileId, $layerId, $distance, $center)
     {
         $response = new Response();
-        $response ->setContent(AreaService::getResponse($layerId, $center, $radius));
+        if($request->query->get('profile') !== null){
+            $profile = $request->query->get('profile');
+        }
+        $response ->setContent(AreaService::getResponse($profileId, $layerId, $center, $distance, $profile));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
 
     }
-    public function getRouteAction(Request $request, $profileId, $layerId, $locations, $detour)
+    public function getRouteAction(Request $request, $profileId, $layerId, $detour, $locations)
     {
         $response = new Response();
         if($request->query->get('profile') !== null){

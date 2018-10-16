@@ -289,7 +289,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         console.log("Please use a more modern API-Version for the Routeservice")
       }
     },
-    showFeatures: function (features, type) {
+    showFeatures: function (features, type = "table") {
       const self = this;
       self.routerFeaturesSource.clear();
       const layer = self.options.mapController.proxy.layerController.arrLayers[74];
@@ -356,7 +356,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       
-      let url = 'con4gis/areaService/1/74/' + distance + '/' + fromCoord;
+      let url = 'con4gis/areaService/1/71/' + distance + '/' + fromCoord;
       if (this.routeProfile && this.routeProfile.active) {
         url += '?profile=' + this.routeProfile.active;
       }
@@ -368,9 +368,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         .done(function (response) {
           self.response = response;
           if (response) {
-            if (response.features) {
-              self.showFeatures(response.features, response.type);
-            }
+              self.showFeatures(response);
           }
 
         })

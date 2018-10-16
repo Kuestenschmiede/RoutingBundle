@@ -45,7 +45,12 @@ class LatLng {
     public function getLngWidth($lat = 0) {
         return 2 * M_PI * self::EARTH_RADIUS * cos(deg2rad($lat)) / 360;
     }
-
+    public function getDistance(LatLng $latLng) {
+        $lat = ($this->getLat() + $latLng->getLat()) / 2 * 0.01745;
+        $dy = self::LAT_WIDTH * ($this->getLat() - $latLng->getLat());
+        $dx = self::LAT_WIDTH * cos($lat) * ($this->getLng() - $latLng->getLng());
+        return sqrt(pow($dx, 2) + pow($dy, 2));
+    }
     public function getEarthRadius() {
         return self::EARTH_RADIUS;
     }
