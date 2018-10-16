@@ -43,7 +43,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
    */
   c4g.maps.control.RouterPlugin.prototype = $.extend(c4g.maps.control.RouterPlugin.prototype, {
 
-    init: function(){
+    init: function () {
       var self,
         viewRouter,
         viewArea,
@@ -103,7 +103,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
       });
 
       selectInteraction = new ol.interaction.Select({
-        style:[
+        style: [
           new ol.style.Style({
             stroke: new ol.style.Stroke({
               color: 'rgba(255, 255, 255, 0.0)',
@@ -121,10 +121,10 @@ this.c4g.maps.control = this.c4g.maps.control || {};
       });
       selectInteraction.on('select', function (event) {
 
-        if(event.selected[0] ) {
+        if (event.selected[0]) {
           var geometry = event.selected[0].getGeometry();
-          if(geometry && geometry instanceof ol.geom.LineString){
-            self.showAltRoute(self.response,event.selected[0].getId());
+          if (geometry && geometry instanceof ol.geom.LineString) {
+            self.showAltRoute(self.response, event.selected[0].getId());
           }
 
         }
@@ -132,7 +132,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
       });
       this.modWayInteraction = new ol.interaction.Modify({
         source: this.routingWaySource,
-        style:[
+        style: [
           new ol.style.Style({
             stroke: new ol.style.Stroke({
               color: 'rgba(255, 255, 255, 0.0)',
@@ -148,15 +148,15 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         ]
 
       });
-      this.modWayInteraction.on('modifyend', function(event){
+      this.modWayInteraction.on('modifyend', function (event) {
         self.$buttonOver.trigger('click');
-        let overPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857","EPSG:4326");
+        let overPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
         self.performReverseSearch(self.$overInput, overPoint.getCoordinates());
         if (!self.overValue) {
-          self.overValue={};
+          self.overValue = {};
         }
-        self.overValue[self.index]= overPoint;
-        self.$buttonOver.prop("disabled",false);
+        self.overValue[self.index] = overPoint;
+        self.$buttonOver.prop("disabled", false);
       });
 
       self.options.mapController.map.addInteraction(selectInteraction);
@@ -220,11 +220,11 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
       $(this.routerInstructionsWrapper).empty();
       this.clearInput(this.$fromInput);
-      if(this.overValue){
-        for(var id in this.overValue){
-          this.clearOver(this.$overInput,id);
+      if (this.overValue) {
+        for (var id in this.overValue) {
+          this.clearOver(this.$overInput, id);
           var elem = document.getElementById(id);
-          if(elem){
+          if (elem) {
             elem.parentNode.parentNode.removeChild(elem.parentNode);
           }
         }
@@ -246,32 +246,33 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
       fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
-      if(overPoint){
+      if (overPoint) {
         overCoord = new Array();
-        for(var propt in overPoint){
+        for (var propt in overPoint) {
           overCoord.push([overPoint[propt].getCoordinates()[1], overPoint[propt].getCoordinates()[0]]);
         }
       }
-      if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2'){//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/74/2/' + fromCoord ;
+      if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
+        url = 'con4gis/routeService/1/74/2/' + fromCoord;
 
-        if(overPoint){
-          for(var i = 0;i<overCoord.length;i++)
-            url +=';'+overCoord[i];
+        if (overPoint) {
+          for (var i = 0; i < overCoord.length; i++)
+            url += ';' + overCoord[i];
         }
-        url +=';'+toCoord;
-        if(this.routeProfile && this.routeProfile.active){
-          url += '?profile='+this.routeProfile.active;
+        url += ';' + toCoord;
+        if (this.routeProfile && this.routeProfile.active) {
+          url += '?profile=' + this.routeProfile.active;
         }
         this.spinner.show();
 
         jQuery.ajax({
-          'url': url})
+          'url': url
+        })
           .done(function (response) {
             self.response = response;
             if (response) {
               self.showRoute(response);
-              if(response.features){
+              if (response.features) {
                 self.showFeatures(response.features, response.type);
               }
             }
@@ -284,27 +285,27 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
         return '';
 
-      } else{//OSRM-API:<5
+      } else {//OSRM-API:<5
         console.log("Please use a more modern API-Version for the Routeservice")
       }
     },
-    showFeatures: function(features, type){
+    showFeatures: function (features, type) {
       const self = this;
       self.routerFeaturesSource.clear();
       const layer = self.options.mapController.proxy.layerController.arrLayers[74];
-      if(layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup){
+      if (layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup) {
         self.routerFeaturesLayer.popup = layer.content[0].data.popup;
       }
       const unstyledFeatures = [];
       const contentFeatures = [];
       let missingStyles = [];
-      for(let i = 0; i < features.length; i++){
+      for (let i = 0; i < features.length; i++) {
         let feature = features[i]
         let resultCoordinate;
-        if(type == "overpass"){
+        if (type == "overpass") {
           resultCoordinate = ol.proj.transform([parseFloat(feature['lon']), parseFloat(feature['lat'])], 'EPSG:4326', 'EPSG:3857');
         }
-        else{
+        else {
           resultCoordinate = ol.proj.transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
         }
         let point = new ol.geom.Point(resultCoordinate);
@@ -321,32 +322,63 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         contentFeature.set('tid', feature['id']);
         let locstyle = feature['locstyle'] || layer.locstyle;
         contentFeature.set('locationStyle', locstyle);
-        if(locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style){
+        if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
           contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
           contentFeatures.push(contentFeature);
         }
-        else{
-          contentFeature.set('styleId',locstyle);
+        else {
+          contentFeature.set('styleId', locstyle);
           unstyledFeatures.push(contentFeature);
           missingStyles[locstyle] = locstyle;
         }
-        for(let tags in feature.tags){
+        for (let tags in feature.tags) {
           contentFeature.set(tags, feature.tags[tags]);
         }
       }
-      if(missingStyles && missingStyles.length > 0){
-        self.options.mapController.proxy.locationStyleController.loadLocationStyles(missingStyles, {done: function() {
-            for(let i = 0; i < unstyledFeatures.length; i++){
-              var styleId =unstyledFeatures[i].get('styleId');
+      if (missingStyles && missingStyles.length > 0) {
+        self.options.mapController.proxy.locationStyleController.loadLocationStyles(missingStyles, {
+          done: function () {
+            for (let i = 0; i < unstyledFeatures.length; i++) {
+              var styleId = unstyledFeatures[i].get('styleId');
               unstyledFeatures[i].setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[styleId].style);
               self.routerFeaturesSource.addFeature(unstyledFeatures[i]);
             }
             missingStyles = undefined;
-          }});
+          }
+        });
       }
-      if(features.length > 0){
+      if (features.length > 0) {
         self.routerFeaturesSource.addFeatures(contentFeatures);
       }
+    },
+    performArea: function(fromPoint, distance){
+      const self = this;
+
+      let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
+      
+      let url = 'con4gis/areaService/1/74/' + distance + '/' + fromCoord;
+      if (this.routeProfile && this.routeProfile.active) {
+        url += '?profile=' + this.routeProfile.active;
+      }
+      this.spinner.show();
+
+      jQuery.ajax({
+        'url': url
+      })
+        .done(function (response) {
+          self.response = response;
+          if (response) {
+            if (response.features) {
+              self.showFeatures(response.features, response.type);
+            }
+          }
+
+        })
+        .always(function () {
+          self.spinner.hide();
+          self.update();
+        });
+        
     },
     addUserInterface: function (type) {
 
@@ -360,7 +392,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         areaContentElement,
         areaViewContentWrapper,
         print,
-        routeProfile =[],
+        routeProfile = [],
         routerFromLabel,
         routerOverLabel,
         routerToLabel,
@@ -368,9 +400,11 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         routerOverClear,
         routerToClear,
         switchFromTo,
+        areaFromLabel,
+        areaFromClear,
         buttonOver;
 
-      if(type === 'router') {
+      if (type === 'router') {
         self = this;
         routerContentElement = document.createElement('div');
         routerViewInputWrapper = document.createElement('div');
@@ -695,6 +729,13 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         routerViewInputWrapper.appendChild(this.toInputWrapper);
 
         self.statusBar.appendChild(this.getAttribution());
+        let routerActivateFunction = function(){
+          self.removeMapInputInteraction();
+          self.addMapInputInteraction();
+        }
+        let routerDeactivateFunction = function(){
+          self.removeMapInputInteraction();
+        }
 
         routerView = this.addView({
           name: 'router-view',
@@ -707,49 +748,38 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             //{section: this.topToolbar, element: routerViewInputWrapper},
             {section: this.contentContainer, element: routerContentElement},
             {section: this.topToolbar, element: this.viewTriggerBar}
-          ]
+          ],
+          activateFunction : routerActivateFunction,
+          deactivateFunction : routerDeactivateFunction
         });
         return routerView;
-        // areaView = this.addView({
-        //   name: 'area-view',
-        //   triggerConfig: {
-        //     tipLabel: "Lol",
-        //     className: c4g.maps.constant.css.ROUTER_VIEW_ADDRESS_INPUT,
-        //     withHeadline: true
-        //   },
-        //   sectionElements: [
-        //     //{section: this.topToolbar, element: routerViewInputWrapper},
-        //     {section: this.contentContainer, element: areaContentElement},
-        //     {section: this.topToolbar, element: this.viewTriggerBar}
-        //   ]
-        // })
       }
-      else{
+      else {
         self = this;
-        routerContentElement = document.createElement('div');
-        routerViewInputWrapper = document.createElement('div');
-        routerViewContentWrapper = document.createElement('div');
-        routerContentElement.appendChild(routerViewInputWrapper);
-        routerContentElement.appendChild(routerViewContentWrapper);
-        self.routerViewContentWrapper = routerViewContentWrapper;
+        areaContentElement = document.createElement('div');
+        areaViewInputWrapper = document.createElement('div');
+        areaViewContentWrapper = document.createElement('div');
+        areaContentElement.appendChild(areaViewInputWrapper);
+        areaContentElement.appendChild(areaViewContentWrapper);
+        self.areaViewContentWrapper = areaViewContentWrapper;
 
-        this.fromInputWrapper = document.createElement('div');
-        this.fromInputWrapper.className = c4g.maps.constant.css.ROUTER_INPUT_WRAPPER;
+        this.areaFromInputWrapper = document.createElement('div');
+        this.areaFromInputWrapper.className = c4g.maps.constant.css.ROUTER_INPUT_WRAPPER;
 
-        this.fromInput = document.createElement("input");
-        this.fromInput.type = "text";
-        this.fromInput.className = c4g.maps.constant.css.ROUTER_INPUT_FROM;
-        this.fromInput.id = this.fromInput.name = "routingFrom";
+        this.areaFromInput = document.createElement("input");
+        this.areaFromInput.type = "text";
+        this.areaFromInput.className = c4g.maps.constant.css.ROUTER_INPUT_FROM;
+        this.areaFromInput.id = this.areaFromInput.name = "routingFrom";
 
-        routerFromLabel = document.createElement('label');
-        routerFromLabel.setAttribute('for', 'routingFrom');
-        routerFromLabel.innerHTML = c4g.maps.constant.i18n.ROUTER_FROM_LABEL;
+        areaFromLabel = document.createElement('label');
+        areaFromLabel.setAttribute('for', 'routingFrom');
+        areaFromLabel.innerHTML = c4g.maps.constant.i18n.ROUTER_FROM_LABEL;
 
-        routerFromClear = document.createElement('button');
-        routerFromClear.className = c4g.maps.constant.css.ROUTER_INPUT_CLEAR;
-        routerFromClear.title = c4g.maps.constant.i18n.ROUTER_CLEAR_TITLE;
-        routerFromClear.innerHTML = c4g.maps.constant.i18n.ROUTER_CLEAR_HTML;
-        this.$routerFromClear = $(routerFromClear);
+        areaFromClear = document.createElement('button');
+        areaFromClear.className = c4g.maps.constant.css.ROUTER_INPUT_CLEAR;
+        areaFromClear.title = c4g.maps.constant.i18n.ROUTER_CLEAR_TITLE;
+        areaFromClear.innerHTML = c4g.maps.constant.i18n.ROUTER_CLEAR_HTML;
+        this.$areaFromClear = $(areaFromClear);
         if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
           if (Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
             this.routeProfile = [];
@@ -906,31 +936,47 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             console.warn('No Router Profiles enabled')
           }
         }
-        this.fromInputWrapper.appendChild(routerFromLabel);
-        this.fromInputWrapper.appendChild(this.fromInput);
-        this.fromInputWrapper.appendChild(routerFromClear);
-        this.$routerFromClear.hide();
+        this.areaFromInputWrapper.appendChild(areaFromLabel);
+        this.areaFromInputWrapper.appendChild(this.areaFromInput);
+        this.areaFromInputWrapper.appendChild(areaFromClear);
+        this.$areaFromClear.hide();
 
-        this.$routerFromClear.click(function (event) {
+        this.$areaFromClear.click(function (event) {
           event.preventDefault();
           self.clearInput(self.$fromInput);
         });
-        routerViewInputWrapper.appendChild(this.routerButtonBar);
         if (this.routeProfile && this.routeProfile.children) {
-          routerViewInputWrapper.appendChild(this.routeProfile);
+          areaViewInputWrapper.appendChild(this.routeProfile);
+        }
+        
+        areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
+        let areaActivateFunction = function(){
+          self.fnMapAreaInteraction = function(evt){
+            const scope = this;
+            if($(self.areaFromInput).val() === ""){
+              self.performReverseSearch($(self.areaFromInput),ol.proj.toLonLat(evt.coordinate));
+              self.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
+              self.performArea(self.areaValue,5);
+            }
+          }
+          self.options.mapController.map.on('click', self.fnMapAreaInteraction);
+        }
+        let areaDeactivateFunction = function(){
+          self.options.mapController.map.un('click', self.fnMapAreaInteraction);
         }
         areaView = this.addView({
-          name: 'router-view',
+          name: 'area-view',
           triggerConfig: {
-            tipLabel: c4g.maps.constant.i18n.ROUTER_VIEW_ADDRESS_INPUT,
+            tipLabel: 'LOOOOL',
             className: c4g.maps.constant.css.ROUTER_VIEW_ADDRESS_INPUT,
             withHeadline: true
           },
           sectionElements: [
-            //{section: this.topToolbar, element: routerViewInputWrapper},
-            {section: this.contentContainer, element: routerContentElement},
+            {section: this.contentContainer, element: areaContentElement},
             {section: this.topToolbar, element: this.viewTriggerBar}
-          ]
+          ],
+          activateFunction : areaActivateFunction,
+          deactivateFunction: areaDeactivateFunction
         });
         return areaView;
       }

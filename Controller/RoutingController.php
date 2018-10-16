@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoutingController extends BaseController
 {
-    public function getAreaAction(Request $request, $layerId, $center, $radius)
+    public function getAreaAction(Request $request, $profileId, $layerId, $center, $radius)
     {
         $response = new Response();
         $response ->setContent(AreaService::getResponse($layerId, $center, $radius));

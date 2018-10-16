@@ -26,7 +26,9 @@ class AreaService
     {
         $this->eventDispatcher = $eventDispatcher;
     }
-    public static function getResponse($layer, $locations, $detour, $profile){
-        return $layer;
+    public static function getResponse($profileId, $layerId, $location, $detour, $profile){
+        $objMapsProfile = C4gMapProfilesModel::findBy('id', $profileId);
+        $rect = [];
+        $rect[] =
     }
 }
