@@ -3,6 +3,10 @@ this.c4g = this.c4g || {};
 this.c4g.maps = this.c4g.maps || {};
 this.c4g.maps.control = this.c4g.maps.control || {};
 
+import {Router} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-control-portside-router";
+import {langConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant-i18n-de";
+import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
+
 (function ($, c4g) {
   'use strict';
 
@@ -21,7 +25,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
       name: 'router',
       create: true,
       mapController: undefined,
-      headline: c4g.maps.constant.i18n.ROUTER,
+      headline: langConstants.ROUTER,
       direction: 'left'
     }, opt_options);
 
@@ -31,12 +35,12 @@ this.c4g.maps.control = this.c4g.maps.control || {};
     this.index=0;
 
     // call parent constructor
-    c4g.maps.control.Router.call(this, this.options);
+    Router.call(this, this.options);
   };
   /**
    * Inherit from "Router"
    */
-  ol.inherits(c4g.maps.control.RouterPlugin, c4g.maps.control.Router);
+  ol.inherits(c4g.maps.control.RouterPlugin, Router);
 
   /**
    * Methods
@@ -414,36 +418,36 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         self.routerViewContentWrapper = routerViewContentWrapper;
 
         this.fromInputWrapper = document.createElement('div');
-        this.fromInputWrapper.className = c4g.maps.constant.css.ROUTER_INPUT_WRAPPER;
+        this.fromInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
 
         this.fromInput = document.createElement("input");
         this.fromInput.type = "text";
-        this.fromInput.className = c4g.maps.constant.css.ROUTER_INPUT_FROM;
+        this.fromInput.className = cssConstants.ROUTER_INPUT_FROM;
         this.fromInput.id = this.fromInput.name = "routingFrom";
 
         routerFromLabel = document.createElement('label');
         routerFromLabel.setAttribute('for', 'routingFrom');
-        routerFromLabel.innerHTML = c4g.maps.constant.i18n.ROUTER_FROM_LABEL;
+        routerFromLabel.innerHTML = langConstants.ROUTER_FROM_LABEL;
 
         routerFromClear = document.createElement('button');
-        routerFromClear.className = c4g.maps.constant.css.ROUTER_INPUT_CLEAR;
-        routerFromClear.title = c4g.maps.constant.i18n.ROUTER_CLEAR_TITLE;
-        routerFromClear.innerHTML = c4g.maps.constant.i18n.ROUTER_CLEAR_HTML;
+        routerFromClear.className = cssConstants.ROUTER_INPUT_CLEAR;
+        routerFromClear.title = langConstants.ROUTER_CLEAR_TITLE;
+        routerFromClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
         this.$routerFromClear = $(routerFromClear);
 
         switchFromTo = document.createElement('button');
-        switchFromTo.className = c4g.maps.constant.css.ROUTER_SWITCH;
-        switchFromTo.title = c4g.maps.constant.i18n.ROUTER_SWITCH;
+        switchFromTo.className = cssConstants.ROUTER_SWITCH;
+        switchFromTo.title = langConstants.ROUTER_SWITCH;
         this.$switchFromTo = $(switchFromTo);
 
         buttonOver = document.createElement('button');
-        buttonOver.className = c4g.maps.constant.css.ROUTER_OVER;
-        buttonOver.title = c4g.maps.constant.i18n.ROUTER_OVER;
+        buttonOver.className = cssConstants.ROUTER_OVER;
+        buttonOver.title = langConstants.ROUTER_OVER;
         this.$buttonOver = $(buttonOver);
 
 
         this.routerButtonBar = document.createElement('div');
-        this.routerButtonBar.className = c4g.maps.constant.css.ROUTER_BUTTONBAR;
+        this.routerButtonBar.className = cssConstants.ROUTER_BUTTONBAR;
         this.routerButtonBar.appendChild(switchFromTo);
         this.routerButtonBar.appendChild(buttonOver);
 
@@ -454,10 +458,10 @@ this.c4g.maps.control = this.c4g.maps.control || {};
           }
           else if (Object.keys(this.options.mapController.data.router_profiles).length > 1) { //check for multiple profiles and add profile-changer
             this.routeProfile = document.createElement('div');
-            $(this.routeProfile).addClass(c4g.maps.constant.css.ROUTER_PROFILE_WRAPPER);
+            $(this.routeProfile).addClass(cssConstants.ROUTER_PROFILE_WRAPPER);
             if (this.options.mapController.data.router_profiles['0']) { //add button for profile driving-car
               routeProfile.car = document.createElement('button');
-              $(routeProfile.car).addClass(c4g.maps.constant.css.ROUTER_PROFILE_CAR);
+              $(routeProfile.car).addClass(cssConstants.ROUTER_PROFILE_CAR);
               this.$routeProfileCar = $(routeProfile.car);
               this.routeProfile.appendChild(routeProfile.car);
               this.$routeProfileCar.click(function (event) {
@@ -469,7 +473,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
             if (this.options.mapController.data.router_profiles['1']) { //add button for profile driving-hgv
               routeProfile.hgv = document.createElement('button');
-              $(routeProfile.hgv).addClass(c4g.maps.constant.css.ROUTER_PROFILE_HGV);
+              $(routeProfile.hgv).addClass(cssConstants.ROUTER_PROFILE_HGV);
               this.routeProfile.appendChild(routeProfile.hgv);
               this.$routeProfileHgv = $(routeProfile.hgv);
 
@@ -499,13 +503,13 @@ this.c4g.maps.control = this.c4g.maps.control || {};
                   });
                   if (!this.$routeProfileBike.data('profile')) { //add existing default profile to button
                     this.$routeProfileBike.data('profile', i);
-                    $(child).addClass(c4g.maps.constant.css.ACTIVE);
+                    $(child).addClass(cssConstants.ACTIVE);
                   }
                   routeProfile.bike.list.appendChild(child);
                 }
               }
 
-              $(routeProfile.bike).addClass(c4g.maps.constant.css.ROUTER_PROFILE_BIKE);
+              $(routeProfile.bike).addClass(cssConstants.ROUTER_PROFILE_BIKE);
 
               if (routeProfile.bike.list.children.length == 1) { //ignore dropdown list, if only one cycling profile is enabled
                 this.routeProfile.appendChild(routeProfile.bike);
@@ -542,13 +546,13 @@ this.c4g.maps.control = this.c4g.maps.control || {};
                   });
                   if (!this.$routeProfileFoot.data('profile')) { //add existing default profile to button
                     this.$routeProfileFoot.data('profile', i);
-                    $(child).addClass(c4g.maps.constant.css.ACTIVE);
+                    $(child).addClass(cssConstants.ACTIVE);
                   }
                   routeProfile.foot.list.appendChild(child);
                 }
               }
 
-              $(routeProfile.foot).addClass(c4g.maps.constant.css.ROUTER_PROFILE_FOOT);
+              $(routeProfile.foot).addClass(cssConstants.ROUTER_PROFILE_FOOT);
 
               if (routeProfile.foot.list.children.length == 1) { //ignore dropdown list, if only one walking profile is enabled
                 this.routeProfile.appendChild(routeProfile.foot);
@@ -571,7 +575,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             }
             if (this.options.mapController.data.router_profiles['10']) { //add button for profile wheelchair
               routeProfile.wheelchair = document.createElement('button');
-              $(routeProfile.wheelchair).addClass(c4g.maps.constant.css.ROUTER_PROFILE_WHEELCHAIR);
+              $(routeProfile.wheelchair).addClass(cssConstants.ROUTER_PROFILE_WHEELCHAIR);
               this.$routeProfileWheelchair = $(routeProfile.wheelchair);
               this.routeProfile.appendChild(routeProfile.wheelchair);
               this.$routeProfileWheelchair.click(function (event) {
@@ -588,9 +592,9 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             this.clearSiblings = function (element) { //function to adjust css-classes after changing profile
               let siblings = $(element).parent().children();
               for (let i = 0; i < siblings.length; i++) {
-                $(siblings[i]).removeClass(c4g.maps.constant.css.ACTIVE);
+                $(siblings[i]).removeClass(cssConstants.ACTIVE);
               }
-              $(element).addClass(c4g.maps.constant.css.ACTIVE);
+              $(element).addClass(cssConstants.ACTIVE);
             };
             for (let profile in this.options.mapController.data.router_profiles) { //set default value for initial routing
               if (this.options.mapController.data.router_profiles.hasOwnProperty(profile)) {
@@ -624,21 +628,21 @@ this.c4g.maps.control = this.c4g.maps.control || {};
           self.$buttonOver.prop("disabled", true);
 
           self.overInputWrapper = document.createElement('div');
-          self.overInputWrapper.className = c4g.maps.constant.css.ROUTER_INPUT_WRAPPER;
+          self.overInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
 
           self.overInput = document.createElement("input");
           self.overInput.type = "text";
-          self.overInput.className = c4g.maps.constant.css.ROUTER_INPUT_FROM;
+          self.overInput.className = cssConstants.ROUTER_INPUT_FROM;
           self.overInput.id = self.overInput.name = "routingOver";
 
           routerOverLabel = document.createElement('label');
           routerOverLabel.setAttribute('for', 'routingFrom');
-          routerOverLabel.innerHTML = c4g.maps.constant.i18n.ROUTER_Label_Interim;
+          routerOverLabel.innerHTML = langConstants.ROUTER_Label_Interim;
 
           routerOverClear = document.createElement('button');
-          routerOverClear.className = c4g.maps.constant.css.ROUTER_INPUT_CLEAR;
-          routerOverClear.title = c4g.maps.constant.i18n.ROUTER_CLEAR_TITLE;
-          routerOverClear.innerHTML = c4g.maps.constant.i18n.ROUTER_CLEAR_HTML;
+          routerOverClear.className = cssConstants.ROUTER_INPUT_CLEAR;
+          routerOverClear.title = langConstants.ROUTER_CLEAR_TITLE;
+          routerOverClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
           routerOverClear.id = self.index;
           self.$routerOverClear = $(routerOverClear);
 
@@ -687,21 +691,21 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         }
         routerViewInputWrapper.appendChild(this.fromInputWrapper);
         this.toInputWrapper = document.createElement('div');
-        this.toInputWrapper.className = c4g.maps.constant.css.ROUTER_INPUT_WRAPPER;
+        this.toInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
 
         this.toInput = document.createElement("input");
         this.toInput.type = "text";
-        this.toInput.className = c4g.maps.constant.css.ROUTER_INPUT_TO;
+        this.toInput.className = cssConstants.ROUTER_INPUT_TO;
         this.toInput.id = this.toInput.name = "routingTo";
 
         routerToLabel = document.createElement('label');
         routerToLabel.setAttribute('for', 'routingTo');
-        routerToLabel.innerHTML = c4g.maps.constant.i18n.ROUTER_TO_LABEL;
+        routerToLabel.innerHTML = langConstants.ROUTER_TO_LABEL;
 
         routerToClear = document.createElement('button');
-        routerToClear.className = c4g.maps.constant.css.ROUTER_INPUT_CLEAR;
-        routerToClear.title = c4g.maps.constant.i18n.ROUTER_CLEAR_TITLE;
-        routerToClear.innerHTML = c4g.maps.constant.i18n.ROUTER_CLEAR_HTML;
+        routerToClear.className = cssConstants.ROUTER_INPUT_CLEAR;
+        routerToClear.title = langConstants.ROUTER_CLEAR_TITLE;
+        routerToClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
         this.$routerToClear = $(routerToClear);
 
         this.toInputWrapper.appendChild(routerToLabel);
@@ -740,8 +744,8 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         routerView = this.addView({
           name: 'router-view',
           triggerConfig: {
-            tipLabel: c4g.maps.constant.i18n.ROUTER_VIEW_ADDRESS_INPUT,
-            className: c4g.maps.constant.css.ROUTER_VIEW_ADDRESS_INPUT,
+            tipLabel: langConstants.ROUTER_VIEW_ADDRESS_INPUT,
+            className: cssConstants.ROUTER_VIEW_ADDRESS_INPUT,
             withHeadline: true
           },
           sectionElements: [
@@ -764,21 +768,21 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         self.areaViewContentWrapper = areaViewContentWrapper;
 
         this.areaFromInputWrapper = document.createElement('div');
-        this.areaFromInputWrapper.className = c4g.maps.constant.css.ROUTER_INPUT_WRAPPER;
+        this.areaFromInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
 
         this.areaFromInput = document.createElement("input");
         this.areaFromInput.type = "text";
-        this.areaFromInput.className = c4g.maps.constant.css.ROUTER_INPUT_FROM;
+        this.areaFromInput.className = cssConstants.ROUTER_INPUT_FROM;
         this.areaFromInput.id = this.areaFromInput.name = "routingFrom";
 
         areaFromLabel = document.createElement('label');
         areaFromLabel.setAttribute('for', 'routingFrom');
-        areaFromLabel.innerHTML = c4g.maps.constant.i18n.ROUTER_FROM_LABEL;
+        areaFromLabel.innerHTML = langConstants.ROUTER_FROM_LABEL;
 
         areaFromClear = document.createElement('button');
-        areaFromClear.className = c4g.maps.constant.css.ROUTER_INPUT_CLEAR;
-        areaFromClear.title = c4g.maps.constant.i18n.ROUTER_CLEAR_TITLE;
-        areaFromClear.innerHTML = c4g.maps.constant.i18n.ROUTER_CLEAR_HTML;
+        areaFromClear.className = cssConstants.ROUTER_INPUT_CLEAR;
+        areaFromClear.title = langConstants.ROUTER_CLEAR_TITLE;
+        areaFromClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
         this.$areaFromClear = $(areaFromClear);
         if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
           if (Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
@@ -787,10 +791,10 @@ this.c4g.maps.control = this.c4g.maps.control || {};
           }
           else if (Object.keys(this.options.mapController.data.router_profiles).length > 1) { //check for multiple profiles and add profile-changer
             this.routeProfile = document.createElement('div');
-            $(this.routeProfile).addClass(c4g.maps.constant.css.ROUTER_PROFILE_WRAPPER);
+            $(this.routeProfile).addClass(cssConstants.ROUTER_PROFILE_WRAPPER);
             if (this.options.mapController.data.router_profiles['0']) { //add button for profile driving-car
               routeProfile.car = document.createElement('button');
-              $(routeProfile.car).addClass(c4g.maps.constant.css.ROUTER_PROFILE_CAR);
+              $(routeProfile.car).addClass(cssConstants.ROUTER_PROFILE_CAR);
               this.$routeProfileCar = $(routeProfile.car);
               this.routeProfile.appendChild(routeProfile.car);
               this.$routeProfileCar.click(function (event) {
@@ -802,7 +806,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 
             if (this.options.mapController.data.router_profiles['1']) { //add button for profile driving-hgv
               routeProfile.hgv = document.createElement('button');
-              $(routeProfile.hgv).addClass(c4g.maps.constant.css.ROUTER_PROFILE_HGV);
+              $(routeProfile.hgv).addClass(cssConstants.ROUTER_PROFILE_HGV);
               this.routeProfile.appendChild(routeProfile.hgv);
               this.$routeProfileHgv = $(routeProfile.hgv);
 
@@ -832,13 +836,13 @@ this.c4g.maps.control = this.c4g.maps.control || {};
                   });
                   if (!this.$routeProfileBike.data('profile')) { //add existing default profile to button
                     this.$routeProfileBike.data('profile', i);
-                    $(child).addClass(c4g.maps.constant.css.ACTIVE);
+                    $(child).addClass(cssConstants.ACTIVE);
                   }
                   routeProfile.bike.list.appendChild(child);
                 }
               }
 
-              $(routeProfile.bike).addClass(c4g.maps.constant.css.ROUTER_PROFILE_BIKE);
+              $(routeProfile.bike).addClass(cssConstants.ROUTER_PROFILE_BIKE);
 
               if (routeProfile.bike.list.children.length == 1) { //ignore dropdown list, if only one cycling profile is enabled
                 this.routeProfile.appendChild(routeProfile.bike);
@@ -875,13 +879,13 @@ this.c4g.maps.control = this.c4g.maps.control || {};
                   });
                   if (!this.$routeProfileFoot.data('profile')) { //add existing default profile to button
                     this.$routeProfileFoot.data('profile', i);
-                    $(child).addClass(c4g.maps.constant.css.ACTIVE);
+                    $(child).addClass(cssConstants.ACTIVE);
                   }
                   routeProfile.foot.list.appendChild(child);
                 }
               }
 
-              $(routeProfile.foot).addClass(c4g.maps.constant.css.ROUTER_PROFILE_FOOT);
+              $(routeProfile.foot).addClass(cssConstants.ROUTER_PROFILE_FOOT);
 
               if (routeProfile.foot.list.children.length == 1) { //ignore dropdown list, if only one walking profile is enabled
                 this.routeProfile.appendChild(routeProfile.foot);
@@ -904,7 +908,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             }
             if (this.options.mapController.data.router_profiles['10']) { //add button for profile wheelchair
               routeProfile.wheelchair = document.createElement('button');
-              $(routeProfile.wheelchair).addClass(c4g.maps.constant.css.ROUTER_PROFILE_WHEELCHAIR);
+              $(routeProfile.wheelchair).addClass(cssConstants.ROUTER_PROFILE_WHEELCHAIR);
               this.$routeProfileWheelchair = $(routeProfile.wheelchair);
               this.routeProfile.appendChild(routeProfile.wheelchair);
               this.$routeProfileWheelchair.click(function (event) {
@@ -921,9 +925,9 @@ this.c4g.maps.control = this.c4g.maps.control || {};
             this.clearSiblings = function (element) { //function to adjust css-classes after changing profile
               let siblings = $(element).parent().children();
               for (let i = 0; i < siblings.length; i++) {
-                $(siblings[i]).removeClass(c4g.maps.constant.css.ACTIVE);
+                $(siblings[i]).removeClass(cssConstants.ACTIVE);
               }
-              $(element).addClass(c4g.maps.constant.css.ACTIVE);
+              $(element).addClass(cssConstants.ACTIVE);
             };
             for (let profile in this.options.mapController.data.router_profiles) { //set default value for initial routing
               if (this.options.mapController.data.router_profiles.hasOwnProperty(profile)) {
@@ -968,7 +972,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
           name: 'area-view',
           triggerConfig: {
             tipLabel: 'LOOOOL',
-            className: c4g.maps.constant.css.ROUTER_VIEW_ADDRESS_INPUT,
+            className: cssConstants.ROUTER_VIEW_ADDRESS_INPUT,
             withHeadline: true
           },
           sectionElements: [
@@ -984,16 +988,19 @@ this.c4g.maps.control = this.c4g.maps.control || {};
     }
   });
 
-  c4g.maps.hook.mapController_addControls = c4g.maps.hook.mapController_addControls || [];
-  c4g.maps.hook.mapController_addControls.push(function(params){
+  window.c4gMapsHooks = window.c4gMapsHooks || {};
+  window.c4gMapsHooks.mapController_addControls = window.c4gMapsHooks.mapController_addControls || [];
+  window.c4gMapsHooks.mapController_addControls.push(function(params){
     let mapController = params.mapController;
 
     mapController.map.removeControl(mapController.controls.router);
-    mapController.controls.router = new c4g.maps.control.RouterPlugin({
-      tipLabel: c4g.maps.constant.i18n.CTRL_ROUTER,
+    let router = new c4g.maps.control.RouterPlugin({
+      tipLabel: langConstants.CTRL_ROUTER,
       target: params.Container,
       mapController: mapController
     });
-    mapController.map.addControl(mapController.controls.router)
+    mapController.map.addControl(router);
+    mapController.controls.router = router;
+    console.log(mapController.map.controls);
   })
 }(jQuery, this.c4g));
