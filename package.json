@@ -1,0 +1,23 @@
+{
+  "name": "routingbundle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "encore": "encore",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kuestenschmiede/RoutingBundle.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kuestenschmiede/RoutingBundle/issues"
+  },
+  "homepage": "https://github.com/Kuestenschmiede/RoutingBundle#readme",
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.20.1"
+  }
+}

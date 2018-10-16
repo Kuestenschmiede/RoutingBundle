@@ -19,9 +19,8 @@ class LoadMapResourcesListener
         LoadMapResourcesEvent $event,
         $eventName,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
-        ResourceLoader::loadJavaScriptDeferred('routing-plugin', "/bundles/con4gisrouting/js/routing-plugin.js");
+    ) {
+        ResourceLoader::loadJavaScriptDeferred('routing-plugin', "/bundles/con4gisrouting/build/routing-plugin.js");
 //        ResourceLoader::loadCssRessource('east-frisia-click-plugin', "/bundles/con4gisrouting/css/east-frisia-general.css");
 
     }
