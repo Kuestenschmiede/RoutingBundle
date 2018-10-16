@@ -15,9 +15,11 @@ use con4gis\RoutingBundle\Classes\LatLng;
 use con4gis\RoutingBundle\Classes\Polyline;
 
 include_once($_SERVER['DOCUMENT_ROOT']."../vendor/phayes/geophp/geoPHP.inc");
+
 class RouteService
 {
-    public function getResponse($profileId, $layer, $locations, $detour, $profile){
+    public function getResponse($profileId, $layer, $locations, $detour, $profile)
+    {
         $routingApi = new RoutingApi();
         $routeString = $routingApi->generate($profileId, $locations, $profile);
         $routeData =\GuzzleHttp\json_decode($routeString, true);
@@ -34,13 +36,15 @@ class RouteService
         $routeData['type'] = $objLayer->location_type;
         return \GuzzleHttp\json_encode($routeData);
     }
-    public function getFeatures($layerId,$detour,$points){
+
+    public function getFeatures($layerId,$detour,$points)
+    {
         $features = [];
         $objLayer = C4gMapsModel::findById($layerId);
-        if($objLayer->location_type == "table" || $objLayer->location_type == "frisia"){
+        if ($objLayer->location_type == "table" || $objLayer->location_type == "frisia") {
             $sourceTable = $objLayer->tab_source;
             $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
-            foreach($points as $point){
+            foreach ($points as $point) {
                 $bounds = $point->getLatLngBounds($point,$detour);
                 $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';
                 $onClause = $objLayer->tabJoinclause ? ' ' . htmlspecialchars_decode($objLayer->tabJoinclause) : '';
@@ -56,10 +60,10 @@ class RouteService
                 $features = array_merge($features,$featurePoint);
             }
         }
-        else if($objLayer->location_type == "overpass"){
+        else if ($objLayer->location_type == "overpass") {
             $url = "https://osm.kartenkueste.de/api/interpreter";
             $lineStringWKT = 'LINESTRING (';
-            foreach($points as $point){
+            foreach ($points as $point) {
                 if($point){
                     $lineStringWKT .= $point->getLng() . ' ' . $point->getLat() . ', ';
                 }
@@ -72,7 +76,7 @@ class RouteService
             $polygon = \geoPHP::load($result,'wkt');
             $jsonPolygon = \GuzzleHttp\json_decode($polygon->out('json'));
             $strBBox = 'poly:"';
-            foreach($jsonPolygon->coordinates[0] as $coordinate){
+            foreach ($jsonPolygon->coordinates[0] as $coordinate) {
                 $strBBox .= $coordinate[1] . ' ' .$coordinate[0]. ' ';
             }
             $strBBox = rtrim($strBBox).'"';
@@ -94,12 +98,13 @@ class RouteService
 
         return ['features'=>$features,'bbox'=>$jsonPolygon];
     }
-    public function bufferLineString($points,$detour){
+    public function bufferLineString($points,$detour)
+    {
         $latLng = new LatLng();
         $latWidth = $latLng->getLatWidth();
         $pointsUp = [];
         $pointsDown = [];
-        for($i = 0; $i < count($points); $i++){
+        for ($i = 0; $i < count($points); $i++) {
             $lngWidth = $latLng->getLngWidth($points[$i]->getLat());
             if($i == 0){
                 $divX = $points[1]->getLng()-$points[0]->getLng();
@@ -110,7 +115,7 @@ class RouteService
                 $pointsUp[]= [$points[0]->getLng()+((cos($radUp)*$detour)/$lngWidth),$points[0]->getLat()+((sin($radUp)*$detour)/$latWidth)];
                 $pointsDown[]= [$points[0]->getLng()+((cos($radDown)*$detour)/$lngWidth),$points[0]->getLat()+((sin($radDown)*$detour)/$latWidth)];
             }
-            else if($i == count($points)-1){
+            else if ($i == count($points)-1) {
                 $divX = $points[count($points)-1]->getLng()-$points[count($points)-2]->getLng();
                 $divY = $points[count($points)-1]->getLat()-$points[count($points)-2]->getLat();
                 $rad = atan2($divX,$divY);
@@ -118,8 +123,7 @@ class RouteService
                 $radDown = $rad-M_PI_2;
                 $pointsUp[]= [$points[count($points)-1]->getLng()+((cos($radUp)*$detour)/$lngWidth),$points[count($points)-1]->getLat()+((sin($radUp)*$detour)/$latWidth)];
                 $pointsDown[]= [$points[count($points)-1]->getLng()+((cos($radDown)*$detour)/$lngWidth),$points[count($points)-1]->getLat()+((sin($radDown)*$detour)/$latWidth)];
-            }
-            else{
+            } else {
                 $divX = $points[$i+1]->getLng()-$points[$i-1]->getLng();
                 $divY = $points[$i+1]->getLat()-$points[$i-1]->getLat();
                 $rad = atan2($divX,$divY);
@@ -129,7 +133,7 @@ class RouteService
                 $pointsDown[]= [$points[$i]->getLng()+((cos($radDown)*$detour)/$lngWidth),$points[$i]->getLat()+((sin($radDown)*$detour)/$latWidth)];
             }
         }
-        for($i = count($pointsDown); $i >= 0; $i--){
+        for ($i = count($pointsDown); $i >= 0; $i--) {
             $pointsUp[] = $pointsDown[$i];
         }
         return $pointsUp;

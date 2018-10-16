@@ -19,11 +19,11 @@ include_once($_SERVER['DOCUMENT_ROOT']."../vendor/phayes/geophp/geoPHP.inc");
 class AreaService
 {
 
-    public function getResponse($profileId, $layerId, $distance, $location, $profile){
+    public function getResponse($profileId, $layerId, $distance, $location, $profile)
+    {
         $objMapsProfile = C4gMapProfilesModel::findBy('id', $profileId);
         $coords = explode(',',$location);
         $point = new LatLng($coords[1], $coords[0]);
-        $bounds = $point->getLatLngBounds($point,$distance);
 
         $objLayer = C4gMapsModel::findById($layerId);
 //        if($objLayer->type == "table" || $objLayer->type == "frisia"){
