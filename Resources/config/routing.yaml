@@ -1,5 +1,5 @@
 routing_area:
-    path: /con4gis/routingbundle/area/{layerId}/{center}/{radius}
+    path: /con4gis/areaService/{profileId}/{layerId}/{center}/{distance}
     defaults:
         _scope: frontend
         _controller: "con4gisRoutingBundle:Routing:getArea"
