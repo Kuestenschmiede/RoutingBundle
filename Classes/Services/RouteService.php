@@ -98,44 +98,4 @@ class RouteService
 
         return ['features'=>$features,'bbox'=>$jsonPolygon];
     }
-    public function bufferLineString($points,$detour)
-    {
-        $latLng = new LatLng();
-        $latWidth = $latLng->getLatWidth();
-        $pointsUp = [];
-        $pointsDown = [];
-        for ($i = 0; $i < count($points); $i++) {
-            $lngWidth = $latLng->getLngWidth($points[$i]->getLat());
-            if($i == 0){
-                $divX = $points[1]->getLng()-$points[0]->getLng();
-                $divY = $points[1]->getLat()-$points[0]->getLat();
-                $rad = atan2($divX,$divY);
-                $radUp = $rad+M_PI_2;
-                $radDown = $rad-M_PI_2;
-                $pointsUp[]= [$points[0]->getLng()+((cos($radUp)*$detour)/$lngWidth),$points[0]->getLat()+((sin($radUp)*$detour)/$latWidth)];
-                $pointsDown[]= [$points[0]->getLng()+((cos($radDown)*$detour)/$lngWidth),$points[0]->getLat()+((sin($radDown)*$detour)/$latWidth)];
-            }
-            else if ($i == count($points)-1) {
-                $divX = $points[count($points)-1]->getLng()-$points[count($points)-2]->getLng();
-                $divY = $points[count($points)-1]->getLat()-$points[count($points)-2]->getLat();
-                $rad = atan2($divX,$divY);
-                $radUp = $rad+M_PI_2;
-                $radDown = $rad-M_PI_2;
-                $pointsUp[]= [$points[count($points)-1]->getLng()+((cos($radUp)*$detour)/$lngWidth),$points[count($points)-1]->getLat()+((sin($radUp)*$detour)/$latWidth)];
-                $pointsDown[]= [$points[count($points)-1]->getLng()+((cos($radDown)*$detour)/$lngWidth),$points[count($points)-1]->getLat()+((sin($radDown)*$detour)/$latWidth)];
-            } else {
-                $divX = $points[$i+1]->getLng()-$points[$i-1]->getLng();
-                $divY = $points[$i+1]->getLat()-$points[$i-1]->getLat();
-                $rad = atan2($divX,$divY);
-                $radUp = $rad+M_PI_2;
-                $radDown = $rad-M_PI_2;
-                $pointsUp[]= [$points[$i]->getLng()+((cos($radUp)*$detour)/$lngWidth),$points[$i]->getLat()+((sin($radUp)*$detour)/$latWidth)];
-                $pointsDown[]= [$points[$i]->getLng()+((cos($radDown)*$detour)/$lngWidth),$points[$i]->getLat()+((sin($radDown)*$detour)/$latWidth)];
-            }
-        }
-        for ($i = count($pointsDown); $i >= 0; $i--) {
-            $pointsUp[] = $pointsDown[$i];
-        }
-        return $pointsUp;
-    }
 }

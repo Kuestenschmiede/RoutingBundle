@@ -214,6 +214,13 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
       return true;
 
     },
+    preOpenFunction: function (opt_options) {
+      if (opt_options && opt_options.toLonLat) {
+        this.performReverseSearch(this.$toInput, opt_options.toLonLat);
+        this.toValue = new ol.geom.Point([opt_options.toLonLat[1], opt_options.toLonLat[0]]);
+      }
+
+    },
     preCloseFunction: function () {
 
       this.routingWaySource.clear();
@@ -257,7 +264,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         }
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/74/2/' + fromCoord;
+        url = 'con4gis/routeService/1/36/2/' + fromCoord;
 
         if (overPoint) {
           for (var i = 0; i < overCoord.length; i++)
@@ -360,7 +367,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
 
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       
-      let url = 'con4gis/areaService/1/71/' + distance + '/' + fromCoord;
+      let url = 'con4gis/areaService/1/36/' + distance + '/' + fromCoord;
       if (this.routeProfile && this.routeProfile.active) {
         url += '?profile=' + this.routeProfile.active;
       }
@@ -372,7 +379,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         .done(function (response) {
           self.response = response;
           if (response) {
-              self.showFeatures(response);
+              self.showFeatures(response[0],response[1]);
           }
 
         })

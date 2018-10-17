@@ -24,8 +24,7 @@ class RoutingController extends BaseController
         if($request->query->get('profile') !== null){
             $profile = $request->query->get('profile');
         }
-        $areaService = new AreaService();
-        $response ->setContent($areaService->getResponse($profileId, $layerId, $center, $distance, $profile));
+        $response ->setContent(AreaService::getResponse($profileId, $layerId, $distance, $center, $profile));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
 
