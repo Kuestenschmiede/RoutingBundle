@@ -29,6 +29,7 @@ class RouteService
 
         $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
         $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
+        // TODO event einbauen
         $objFeatures = $this->getFeatures($layer, $detour, $points);
         $routeData['features'] = $objFeatures['features'];
         $routeData['bbox'] = $objFeatures['bbox'];
