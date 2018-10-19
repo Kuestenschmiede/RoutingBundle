@@ -362,6 +362,15 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         self.routerFeaturesSource.addFeatures(contentFeatures);
       }
     },
+    showFeaturesInPortside: function(features, type){
+      const scope = this;
+      if(self.featureWrapper === undefined){
+        self.featureWrapper = document.createElement('div');
+        self.featureWrapper.className('changeDat');
+        self.routerViewContentWrapper.appendChild(sef.featureWrapper);
+      }
+
+    },
     performArea: function(fromPoint, distance){
       const self = this;
 

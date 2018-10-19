@@ -51,27 +51,7 @@ class AreaService
                     $locations[] = [$pTemp->getLng(), $pTemp->getLat()];
                 }
             }
-            $matrixUrl = 'https://api.openrouteservice.org/matrix?api_key=' . $objMapsProfile->router_api_key . '&profile=driving-car';
-            $matrixData = [
-                'profile'       => 'driving-car',
-                'locations'     => $locations,
-                'sources'       => '0',
-                'metrics'       => 'distance',
-                'units'         => 'km'
-            ];
-
-            $REQUEST = new \Request();
-            if ($_SERVER['HTTP_REFERER']) {
-                $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
-            }
-            if ($_SERVER['HTTP_USER_AGENT']) {
-                $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
-            }
-            $REQUEST->method = "POST";
-            $finalResponseFeatures = [];
-            $encodedData = \GuzzleHttp\json_encode($matrixData);
-            $REQUEST->send($matrixUrl, $encodedData);
-            $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
+            $requestData = \GuzzleHttp\json_decode($this->performMatrix($objMapsProfile,$profile,$locations), true);
             for($i = 1; $i < count($requestData['distances'][0]); $i++) {
                 if($requestData['distances'][0][$i] < $distance){
                     $finalResponseFeatures[] = $responseFeatures[$i-1];
@@ -100,33 +80,40 @@ class AreaService
             foreach($requestData['elements'] as $element){
                 $locations[] = [$element['lon'],$element['lat']];
             }
-            $matrixUrl = 'https://api.openrouteservice.org/matrix?api_key=' . $objMapsProfile->router_api_key . '&profile=driving-car';
-            $matrixData = [
-                'profile'       => 'driving-car',
-                'locations'     => $locations,
-                'sources'       => '0',
-                'metrics'       => 'distance',
-                'units'         => 'km'
-            ];
-
-            $REQUEST = new \Request();
-            if ($_SERVER['HTTP_REFERER']) {
-                $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
-            }
-            if ($_SERVER['HTTP_USER_AGENT']) {
-                $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
-            }
-            $REQUEST->method = "POST";
-            $encodedData = \GuzzleHttp\json_encode($matrixData);
-            $REQUEST->send($matrixUrl, $encodedData);
-            $matrixResponse = \GuzzleHttp\json_decode($REQUEST->response, true);
+            $matrixResponse = \GuzzleHttp\json_decode($this->performMatrix($objMapsProfile,$profile,$locations), true);
             $features = [];
             for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
                 if($matrixResponse['distances'][0][$i] < $distance){
+                    $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
                     $features[] = $requestData['elements'][$i-1];
                 }
             }
             return \GuzzleHttp\json_encode([$features,'overpass']);
         }
+    }
+    public function performMatrix($mapsProfile, $routingProfile, $locations, $opt_options = null)
+    {
+        $valuesProfile = ["driving-car" , "driving-hgv" , "cycling-regular" , "cycling-road" , "cycling-safe" , "cycling-mountain" , "cycling-tour" , "cycling-electric" , "foot-walking" , "foot-hiking" , "wheelchair"];
+        $routingProfile = $valuesProfile[$routingProfile] ? $valuesProfile[$routingProfile] : 'driving-car';
+        $matrixUrl = 'https://api.openrouteservice.org/matrix?api_key=' . $mapsProfile->router_api_key . '&profile=' . $routingProfile;
+        $matrixData = [
+            'profile'       => $routingProfile,
+            'locations'     => $locations,
+            'sources'       => '0',
+            'metrics'       => 'distance',
+            'units'         => 'km'
+        ];
+
+        $REQUEST = new \Request();
+        if ($_SERVER['HTTP_REFERER']) {
+            $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+        }
+        if ($_SERVER['HTTP_USER_AGENT']) {
+            $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+        }
+        $REQUEST->method = "POST";
+        $encodedData = \GuzzleHttp\json_encode($matrixData);
+        $REQUEST->send($matrixUrl, $encodedData);
+        return $REQUEST->response;
     }
 }

@@ -5132,6 +5132,14 @@ this.c4g.maps.control = this.c4g.maps.control || {};
         self.routerFeaturesSource.addFeatures(contentFeatures);
       }
     },
+    showFeaturesInPortside: function showFeaturesInPortside(features, type) {
+      var scope = this;
+      if (self.featureWrapper === undefined) {
+        self.featureWrapper = document.createElement('div');
+        self.featureWrapper.className('changeDat');
+        self.routerViewContentWrapper.appendChild(sef.featureWrapper);
+      }
+    },
     performArea: function performArea(fromPoint, distance) {
       var self = this;
 
