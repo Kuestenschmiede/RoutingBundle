@@ -6,7 +6,7 @@
  * Time: 15:49
  */
 
-namespace con4gis\RoutingBundle\Classes\Events;
+namespace con4gis\RoutingBundle\Classes\Event;
 
 
 use Symfony\Component\EventDispatcher\Event;

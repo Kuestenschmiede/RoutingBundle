@@ -36,7 +36,7 @@ class RoutingController extends BaseController
             $profile = $request->query->get('profile');
         }
         $locations = explode(";",$locations);
-        $routeService = new RouteService();
+        $routeService = $this->get("con4gis.route_service");
         $response ->setContent($routeService->getResponse($profileId, $layerId, $locations, $detour, $profile));
         $response->headers->set('Content-Type', 'application/json');
         return $response;

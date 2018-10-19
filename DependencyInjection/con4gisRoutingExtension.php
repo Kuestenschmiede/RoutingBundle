@@ -26,6 +26,7 @@ class con4gisRoutingExtension extends Extension
             new FileLocator(__DIR__.'/../Resources/config')
         );
         $loader->load('listeners.yaml');
+        $loader->load('services.yaml');
     }
     public function getAlias()
     {

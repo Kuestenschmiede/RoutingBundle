@@ -264,7 +264,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         }
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/36/2/' + fromCoord;
+        url = 'con4gis/routeService/1/3/2/' + fromCoord;
 
         if (overPoint) {
           for (var i = 0; i < overCoord.length; i++)
@@ -303,7 +303,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
     showFeatures: function (features, type = "table") {
       const self = this;
       self.routerFeaturesSource.clear();
-      const layer = self.options.mapController.proxy.layerController.arrLayers[74];
+      const layer = self.options.mapController.proxy.layerController.arrLayers[3];
       if (layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup) {
         self.routerFeaturesLayer.popup = layer.content[0].data.popup;
       }
@@ -366,8 +366,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
       const self = this;
 
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
-      
-      let url = 'con4gis/areaService/1/36/' + distance + '/' + fromCoord;
+      let url = 'con4gis/areaService/1/3/' + distance + '/' + fromCoord;
       if (this.routeProfile && this.routeProfile.active) {
         url += '?profile=' + this.routeProfile.active;
       }
