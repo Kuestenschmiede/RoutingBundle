@@ -4,3 +4,9 @@ services:
     public: true
     arguments:
       - "@event_dispatcher"
+
+  con4gis.area_service:
+    class: con4gis\RoutingBundle\Classes\Services\AreaService
+    public: true
+    arguments:
+    - "@event_dispatcher"

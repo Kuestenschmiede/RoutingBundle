@@ -23,7 +23,7 @@ class RoutingController extends BaseController
         if($request->query->get('profile') !== null){
             $profile = $request->query->get('profile');
         }
-        $areaService = new AreaService();
+        $areaService = $this->get('con4gis.area_service');
         $response ->setContent($areaService->getResponse($profileId, $layerId, $distance, $center, $profile));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
