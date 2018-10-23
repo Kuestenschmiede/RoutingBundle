@@ -739,7 +739,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
             $(self.routerLayersValueSelect).empty();
             let selected = $(this).val();
             let clickFunction = function(){
-              self.activeLayerValue = $(this).val();
+              self.activeLayerValue = this.innerHTML;
               $(this).addClass("c4g-active").removeClass('c4g-inactive');
               $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
               // @ToDo add Handler to change features in portside with new value
