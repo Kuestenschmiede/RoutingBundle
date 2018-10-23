@@ -735,7 +735,6 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
             this.routerLayersSelect.add(option);
           }
           this.routerLayersValueSelect = document.createElement('div');
-          this.routerValueClick
           $(this.routerLayersSelect).on('change', function(){
             $(self.routerLayersValueSelect).empty();
             let selected = $(this).val();
@@ -752,8 +751,8 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
                 $(buttonElement).on('click', clickFunction);
                 self.routerLayersValueSelect.appendChild(buttonElement);
               }
-
             }
+            $(self.routerLayersValueSelect.firstChild).trigger('click');
           });
           $(this.routerLayersSelect).trigger('change');
           routerViewInputWrapper.appendChild(this.routerLayersInput);
