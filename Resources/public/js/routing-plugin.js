@@ -373,12 +373,11 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
         scope.routerViewContentWrapper.appendChild(scope.featureWrapper);
       }
       const routerLayers = this.options.mapController.data.routerLayers;
-      let chosenLayerId = $(scope.routerLayersSelect).val();
-      console.log(chosenLayerId);
-      let chosenOption = "Diesel";
+      const chosenLayerId = $(scope.routerLayersSelect).val();
+      const chosenOption = scope.activeLayerValue;
       const values = routerLayers[chosenLayerId][chosenOption].keys;
       const labels = routerLayers[chosenLayerId][chosenOption].labels;
-      console.log(values);
+
       let entryWrapper = document.createElement("ul");
       $(entryWrapper).addClass("route-features-list-wrapper");
       for (let i = 0; i < features.length; i++) {
