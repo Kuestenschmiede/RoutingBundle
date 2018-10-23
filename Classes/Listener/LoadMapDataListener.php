@@ -30,6 +30,8 @@ class LoadMapDataListener
             $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
         }
         $mapData['routerLayers'] = $returnLayers;
+        $mapData['detourArea'] = [$profile->minDetourArea, $profile->maxDetourArea];
+        $mapData['detourRoute'] = [$profile->minDetourRoute, $profile->maxDetourRoute];
         $event->setMapData($mapData);
     }
 }

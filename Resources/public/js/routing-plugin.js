@@ -265,7 +265,7 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
         }
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/' + $(self.routerLayersSelect).val() + '/2/' + fromCoord;
+        url = 'con4gis/routeService/1/' + $(self.routerLayersSelect).val() + '/'+$(self.toggleDetour).val()+'/' + fromCoord;
 
         if (overPoint) {
           for (var i = 0; i < overCoord.length; i++)
@@ -783,7 +783,15 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
           routerViewInputWrapper.appendChild(this.routerLayersInput);
           routerViewInputWrapper.appendChild(this.routerLayersValueSelect);
         }
+        self.toggleDetourRoute = document.createElement('input');
+        self.toggleDetourRoute.className = 'c4g-overlay-toggle';
+        self.toggleDetourRoute.setAttribute('type','range');
+        self.toggleDetourRoute.setAttribute('min',mapData.detourRoute[0]);
+        self.toggleDetourRoute.setAttribute('max',mapData.detourRoute[1]);
+        self.toggleDetourRoute.setAttribute('value',(mapData.detourRoute[0]+mapData.detourRoute[1])/2);
+        self.toggleDetourRoute.setAttribute('steps',0.5);
 
+        routerViewInputWrapper.appendChild(self.toggleDetourRoute);
         routerViewInputWrapper.appendChild(this.fromInputWrapper);
         this.toInputWrapper = document.createElement('div');
         this.toInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
