@@ -23,12 +23,11 @@ class LoadMapDataListener
         $profile = C4gMapProfilesModel::findById($mapData['profile']);
         $routerLayers = unserialize($profile->routerLayers);
         $returnLayers = [];
-        foreach($routerLayers as $routerLayer){
+        foreach ($routerLayers as $routerLayer) {
             $routerLayer['key'] = str_replace(" ", "", $routerLayer['key']);
             $routerLayer['label'] = str_replace(" ", "", $routerLayer['label']);
             $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(",", $routerLayer['key']);
             $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
-
         }
         $mapData['routerLayers'] = $returnLayers;
         $event->setMapData($mapData);
