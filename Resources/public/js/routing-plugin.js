@@ -726,21 +726,40 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         }
         if(mapData.routerLayers){
           this.routerLayersInput = document.createElement('div');
-          if(mapData.routerLayers.length > 1 || true){
-            this.routerLayersSelect = document.createElement('select')
-            this.routerLayersInput.appendChild(this.routerLayersSelect);
-            for(let i in mapData.routerLayers){
-              let option = document.createElement('option');
-              option.value = i;
-              option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
-              this.routerLayersSelect.add(option);
-            }
-            $(this.routerLayersSelect).on('change', function(){
-              
-            })
+          this.routerLayersSelect = document.createElement('select')
+          this.routerLayersInput.appendChild(this.routerLayersSelect);
+          for(let i in mapData.routerLayers){
+            let option = document.createElement('option');
+            option.value = i;
+            option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
+            this.routerLayersSelect.add(option);
           }
+          this.routerLayersValueSelect = document.createElement('div');
+          this.routerValueClick
+          $(this.routerLayersSelect).on('change', function(){
+            $(self.routerLayersValueSelect).empty();
+            let selected = $(this).val();
+            let clickFunction = function(){
+              self.activeLayerValue = $(this).val();
+              $(this).addClass("c4g-active").removeClass('c4g-inactive');
+              $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
+            }
+            for(let i in mapData.routerLayers[selected]){
+              if(mapData.routerLayers[selected].hasOwnProperty(i)){
+                let buttonElement = document.createElement('button');
+                buttonElement.innerHTML = i;
+                buttonElement.value = mapData.routerLayers[selected][i]['keys'];
+                $(buttonElement).on('click', clickFunction);
+                self.routerLayersValueSelect.appendChild(buttonElement);
+              }
+
+            }
+          });
+          $(this.routerLayersSelect).trigger('change');
+          routerViewInputWrapper.appendChild(this.routerLayersInput);
+          routerViewInputWrapper.appendChild(this.routerLayersValueSelect);
         }
-        routerViewInputWrapper.appendChild(this.routerLayersInput);
+
         routerViewInputWrapper.appendChild(this.fromInputWrapper);
         this.toInputWrapper = document.createElement('div');
         this.toInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
