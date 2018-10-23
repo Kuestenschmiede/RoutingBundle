@@ -264,7 +264,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         }
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/4/2/' + fromCoord;
+        url = 'con4gis/routeService/1/' + $(self.routerLayersSelect).val() + '/2/' + fromCoord;
 
         if (overPoint) {
           for (var i = 0; i < overCoord.length; i++)
@@ -726,7 +726,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         }
         if(mapData.routerLayers){
           this.routerLayersInput = document.createElement('div');
-          this.routerLayersSelect = document.createElement('select')
+          this.routerLayersSelect = document.createElement('select');
           this.routerLayersInput.appendChild(this.routerLayersSelect);
           for(let i in mapData.routerLayers){
             let option = document.createElement('option');
@@ -742,6 +742,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
               self.activeLayerValue = $(this).val();
               $(this).addClass("c4g-active").removeClass('c4g-inactive');
               $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
+              // @ToDo add Handler to change features in portside with new value
             }
             for(let i in mapData.routerLayers[selected]){
               if(mapData.routerLayers[selected].hasOwnProperty(i)){
@@ -753,6 +754,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
               }
             }
             $(self.routerLayersValueSelect.firstChild).trigger('click');
+            self.recalculateRoute();
           });
           $(this.routerLayersSelect).trigger('change');
           routerViewInputWrapper.appendChild(this.routerLayersInput);
