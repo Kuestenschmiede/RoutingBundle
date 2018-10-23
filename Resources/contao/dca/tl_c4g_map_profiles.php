@@ -19,10 +19,10 @@ class tl_c4g_map_profiles_router extends Backend
 {
     public function getRouterLayer($multiColumnWizard)
     {
-        $arrColumnLayers = array(
+        $arrColumnLayers = [
             'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['layers'],
             'inputType' => 'select'
-        );
+        ];
         $arrLayers = $this->Database->prepare('SELECT * FROM tl_c4g_maps WHERE published=1')
             ->execute()->fetchAllAssoc();
         $arrOptions =[];
@@ -30,23 +30,30 @@ class tl_c4g_map_profiles_router extends Backend
             $arrOptions[$arrLayer['id']] = $arrLayer['name'];
         }
         $arrColumnLayers['options'] = $arrOptions;
-        $arrColumnKey = array(
+        $arrColumnKey = [
             'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'],
             'filter'                  => false,
             'inputType'               => 'text',
-            'eval'                    => array('mandatory'=>'true', 'tl_class'=>'w50')
-        );
-        $arrColumnValue = array(
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['baselayerGroup']['value'],
+            'eval'                    => ['mandatory'=>'true', 'tl_class'=>'w50']
+        ];
+        $arrColumnValue = [
+            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'],
             'filter'                  => false,
             'inputType'               => 'text',
-            'eval'                    => array('mandatory'=>'true', 'tl_class'=>'w50')
-        );
-        $return = array(
+            'eval'                    => ['mandatory'=>'true', 'tl_class'=>'w50']
+        ];
+        $arrColumnLabels = [
+            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'],
+            'filter'                  => false,
+            'inputType'               => 'text',
+            'eval'                    => ['mandatory'=>'true', 'tl_class'=>'w50']
+        ];
+        $return = [
             'layers'    => $arrColumnLayers,
             'key'       => $arrColumnKey,
             'value'     => $arrColumnValue,
-        );
+            'label'     => $arrColumnLabels
+        ];
         return $return;
     }
 }

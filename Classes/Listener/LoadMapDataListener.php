@@ -25,7 +25,9 @@ class LoadMapDataListener
         $returnLayers = [];
         foreach($routerLayers as $routerLayer){
             $routerLayer['key'] = str_replace(" ", "", $routerLayer['key']);
-            $returnLayers[$routerLayer['layers']][$routerLayer['value']] = explode(",", $routerLayer['key']);
+            $routerLayer['label'] = str_replace(" ", "", $routerLayer['label']);
+            $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(",", $routerLayer['key']);
+            $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
 
         }
         $mapData['routerLayers'] = $returnLayers;
