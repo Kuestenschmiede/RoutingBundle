@@ -6,6 +6,7 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 import {Router} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-control-portside-router";
 import {langConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant-i18n-de";
 import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
+import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils"
 
 (function ($, c4g) {
   'use strict';
@@ -372,11 +373,11 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         scope.routerViewContentWrapper.appendChild(scope.featureWrapper);
       }
       const routerLayers = this.options.mapController.data.routerLayers;
-      console.log(routerLayers);
-      // ToDo dynamisch ermitteln
-      let chosenLayerId = 4;
+      let chosenLayerId = $(scope.routerLayersSelect).val();
+      console.log(chosenLayerId);
       let chosenOption = "Diesel";
-      const values = routerLayers[chosenLayerId][chosenOption];
+      const values = routerLayers[chosenLayerId][chosenOption].keys;
+      const labels = routerLayers[chosenLayerId][chosenOption].labels;
       console.log(values);
       let entryWrapper = document.createElement("ul");
       $(entryWrapper).addClass("route-features-list-wrapper");
@@ -384,15 +385,30 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         // TODO von der ausgewählten Option in routerFeatureValueSelection (oder wie auch immer) abhängig die werte anzeigen
         let entry = document.createElement('li');
         $(entry).addClass("route-features-list-element");
-        for (let j = 0; j < values.length; j++) {
-          let valueDiv = document.createElement('div');
-          valueDiv.innerHTML = features[i][values[j]];
-          entry.appendChild(valueDiv);
+        if (type === "overpass" || type === "table") {
+          for (let j = 0; j < values.length; j++) {
+            let valueDiv = document.createElement('div');
+            valueDiv.innerHTML = labels[j] + ": " + features[i][values[j]];
+            entry.appendChild(valueDiv);
+          }
+        } else {
+          // TODO entry durch hook erzeugen
+          console.log(window.c4gMapsHooks);
+          if (window.c4gMapsHooks && window.c4gMapsHooks.routePluginEntry) {
+            utils.callHookFunctions(window.c4gMapsHooks.routePluginEntry, {
+              entry: entry,
+              feature: features[i],
+              values: values,
+              labels: labels
+            });
+          }
         }
+
         entryWrapper.appendChild(entry);
       }
       scope.featureWrapper.appendChild(entryWrapper);
     },
+
     performArea: function(fromPoint, distance){
       const self = this;
 
