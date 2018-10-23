@@ -265,7 +265,7 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
         }
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/4/2/' + fromCoord;
+        url = 'con4gis/routeService/1/' + $(self.routerLayersSelect).val() + '/2/' + fromCoord;
 
         if (overPoint) {
           for (var i = 0; i < overCoord.length; i++)
@@ -742,21 +742,41 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
         }
         if(mapData.routerLayers){
           this.routerLayersInput = document.createElement('div');
-          if(mapData.routerLayers.length > 1 || true){
-            this.routerLayersSelect = document.createElement('select')
-            this.routerLayersInput.appendChild(this.routerLayersSelect);
-            for(let i in mapData.routerLayers){
-              let option = document.createElement('option');
-              option.value = i;
-              option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
-              this.routerLayersSelect.add(option);
-            }
-            $(this.routerLayersSelect).on('change', function(){
-              
-            })
+          this.routerLayersSelect = document.createElement('select');
+          this.routerLayersInput.appendChild(this.routerLayersSelect);
+          for(let i in mapData.routerLayers){
+            let option = document.createElement('option');
+            option.value = i;
+            option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
+            this.routerLayersSelect.add(option);
           }
+          this.routerLayersValueSelect = document.createElement('div');
+          $(this.routerLayersSelect).on('change', function(){
+            $(self.routerLayersValueSelect).empty();
+            let selected = $(this).val();
+            let clickFunction = function(){
+              self.activeLayerValue = $(this).val();
+              $(this).addClass("c4g-active").removeClass('c4g-inactive');
+              $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
+              // @ToDo add Handler to change features in portside with new value
+            }
+            for(let i in mapData.routerLayers[selected]){
+              if(mapData.routerLayers[selected].hasOwnProperty(i)){
+                let buttonElement = document.createElement('button');
+                buttonElement.innerHTML = i;
+                buttonElement.value = mapData.routerLayers[selected][i]['keys'];
+                $(buttonElement).on('click', clickFunction);
+                self.routerLayersValueSelect.appendChild(buttonElement);
+              }
+            }
+            $(self.routerLayersValueSelect.firstChild).trigger('click');
+            self.recalculateRoute();
+          });
+          $(this.routerLayersSelect).trigger('change');
+          routerViewInputWrapper.appendChild(this.routerLayersInput);
+          routerViewInputWrapper.appendChild(this.routerLayersValueSelect);
         }
-        routerViewInputWrapper.appendChild(this.routerLayersInput);
+
         routerViewInputWrapper.appendChild(this.fromInputWrapper);
         this.toInputWrapper = document.createElement('div');
         this.toInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
