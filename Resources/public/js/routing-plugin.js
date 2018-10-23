@@ -365,47 +365,55 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
       }
     },
     showFeaturesInPortside: function(features, type) {
-      console.log(features);
       const scope = this;
       if(scope.featureWrapper === undefined){
         scope.featureWrapper = document.createElement('div');
         $(scope.featureWrapper).addClass('route-features-display');
         scope.routerViewContentWrapper.appendChild(scope.featureWrapper);
       }
-      const routerLayers = this.options.mapController.data.routerLayers;
-      const chosenLayerId = $(scope.routerLayersSelect).val();
-      const chosenOption = scope.activeLayerValue;
-      const values = routerLayers[chosenLayerId][chosenOption].keys;
-      const labels = routerLayers[chosenLayerId][chosenOption].labels;
+      scope.features = features;
+      scope.type = type;
+      scope.reloadFeatureValues();
+    },
 
-      let entryWrapper = document.createElement("ul");
-      $(entryWrapper).addClass("route-features-list-wrapper");
-      for (let i = 0; i < features.length; i++) {
-        // TODO von der ausgewählten Option in routerFeatureValueSelection (oder wie auch immer) abhängig die werte anzeigen
-        let entry = document.createElement('li');
-        $(entry).addClass("route-features-list-element");
-        if (type === "overpass" || type === "table") {
-          for (let j = 0; j < values.length; j++) {
-            let valueDiv = document.createElement('div');
-            valueDiv.innerHTML = labels[j] + ": " + features[i][values[j]];
-            entry.appendChild(valueDiv);
+    reloadFeatureValues: function() {
+      const scope = this;
+      const features = scope.features;
+      const type = scope.type;
+      if (scope.featureWrapper) {
+        $(scope.featureWrapper).empty();
+        const routerLayers = this.options.mapController.data.routerLayers;
+        const chosenLayerId = $(scope.routerLayersSelect).val();
+        const chosenOption = scope.activeLayerValue;
+        const values = routerLayers[chosenLayerId][chosenOption].keys;
+        const labels = routerLayers[chosenLayerId][chosenOption].labels;
+
+        let entryWrapper = document.createElement("ul");
+        $(entryWrapper).addClass("route-features-list-wrapper");
+        for (let i = 0; i < features.length; i++) {
+          let entry = document.createElement('li');
+          $(entry).addClass("route-features-list-element");
+          if (type === "overpass" || type === "table") {
+            for (let j = 0; j < values.length; j++) {
+              let valueDiv = document.createElement('div');
+              valueDiv.innerHTML = labels[j] + ": " + features[i][values[j]];
+              entry.appendChild(valueDiv);
+            }
+          } else {
+            if (window.c4gMapsHooks && window.c4gMapsHooks.routePluginEntry) {
+              utils.callHookFunctions(window.c4gMapsHooks.routePluginEntry, {
+                entry: entry,
+                feature: features[i],
+                values: values,
+                labels: labels
+              });
+            }
           }
-        } else {
-          // TODO entry durch hook erzeugen
-          console.log(window.c4gMapsHooks);
-          if (window.c4gMapsHooks && window.c4gMapsHooks.routePluginEntry) {
-            utils.callHookFunctions(window.c4gMapsHooks.routePluginEntry, {
-              entry: entry,
-              feature: features[i],
-              values: values,
-              labels: labels
-            });
-          }
+
+          entryWrapper.appendChild(entry);
         }
-
-        entryWrapper.appendChild(entry);
+        scope.featureWrapper.appendChild(entryWrapper);
       }
-      scope.featureWrapper.appendChild(entryWrapper);
     },
 
     performArea: function(fromPoint, distance){
@@ -750,15 +758,15 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
             this.routerLayersSelect.add(option);
           }
           this.routerLayersValueSelect = document.createElement('div');
-          $(this.routerLayersSelect).on('change', function(){
+          $(this.routerLayersSelect).on('change', function() {
             $(self.routerLayersValueSelect).empty();
             let selected = $(this).val();
-            let clickFunction = function(){
+            let clickFunction = function() {
               self.activeLayerValue = this.innerHTML;
               $(this).addClass("c4g-active").removeClass('c4g-inactive');
               $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
-              // @ToDo add Handler to change features in portside with new value
-            }
+              self.reloadFeatureValues();
+            };
             for(let i in mapData.routerLayers[selected]){
               if(mapData.routerLayers[selected].hasOwnProperty(i)){
                 let buttonElement = document.createElement('button');
