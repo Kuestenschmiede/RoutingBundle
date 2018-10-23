@@ -23,7 +23,7 @@ class tl_c4g_map_profiles_router extends Backend
             'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['layers'],
             'inputType' => 'select'
         );
-        $arrLayers = $this->Database->prepare('SELECT * FROM tl_c4g_maps WHERE published=1 AND (location_type ="overpass" OR location_type ="table")')
+        $arrLayers = $this->Database->prepare('SELECT * FROM tl_c4g_maps WHERE published=1')
             ->execute()->fetchAllAssoc();
         $arrOptions =[];
         foreach ($arrLayers as $arrLayer){

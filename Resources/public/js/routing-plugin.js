@@ -702,6 +702,23 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         if (this.routeProfile && this.routeProfile.children) {
           routerViewInputWrapper.appendChild(this.routeProfile);
         }
+        if(mapData.routerLayers){
+          this.routerLayersInput = document.createElement('div');
+          if(mapData.routerLayers.length > 1 || true){
+            this.routerLayersSelect = document.createElement('select')
+            this.routerLayersInput.appendChild(this.routerLayersSelect);
+            for(let i in mapData.routerLayers){
+              let option = document.createElement('option');
+              option.value = i;
+              option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
+              this.routerLayersSelect.add(option);
+            }
+            $(this.routerLayersSelect).on('change', function(){
+              
+            })
+          }
+        }
+        routerViewInputWrapper.appendChild(this.routerLayersInput);
         routerViewInputWrapper.appendChild(this.fromInputWrapper);
         this.toInputWrapper = document.createElement('div');
         this.toInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
