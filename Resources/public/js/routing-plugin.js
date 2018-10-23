@@ -282,9 +282,10 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
           .done(function (response) {
             self.response = response;
             if (response) {
-              self.showRoute(response);
+              self.showRouteLayer(response);
               if (response.features) {
                 self.showFeatures(response.features, response.type);
+                self.showFeaturesInPortside(response.features, response.type);
               }
             }
 
@@ -311,7 +312,7 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
       const contentFeatures = [];
       let missingStyles = [];
       for (let i = 0; i < features.length; i++) {
-        let feature = features[i]
+        let feature = features[i];
         let resultCoordinate;
         if (type == "overpass") {
           resultCoordinate = ol.proj.transform([parseFloat(feature['lon']), parseFloat(feature['lat'])], 'EPSG:4326', 'EPSG:3857');
@@ -362,14 +363,35 @@ import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-map
         self.routerFeaturesSource.addFeatures(contentFeatures);
       }
     },
-    showFeaturesInPortside: function(features, type){
+    showFeaturesInPortside: function(features, type) {
+      console.log(features);
       const scope = this;
-      if(self.featureWrapper === undefined){
-        self.featureWrapper = document.createElement('div');
-        self.featureWrapper.className('changeDat');
-        self.routerViewContentWrapper.appendChild(sef.featureWrapper);
+      if(scope.featureWrapper === undefined){
+        scope.featureWrapper = document.createElement('div');
+        $(scope.featureWrapper).addClass('route-features-display');
+        scope.routerViewContentWrapper.appendChild(scope.featureWrapper);
       }
-
+      const routerLayers = this.options.mapController.data.routerLayers;
+      console.log(routerLayers);
+      // ToDo dynamisch ermitteln
+      let chosenLayerId = 4;
+      let chosenOption = "Diesel";
+      const values = routerLayers[chosenLayerId][chosenOption];
+      console.log(values);
+      let entryWrapper = document.createElement("ul");
+      $(entryWrapper).addClass("route-features-list-wrapper");
+      for (let i = 0; i < features.length; i++) {
+        // TODO von der ausgewählten Option in routerFeatureValueSelection (oder wie auch immer) abhängig die werte anzeigen
+        let entry = document.createElement('li');
+        $(entry).addClass("route-features-list-element");
+        for (let j = 0; j < values.length; j++) {
+          let valueDiv = document.createElement('div');
+          valueDiv.innerHTML = features[i][values[j]];
+          entry.appendChild(valueDiv);
+        }
+        entryWrapper.appendChild(entry);
+      }
+      scope.featureWrapper.appendChild(entryWrapper);
     },
     performArea: function(fromPoint, distance){
       const self = this;
