@@ -7,7 +7,7 @@ import {Router} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-cont
 import {langConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant-i18n-de";
 import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
 import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils"
-
+import {routingConstants} from "./routing-constants";
 (function ($, c4g) {
   'use strict';
 
@@ -420,7 +420,7 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
       const self = this;
 
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
-      let url = 'con4gis/areaService/1/74/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
+      let url = 'con4gis/areaService/1/' + $(this.areaLayersSelect).val() + '/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
       if (this.routeProfile && this.routeProfile.active) {
         url += '?profile=' + this.routeProfile.active;
       }
@@ -758,6 +758,7 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
             this.routerLayersSelect.add(option);
           }
           this.routerLayersValueSelect = document.createElement('div');
+          this.routerLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
           $(this.routerLayersSelect).on('change', function() {
             $(self.routerLayersValueSelect).empty();
             let selected = $(this).val();
@@ -780,11 +781,12 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
             self.recalculateRoute();
           });
           $(this.routerLayersSelect).trigger('change');
+          $(this.routerLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
           routerViewInputWrapper.appendChild(this.routerLayersInput);
           routerViewInputWrapper.appendChild(this.routerLayersValueSelect);
         }
         self.toggleDetourRoute = document.createElement('input');
-        self.toggleDetourRoute.className = 'c4g-overlay-toggle';
+        self.toggleDetourRoute.className = routingConstants.ROUTE_TOGGLE;
         self.toggleDetourRoute.setAttribute('type','range');
         self.toggleDetourRoute.setAttribute('min',mapData.detourRoute[0]);
         self.toggleDetourRoute.setAttribute('max',mapData.detourRoute[1]);

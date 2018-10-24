@@ -1,3 +1,11 @@
 .route-features-list-wrapper {
     list-style-type: none;
 }
+.c4g-routing-layer-values > button{
+    width: 100px !important;
+}
+.c4g-routing-layers-select{
+    background-color: var(--main-color);
+    color: var(--font-color);
+    width:100%
+}
