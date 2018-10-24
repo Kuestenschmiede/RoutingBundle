@@ -56,7 +56,8 @@ class LoadRouteFeaturesListener
             }
             $lineStringWKT = rtrim($lineStringWKT, ', ');
             $lineStringWKT .= ')';
-            $selectBuffer = "SELECT ST_AsText(ST_Buffer(ST_GeomFromText('". $lineStringWKT. "'),". $detour/113.139 .",ST_Buffer_Strategy('end_flat'),ST_Buffer_Strategy('join_round', 10)))";
+            //,ST_Buffer_Strategy('end_flat'),ST_Buffer_Strategy('join_round', 10)
+            $selectBuffer = "SELECT ST_AsText(ST_Buffer(ST_GeomFromText('". $lineStringWKT. "'),". $detour/113.139 ."))";
             $db = \Database::getInstance();
             $result = array_shift($db->prepare($selectBuffer)->execute()->fetchAssoc());
             $polygon = \geoPHP::load($result,'wkt');
