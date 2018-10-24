@@ -1,3 +1,48 @@
 .route-features-list-wrapper {
     list-style-type: none;
 }
+
+.feature-entry {
+    display: inline-block;
+    width: 400px;
+}
+
+.feature-entry div{
+    margin: 2px;
+}
+
+.top-container {
+    display: flex;
+}
+
+.fuel-prices {
+    display: flex;
+    float: right;
+    align-items: flex-end;
+    align-self: flex-end;
+    justify-self: right;
+}
+
+.station-distance {
+    width: 40%;
+}
+
+.fuel-prices div {
+    margin-top: 0;
+}
+
+.middle-container {
+    display: flex;
+}
+
+.station-address {
+
+}
+
+.opening-times {
+
+}
+
+.fuel-source {
+    margin-bottom: 5px;
+}
