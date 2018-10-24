@@ -265,7 +265,7 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
         }
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/' + $(self.routerLayersSelect).val() + '/'+$(self.toggleDetour).val()+'/' + fromCoord;
+        url = 'con4gis/routeService/1/' + $(self.routerLayersSelect).val() + '/'+$(self.toggleDetourRoute).val()+'/' + fromCoord;
 
         if (overPoint) {
           for (var i = 0; i < overCoord.length; i++)
@@ -416,11 +416,11 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
       }
     },
 
-    performArea: function(fromPoint, distance){
+    performArea: function(fromPoint){
       const self = this;
 
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
-      let url = 'con4gis/areaService/1/4/' + distance + '/' + fromCoord;
+      let url = 'con4gis/areaService/1/74/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
       if (this.routeProfile && this.routeProfile.active) {
         url += '?profile=' + this.routeProfile.active;
       }
@@ -789,7 +789,7 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
         self.toggleDetourRoute.setAttribute('min',mapData.detourRoute[0]);
         self.toggleDetourRoute.setAttribute('max',mapData.detourRoute[1]);
         self.toggleDetourRoute.setAttribute('value',(mapData.detourRoute[0]+mapData.detourRoute[1])/2);
-        self.toggleDetourRoute.setAttribute('steps',0.5);
+        self.toggleDetourRoute.setAttribute('step',0.5);
 
         routerViewInputWrapper.appendChild(self.toggleDetourRoute);
         routerViewInputWrapper.appendChild(this.fromInputWrapper);
@@ -1057,13 +1057,58 @@ import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils
         }
         
         areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
+        if(mapData.routerLayers){
+          this.areaLayersInput = document.createElement('div');
+          this.areaLayersSelect = document.createElement('select');
+          this.areaLayersInput.appendChild(this.areaLayersSelect);
+          for(let i in mapData.routerLayers){
+            let option = document.createElement('option');
+            option.value = i;
+            option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
+            this.areaLayersSelect.add(option);
+          }
+          this.areaLayersValueSelect = document.createElement('div');
+          $(this.areaLayersSelect).on('change', function() {
+            $(self.areaLayersValueSelect).empty();
+            let selected = $(this).val();
+            let clickFunction = function() {
+              self.activeLayerValueArea = this.innerHTML;
+              $(this).addClass("c4g-active").removeClass('c4g-inactive');
+              $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
+              // self.reloadFeatureValues();
+            };
+            for(let i in mapData.routerLayers[selected]){
+              if(mapData.routerLayers[selected].hasOwnProperty(i)){
+                let buttonElement = document.createElement('button');
+                buttonElement.innerHTML = i;
+                buttonElement.value = mapData.routerLayers[selected][i]['keys'];
+                $(buttonElement).on('click', clickFunction);
+                self.areaLayersValueSelect.appendChild(buttonElement);
+              }
+            }
+            $(self.areaLayersValueSelect.firstChild).trigger('click');
+            //self.recalculateRoute();
+          });
+          $(this.areaLayersSelect).trigger('change');
+          areaViewInputWrapper.appendChild(this.areaLayersInput);
+          areaViewInputWrapper.appendChild(this.areaLayersValueSelect);
+        }
+        self.toggleDetourArea = document.createElement('input');
+        self.toggleDetourArea.className = 'c4g-overlay-toggle';
+        self.toggleDetourArea.setAttribute('type','range');
+        self.toggleDetourArea.setAttribute('min',mapData.detourArea[0]);
+        self.toggleDetourArea.setAttribute('max',mapData.detourArea[1]);
+        self.toggleDetourArea.setAttribute('value',(mapData.detourArea[0]+mapData.detourArea[1])/2);
+        self.toggleDetourArea.setAttribute('step',0.5);
+
+        areaViewInputWrapper.appendChild(self.toggleDetourArea);
         let areaActivateFunction = function(){
           self.fnMapAreaInteraction = function(evt){
             const scope = this;
             if($(self.areaFromInput).val() === ""){
               self.performReverseSearch($(self.areaFromInput),ol.proj.toLonLat(evt.coordinate));
               self.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
-              self.performArea(self.areaValue,5);
+              self.performArea(self.areaValue);
             }
           }
           self.options.mapController.map.on('click', self.fnMapAreaInteraction);
