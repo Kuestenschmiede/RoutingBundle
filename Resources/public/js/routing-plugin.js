@@ -218,6 +218,7 @@ import {routingConstants} from "./routing-constants";
     preOpenFunction: function (opt_options) {
       if (opt_options && opt_options.toLonLat) {
         this.performReverseSearch(this.$toInput, opt_options.toLonLat);
+        this.recalculateRoute();
         this.toValue = new ol.geom.Point([opt_options.toLonLat[1], opt_options.toLonLat[0]]);
       }
 
@@ -1122,8 +1123,26 @@ import {routingConstants} from "./routing-constants";
         self.toggleDetourArea.setAttribute('max',mapData.detourArea[1]);
         self.toggleDetourArea.setAttribute('value',(mapData.detourArea[0]+mapData.detourArea[1])/2);
         self.toggleDetourArea.setAttribute('step',0.5);
-
-        areaViewInputWrapper.appendChild(self.toggleDetourArea);
+        let toggleDetourAreaWrapper = document.createElement('div');
+        let output = document.createElement('output');
+        let p = document.createElement('p');
+        p.innerHTML = 'Radius';
+        output.innerHTML = 100;
+        toggleDetourAreaWrapper.appendChild(p);
+        toggleDetourAreaWrapper.appendChild(self.toggleDetourArea);
+        toggleDetourAreaWrapper.appendChild(output);
+        $(self.toggleDetourArea).on('input', function(){
+          let control = $(this);
+          let range = control.attr('max') - control.attr('min');
+          let pos = ((control.val() - control.attr('min')) / range) * 100;
+          let posOffset = Math.round(25 * pos / 100) - (12.5);
+          let output = control.next('output');
+          output
+            .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
+            .text(control.val());
+        });
+        $(self.toggleDetourArea).trigger('input');
+        areaViewInputWrapper.appendChild(toggleDetourAreaWrapper);
         let areaActivateFunction = function(){
           self.fnMapAreaInteraction = function(evt){
             const scope = this;
