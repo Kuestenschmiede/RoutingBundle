@@ -1,5 +1,6 @@
 .route-features-list-wrapper {
     list-style-type: none;
+    padding: 0;
 }
 .c4g-routing-layer-values > button{
     min-width: 30%;
@@ -11,6 +12,10 @@
     width:100%
 }
 
+.route-features-list-element:nth-child(1) > div {
+    border-top: 1px solid;
+}
+
 .c4g-routing-toggle{
     width:100%;
 }
@@ -18,9 +23,11 @@
 .feature-entry {
     display: inline-block;
     width: 400px;
+    /*border-top: 1px solid;*/
+    border-bottom: 1px solid;
 }
 
-.feature-entry div{
+.feature-entry div {
     margin: 2px;
 }
 
@@ -58,4 +65,8 @@
 
 .fuel-source {
     margin-bottom: 5px;
+}
+
+.no-display {
+    display: none;
 }
