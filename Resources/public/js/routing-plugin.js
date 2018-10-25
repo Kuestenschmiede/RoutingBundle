@@ -285,8 +285,14 @@ import {routingConstants} from "./routing-constants";
             if (response) {
               self.showRouteLayer(response);
               if (response.features) {
+                if (response.features[0].distance) {
+                  response.features.sort(function(a,b) {
+                    return parseFloat(a.distance) - parseFloat(b.distance);
+                  });
+                }
+
                 self.showFeatures(response.features, response.type);
-                self.showFeaturesInPortside(response.features, response.type);
+                self.showFeaturesInPortside(response.features, response.type, "router");
               }
             }
 
@@ -364,24 +370,24 @@ import {routingConstants} from "./routing-constants";
         self.routerFeaturesSource.addFeatures(contentFeatures);
       }
     },
-    showFeaturesInPortside: function(features, type) {
+    showFeaturesInPortside: function(features, type, mode) {
       const scope = this;
-      if(scope.featureWrapper === undefined){
-        scope.featureWrapper = document.createElement('div');
-        $(scope.featureWrapper).addClass('route-features-display');
-        scope.routerViewContentWrapper.appendChild(scope.featureWrapper);
+      if(scope[mode + "FeatureWrapper"] === undefined){
+        scope[mode + "FeatureWrapper"] = document.createElement('div');
+        $(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
+        scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
       }
       scope.features = features;
       scope.type = type;
-      scope.reloadFeatureValues();
+      scope.reloadFeatureValues(mode);
     },
 
-    reloadFeatureValues: function() {
+    reloadFeatureValues: function(mode) {
       const scope = this;
       const features = scope.features;
       const type = scope.type;
-      if (scope.featureWrapper) {
-        $(scope.featureWrapper).empty();
+      if (scope[mode + "FeatureWrapper"]) {
+        $(scope[mode + "FeatureWrapper"]).empty();
         const routerLayers = this.options.mapController.data.routerLayers;
         const chosenLayerId = $(scope.routerLayersSelect).val();
         const chosenOption = scope.activeLayerValue;
@@ -412,7 +418,7 @@ import {routingConstants} from "./routing-constants";
 
           entryWrapper.appendChild(entry);
         }
-        scope.featureWrapper.appendChild(entryWrapper);
+        scope[mode + "FeatureWrapper"].appendChild(entryWrapper);
       }
     },
 
@@ -432,7 +438,11 @@ import {routingConstants} from "./routing-constants";
         .done(function (response) {
           self.response = response;
           if (response) {
-              self.showFeatures(response[0],response[1]);
+            response[0].sort(function(a,b) {
+              return parseFloat(a.distance) - parseFloat(b.distance);
+            });
+            self.showFeatures(response[0],response[1]);
+            self.showFeaturesInPortside(response[0], response[1], "area");
           }
 
         })
