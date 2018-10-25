@@ -411,10 +411,33 @@ import {routingConstants} from "./routing-constants";
                 entry: entry,
                 feature: features[i],
                 values: values,
-                labels: labels
+                labels: labels,
+                router: scope
               });
             }
           }
+          $(entry).addClass("c4g-inactive");
+          $(entry).data('id', features[i].id);
+          $(entry).on('click', function(event) {
+            scope.routerFeaturesSource.forEachFeature(function(tmpFeature) {
+              if (tmpFeature.get('tid') === features[i].id) {
+                scope.options.mapController.proxy.locationStyleController.loadLocationStyles([scope.options.mapController.data.click_locstyle], {
+                  done: function() {
+                    let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle].style;
+                    tmpFeature.setStyle(style);
+                  }
+                });
+              } else {
+                tmpFeature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[1].style);
+              }
+            });
+            // refresh css classes
+            $(this).parent().children('li').each(function(index, element) {
+              $(element).addClass("c4g-inactive").removeClass("c4g-active");
+            });
+            $(this).addClass("c4g-active").removeClass("c4g-inactive");
+          });
+
 
           entryWrapper.appendChild(entry);
         }
@@ -854,10 +877,10 @@ import {routingConstants} from "./routing-constants";
         let routerActivateFunction = function(){
           self.removeMapInputInteraction();
           self.addMapInputInteraction();
-        }
+        };
         let routerDeactivateFunction = function(){
           self.removeMapInputInteraction();
-        }
+        };
 
         routerView = this.addView({
           name: 'router-view',
