@@ -807,7 +807,27 @@ import {routingConstants} from "./routing-constants";
         self.toggleDetourRoute.setAttribute('value',(mapData.detourRoute[0]+mapData.detourRoute[1])/2);
         self.toggleDetourRoute.setAttribute('step',0.5);
 
-        routerViewInputWrapper.appendChild(self.toggleDetourRoute);
+        let toggleDetourWrapper = document.createElement('div');
+        let output = document.createElement('output');
+        let p = document.createElement('p');
+        p.innerHTML = 'Umweg';
+        output.innerHTML = 100;
+        toggleDetourWrapper.appendChild(p);
+        toggleDetourWrapper.appendChild(self.toggleDetourRoute);
+        toggleDetourWrapper.appendChild(output);
+        $(self.toggleDetourRoute).on('input', function(){
+          let control = $(this);
+          let range = control.attr('max') - control.attr('min');
+          let pos = ((control.val() - control.attr('min')) / range) * 100;
+          let posOffset = Math.round(50 * pos / 100) - (25);
+          let output = control.next('output');
+          output
+            .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
+            .text(control.val());
+        });
+        $(self.toggleDetourRoute).trigger('input');
+        routerViewInputWrapper.appendChild(toggleDetourWrapper);
+
         routerViewInputWrapper.appendChild(this.fromInputWrapper);
         this.toInputWrapper = document.createElement('div');
         this.toInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
@@ -1123,26 +1143,26 @@ import {routingConstants} from "./routing-constants";
         self.toggleDetourArea.setAttribute('max',mapData.detourArea[1]);
         self.toggleDetourArea.setAttribute('value',(mapData.detourArea[0]+mapData.detourArea[1])/2);
         self.toggleDetourArea.setAttribute('step',0.5);
-        let toggleDetourAreaWrapper = document.createElement('div');
+        let toggleDetourWrapper = document.createElement('div');
         let output = document.createElement('output');
         let p = document.createElement('p');
         p.innerHTML = 'Radius';
         output.innerHTML = 100;
-        toggleDetourAreaWrapper.appendChild(p);
-        toggleDetourAreaWrapper.appendChild(self.toggleDetourArea);
-        toggleDetourAreaWrapper.appendChild(output);
+        toggleDetourWrapper.appendChild(p);
+        toggleDetourWrapper.appendChild(self.toggleDetourArea);
+        toggleDetourWrapper.appendChild(output);
         $(self.toggleDetourArea).on('input', function(){
           let control = $(this);
           let range = control.attr('max') - control.attr('min');
           let pos = ((control.val() - control.attr('min')) / range) * 100;
-          let posOffset = Math.round(25 * pos / 100) - (12.5);
+          let posOffset = Math.round(50 * pos / 100) - (25);
           let output = control.next('output');
           output
             .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
             .text(control.val());
         });
         $(self.toggleDetourArea).trigger('input');
-        areaViewInputWrapper.appendChild(toggleDetourAreaWrapper);
+        areaViewInputWrapper.appendChild(toggleDetourWrapper);
         let areaActivateFunction = function(){
           self.fnMapAreaInteraction = function(evt){
             const scope = this;
