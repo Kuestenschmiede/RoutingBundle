@@ -312,6 +312,7 @@ import {routingConstants} from "./routing-constants";
     showFeatures: function (features, type = "table") {
       const self = this;
       self.routerFeaturesSource.clear();
+      self.routeFeatureSelect = null;
       const layer = self.options.mapController.proxy.layerController.arrLayers[4];
       if (layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup) {
         self.routerFeaturesLayer.popup = layer.content[0].data.popup;
@@ -369,6 +370,17 @@ import {routingConstants} from "./routing-constants";
       }
       if (features.length > 0) {
         self.routerFeaturesSource.addFeatures(contentFeatures);
+        self.routeFeatureSelect = new ol.interaction.Select({
+          filter: function(feature, layer) {
+            return self.routerFeaturesSource.hasFeature(feature);
+          }
+        });
+        self.routeFeatureSelect.on('select', function(event) {
+          // should be always only one feature
+          const feature = event.selected[0];
+          self.clickFeatureEntryForFeature(feature);
+        });
+        self.options.mapController.map.addInteraction(self.routeFeatureSelect);
       }
     },
     showFeaturesInPortside: function(features, type, mode) {
@@ -381,6 +393,17 @@ import {routingConstants} from "./routing-constants";
       scope.features = features;
       scope.type = type;
       scope.reloadFeatureValues(mode);
+    },
+
+    clickFeatureEntryForFeature: function (feature) {
+      const featureId = feature.get('tid');
+      if (this.entryWrapper) {
+        $(this.entryWrapper).children().each(function(index, element) {
+          if ($(element).data('id') === featureId) {
+            $(element).click();
+          }
+        });
+      }
     },
 
     reloadFeatureValues: function(mode) {
@@ -447,6 +470,7 @@ import {routingConstants} from "./routing-constants";
 
           entryWrapper.appendChild(entry);
         }
+        scope.entryWrapper = entryWrapper;
         scope[mode + "FeatureWrapper"].appendChild(entryWrapper);
       }
     },
