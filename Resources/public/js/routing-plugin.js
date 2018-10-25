@@ -422,12 +422,17 @@ import {routingConstants} from "./routing-constants";
           $(entry).on('click', function(event) {
             scope.routerFeaturesSource.forEachFeature(function(tmpFeature) {
               if (tmpFeature.get('tid') === features[i].id) {
-                scope.options.mapController.proxy.locationStyleController.loadLocationStyles([scope.options.mapController.data.click_locstyle], {
-                  done: function() {
-                    let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle].style;
-                    tmpFeature.setStyle(style);
-                  }
-                });
+                if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle]) {
+                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([scope.options.mapController.data.click_locstyle], {
+                    done: function() {
+                      let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle].style;
+                      tmpFeature.setStyle(style);
+                    }
+                  });
+                } else {
+                  let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle].style;
+                  tmpFeature.setStyle(style);
+                }
               } else {
                 tmpFeature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[1].style);
               }
