@@ -2,12 +2,17 @@
     list-style-type: none;
 }
 .c4g-routing-layer-values > button{
-    width: 100px !important;
+    min-width: 30%;
+    width: auto !important;
 }
 .c4g-routing-layers-select{
     background-color: var(--main-color);
     color: var(--font-color);
     width:100%
+}
+
+.c4g-routing-toggle{
+    width:100%;
 }
 
 .feature-entry {

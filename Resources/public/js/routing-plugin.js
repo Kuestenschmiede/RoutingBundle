@@ -781,6 +781,9 @@ import {routingConstants} from "./routing-constants";
             self.recalculateRoute();
           });
           $(this.routerLayersSelect).trigger('change');
+          if(Object.keys(mapData.routerLayers).length <= 1){
+            $(this.routerLayersSelect).css('display','none');
+          }
           $(this.routerLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
           routerViewInputWrapper.appendChild(this.routerLayersInput);
           routerViewInputWrapper.appendChild(this.routerLayersValueSelect);
@@ -1070,6 +1073,7 @@ import {routingConstants} from "./routing-constants";
             this.areaLayersSelect.add(option);
           }
           this.areaLayersValueSelect = document.createElement('div');
+          this.areaLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
           $(this.areaLayersSelect).on('change', function() {
             $(self.areaLayersValueSelect).empty();
             let selected = $(this).val();
@@ -1089,14 +1093,20 @@ import {routingConstants} from "./routing-constants";
               }
             }
             $(self.areaLayersValueSelect.firstChild).trigger('click');
-            //self.recalculateRoute();
+            if(self.areaValue){
+              self.performArea(self.areaValue);
+            }
           });
           $(this.areaLayersSelect).trigger('change');
+          if(Object.keys(mapData.routerLayers).length <= 1){
+            $(this.areaLayersSelect).css('display','none');
+          }
+          $(this.areaLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
           areaViewInputWrapper.appendChild(this.areaLayersInput);
           areaViewInputWrapper.appendChild(this.areaLayersValueSelect);
         }
         self.toggleDetourArea = document.createElement('input');
-        self.toggleDetourArea.className = 'c4g-overlay-toggle';
+        self.toggleDetourArea.className = routingConstants.ROUTE_TOGGLE;
         self.toggleDetourArea.setAttribute('type','range');
         self.toggleDetourArea.setAttribute('min',mapData.detourArea[0]);
         self.toggleDetourArea.setAttribute('max',mapData.detourArea[1]);
