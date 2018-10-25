@@ -17,6 +17,51 @@
 }
 
 .c4g-routing-toggle{
-    width:100%;
+    display: block;
+    width: 100%;
+    margin: 0;
+    margin-top: 30px;
+    -webkit-appearance: none;
+    outline: none;
+}
+.c4g-routing-toggle::-webkit-slider-runnable-track {
+    position: relative;
+    height: 12px;
+    border: 1px solid var(--shadow-color);
+    border-radius: 5px;
+    background-color:var(--font-color);
+    box-shadow: inset 0 1px 2px 0 var(--shadow-color);
+}
+
+.c4g-routing-toggle::-webkit-slider-thumb {
+    position: relative;
+    top: -5px;
+    width: 50px;
+    height: 24px;
+    border: 1px solid var(--shadow-color);
+    -webkit-appearance: none;
+    background-color: var(--font-color);
+    box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 0%;
+    cursor: pointer;
+}
+output {
+    position: relative;
+    pointer-events: none;
+    top: -15px;
+    display: inline-block;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 22px;
+    color: var(--main-color);
+    background-color: var(--font-color);
+    font-size: 1em;
+    line-height: 24px;
+    text-align: center;
+}
+
+.c4g-routing-toggle:active + output {
+    display: block;
+    transform: translateX(-50%);
 }
 
