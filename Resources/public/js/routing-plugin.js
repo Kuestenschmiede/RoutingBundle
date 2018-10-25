@@ -378,7 +378,9 @@ import {routingConstants} from "./routing-constants";
         self.routeFeatureSelect.on('select', function(event) {
           // should be always only one feature
           const feature = event.selected[0];
-          self.clickFeatureEntryForFeature(feature);
+          if (feature) {
+            self.clickFeatureEntryForFeature(feature);
+          }
         });
         self.options.mapController.map.addInteraction(self.routeFeatureSelect);
       }
@@ -465,6 +467,11 @@ import {routingConstants} from "./routing-constants";
               $(element).addClass("c4g-inactive").removeClass("c4g-active");
             });
             $(this).addClass("c4g-active").removeClass("c4g-inactive");
+            // TODO soll auf den ausgewählten entry scrollen
+            console.log(entry.offsetTop);
+            let container = document.getElementsByClassName("c4g-portside-content-container")[0];
+            $("div.c4g-portside-content-container").scrollTop(entry.offsetTop - 300);
+            console.log("scrolled");
           });
 
 
