@@ -466,8 +466,7 @@ import {routingConstants} from "./routing-constants";
               $(element).addClass("c4g-inactive").removeClass("c4g-active");
             });
             $(this).addClass("c4g-active").removeClass("c4g-inactive");
-            let container = document.getElementsByClassName("c4g-portside-content-container")[0];
-            $("div.c4g-portside-content-container").scrollTop(entry.offsetTop - 300);
+            $("div.c4g-portside-content-container").animate({scrollTop: entry.offsetTop - 300});
           });
 
 
@@ -939,7 +938,7 @@ import {routingConstants} from "./routing-constants";
           name: 'router-view',
           triggerConfig: {
             tipLabel: langConstants.ROUTER_VIEW_ADDRESS_INPUT,
-            className: cssConstants.ROUTER_VIEW_ADDRESS_INPUT,
+            className: "c4g-router-search",
             withHeadline: true
           },
           sectionElements: [
@@ -1236,7 +1235,7 @@ import {routingConstants} from "./routing-constants";
           name: 'area-view',
           triggerConfig: {
             tipLabel: 'LOOOOL',
-            className: cssConstants.ROUTER_VIEW_ADDRESS_INPUT,
+            className: "c4g-area-search",
             withHeadline: true
           },
           sectionElements: [
