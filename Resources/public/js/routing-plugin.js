@@ -466,7 +466,6 @@ import {routingConstants} from "./routing-constants";
               $(element).addClass("c4g-inactive").removeClass("c4g-active");
             });
             $(this).addClass("c4g-active").removeClass("c4g-inactive");
-            // TODO soll auf den ausgewählten entry scrollen
             let container = document.getElementsByClassName("c4g-portside-content-container")[0];
             $("div.c4g-portside-content-container").scrollTop(entry.offsetTop - 300);
           });
