@@ -172,7 +172,6 @@ import {routingConstants} from "./routing-constants";
       this.routerHintLayer = new ol.layer.Vector({
         source: this.routingHintSource,
         style: function (feature, resolution) {
-          // console.log(self.proxy.locationStyleController.arrLocStyles[self.options.mapController.data.router_point_locstyle].style);
           return (!self.options.mapController.proxy) || self.options.mapController.proxy.locationStyleController.arrLocStyles[self.options.mapController.data.router_point_locstyle].style(feature, resolution);
         }
       });
@@ -468,10 +467,8 @@ import {routingConstants} from "./routing-constants";
             });
             $(this).addClass("c4g-active").removeClass("c4g-inactive");
             // TODO soll auf den ausgewählten entry scrollen
-            console.log(entry.offsetTop);
             let container = document.getElementsByClassName("c4g-portside-content-container")[0];
             $("div.c4g-portside-content-container").scrollTop(entry.offsetTop - 300);
-            console.log("scrolled");
           });
 
 
@@ -1269,6 +1266,5 @@ import {routingConstants} from "./routing-constants";
     });
     mapController.map.addControl(router);
     mapController.controls.router = router;
-    console.log(mapController.map.controls);
   })
 }(jQuery, this.c4g));
