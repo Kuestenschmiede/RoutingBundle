@@ -66,10 +66,10 @@ output {
 }
 
 button.c4g-area-search:before {
-    content: "\f5a0" !important;
+    content: "\f5a0";
 }
 
 button.c4g-router-search:before {
-    content: "\f4d7" !important;
+    content: "\f4d7";
 }
 
