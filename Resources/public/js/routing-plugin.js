@@ -6,7 +6,9 @@ this.c4g.maps.control = this.c4g.maps.control || {};
 import {Router} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-control-portside-router";
 import {langConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant-i18n-de";
 import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
-import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils"
+import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
+import * as popupFunctions from "./../../../../MapsBundle/Resources/public/js/c4g-maps-popup-info-de";
+
 import {routingConstants} from "./routing-constants";
 (function ($, c4g) {
   'use strict';
@@ -265,7 +267,8 @@ import {routingConstants} from "./routing-constants";
         }
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
-        url = 'con4gis/routeService/1/' + $(self.routerLayersSelect).val() + '/'+$(self.toggleDetourRoute).val()+'/' + fromCoord;
+        let profileId = this.options.mapController.data.profile;
+        url = 'con4gis/routeService/' + profileId + '/' + $(self.routerLayersSelect).val() + '/'+$(self.toggleDetourRoute).val()+'/' + fromCoord;
 
         if (overPoint) {
           for (var i = 0; i < overCoord.length; i++)
@@ -424,11 +427,21 @@ import {routingConstants} from "./routing-constants";
         for (let i = 0; i < features.length; i++) {
           let entry = document.createElement('li');
           $(entry).addClass("route-features-list-element");
-          if (type === "overpass" || type === "table") {
+          if (type === "table") {
             for (let j = 0; j < values.length; j++) {
               let valueDiv = document.createElement('div');
               valueDiv.innerHTML = labels[j] + ": " + features[i][values[j]];
               entry.appendChild(valueDiv);
+            }
+          } else if (type === "overpass") {
+            let tags = features[i].tags;
+            for (let key in tags) {
+              if (tags.hasOwnProperty(key)) {
+                let currentTag = tags[key];
+                let valueDiv = document.createElement('div');
+                valueDiv.innerHTML = key + ": " + currentTag;
+                entry.appendChild(valueDiv);
+              }
             }
           } else {
             if (window.c4gMapsHooks && window.c4gMapsHooks.routePluginEntry) {
@@ -481,7 +494,8 @@ import {routingConstants} from "./routing-constants";
       const self = this;
 
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
-      let url = 'con4gis/areaService/1/' + $(this.areaLayersSelect).val() + '/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
+      let profileId = this.options.mapController.data.profile;
+      let url = 'con4gis/areaService/' + profileId + '/' + $(this.areaLayersSelect).val() + '/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
       if (this.routeProfile && this.routeProfile.active) {
         url += '?profile=' + this.routeProfile.active;
       }

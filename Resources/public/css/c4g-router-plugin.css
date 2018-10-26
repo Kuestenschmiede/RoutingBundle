@@ -12,8 +12,12 @@
     width:100%
 }
 
-.route-features-list-element:nth-child(1) > div {
+.route-features-list-element:nth-child(1) {
     border-top: 1px solid;
+}
+
+.route-features-list-element {
+    border-bottom: 1px solid;
 }
 
 .c4g-routing-toggle{
@@ -71,5 +75,13 @@ button.c4g-area-search:before {
 
 button.c4g-router-search:before {
     content: "\f4d7";
+}
+
+.route-features-list-element.c4g-active {
+    background-color: var(--shadow-color);
+}
+
+.route-features-list-element.c4g-inactive {
+    background-color: var(--main-color);
 }
 
