@@ -19,3 +19,4 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['clickLocstyle'] =           ['Lokati
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'] =      ['Schlüssel'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'] =    ['Wert'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'] =    ['Label'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['mapLabel'] = ['Kartenlabel',' Geben Sie den Schlüssel für das Label aus der Karte ein.'];

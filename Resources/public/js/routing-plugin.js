@@ -235,6 +235,7 @@ import {routingConstants} from "./routing-constants";
           let forceStart = arrParams[4];
           if (center && detour && searchtype && forceStart) {
             $(this.toggleDetourArea).val(detour);
+            $(this.toggleDetourArea).trigger('input');
             $(this.areaFromInput).val(center);
             this.performSearch($(this.areaFromInput), "areaValue", function() {
               if (scope.areaValue) {
@@ -252,6 +253,7 @@ import {routingConstants} from "./routing-constants";
           let forceStart = arrParams[5];
           if (fromAddress && toAddress && detour && searchtype && forceStart) {
             $(this.toggleDetourRoute).val(detour);
+            $(this.toggleDetourRoute).trigger('input');
             $(this.fromInput).val(fromAddress);
             $(this.toInput).val(toAddress);
             this.performSearch($(this.fromInput), "fromValue", function() {
@@ -349,7 +351,7 @@ import {routingConstants} from "./routing-constants";
                   });
                 }
 
-                self.showFeatures(response.features, response.type);
+                self.showFeatures(response.features, response.type, "router");
                 self.showFeaturesInPortside(response.features, response.type, "router");
                 $(self.areaFeatureWrapper).empty();
                 $(self.areaFromInput).val("");
@@ -368,11 +370,12 @@ import {routingConstants} from "./routing-constants";
         console.log("Please use a more modern API-Version for the Routeservice")
       }
     },
-    showFeatures: function (features, type = "table") {
+    showFeatures: function (features, type = "table" , mode = "router") {
       const self = this;
       self.routerFeaturesSource.clear();
       self.routeFeatureSelect = null;
-      const layer = self.options.mapController.proxy.layerController.arrLayers[$(this.areaLayersSelect).val()];
+      const layerId = mode === "router" ? $(this.routerLayersSelect).val() : $(this.areaLayersSelect).val();
+      const layer = self.options.mapController.proxy.layerController.arrLayers[layerId];
       if (layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup) {
         self.routerFeaturesLayer.popup = layer.content[0].data.popup;
       }
@@ -400,6 +403,17 @@ import {routingConstants} from "./routing-constants";
         contentFeature.set('hover_style', layer.hover_style);
         contentFeature.set('zoom_onclick', layer.zoom_onclick);
         contentFeature.set('tid', feature['id']);
+        if(mode === "router"){
+          if(self.activeLayerValue && feature[mapData.routerLayers[layerId][self.activeLayerValue]['mapLabel']]){
+            contentFeature.set('label', feature[mapData.routerLayers[layerId][self.activeLayerValue]['mapLabel']]);
+          }
+        }
+        else{
+          if(self.activeLayerValueArea && feature[mapData.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']]){
+            contentFeature.set('label', feature[mapData.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']]);
+          }
+        }
+
         let locstyle = feature['locstyle'] || layer.locstyle;
         contentFeature.set('locationStyle', locstyle);
         if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
@@ -413,6 +427,7 @@ import {routingConstants} from "./routing-constants";
         }
         for (let tags in feature.tags) {
           contentFeature.set(tags, feature.tags[tags]);
+          contentFeature.set('label', feature.tags[tags]);
         }
       }
       if (missingStyles && missingStyles.length > 0) {
@@ -441,6 +456,7 @@ import {routingConstants} from "./routing-constants";
             self.clickFeatureEntryForFeature(feature);
           }
         });
+        self.routeFeatureSelect.setHitTolerance(5);
         self.options.mapController.map.addInteraction(self.routeFeatureSelect);
       }
       this.update();
@@ -575,7 +591,7 @@ import {routingConstants} from "./routing-constants";
             response[0].sort(function(a,b) {
               return parseFloat(a.distance) - parseFloat(b.distance);
             });
-            self.showFeatures(response[0],response[1]);
+            self.showFeatures(response[0],response[1], "area");
             self.showFeaturesInPortside(response[0], response[1], "area");
             // clear route & route features
             self.routingWaySource.clear();
@@ -919,6 +935,9 @@ import {routingConstants} from "./routing-constants";
               $(this).addClass("c4g-active").removeClass('c4g-inactive');
               $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
               self.reloadFeatureValues();
+              if(self.response){
+                self.showFeatures(self.response.features, self.response.type, "router")
+              }
             };
             for(let i in mapData.routerLayers[selected]){
               if(mapData.routerLayers[selected].hasOwnProperty(i)){
@@ -1029,7 +1048,6 @@ import {routingConstants} from "./routing-constants";
             withHeadline: true
           },
           sectionElements: [
-            //{section: this.topToolbar, element: routerViewInputWrapper},
             {section: this.contentContainer, element: routerContentElement},
             {section: this.topToolbar, element: this.viewTriggerBar}
           ],
@@ -1253,6 +1271,9 @@ import {routingConstants} from "./routing-constants";
               $(this).addClass("c4g-active").removeClass('c4g-inactive');
               $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
               // self.reloadFeatureValues();
+              if(self.response){
+                self.showFeatures(self.response[0], self.response[1], "area")
+              }
             };
             for(let i in mapData.routerLayers[selected]){
               if(mapData.routerLayers[selected].hasOwnProperty(i)){
