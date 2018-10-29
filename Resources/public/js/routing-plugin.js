@@ -641,6 +641,23 @@ import {routingConstants} from "./routing-constants";
         routerContentElement.appendChild(routerViewInputWrapper);
         routerContentElement.appendChild(routerViewContentWrapper);
         self.routerViewContentWrapper = routerViewContentWrapper;
+        self.contentSwitcher = document.createElement("div");
+        self.contentSwitcher.className = "router-content-switcher";
+        let buttonInstructions = document.createElement('button');
+        buttonInstructions.innerHTML = "Instructions";
+        $(buttonInstructions).on('click', function(){
+          $(".c4g-router-instructions-wrapper").css('display','block');
+          $(".router-features-display").css('display','none');
+        })
+        let buttonFeatures = document.createElement("button");
+        buttonFeatures.innerHTML = "Features";
+        $(buttonFeatures).on('click', function(){
+          $(".c4g-router-instructions-wrapper").css('display','none');
+          $(".router-features-display").css('display','block');
+        })
+        self.contentSwitcher.appendChild(buttonInstructions);
+        self.contentSwitcher.appendChild(buttonFeatures);
+        routerViewContentWrapper.appendChild(contentSwitcher);
 
         this.fromInputWrapper = document.createElement('div');
         this.fromInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
