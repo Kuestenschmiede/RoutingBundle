@@ -15,7 +15,9 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourArea'] =           ['Minima
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourArea'] =           ['Maximaler Radius Gebietssuche', ''];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourRoute'] =          ['Minimaler Umweg an Route', ''];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourRoute'] =          ['Maximaler Umweg an Route', ''];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['openRouter'] =          ['Router initial öffnen', 'Klicken Sie diese Checkbox, um den Router initial zu öffnen.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['clickLocstyle'] =           ['Lokationsstil aktives Element', 'Geben Sie hier den Lokationsstil für das jeweils aktive Element ein.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'] =      ['Schlüssel'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'] =    ['Wert'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'] =    ['Label'];
+

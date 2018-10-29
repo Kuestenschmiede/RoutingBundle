@@ -343,7 +343,7 @@ import {routingConstants} from "./routing-constants";
             if (response) {
               self.showRouteLayer(response);
               if (response.features) {
-                if (response.features[0].distance) {
+                if (response.features.length > 0 && response.features[0].distance) {
                   response.features.sort(function(a,b) {
                     return parseFloat(a.distance) - parseFloat(b.distance);
                   });
@@ -899,7 +899,8 @@ import {routingConstants} from "./routing-constants";
         if (this.routeProfile && this.routeProfile.children) {
           routerViewInputWrapper.appendChild(this.routeProfile);
         }
-        if(mapData.routerLayers){
+        // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
+        if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded){
           this.routerLayersInput = document.createElement('div');
           this.routerLayersSelect = document.createElement('select');
           this.routerLayersInput.appendChild(this.routerLayersSelect);
@@ -1233,7 +1234,8 @@ import {routingConstants} from "./routing-constants";
           areaViewInputWrapper.appendChild(this.routeProfile);
         }
 
-        if(mapData.routerLayers){
+        // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
+        if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded) {
           this.areaLayersInput = document.createElement('div');
           this.areaLayersSelect = document.createElement('select');
           this.areaLayersInput.appendChild(this.areaLayersSelect);
@@ -1347,7 +1349,8 @@ import {routingConstants} from "./routing-constants";
     let router = new c4g.maps.control.RouterPlugin({
       tipLabel: langConstants.CTRL_ROUTER,
       target: params.Container,
-      mapController: mapController
+      mapController: mapController,
+      defaultOpen: mapController.data.router_open || false
     });
     mapController.map.addControl(router);
     mapController.controls.router = router;
