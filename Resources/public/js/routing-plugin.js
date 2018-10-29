@@ -958,8 +958,10 @@ import {routingConstants} from "./routing-constants";
             $(self.routerLayersSelect).css('display','none');
           }
           $(self.routerLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
-          routerViewInputWrapper.appendChild(self.routerLayersInput);
-          routerViewInputWrapper.appendChild(self.routerLayersValueSelect);
+          $(self.routerLayersInput).insertBefore($(routerViewInputWrapper));
+          $(self.routerLayersValueSelect).insertBefore($(routerViewInputWrapper));
+          // routerViewInputWrapper.appendChild(self.routerLayersInput);
+          // routerViewInputWrapper.appendChild(self.routerLayersValueSelect);
         };
         /**
          * End routerUiFunction
@@ -1309,8 +1311,10 @@ import {routingConstants} from "./routing-constants";
             $(self.areaLayersSelect).css('display','none');
           }
           $(self.areaLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
-          areaViewInputWrapper.appendChild(self.areaLayersInput);
-          areaViewInputWrapper.appendChild(self.areaLayersValueSelect);
+          $(self.areaLayersInput).insertBefore($(areaViewInputWrapper));
+          $(self.areaLayersValueSelect).insertBefore($(areaViewInputWrapper));
+          // areaViewInputWrapper.appendChild(self.areaLayersInput);
+          // areaViewInputWrapper.appendChild(self.areaLayersValueSelect);
         };
         // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
         if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded) {
