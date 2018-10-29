@@ -28,6 +28,7 @@ class LoadMapDataListener
             $routerLayer['label'] = str_replace(" ", "", $routerLayer['label']);
             $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(",", $routerLayer['key']);
             $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
+            $returnLayers[$routerLayer['layers']][$routerLayer['value']]['mapLabel'] = $routerLayer['mapLabel'];
         }
         $mapData['routerLayers'] = $returnLayers;
         $mapData['clickLocstyle'] = $profile->clickLocstyle;

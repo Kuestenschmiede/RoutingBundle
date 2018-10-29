@@ -102,11 +102,18 @@ class tl_c4g_map_profiles_router extends Backend
             'inputType'               => 'text',
             'eval'                    => ['tl_class'=>'w50']
         ];
+        $arrColumnMapLabels = [
+            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['mapLabel'],
+            'filter'                  => false,
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class'=>'w50']
+        ];
         $return = [
             'layers'    => $arrColumnLayers,
             'key'       => $arrColumnKey,
             'value'     => $arrColumnValue,
-            'label'     => $arrColumnLabels
+            'label'     => $arrColumnLabels,
+            'mapLabel'  => $arrColumnMapLabels
         ];
         return $return;
     }
