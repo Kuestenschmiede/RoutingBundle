@@ -212,10 +212,43 @@ import {routingConstants} from "./routing-constants";
       this.routingApi = this.options.mapController.data.api.routing + '/' + profileId;
 
       this.spinner.hide();
-
+      this.handleInitialParams();
       return true;
 
     },
+
+    /**
+     * Checks if there are GET params loaded into the mapData and triggers the search accordingly.
+     * The first param is expected to be either "route" or "area" to indicate the type of search.
+     * After that, the next param (or the next two, in case of "route") should be an address string.
+     * The following parameters are detour/searchtype/forceStart.
+     */
+    handleInitialParams: function() {
+      const params = this.options.mapController.data.initialParams;
+      const scope = this;
+      if (params) {
+        const arrParams = params.split("/");
+        if (arrParams[0] === "area") {
+          let center = arrParams[1];
+          let detour = arrParams[2];
+          let searchtype = arrParams[3];
+          let forceStart = arrParams[4];
+          if (center && detour && searchtype && forceStart) {
+            $(this.toggleDetourArea).val(detour);
+            $(this.areaFromInput).val(center);
+            // TODO hier irgendwie auf die response von performSearch warten
+            this.performSearch($(this.areaFromInput), "areaValue", function() {
+              if (scope.areaValue) {
+                scope.performArea(scope.areaValue);
+              }
+            });
+            // this.areaValue = new ol.geom.Point([coordinates[0], coordinates[1]]);
+            // this.performArea(this.areaValue);
+          }
+        }
+      }
+    },
+
     preOpenFunction: function (opt_options) {
       if (opt_options && opt_options.toLonLat) {
         this.performReverseSearch(this.$toInput, opt_options.toLonLat);
@@ -224,6 +257,7 @@ import {routingConstants} from "./routing-constants";
       }
 
     },
+
     preCloseFunction: function () {
 
       this.routingWaySource.clear();
