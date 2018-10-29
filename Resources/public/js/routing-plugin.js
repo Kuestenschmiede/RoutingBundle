@@ -236,14 +236,35 @@ import {routingConstants} from "./routing-constants";
           if (center && detour && searchtype && forceStart) {
             $(this.toggleDetourArea).val(detour);
             $(this.areaFromInput).val(center);
-            // TODO hier irgendwie auf die response von performSearch warten
             this.performSearch($(this.areaFromInput), "areaValue", function() {
               if (scope.areaValue) {
                 scope.performArea(scope.areaValue);
               }
             });
-            // this.areaValue = new ol.geom.Point([coordinates[0], coordinates[1]]);
-            // this.performArea(this.areaValue);
+            // activate area view
+            $(".c4g-portside-viewtriggerbar .c4g-area-search").click();
+          }
+        } else if (arrParams[0] === "route") {
+          let fromAddress = arrParams[1];
+          let toAddress = arrParams[2];
+          let detour = arrParams[3];
+          let searchtype = arrParams[4];
+          let forceStart = arrParams[5];
+          if (fromAddress && toAddress && detour && searchtype && forceStart) {
+            $(this.toggleDetourRoute).val(detour);
+            $(this.fromInput).val(fromAddress);
+            $(this.toInput).val(toAddress);
+            this.performSearch($(this.fromInput), "fromValue", function() {
+              if (scope.fromValue) {
+                scope.performSearch($(scope.toInput), "toValue", function() {
+                  if (scope.fromValue && scope.toValue) {
+                    scope.performViaRoute(scope.fromValue, scope.toValue);
+                  }
+                });
+              }
+            });
+            // activate area view
+            $(".c4g-portside-viewtriggerbar .c4g-route-search").click();
           }
         }
       }
@@ -420,6 +441,7 @@ import {routingConstants} from "./routing-constants";
         });
         self.options.mapController.map.addInteraction(self.routeFeatureSelect);
       }
+      this.update();
     },
     showFeaturesInPortside: function(features, type, mode) {
       const scope = this;
@@ -521,6 +543,7 @@ import {routingConstants} from "./routing-constants";
             });
             $(this).addClass("c4g-active").removeClass("c4g-inactive");
             $("div.c4g-portside-content-container").animate({scrollTop: entry.offsetTop - 300});
+            scope.update();
           });
 
 
