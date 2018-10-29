@@ -344,6 +344,7 @@ import {routingConstants} from "./routing-constants";
             self.response = response;
             if (response) {
               self.showRouteLayer(response);
+              self.showRouteInstructions(response,0);
               if (response.features) {
                 if (response.features[0].distance) {
                   response.features.sort(function(a,b) {
@@ -352,6 +353,7 @@ import {routingConstants} from "./routing-constants";
                 }
 
                 self.showFeatures(response.features, response.type, "router");
+
                 self.showFeaturesInPortside(response.features, response.type, "router");
                 $(self.areaFeatureWrapper).empty();
                 $(self.areaFromInput).val("");
@@ -403,16 +405,14 @@ import {routingConstants} from "./routing-constants";
         contentFeature.set('hover_style', layer.hover_style);
         contentFeature.set('zoom_onclick', layer.zoom_onclick);
         contentFeature.set('tid', feature['id']);
-        if(mode === "router"){
-          if(self.activeLayerValue && feature[mapData.routerLayers[layerId][self.activeLayerValue]['mapLabel']]){
-            contentFeature.set('label', feature[mapData.routerLayers[layerId][self.activeLayerValue]['mapLabel']]);
-          }
+        let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
+        if(mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]){
+          contentFeature.set('label', feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
         }
-        else{
-          if(self.activeLayerValueArea && feature[mapData.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']]){
-            contentFeature.set('label', feature[mapData.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']]);
-          }
+        else if(mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature.tags && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]){
+          contentFeature.set('label', feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
         }
+
 
         let locstyle = feature['locstyle'] || layer.locstyle;
         contentFeature.set('locationStyle', locstyle);
@@ -427,7 +427,6 @@ import {routingConstants} from "./routing-constants";
         }
         for (let tags in feature.tags) {
           contentFeature.set(tags, feature.tags[tags]);
-          contentFeature.set('label', feature.tags[tags]);
         }
       }
       if (missingStyles && missingStyles.length > 0) {
