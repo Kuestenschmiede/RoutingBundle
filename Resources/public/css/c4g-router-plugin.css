@@ -28,6 +28,12 @@
     -webkit-appearance: none;
     outline: none;
 }
+.router-features-display{
+    display: none;
+}
+.router-content-switcher{
+    display: none;
+}
 .c4g-routing-toggle::-webkit-slider-runnable-track {
     position: relative;
     height: 12px;
