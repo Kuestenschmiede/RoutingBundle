@@ -349,7 +349,7 @@ import {routingConstants} from "./routing-constants";
       const self = this;
       self.routerFeaturesSource.clear();
       self.routeFeatureSelect = null;
-      const layer = self.options.mapController.proxy.layerController.arrLayers[4];
+      const layer = self.options.mapController.proxy.layerController.arrLayers[$(this.areaLayersSelect).val()];
       if (layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup) {
         self.routerFeaturesLayer.popup = layer.content[0].data.popup;
       }
@@ -492,20 +492,27 @@ import {routingConstants} from "./routing-constants";
           $(entry).data('id', features[i].id);
           $(entry).on('click', function(event) {
             scope.routerFeaturesSource.forEachFeature(function(tmpFeature) {
+              let layer = undefined;
+              if(mode === "area"){
+                layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.areaLayersSelect).val()];
+              }
+              else if( mode === "router"){
+                layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.routerLayersSelect).val()];0
+              }
               if (tmpFeature.get('tid') === features[i].id) {
-                if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle]) {
-                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([scope.options.mapController.data.click_locstyle], {
+                if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle]) {
+                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([scope.options.mapController.data.clickLocstyle], {
                     done: function() {
-                      let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle].style;
+                      let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle].style;
                       tmpFeature.setStyle(style);
                     }
                   });
                 } else {
-                  let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle].style;
+                  let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle].style;
                   tmpFeature.setStyle(style);
                 }
               } else {
-                tmpFeature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[1].style);
+                tmpFeature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
               }
             });
             // refresh css classes
@@ -912,7 +919,7 @@ import {routingConstants} from "./routing-constants";
         let toggleDetourWrapper = document.createElement('div');
         let output = document.createElement('output');
         let p = document.createElement('p');
-        p.innerHTML = 'Umweg';
+        p.innerHTML = routingConstants.ROUTE_DETOUR;
         output.innerHTML = 100;
         toggleDetourWrapper.appendChild(p);
         toggleDetourWrapper.appendChild(self.toggleDetourRoute);
@@ -1193,8 +1200,7 @@ import {routingConstants} from "./routing-constants";
         if (this.routeProfile && this.routeProfile.children) {
           areaViewInputWrapper.appendChild(this.routeProfile);
         }
-        
-        areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
+
         if(mapData.routerLayers){
           this.areaLayersInput = document.createElement('div');
           this.areaLayersSelect = document.createElement('select');
@@ -1248,7 +1254,7 @@ import {routingConstants} from "./routing-constants";
         let toggleDetourWrapper = document.createElement('div');
         let output = document.createElement('output');
         let p = document.createElement('p');
-        p.innerHTML = 'Radius';
+        p.innerHTML = routingConstants.AREA_DETOUR;
         output.innerHTML = 100;
         toggleDetourWrapper.appendChild(p);
         toggleDetourWrapper.appendChild(self.toggleDetourArea);
@@ -1279,10 +1285,11 @@ import {routingConstants} from "./routing-constants";
         let areaDeactivateFunction = function(){
           self.options.mapController.map.un('click', self.fnMapAreaInteraction);
         }
+        areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
         areaView = this.addView({
           name: 'area-view',
           triggerConfig: {
-            tipLabel: 'LOOOOL',
+            tipLabel: routingConstants.AREA_NAME,
             className: "c4g-area-search",
             withHeadline: true
           },
