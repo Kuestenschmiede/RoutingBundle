@@ -344,10 +344,6 @@ import {routingConstants} from "./routing-constants";
             self.response = response;
             if (response) {
               self.showRouteLayer(response);
-              self.routerInstructionsWrapper = document.createElement('div');
-              self.routerInstructionsWrapper.className = cssConstants.ROUTER_INSTRUCTIONS_WRAPPER;
-              self.routerViewContentWrapper.appendChild(self.routerInstructionsWrapper);
-              self.contentSwitcher.css('display','block');
               self.showRouteInstructions(response,0);
               if (response.features) {
                 if (response.features.length > 0 && response.features[0].distance) {
@@ -642,27 +638,9 @@ import {routingConstants} from "./routing-constants";
         routerContentElement = document.createElement('div');
         routerViewInputWrapper = document.createElement('div');
         routerViewContentWrapper = document.createElement('div');
-        routerViewContentWrapper.className = "OPFER";
         routerContentElement.appendChild(routerViewInputWrapper);
         routerContentElement.appendChild(routerViewContentWrapper);
         self.routerViewContentWrapper = routerViewContentWrapper;
-        self.contentSwitcher = document.createElement("div");
-        self.contentSwitcher.className = "router-content-switcher";
-        let buttonInstructions = document.createElement('button');
-        buttonInstructions.innerHTML = "LOOOL";
-        $(buttonInstructions).on('click', function(){
-          $(".c4g-router-instructions-wrapper").css('display','block');
-          $(".router-features-display").css('display','none');
-        })
-        let buttonFeatures = document.createElement("button");
-        buttonFeatures.innerHTML = "Arschkopf";
-        $(buttonFeatures).on('click', function(){
-          $(".c4g-router-instructions-wrapper").css('display','none');
-          $(".router-features-display").css('display','block');
-        })
-        self.contentSwitcher.appendChild(buttonInstructions);
-        self.contentSwitcher.appendChild(buttonFeatures);
-        routerViewContentWrapper.appendChild(contentSwitcher);
 
         this.fromInputWrapper = document.createElement('div');
         this.fromInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
