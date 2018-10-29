@@ -351,6 +351,8 @@ import {routingConstants} from "./routing-constants";
 
                 self.showFeatures(response.features, response.type);
                 self.showFeaturesInPortside(response.features, response.type, "router");
+                $(self.areaFeatureWrapper).empty();
+                $(self.areaFromInput).val("");
               }
             }
 
@@ -564,7 +566,6 @@ import {routingConstants} from "./routing-constants";
         url += '?profile=' + this.routeProfile.active;
       }
       this.spinner.show();
-
       jQuery.ajax({
         'url': url
       })
@@ -576,6 +577,14 @@ import {routingConstants} from "./routing-constants";
             });
             self.showFeatures(response[0],response[1]);
             self.showFeaturesInPortside(response[0], response[1], "area");
+            // clear route & route features
+            self.routingWaySource.clear();
+            self.routingHintSource.clear();
+            $(self.routerFeatureWrapper).empty();
+            $(self.fromInput).val("");
+            self.fromValue = null;
+            $(self.toInput).val("");
+            self.toValue = null;
           }
 
         })
