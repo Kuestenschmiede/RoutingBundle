@@ -1,9 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: fsc
- * Date: 22.10.18
- * Time: 11:19
+ * con4gis - the gis-kit
+ *
+ * @version   php 7
+ * @package   con4gis
+ * @author    con4gis contributors (see "authors.txt")
+ * @license   GNU/LGPL http://opensource.org/licenses/lgpl-3.0.html
+ * @copyright Küstenschmiede GmbH Software & Design 2011 - 2018
+ * @link      https://www.kuestenschmiede.de
  */
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,router_attribution,router_alternative,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,click_locstyle';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['routerLayers'] = [
@@ -49,8 +53,8 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['maxDetourRoute'] = [
     'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit'),
     'sql'                     => "decimal(10) NOT NULL default '5'"
 ];
-$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['click_locstyle'] = [
-    'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['click_locstyle'],
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['clickLocstyle'] = [
+    'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['clickLocstyle'],
     'exclude'                 => true,
     'inputType'               => 'select',
     'options_callback'        => array('tl_c4g_map_profiles_router','getLocStyles'),
