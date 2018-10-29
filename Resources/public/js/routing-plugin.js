@@ -466,15 +466,15 @@ import {routingConstants} from "./routing-constants";
                 layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.routerLayersSelect).val()];0
               }
               if (tmpFeature.get('tid') === features[i].id) {
-                if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle]) {
-                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([scope.options.mapController.data.click_locstyle], {
+                if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle]) {
+                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([scope.options.mapController.data.clickLocstyle], {
                     done: function() {
-                      let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle].style;
+                      let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle].style;
                       tmpFeature.setStyle(style);
                     }
                   });
                 } else {
-                  let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.click_locstyle].style;
+                  let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle].style;
                   tmpFeature.setStyle(style);
                 }
               } else {
