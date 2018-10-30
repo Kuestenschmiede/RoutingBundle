@@ -85,3 +85,9 @@ button.c4g-router-search:before {
 .route-features-list-element.c4g-inactive {
     background-color: var(--main-color);
 }
+.router-content-switcher button{
+    width: 48% !important;
+    margin-bottom: 20px !important;
+}.router-content-switcher{
+    display: none;
+}

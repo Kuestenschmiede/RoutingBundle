@@ -335,15 +335,21 @@ import {routingConstants} from "./routing-constants";
         if (this.routeProfile && this.routeProfile.active) {
           url += '?profile=' + this.routeProfile.active;
         }
+
+        if(self.routeAjax){
+          self.routeAjax.abort();
+        }
+
         this.spinner.show();
 
-        jQuery.ajax({
+        self.routeAjax = jQuery.ajax({
           'url': url
         })
           .done(function (response) {
             self.response = response;
             if (response) {
               self.showRouteLayer(response);
+              $(".router-content-switcher").css('display','block');
               self.showRouteInstructions(response,0);
               if (response.features) {
                 if (response.features.length > 0 && response.features[0].distance) {
@@ -362,6 +368,7 @@ import {routingConstants} from "./routing-constants";
 
           })
           .always(function () {
+            self.routeAjax = undefined;
             self.spinner.hide();
             self.update();
           });
@@ -576,8 +583,13 @@ import {routingConstants} from "./routing-constants";
       if (this.routeProfile && this.routeProfile.active) {
         url += '?profile=' + this.routeProfile.active;
       }
+      if(self.areaAjax){
+        self.areaAjax.abort();
+      }
+
       this.spinner.show();
-      jQuery.ajax({
+
+      self.areaAjax = jQuery.ajax({
         'url': url
       })
         .done(function (response) {
@@ -600,6 +612,7 @@ import {routingConstants} from "./routing-constants";
 
         })
         .always(function () {
+          self.areaAjax = undefined;
           self.spinner.hide();
           self.update();
         });
@@ -1015,6 +1028,9 @@ import {routingConstants} from "./routing-constants";
             .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
             .text(control.val());
         });
+        $(self.toggleDetourRoute).on('change', function(){
+          self.recalculateRoute();
+        });
         $(self.toggleDetourRoute).trigger('input');
         routerViewInputWrapper.appendChild(toggleDetourWrapper);
 
@@ -1361,6 +1377,9 @@ import {routingConstants} from "./routing-constants";
           output
             .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
             .text(control.val());
+        });
+        $(self.toggleDetourArea).on('change', function(){
+          self.performArea(self.areaValue);
         });
         $(self.toggleDetourArea).trigger('input');
         areaViewInputWrapper.appendChild(toggleDetourWrapper);
