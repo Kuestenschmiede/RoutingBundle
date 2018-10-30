@@ -614,8 +614,12 @@ import {routingConstants} from "./routing-constants";
             self.showFeaturesInPortside(response[0], response[1], "area");
             // clear route & route features
             self.routingWaySource.clear();
+            self.routingAltWaySource.clear();
             self.routingHintSource.clear();
+            self.locationsSource.clear();
             $(self.routerFeatureWrapper).empty();
+            $(self.routerInstructionsWrapper).empty();
+            $(".router-content-switcher").css('display', 'none');
             $(self.fromInput).val("");
             self.fromValue = null;
             $(self.toInput).val("");
@@ -664,6 +668,7 @@ import {routingConstants} from "./routing-constants";
         self.routerViewContentWrapper = routerViewContentWrapper;
         self.contentSwitcher = document.createElement("div");
         self.contentSwitcher.className = "router-content-switcher";
+        $(self.contentSwitcher).hide();
         let buttonInstructions = document.createElement('button');
         buttonInstructions.innerHTML = "Instructions";
         $(buttonInstructions).on('click', function(){
