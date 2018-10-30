@@ -931,20 +931,22 @@ import {routingConstants} from "./routing-constants";
         if (this.routeProfile && this.routeProfile.children) {
           routerViewInputWrapper.appendChild(this.routeProfile);
         }
-        // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
-        if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded){
-          this.routerLayersInput = document.createElement('div');
-          this.routerLayersSelect = document.createElement('select');
-          this.routerLayersInput.appendChild(this.routerLayersSelect);
+        /**
+         * Begin routerUiFunction
+         */
+        const routerUiFunction = function() {
+          self.routerLayersInput = document.createElement('div');
+          self.routerLayersSelect = document.createElement('select');
+          self.routerLayersInput.appendChild(self.routerLayersSelect);
           for(let i in mapData.routerLayers){
             let option = document.createElement('option');
             option.value = i;
             option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
-            this.routerLayersSelect.add(option);
+            self.routerLayersSelect.add(option);
           }
-          this.routerLayersValueSelect = document.createElement('div');
-          this.routerLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
-          $(this.routerLayersSelect).on('change', function() {
+          self.routerLayersValueSelect = document.createElement('div');
+          self.routerLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
+          $(self.routerLayersSelect).on('change', function() {
             $(self.routerLayersValueSelect).empty();
             let selected = $(this).val();
             let clickFunction = function() {
@@ -968,13 +970,28 @@ import {routingConstants} from "./routing-constants";
             $(self.routerLayersValueSelect.firstChild).trigger('click');
             self.recalculateRoute();
           });
-          $(this.routerLayersSelect).trigger('change');
+          $(self.routerLayersSelect).trigger('change');
           if(Object.keys(mapData.routerLayers).length <= 1){
-            $(this.routerLayersSelect).css('display','none');
+            $(self.routerLayersSelect).css('display','none');
           }
-          $(this.routerLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
-          routerViewInputWrapper.appendChild(this.routerLayersInput);
-          routerViewInputWrapper.appendChild(this.routerLayersValueSelect);
+          $(self.routerLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
+          $(self.routerLayersInput).insertBefore($(routerViewInputWrapper));
+          $(self.routerLayersValueSelect).insertBefore($(routerViewInputWrapper));
+          // routerViewInputWrapper.appendChild(self.routerLayersInput);
+          // routerViewInputWrapper.appendChild(self.routerLayersValueSelect);
+        };
+        /**
+         * End routerUiFunction
+         */
+        // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
+        // create the layer selection elements when layers are loaded
+        if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded){
+          routerUiFunction();
+        } else {
+          // add layer selection creation to proxy hook
+          window.c4gMapsHooks = window.c4gMapsHooks || {};
+          window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
+          window.c4gMapsHooks.proxy_layer_loaded.push(routerUiFunction);
         }
         self.toggleDetourRoute = document.createElement('input');
         self.toggleDetourRoute.className = routingConstants.ROUTE_TOGGLE;
@@ -1268,20 +1285,19 @@ import {routingConstants} from "./routing-constants";
           areaViewInputWrapper.appendChild(this.routeProfile);
         }
 
-        // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
-        if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded) {
-          this.areaLayersInput = document.createElement('div');
-          this.areaLayersSelect = document.createElement('select');
-          this.areaLayersInput.appendChild(this.areaLayersSelect);
+        const areaUiFunction = function() {
+          self.areaLayersInput = document.createElement('div');
+          self.areaLayersSelect = document.createElement('select');
+          self.areaLayersInput.appendChild(self.areaLayersSelect);
           for(let i in mapData.routerLayers){
             let option = document.createElement('option');
             option.value = i;
             option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
-            this.areaLayersSelect.add(option);
+            self.areaLayersSelect.add(option);
           }
-          this.areaLayersValueSelect = document.createElement('div');
-          this.areaLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
-          $(this.areaLayersSelect).on('change', function() {
+          self.areaLayersValueSelect = document.createElement('div');
+          self.areaLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
+          $(self.areaLayersSelect).on('change', function() {
             $(self.areaLayersValueSelect).empty();
             let selected = $(this).val();
             let clickFunction = function() {
@@ -1307,13 +1323,23 @@ import {routingConstants} from "./routing-constants";
               self.performArea(self.areaValue);
             }
           });
-          $(this.areaLayersSelect).trigger('change');
+          $(self.areaLayersSelect).trigger('change');
           if(Object.keys(mapData.routerLayers).length <= 1){
-            $(this.areaLayersSelect).css('display','none');
+            $(self.areaLayersSelect).css('display','none');
           }
-          $(this.areaLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
-          areaViewInputWrapper.appendChild(this.areaLayersInput);
-          areaViewInputWrapper.appendChild(this.areaLayersValueSelect);
+          $(self.areaLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
+          $(self.areaLayersInput).insertBefore($(areaViewInputWrapper));
+          $(self.areaLayersValueSelect).insertBefore($(areaViewInputWrapper));
+          // areaViewInputWrapper.appendChild(self.areaLayersInput);
+          // areaViewInputWrapper.appendChild(self.areaLayersValueSelect);
+        };
+        // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
+        if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded) {
+          areaUiFunction();
+        } else {
+          window.c4gMapsHooks = window.c4gMapsHooks || {};
+          window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
+          window.c4gMapsHooks.proxy_layer_loaded.push(areaUiFunction);
         }
         self.toggleDetourArea = document.createElement('input');
         self.toggleDetourArea.className = routingConstants.ROUTE_TOGGLE;
