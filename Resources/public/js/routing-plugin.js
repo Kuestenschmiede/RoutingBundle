@@ -653,7 +653,7 @@ import {routingConstants} from "./routing-constants";
         })
         self.contentSwitcher.appendChild(buttonInstructions);
         self.contentSwitcher.appendChild(buttonFeatures);
-        routerViewContentWrapper.appendChild(contentSwitcher);
+        routerViewContentWrapper.appendChild(self.contentSwitcher);
 
         this.fromInputWrapper = document.createElement('div');
         this.fromInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
