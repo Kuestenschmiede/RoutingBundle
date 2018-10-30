@@ -416,6 +416,9 @@ import {routingConstants} from "./routing-constants";
         contentFeature.set('hover_style', layer.hover_style);
         contentFeature.set('zoom_onclick', layer.zoom_onclick);
         contentFeature.set('tid', feature['id']);
+        if(type === "overpass"){
+          contentFeature.set('osm_type','node');
+        }
         let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
         if(mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]){
           contentFeature.set('label', feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
