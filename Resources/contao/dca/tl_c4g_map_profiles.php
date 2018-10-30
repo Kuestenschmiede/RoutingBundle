@@ -9,7 +9,7 @@
  * @copyright Küstenschmiede GmbH Software & Design 2011 - 2018
  * @link      https://www.kuestenschmiede.de
  */
-$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,router_attribution,router_alternative,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle';
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,router_attribution,router_alternative,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['routerLayers'] = [
     'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayers'],
     'exclude'                 => true,
@@ -67,6 +67,15 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['openRouter'] = [
     'default'                 => true,
     'inputType'               => 'checkbox',
     'sql'                     => "char(1) NOT NULL default '1'"
+];
+
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['areaCenterLocstyle'] = [
+    'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['areaCenterLocstyle'],
+    'exclude'                 => true,
+    'inputType'               => 'select',
+    'options_callback'        => array('tl_c4g_map_profiles_router','getLocStyles'),
+    'eval'                    => array('tl_class'=>'clr', 'chosen' => true),
+    'sql'                     => "int(10) unsigned NOT NULL default '0'"
 ];
 
 class tl_c4g_map_profiles_router extends Backend
