@@ -35,6 +35,7 @@ class LoadMapDataListener
         $mapData['detourArea'] = [$profile->minDetourArea, $profile->maxDetourArea];
         $mapData['detourRoute'] = [$profile->minDetourRoute, $profile->maxDetourRoute];
         $mapData['router_open'] = $profile->openRouter;
+        $mapData['areaCenterLocstyle'] = $profile->areaCenterLocstyle;
         $event->setMapData($mapData);
     }
 }

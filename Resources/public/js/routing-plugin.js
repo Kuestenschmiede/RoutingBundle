@@ -65,7 +65,8 @@ import {routingConstants} from "./routing-constants";
       this.options.mapController.proxy.locationStyleController.loadLocationStyles([
         this.options.mapController.data.router_from_locstyle,
         this.options.mapController.data.router_to_locstyle,
-        this.options.mapController.data.router_point_locstyle
+        this.options.mapController.data.router_point_locstyle,
+        this.options.mapController.data.areaCenterLocstyle,
       ]);
 
 
@@ -194,6 +195,7 @@ import {routingConstants} from "./routing-constants";
           this.locationsLayer,
           this.routerHintLayer,
           this.routerFeaturesLayer,
+          this.locationsLayer
         ]),
         visible: true
       });
@@ -532,7 +534,7 @@ import {routingConstants} from "./routing-constants";
                 layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.areaLayersSelect).val()];
               }
               else if( mode === "router"){
-                layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.routerLayersSelect).val()];0
+                layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.routerLayersSelect).val()];
               }
               if (tmpFeature.get('tid') === features[i].id) {
                 if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle]) {
@@ -979,7 +981,6 @@ import {routingConstants} from "./routing-constants";
         /**
          * End routerUiFunction
          */
-        // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
         // create the layer selection elements when layers are loaded
         if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded){
           routerUiFunction();
@@ -1329,7 +1330,7 @@ import {routingConstants} from "./routing-constants";
           // areaViewInputWrapper.appendChild(self.areaLayersInput);
           // areaViewInputWrapper.appendChild(self.areaLayersValueSelect);
         };
-        // TODO in funktion schmeißen, dann entweder ausführen oder in den proxy layer loaded hook einfügen
+
         if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded) {
           areaUiFunction();
         } else {
@@ -1370,14 +1371,20 @@ import {routingConstants} from "./routing-constants";
             if($(self.areaFromInput).val() === ""){
               self.performReverseSearch($(self.areaFromInput),ol.proj.toLonLat(evt.coordinate));
               self.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
+              let point = $.extend(true, {}, self.areaValue);
+              point.transform('EPSG:4326', 'EPSG:3857');
+              let feature = new ol.Feature({geometry: point});
+              let locstyleId = self.options.mapController.data.areaCenterLocstyle;
+              feature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+              self.locationsSource.addFeature(feature);
               self.performArea(self.areaValue);
             }
-          }
+          };
           self.options.mapController.map.on('click', self.fnMapAreaInteraction);
-        }
+        };
         let areaDeactivateFunction = function(){
           self.options.mapController.map.un('click', self.fnMapAreaInteraction);
-        }
+        };
         areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
         areaView = this.addView({
           name: 'area-view',
