@@ -36,6 +36,8 @@ class LoadMapDataListener
         $mapData['detourRoute'] = [$profile->minDetourRoute, $profile->maxDetourRoute];
         $mapData['router_open'] = $profile->openRouter;
         $mapData['areaCenterLocstyle'] = $profile->areaCenterLocstyle;
+        $mapData['enableOverPoints'] = $profile->enableOverPoints;
+        $mapData['enableTargetSwitch'] = $profile->enableTargetSwitch;
         $event->setMapData($mapData);
     }
 }

@@ -695,21 +695,24 @@ import {routingConstants} from "./routing-constants";
         routerFromClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
         this.$routerFromClear = $(routerFromClear);
 
-        switchFromTo = document.createElement('button');
-        switchFromTo.className = cssConstants.ROUTER_SWITCH;
-        switchFromTo.title = langConstants.ROUTER_SWITCH;
-        this.$switchFromTo = $(switchFromTo);
-
-        buttonOver = document.createElement('button');
-        buttonOver.className = cssConstants.ROUTER_OVER;
-        buttonOver.title = langConstants.ROUTER_OVER;
-        this.$buttonOver = $(buttonOver);
-
-
         this.routerButtonBar = document.createElement('div');
         this.routerButtonBar.className = cssConstants.ROUTER_BUTTONBAR;
-        this.routerButtonBar.appendChild(switchFromTo);
-        this.routerButtonBar.appendChild(buttonOver);
+
+        if (this.options.mapController.data.enableOverPoints) {
+          buttonOver = document.createElement('button');
+          buttonOver.className = cssConstants.ROUTER_OVER;
+          buttonOver.title = langConstants.ROUTER_OVER;
+          this.$buttonOver = $(buttonOver);
+          this.routerButtonBar.appendChild(buttonOver);
+        }
+
+        if (this.options.mapController.data.enableTargetSwitch) {
+          switchFromTo = document.createElement('button');
+          switchFromTo.className = cssConstants.ROUTER_SWITCH;
+          switchFromTo.title = langConstants.ROUTER_SWITCH;
+          this.$switchFromTo = $(switchFromTo);
+          this.routerButtonBar.appendChild(switchFromTo);
+        }
 
         if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
           if (Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
@@ -882,58 +885,61 @@ import {routingConstants} from "./routing-constants";
           self.clearInput(self.$fromInput);
         });
 
-        this.$buttonOver.click(function (event) {
-          event.preventDefault();
-          self.index++;
-          self.$buttonOver.prop("disabled", true);
-
-          self.overInputWrapper = document.createElement('div');
-          self.overInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
-
-          self.overInput = document.createElement("input");
-          self.overInput.type = "text";
-          self.overInput.className = cssConstants.ROUTER_INPUT_FROM;
-          self.overInput.id = self.overInput.name = "routingOver";
-
-          routerOverLabel = document.createElement('label');
-          routerOverLabel.setAttribute('for', 'routingFrom');
-          routerOverLabel.innerHTML = langConstants.ROUTER_Label_Interim;
-
-          routerOverClear = document.createElement('button');
-          routerOverClear.className = cssConstants.ROUTER_INPUT_CLEAR;
-          routerOverClear.title = langConstants.ROUTER_CLEAR_TITLE;
-          routerOverClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
-          routerOverClear.id = self.index;
-          self.$routerOverClear = $(routerOverClear);
-
-          self.overInputWrapper.appendChild(routerOverLabel);
-          self.overInputWrapper.appendChild(self.overInput);
-          self.overInputWrapper.appendChild(routerOverClear);
-
-          routerViewInputWrapper.appendChild(self.overInputWrapper);
-          self.$routerOverClear.click(function (event) {
+        if (this.options.mapController.data.enableOverPoints) {
+          this.$buttonOver.click(function (event) {
             event.preventDefault();
-            self.clearOver(self.$overInput, this.id);
-            $(this).parent().remove();
-            //buttonOver.show();
-          });
-          self.$overInput = $(self.overInput);
-          self.$overInput.on('change', function () {
-            self.performSearch(self.$overInput, "overValue");
-          });
-        });
+            self.index++;
+            self.$buttonOver.prop("disabled", true);
 
-        this.$switchFromTo.click(function (event) {
-          event.preventDefault();
-          var switchVarName = document.getElementById("routingFrom").value;
-          document.getElementById("routingFrom").value = document.getElementById("routingTo").value;
-          document.getElementById("routingTo").value = switchVarName;
-          var switchVarVal = self.fromValue;
-          self.fromValue = self.toValue;
-          self.toValue = switchVarVal;
-          self.recalculateRoute();
+            self.overInputWrapper = document.createElement('div');
+            self.overInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
 
-        });
+            self.overInput = document.createElement("input");
+            self.overInput.type = "text";
+            self.overInput.className = cssConstants.ROUTER_INPUT_FROM;
+            self.overInput.id = self.overInput.name = "routingOver";
+
+            routerOverLabel = document.createElement('label');
+            routerOverLabel.setAttribute('for', 'routingFrom');
+            routerOverLabel.innerHTML = langConstants.ROUTER_Label_Interim;
+
+            routerOverClear = document.createElement('button');
+            routerOverClear.className = cssConstants.ROUTER_INPUT_CLEAR;
+            routerOverClear.title = langConstants.ROUTER_CLEAR_TITLE;
+            routerOverClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
+            routerOverClear.id = self.index;
+            self.$routerOverClear = $(routerOverClear);
+
+            self.overInputWrapper.appendChild(routerOverLabel);
+            self.overInputWrapper.appendChild(self.overInput);
+            self.overInputWrapper.appendChild(routerOverClear);
+
+            routerViewInputWrapper.appendChild(self.overInputWrapper);
+            self.$routerOverClear.click(function (event) {
+              event.preventDefault();
+              self.clearOver(self.$overInput, this.id);
+              $(this).parent().remove();
+              //buttonOver.show();
+            });
+            self.$overInput = $(self.overInput);
+            self.$overInput.on('change', function () {
+              self.performSearch(self.$overInput, "overValue");
+            });
+          });
+        }
+
+        if (this.options.mapController.data.enableTargetSwitch) {
+          this.$switchFromTo.click(function (event) {
+            event.preventDefault();
+            var switchVarName = document.getElementById("routingFrom").value;
+            document.getElementById("routingFrom").value = document.getElementById("routingTo").value;
+            document.getElementById("routingTo").value = switchVarName;
+            var switchVarVal = self.fromValue;
+            self.fromValue = self.toValue;
+            self.toValue = switchVarVal;
+            self.recalculateRoute();
+          });
+        }
 
         this.$fromInput = $(this.fromInput);
         this.$fromInput.on('change', function () {
