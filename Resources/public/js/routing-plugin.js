@@ -184,6 +184,11 @@ import {routingConstants} from "./routing-constants";
         source: this.locationsSource,
         zIndex: 2
       });
+      this.areaSource = new ol.source.Vector();
+      this.areaLayer = new ol.layer.Vector({
+        source: this.areaSource,
+        zIndex: 2
+      });
       this.routerFeaturesSource = new ol.source.Vector();
       this.routerFeaturesLayer = new ol.layer.Vector({
         source: this.routerFeaturesSource
@@ -195,7 +200,8 @@ import {routingConstants} from "./routing-constants";
           this.locationsLayer,
           this.routerHintLayer,
           this.routerFeaturesLayer,
-          this.locationsLayer
+          this.locationsLayer,
+          this.areaLayer
         ]),
         visible: true
       });
@@ -316,7 +322,7 @@ import {routingConstants} from "./routing-constants";
         overCoord;
 
       self = this;
-
+      this.areaSource.clear();
       fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
       if (overPoint) {
@@ -505,15 +511,16 @@ import {routingConstants} from "./routing-constants";
               entry.appendChild(valueDiv);
             }
           } else if (type === "overpass") {
-            let tags = features[i].tags;
-            for (let key in tags) {
-              if (tags.hasOwnProperty(key)) {
-                let currentTag = tags[key];
-                let valueDiv = document.createElement('div');
-                valueDiv.innerHTML = key + ": " + currentTag;
-                entry.appendChild(valueDiv);
+            let currentFeature = null;
+            scope.routerFeaturesSource.forEachFeature(function(feature) {
+              if (feature.get('tid') === features[i].id) {
+                currentFeature = feature;
               }
-            }
+            });
+            const featureEntryContent = popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
+            let valueDiv = document.createElement('div');
+            valueDiv.innerHTML = featureEntryContent;
+            entry.appendChild(valueDiv);
           } else {
             if (window.c4gMapsHooks && window.c4gMapsHooks.routePluginEntry) {
               utils.callHookFunctions(window.c4gMapsHooks.routePluginEntry, {
@@ -1365,10 +1372,10 @@ import {routingConstants} from "./routing-constants";
         });
         $(self.toggleDetourArea).trigger('input');
         areaViewInputWrapper.appendChild(toggleDetourWrapper);
-        let areaActivateFunction = function(){
-          self.fnMapAreaInteraction = function(evt){
+        let areaActivateFunction = function() {
+          self.fnMapAreaInteraction = function(evt) {
             const scope = this;
-            if($(self.areaFromInput).val() === ""){
+            if ($(self.areaFromInput).val() === "") {
               self.performReverseSearch($(self.areaFromInput),ol.proj.toLonLat(evt.coordinate));
               self.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
               let point = $.extend(true, {}, self.areaValue);
@@ -1376,7 +1383,7 @@ import {routingConstants} from "./routing-constants";
               let feature = new ol.Feature({geometry: point});
               let locstyleId = self.options.mapController.data.areaCenterLocstyle;
               feature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
-              self.locationsSource.addFeature(feature);
+              self.areaSource.addFeature(feature);
               self.performArea(self.areaValue);
             }
           };
