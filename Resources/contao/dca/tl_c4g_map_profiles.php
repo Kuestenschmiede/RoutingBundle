@@ -64,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['clickLocstyle'] = [
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['openRouter'] = [
     'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['openRouter'],
     'exclude'                 => true,
-    'default'                 => true,
+    'default'                 => false,
     'inputType'               => 'checkbox',
     'sql'                     => "char(1) NOT NULL default '0'"
 ];
@@ -96,6 +96,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['enableTargetSwitch'] = [
 
 class tl_c4g_map_profiles_router extends Backend
 {
+    // TODO im zweifel via saveCallback noch prüfen ob alles notwendige gesetzt ist
     public function getRouterLayer($multiColumnWizard)
     {
         $arrColumnLayers = [
@@ -113,13 +114,13 @@ class tl_c4g_map_profiles_router extends Backend
             'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'],
             'filter'                  => false,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory'=>'true', 'tl_class'=>'w50']
+            'eval'                    => ['tl_class'=>'w50']
         ];
         $arrColumnValue = [
             'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'],
             'filter'                  => false,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory'=>'true', 'tl_class'=>'w50']
+            'eval'                    => ['tl_class'=>'w50']
         ];
         $arrColumnLabels = [
             'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'],
