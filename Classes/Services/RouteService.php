@@ -16,7 +16,7 @@ use con4gis\RoutingBundle\Classes\LatLng;
 use con4gis\RoutingBundle\Classes\Polyline;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-include_once($_SERVER['DOCUMENT_ROOT']."../vendor/phayes/geophp/geoPHP.inc");
+include_once(System::getContainer()->getParameter('kernel.project_dir')."/vendor/phayes/geophp/geoPHP.inc");
 
 class RouteService
 {

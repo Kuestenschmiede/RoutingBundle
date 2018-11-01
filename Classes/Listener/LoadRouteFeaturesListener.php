@@ -13,7 +13,7 @@ use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-include_once($_SERVER['DOCUMENT_ROOT']."../vendor/phayes/geophp/geoPHP.inc");
+include_once(System::getContainer()->getParameter('kernel.project_dir')."/vendor/phayes/geophp/geoPHP.inc");
 
 class LoadRouteFeaturesListener
 {
