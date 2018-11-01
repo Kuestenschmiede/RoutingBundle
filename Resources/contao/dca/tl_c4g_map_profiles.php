@@ -24,7 +24,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['minDetourArea'] = [
     'filter'                  => false,
     'inputType'               => 'text',
     'default'                 => '0',
-    'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit'),
+    'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 0),
     'sql'                     => "decimal(10) NOT NULL default '0'"
 ];
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['maxDetourArea'] = [
@@ -33,7 +33,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['maxDetourArea'] = [
     'filter'                  => false,
     'inputType'               => 'text',
     'default'                 => '20',
-    'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit'),
+    'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 30),
     'sql'                     => "decimal(10) NOT NULL default '20'"
 ];
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['minDetourRoute'] = [
@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['minDetourRoute'] = [
     'filter'                  => false,
     'inputType'               => 'text',
     'default'                 => '0',
-    'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit'),
+    'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 0),
     'sql'                     => "decimal(10) NOT NULL default '0'"
 ];
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['maxDetourRoute'] = [
@@ -50,7 +50,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['maxDetourRoute'] = [
     'filter'                  => false,
     'inputType'               => 'text',
     'default'                 => '5',
-    'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit'),
+    'eval'                    => array( 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 10),
     'sql'                     => "decimal(10) NOT NULL default '5'"
 ];
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['clickLocstyle'] = [
