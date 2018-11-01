@@ -66,7 +66,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['openRouter'] = [
     'exclude'                 => true,
     'default'                 => true,
     'inputType'               => 'checkbox',
-    'sql'                     => "char(1) NOT NULL default '1'"
+    'sql'                     => "char(1) NOT NULL default '0'"
 ];
 
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['areaCenterLocstyle'] = [
