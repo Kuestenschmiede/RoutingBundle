@@ -89,12 +89,8 @@
     border-radius: 0%;
     cursor: pointer;
 }
-<<<<<<< Updated upstream
 
-output {
-=======
 .c4g-routing-output{
->>>>>>> Stashed changes
     position: relative;
     pointer-events: none;
     top: -15px;
