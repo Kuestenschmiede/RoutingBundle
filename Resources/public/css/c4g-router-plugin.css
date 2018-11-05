@@ -29,7 +29,7 @@
     -webkit-appearance: none;
     outline: none;
 }
-.c4g-routing-toggle::-webkit-slider-runnable-track {
+.c4g-routing-toggle::-webkit-slider-runnable-track{
     position: relative;
     height: 12px;
     border: 1px solid var(--shadow-color);
@@ -37,8 +37,47 @@
     background-color:var(--font-color);
     box-shadow: inset 0 1px 2px 0 var(--shadow-color);
 }
-
-.c4g-routing-toggle::-webkit-slider-thumb {
+.c4g-routing-toggle::-moz-range-track{
+    position: relative;
+    height: 12px;
+    border: 1px solid var(--shadow-color);
+    border-radius: 5px;
+    background-color:var(--font-color);
+    box-shadow: inset 0 1px 2px 0 var(--shadow-color);
+}
+.c4g-routing-toggle::-ms-track{
+    position: relative;
+    height: 12px;
+    border: 1px solid var(--shadow-color);
+    border-radius: 5px;
+    background-color:var(--font-color);
+    box-shadow: inset 0 1px 2px 0 var(--shadow-color);
+}
+.c4g-routing-toggle::-webkit-slider-thumb{
+    position: relative;
+    top: -5px;
+    width: 50px;
+    height: 24px;
+    border: 1px solid var(--shadow-color);
+    -webkit-appearance: none;
+    background-color: var(--font-color);
+    box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 0%;
+    cursor: pointer;
+}
+.c4g-routing-toggle::-moz-range-thumb{
+    position: relative;
+    top: -5px;
+    width: 50px;
+    height: 24px;
+    border: 1px solid var(--shadow-color);
+    -webkit-appearance: none;
+    background-color: var(--font-color);
+    box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 0%;
+    cursor: pointer;
+}
+.c4g-routing-toggle::-ms-thumb{
     position: relative;
     top: -5px;
     width: 50px;
@@ -58,11 +97,11 @@ output {
     display: inline-block;
     transform: translateX(-50%);
     width: 44px;
-    height: 22px;
+    height: 20px;
     color: var(--main-color);
     background-color: var(--font-color);
     font-size: 1em;
-    line-height: 24px;
+    line-height: 20px;
     text-align: center;
 }
 
