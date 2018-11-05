@@ -625,6 +625,9 @@ import {routingConstants} from "./routing-constants";
             $(self.toInput).val("");
             self.toValue = null;
           }
+          let view = self.options.mapController.map.getView();
+          let flippedCoords = ol.proj.fromLonLat(fromCoord.reverse());
+          view.setCenter(flippedCoords);
 
         })
         .always(function () {
