@@ -1037,6 +1037,7 @@ import {routingConstants} from "./routing-constants";
 
         let toggleDetourWrapper = document.createElement('div');
         let output = document.createElement('output');
+        output.className = routingConstants.OUTPUT_DETOUR;
         let p = document.createElement('p');
         p.innerHTML = routingConstants.ROUTE_DETOUR;
         output.innerHTML = 100;
@@ -1387,6 +1388,7 @@ import {routingConstants} from "./routing-constants";
         self.toggleDetourArea.setAttribute('step',0.5);
         let toggleDetourWrapper = document.createElement('div');
         let output = document.createElement('output');
+        output.className = routingConstants.OUTPUT_DETOUR;
         let p = document.createElement('p');
         p.innerHTML = routingConstants.AREA_DETOUR;
         output.innerHTML = 100;
