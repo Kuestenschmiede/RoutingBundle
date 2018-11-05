@@ -674,13 +674,13 @@ import {routingConstants} from "./routing-constants";
         $(buttonInstructions).on('click', function(){
           $(".c4g-router-instructions-wrapper").css('display','block');
           $(".router-features-display").css('display','none');
-        })
+        });
         let buttonFeatures = document.createElement("button");
         buttonFeatures.innerHTML = "Features";
         $(buttonFeatures).on('click', function(){
           $(".c4g-router-instructions-wrapper").css('display','none');
           $(".router-features-display").css('display','block');
-        })
+        });
         self.contentSwitcher.appendChild(buttonInstructions);
         self.contentSwitcher.appendChild(buttonFeatures);
         routerViewContentWrapper.appendChild(self.contentSwitcher);
@@ -990,8 +990,8 @@ import {routingConstants} from "./routing-constants";
                 self.showFeatures(self.response.features, self.response.type, "router")
               }
             };
-            for(let i in mapData.routerLayers[selected]){
-              if(mapData.routerLayers[selected].hasOwnProperty(i)){
+            for (let i in mapData.routerLayers[selected]) {
+              if (mapData.routerLayers[selected].hasOwnProperty(i)) {
                 let buttonElement = document.createElement('button');
                 buttonElement.innerHTML = i;
                 buttonElement.value = mapData.routerLayers[selected][i]['keys'];

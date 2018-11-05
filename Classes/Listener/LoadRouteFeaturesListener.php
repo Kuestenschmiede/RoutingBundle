@@ -11,6 +11,7 @@ namespace con4gis\RoutingBundle\Classes\Listener;
 
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
+use Contao\System;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 include_once(System::getContainer()->getParameter('kernel.project_dir')."/vendor/phayes/geophp/geoPHP.inc");

@@ -50,6 +50,7 @@
     border-radius: 0%;
     cursor: pointer;
 }
+
 output {
     position: relative;
     pointer-events: none;

@@ -14,6 +14,7 @@ use con4gis\MapsBundle\Resources\contao\modules\api\RoutingApi;
 use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
 use con4gis\RoutingBundle\Classes\LatLng;
 use con4gis\RoutingBundle\Classes\Polyline;
+use Contao\System;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 include_once(System::getContainer()->getParameter('kernel.project_dir')."/vendor/phayes/geophp/geoPHP.inc");
