@@ -247,6 +247,12 @@ import {routingConstants} from "./routing-constants";
             $(this.areaFromInput).val(center);
             this.performSearch($(this.areaFromInput), "areaValue", function() {
               if (scope.areaValue) {
+                let point = $.extend(true, {}, scope.areaValue);
+                let feature = new ol.Feature({geometry: point.transform('EPSG:4326', 'EPSG:3857')});
+                let styleId = scope.options.mapController.data.clickLocstyle;
+                feature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[styleId].style);
+                scope.areaSource.addFeature(feature);
+                console.log(scope.areaSource.getFeatures());
                 scope.performArea(scope.areaValue);
               }
             });
@@ -268,6 +274,20 @@ import {routingConstants} from "./routing-constants";
               if (scope.fromValue) {
                 scope.performSearch($(scope.toInput), "toValue", function() {
                   if (scope.fromValue && scope.toValue) {
+                    let fromStyleId = scope.options.mapController.data.router_from_locstyle;
+                    let toStyleId = scope.options.mapController.data.router_to_locstyle;
+                    let fromStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles[fromStyleId].style;
+                    let toStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles[toStyleId].style;
+                    let fromPoint = scope.fromValue.clone();
+                    fromPoint.transform('EPSG:4326', 'EPSG:3857');
+                    let toPoint = scope.toValue.clone();
+                    toPoint.transform('EPSG:4326', 'EPSG:3857');
+                    let fromFeature = new ol.Feature({geometry: fromPoint});
+                    fromFeature.setStyle(fromStyle);
+                    let toFeature = new ol.Feature({geometry: toPoint});
+                    toFeature.setStyle(toStyle);
+                    scope.locationsSource.addFeature(fromFeature);
+                    scope.locationsSource.addFeature(toFeature);
                     scope.performViaRoute(scope.fromValue, scope.toValue);
                   }
                 });
@@ -988,7 +1008,7 @@ import {routingConstants} from "./routing-constants";
               self.activeLayerValue = this.innerHTML;
               $(this).addClass("c4g-active").removeClass('c4g-inactive');
               $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
-              self.reloadFeatureValues();
+              self.reloadFeatureValues("router");
               if(self.response){
                 self.showFeatures(self.response.features, self.response.type, "router")
               }
@@ -1342,7 +1362,7 @@ import {routingConstants} from "./routing-constants";
               self.activeLayerValueArea = this.innerHTML;
               $(this).addClass("c4g-active").removeClass('c4g-inactive');
               $(this).siblings().addClass("c4g-inactive").removeClass('c4g-active');
-              // self.reloadFeatureValues();
+              self.reloadFeatureValues("area");
               if(self.response){
                 self.showFeatures(self.response[0], self.response[1], "area")
               }
