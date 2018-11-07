@@ -706,8 +706,8 @@ import {routingConstants} from "./routing-constants";
           $(".c4g-router-instructions-wrapper").css('display','none');
           $(".router-features-display").css('display','block');
         });
-        self.contentSwitcher.appendChild(buttonInstructions);
         self.contentSwitcher.appendChild(buttonFeatures);
+        self.contentSwitcher.appendChild(buttonInstructions);
         routerViewContentWrapper.appendChild(self.contentSwitcher);
 
         this.fromInputWrapper = document.createElement('div');
