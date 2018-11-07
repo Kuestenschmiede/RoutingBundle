@@ -168,8 +168,9 @@ import {routingConstants} from "./routing-constants";
       });
 
       self.options.mapController.map.addInteraction(selectInteraction);
-      self.options.mapController.map.addInteraction(this.modWayInteraction);
-
+      if (this.options.mapController.data.enableOverPoints) {
+        self.options.mapController.map.addInteraction(this.modWayInteraction);
+      }
 
       this.routingHintSource = new ol.source.Vector();
       this.routerHintLayer = new ol.layer.Vector({
