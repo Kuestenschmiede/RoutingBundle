@@ -253,7 +253,6 @@ import {routingConstants} from "./routing-constants";
                 let styleId = scope.options.mapController.data.clickLocstyle;
                 feature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[styleId].style);
                 scope.areaSource.addFeature(feature);
-                console.log(scope.areaSource.getFeatures());
                 scope.performArea(scope.areaValue);
               }
             });
@@ -349,7 +348,9 @@ import {routingConstants} from "./routing-constants";
       if (overPoint) {
         overCoord = new Array();
         for (var propt in overPoint) {
-          overCoord.push([overPoint[propt].getCoordinates()[1], overPoint[propt].getCoordinates()[0]]);
+          if (overPoint.hasOwnProperty(propt)) {
+            overCoord.push([overPoint[propt].getCoordinates()[1], overPoint[propt].getCoordinates()[0]]);
+          }
         }
       }
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
@@ -659,6 +660,63 @@ import {routingConstants} from "./routing-constants";
         });
         
     },
+
+    handleRouteFromPosition: function(coordinates) {
+      this.handlePosition(coordinates, "#routingFrom", "fromValue");
+    },
+
+    handleRouteToPosition: function(coordinates) {
+      this.handlePosition(coordinates, "#routingTo", "toValue");
+    },
+
+    handleAreaPosition: function(coordinates) {
+      this.handlePosition(coordinates, "#routingFrom", "areaValue");
+    },
+
+    handlePosition: function(coordinates, cssId, property, mode) {
+      const scope = this;
+      let coords = coordinates.coords;
+      // TODO aus modul hier rein geben
+      let profileId = 1;
+      let url = "/con4gis/reverseNominatimService/" + profileId + '?format=json&lat=' + coords.latitude + '&lon=' + coords.longitude;
+      $.ajax({url: url}).done(function(data) {
+        let address = "";
+        if (data.address.pedestrian) {
+          address += data.address.pedestrian + " ";
+          if (data.address.house_number) {
+            address += data.address.house_number + ", ";
+          }
+        } else if (data.address.path) {
+          address += data.address.path + " ";
+          if (data.address.house_number) {
+            address += data.address.house_number;
+          }
+        }
+        if (address.length > 0) {
+          address += ", ";
+        }
+
+        if (data.address.postcode) {
+          address += data.address.postcode + " ";
+        }
+        if (data.address.town) {
+          address += data.address.town;
+        }
+        $(cssId).val(address);
+        scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+
+        if (mode === "area") {
+          if (scope[property]) {
+            scope.performArea(scope[property]);
+          }
+        } else {
+          if (scope.fromValue && scope.toValue) {
+            scope.performViaRoute(scope.fromValue, scope.toValue);
+          }
+        }
+      });
+    },
+
     addUserInterface: function (type) {
 
       let self,
@@ -727,6 +785,38 @@ import {routingConstants} from "./routing-constants";
         routerFromClear.title = langConstants.ROUTER_CLEAR_TITLE;
         routerFromClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
         this.$routerFromClear = $(routerFromClear);
+
+        var handleRouteFromPosition = function(pos) {
+          self.handlePosition(pos, ".c4g-router-input-from", "fromValue", "router");
+        };
+
+        let routerFromPosition = document.createElement("button");
+        routerFromPosition.className = "";
+        routerFromPosition.title = "Position ermitteln";
+        routerFromPosition.innerHTML = "";
+        $(routerFromPosition).on("click", function(event) {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(handleRouteFromPosition);
+          } else {
+            console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
+          }
+        });
+
+        var handleRouteToPosition = function(pos) {
+          self.handlePosition(pos, ".c4g-router-input-to", "toValue", "router");
+        };
+
+        let routerToPosition = document.createElement("button");
+        routerToPosition.className = "";
+        routerToPosition.title = "Position ermitteln";
+        routerToPosition.innerHTML = "";
+        $(routerToPosition).on("click", function(event) {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(handleRouteToPosition);
+          } else {
+            console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
+          }
+        });
 
         this.routerButtonBar = document.createElement('div');
         this.routerButtonBar.className = cssConstants.ROUTER_BUTTONBAR;
@@ -905,6 +995,7 @@ import {routingConstants} from "./routing-constants";
 
         }
         this.fromInputWrapper.appendChild(routerFromLabel);
+        this.fromInputWrapper.appendChild(routerFromPosition);
         this.fromInputWrapper.appendChild(this.fromInput);
         this.fromInputWrapper.appendChild(routerFromClear);
         if (buttonOver && this.options.mapController.data.router_api_selection == '0') {
@@ -1102,6 +1193,7 @@ import {routingConstants} from "./routing-constants";
         this.$routerToClear = $(routerToClear);
 
         this.toInputWrapper.appendChild(routerToLabel);
+        this.toInputWrapper.appendChild(routerToPosition);
         this.toInputWrapper.appendChild(this.toInput);
         this.toInputWrapper.appendChild(routerToClear);
 
@@ -1166,6 +1258,22 @@ import {routingConstants} from "./routing-constants";
         this.areaFromInput.type = "text";
         this.areaFromInput.className = cssConstants.ROUTER_INPUT_FROM;
         this.areaFromInput.id = this.areaFromInput.name = "routingFrom";
+
+        var handleAreaPosition = function(pos) {
+          self.handlePosition(pos, ".c4g-router-input-from", "areaValue", "area");
+        };
+
+        let areaPosition = document.createElement("button");
+        areaPosition.className = "";
+        areaPosition.title = "Position ermitteln";
+        areaPosition.innerHTML = "";
+        $(areaPosition).on("click", function(event) {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(handleAreaPosition);
+          } else {
+            console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
+          }
+        });
 
         areaFromLabel = document.createElement('label');
         areaFromLabel.setAttribute('for', 'routingFrom');
@@ -1333,6 +1441,7 @@ import {routingConstants} from "./routing-constants";
           }
         }
         this.areaFromInputWrapper.appendChild(areaFromLabel);
+        this.areaFromInputWrapper.appendChild(areaPosition);
         this.areaFromInputWrapper.appendChild(this.areaFromInput);
         this.areaFromInputWrapper.appendChild(areaFromClear);
         this.$areaFromClear.hide();
