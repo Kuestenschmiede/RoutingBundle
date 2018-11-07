@@ -419,7 +419,7 @@ import {routingConstants} from "./routing-constants";
       const unstyledFeatures = [];
       const contentFeatures = [];
       let missingStyles = [];
-      for (let i = 0; i < features.length; i++) {
+      for (let i = 0; features && (i < features.length); i++) {
         let feature = features[i];
         let resultCoordinate;
         if (type == "overpass") {
@@ -475,7 +475,7 @@ import {routingConstants} from "./routing-constants";
           }
         });
       }
-      if (features.length > 0) {
+      if (features && features.length > 0) {
         self.routerFeaturesSource.addFeatures(contentFeatures);
         self.routeFeatureSelect = new ol.interaction.Select({
           filter: function(feature, layer) {
@@ -525,7 +525,7 @@ import {routingConstants} from "./routing-constants";
         $(scope[mode + "FeatureWrapper"]).empty();
         const routerLayers = this.options.mapController.data.routerLayers;
         const chosenLayerId = $(scope.routerLayersSelect).val();
-        const chosenOption = scope.activeLayerValue;
+        const chosenOption = mode === "router" ? scope.activeLayerValue : scope.activeLayerValueArea;
         const values = routerLayers[chosenLayerId][chosenOption].keys;
         const labels = routerLayers[chosenLayerId][chosenOption].labels;
 
@@ -558,7 +558,8 @@ import {routingConstants} from "./routing-constants";
                 feature: features[i],
                 values: values,
                 labels: labels,
-                router: scope
+                router: scope,
+                activeLayerValue: chosenOption
               });
             }
           }
