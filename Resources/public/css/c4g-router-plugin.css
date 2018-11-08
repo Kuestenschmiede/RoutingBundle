@@ -138,3 +138,8 @@ button.c4g-router-search:before {
 button.c4g-router-position:before {
     content: "\f05b"
 }
+
+.c4g-routing-layer-values > .c4g-active {
+    color: var(--main-color) !important;
+    background-color: var(--font-color) !important;
+}
