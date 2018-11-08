@@ -255,10 +255,23 @@ import {routingConstants} from "./routing-constants";
               if (scope.areaValue) {
                 let point = $.extend(true, {}, scope.areaValue);
                 let feature = new ol.Feature({geometry: point.transform('EPSG:4326', 'EPSG:3857')});
-                let styleId = scope.options.mapController.data.clickLocstyle;
-                feature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[styleId].style);
-                scope.areaSource.addFeature(feature);
-                scope.performArea(scope.areaValue);
+                var styleId = scope.options.mapController.data.clickLocstyle;
+
+                var locStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles[styleId];
+                if (locStyle) {
+                  feature.setStyle(locStyle.style);
+                  scope.areaSource.addFeature(feature);
+                  scope.performArea(scope.areaValue);
+                } else {
+                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([styleId], {
+                    done: function() {
+                      let locStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles;
+                      feature.setStyle(locStyle.style);
+                      scope.areaSource.addFeature(feature);
+                      scope.performArea(scope.areaValue);
+                    }
+                  });
+                }
               }
             });
             // activate area view
@@ -685,8 +698,7 @@ import {routingConstants} from "./routing-constants";
     handlePosition: function(coordinates, cssId, property, mode) {
       const scope = this;
       let coords = coordinates.coords;
-      // TODO aus modul hier rein geben
-      let profileId = 1;
+      let profileId = this.options.mapController.data.profile;
       let url = "/con4gis/reverseNominatimService/" + profileId + '?format=json&lat=' + coords.latitude + '&lon=' + coords.longitude;
       $.ajax({url: url}).done(function(data) {
         let address = "";
