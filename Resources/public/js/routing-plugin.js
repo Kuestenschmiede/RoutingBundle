@@ -1456,7 +1456,7 @@ import {routingConstants} from "./routing-constants";
 
         this.$areaFromClear.click(function (event) {
           event.preventDefault();
-          self.clearInput(self.$fromInput);
+          self.clearInput($(self.areaFromInput));
         });
         if (this.routeProfile && this.routeProfile.children) {
           areaViewInputWrapper.appendChild(this.routeProfile);
@@ -1551,7 +1551,6 @@ import {routingConstants} from "./routing-constants";
         areaViewInputWrapper.appendChild(toggleDetourWrapper);
         let areaActivateFunction = function() {
           self.fnMapAreaInteraction = function(evt) {
-            const scope = this;
             if ($(self.areaFromInput).val() === "") {
               self.performReverseSearch($(self.areaFromInput),ol.proj.toLonLat(evt.coordinate));
               self.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
