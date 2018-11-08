@@ -1217,6 +1217,15 @@ import {routingConstants} from "./routing-constants";
         $(routeStartButton).on("click", function(event) {
           if (self.fromValue && self.toValue) {
             self.performViaRoute(self.fromValue, self.toValue);
+          } else {
+            // wait for one second and check the values again
+            self.spinner.show();
+            window.setTimeout(function () {
+              if (self.fromValue && self.toValue) {
+                self.performViaRoute(self.fromValue, self.toValue);
+              }
+              self.spinner.hide();
+            }, 1000);
           }
         });
         routerViewInputWrapper.appendChild(routeStartButton);
@@ -1559,6 +1568,8 @@ import {routingConstants} from "./routing-constants";
               let feature = new ol.Feature({geometry: point});
               let locstyleId = self.options.mapController.data.areaCenterLocstyle;
               feature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+              self.areaSource.clear();
+              self.mapSelectInteraction.getFeatures().clear();
               self.areaSource.addFeature(feature);
               self.performArea(self.areaValue);
             }
@@ -1574,6 +1585,15 @@ import {routingConstants} from "./routing-constants";
         $(areaStartButton).on("click", function(event) {
           if (self.areaValue) {
             self.performArea(self.areaValue);
+          } else {
+            // wait for one second and check the values again
+            self.spinner.show();
+            window.setTimeout(function () {
+              if (self.areaValue) {
+                self.performArea(self.areaValue);
+              }
+              self.spinner.hide();
+            }, 1000);
           }
         });
         areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
