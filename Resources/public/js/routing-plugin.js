@@ -347,6 +347,7 @@ import {routingConstants} from "./routing-constants";
 
       self = this;
       this.areaSource.clear();
+      this.$areaFromClear.css('display', "none");
       fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
       if (overPoint) {
@@ -620,6 +621,8 @@ import {routingConstants} from "./routing-constants";
         return;
       }
       this.$areaFromClear.css("display", "");
+      this.$routerFromClear.css('display', "none");
+      this.$routerToClear.css('display', "none");
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       let profileId = this.options.mapController.data.profile;
       let url = 'con4gis/areaService/' + profileId + '/' + $(this.areaLayersSelect).val() + '/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
@@ -678,7 +681,7 @@ import {routingConstants} from "./routing-constants";
     },
 
     handleAreaPosition: function(coordinates) {
-      this.handlePosition(coordinates, "#routingFrom", "areaValue");
+      this.handlePosition(coordinates, "#areaFrom", "areaValue");
     },
 
     handlePosition: function(coordinates, cssId, property, mode) {
@@ -1275,7 +1278,7 @@ import {routingConstants} from "./routing-constants";
         this.areaFromInput = document.createElement("input");
         this.areaFromInput.type = "text";
         this.areaFromInput.className = cssConstants.ROUTER_INPUT_FROM;
-        this.areaFromInput.id = this.areaFromInput.name = "routingFrom";
+        this.areaFromInput.id = this.areaFromInput.name = "areaFrom";
 
         this.$areaFromInput = $(this.areaFromInput);
         this.$areaFromInput.on('change', function () {
@@ -1304,7 +1307,7 @@ import {routingConstants} from "./routing-constants";
         });
 
         areaFromLabel = document.createElement('label');
-        areaFromLabel.setAttribute('for', 'routingFrom');
+        areaFromLabel.setAttribute('for', 'areaFrom');
         areaFromLabel.innerHTML = langConstants.ROUTER_FROM_LABEL;
 
         let areaFromClear = document.createElement('button');
