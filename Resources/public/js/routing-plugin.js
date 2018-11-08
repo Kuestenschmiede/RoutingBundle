@@ -192,7 +192,8 @@ import {routingConstants} from "./routing-constants";
       });
       this.routerFeaturesSource = new ol.source.Vector();
       this.routerFeaturesLayer = new ol.layer.Vector({
-        source: this.routerFeaturesSource
+        source: this.routerFeaturesSource,
+        zIndex: 20
       });
       this.routerLayerGroup = new ol.layer.Group({
         layers: new ol.Collection([
