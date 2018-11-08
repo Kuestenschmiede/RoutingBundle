@@ -1225,6 +1225,16 @@ import {routingConstants} from "./routing-constants";
 
         routerViewInputWrapper.appendChild(this.toInputWrapper);
 
+        let routeStartButton = document.createElement("button");
+        routeStartButton.className = "c4g-route-search-start";
+        routeStartButton.innerText = "Suche starten";
+        $(routeStartButton).on("click", function(event) {
+          if (self.fromValue && self.toValue) {
+            self.performViaRoute(self.fromValue, self.toValue);
+          }
+        });
+        routerViewInputWrapper.appendChild(routeStartButton);
+
         self.statusBar.appendChild(this.getAttribution());
         let routerActivateFunction = function(){
           self.removeMapInputInteraction();
@@ -1266,6 +1276,16 @@ import {routingConstants} from "./routing-constants";
         this.areaFromInput.type = "text";
         this.areaFromInput.className = cssConstants.ROUTER_INPUT_FROM;
         this.areaFromInput.id = this.areaFromInput.name = "routingFrom";
+
+        this.$areaFromInput = $(this.areaFromInput);
+        this.$areaFromInput.on('change', function () {
+          self.performSearch(self.$areaFromInput, "areaValue");
+          if (self.$areaFromInput.val() !== "") {
+            self.$areaFromClear.show();
+          } else {
+            self.$areaFromClear.hide();
+          }
+        });
 
         var handleAreaPosition = function(pos) {
           self.handlePosition(pos, ".c4g-router-input-from", "areaValue", "area");
@@ -1454,7 +1474,7 @@ import {routingConstants} from "./routing-constants";
         this.areaFromInputWrapper.appendChild(areaFromClear);
         this.$areaFromClear.hide();
 
-        this.$areaFromClear.click(function (event) {
+        this.$areaFromClear.on("click", function (event) {
           event.preventDefault();
           self.clearInput($(self.areaFromInput));
         });
@@ -1568,7 +1588,16 @@ import {routingConstants} from "./routing-constants";
         let areaDeactivateFunction = function(){
           self.options.mapController.map.un('click', self.fnMapAreaInteraction);
         };
+        let areaStartButton = document.createElement("button");
+        areaStartButton.className = "c4g-area-search-start";
+        areaStartButton.innerText = "Suche starten";
+        $(areaStartButton).on("click", function(event) {
+          if (self.areaValue) {
+            self.performArea(self.areaValue);
+          }
+        });
         areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
+        areaViewInputWrapper.appendChild(areaStartButton);
         areaView = this.addView({
           name: 'area-view',
           triggerConfig: {
@@ -1585,7 +1614,6 @@ import {routingConstants} from "./routing-constants";
         });
         return areaView;
       }
-
     }
   });
 

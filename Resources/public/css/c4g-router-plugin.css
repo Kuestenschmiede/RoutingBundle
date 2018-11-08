@@ -143,3 +143,11 @@ button.c4g-router-position:before {
     color: var(--main-color) !important;
     background-color: var(--font-color) !important;
 }
+
+.c4g-area-search-start {
+    width: auto !important;
+}
+
+.c4g-route-search-start {
+    width: auto !important;
+}
