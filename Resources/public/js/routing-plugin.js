@@ -141,6 +141,7 @@ import {routingConstants} from "./routing-constants";
         }
 
       });
+      this.mapSelectInteraction = selectInteraction;
       this.modWayInteraction = new ol.interaction.Modify({
         source: this.routingWaySource,
         style: [
@@ -347,6 +348,7 @@ import {routingConstants} from "./routing-constants";
 
       self = this;
       this.areaSource.clear();
+      this.mapSelectInteraction.getFeatures().clear();
       fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
       if (overPoint) {
