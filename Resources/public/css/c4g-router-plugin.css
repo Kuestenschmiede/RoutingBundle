@@ -129,6 +129,11 @@ button.c4g-router-search:before {
 .router-content-switcher button{
     width: 48% !important;
     margin-bottom: 20px !important;
-}.router-content-switcher{
+}
+.router-content-switcher{
     display: none;
+}
+
+button.c4g-router-position:before {
+    content: "\f05b"
 }

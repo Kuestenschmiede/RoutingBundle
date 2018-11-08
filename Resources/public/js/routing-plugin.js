@@ -612,6 +612,10 @@ import {routingConstants} from "./routing-constants";
     performArea: function(fromPoint){
       const self = this;
 
+      if (!fromPoint) {
+        return;
+      }
+
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       let profileId = this.options.mapController.data.profile;
       let url = 'con4gis/areaService/' + profileId + '/' + $(this.areaLayersSelect).val() + '/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
@@ -791,7 +795,7 @@ import {routingConstants} from "./routing-constants";
         };
 
         let routerFromPosition = document.createElement("button");
-        routerFromPosition.className = "";
+        routerFromPosition.className = "c4g-router-position";
         routerFromPosition.title = "Position ermitteln";
         routerFromPosition.innerHTML = "";
         $(routerFromPosition).on("click", function(event) {
@@ -807,7 +811,7 @@ import {routingConstants} from "./routing-constants";
         };
 
         let routerToPosition = document.createElement("button");
-        routerToPosition.className = "";
+        routerToPosition.className = "c4g-router-position";
         routerToPosition.title = "Position ermitteln";
         routerToPosition.innerHTML = "";
         $(routerToPosition).on("click", function(event) {
@@ -1165,7 +1169,7 @@ import {routingConstants} from "./routing-constants";
           let output = control.next('output');
           output
             .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-            .text(control.val());
+            .text(control.val() + " km");
         });
         $(self.toggleDetourRoute).on('change', function(){
           self.recalculateRoute();
@@ -1264,7 +1268,7 @@ import {routingConstants} from "./routing-constants";
         };
 
         let areaPosition = document.createElement("button");
-        areaPosition.className = "";
+        areaPosition.className = "c4g-router-position";
         areaPosition.title = "Position ermitteln";
         areaPosition.innerHTML = "";
         $(areaPosition).on("click", function(event) {
@@ -1534,7 +1538,7 @@ import {routingConstants} from "./routing-constants";
           let output = control.next('output');
           output
             .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-            .text(control.val());
+            .text(control.val() + " km");
         });
         $(self.toggleDetourArea).on('change', function(){
           self.performArea(self.areaValue);
