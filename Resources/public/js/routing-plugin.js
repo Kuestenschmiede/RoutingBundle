@@ -255,7 +255,7 @@ import {routingConstants} from "./routing-constants";
               if (scope.areaValue) {
                 let point = $.extend(true, {}, scope.areaValue);
                 let feature = new ol.Feature({geometry: point.transform('EPSG:4326', 'EPSG:3857')});
-                var styleId = scope.options.mapController.data.clickLocstyle;
+                var styleId = scope.options.mapController.data.areaCenterLocstyle;
 
                 var locStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles[styleId];
                 if (locStyle) {
