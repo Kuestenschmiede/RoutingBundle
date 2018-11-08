@@ -347,7 +347,6 @@ import {routingConstants} from "./routing-constants";
 
       self = this;
       this.areaSource.clear();
-      this.$areaFromClear.css('display', "none");
       fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
       if (overPoint) {
@@ -620,9 +619,6 @@ import {routingConstants} from "./routing-constants";
       if (!fromPoint) {
         return;
       }
-      this.$areaFromClear.css("display", "");
-      this.$routerFromClear.css('display', "none");
-      this.$routerToClear.css('display', "none");
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       let profileId = this.options.mapController.data.profile;
       let url = 'con4gis/areaService/' + profileId + '/' + $(this.areaLayersSelect).val() + '/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
@@ -1013,8 +1009,6 @@ import {routingConstants} from "./routing-constants";
           this.$buttonOver.hide();
         }
 
-        this.$routerFromClear.hide();
-
         this.$routerFromClear.click(function (event) {
           event.preventDefault();
           self.clearInput(self.$fromInput);
@@ -1079,11 +1073,6 @@ import {routingConstants} from "./routing-constants";
         this.$fromInput = $(this.fromInput);
         this.$fromInput.on('change', function () {
           self.performSearch(self.$fromInput, "fromValue");
-          if (self.$fromInput.val() !== "") {
-            self.$routerFromClear.show();
-          } else {
-            self.$routerFromClear.hide();
-          }
         });
 
         routerViewInputWrapper.appendChild(this.routerButtonBar);
@@ -1208,9 +1197,6 @@ import {routingConstants} from "./routing-constants";
         this.toInputWrapper.appendChild(this.toInput);
         this.toInputWrapper.appendChild(routerToClear);
 
-
-        this.$routerToClear.hide();
-
         self.$routerToClear.click(function (event) {
           event.preventDefault();
           self.clearInput(self.$toInput);
@@ -1219,11 +1205,6 @@ import {routingConstants} from "./routing-constants";
         this.$toInput = $(this.toInput);
         this.$toInput.on('change', function () {
           self.performSearch(self.$toInput, "toValue");
-          if (self.$toInput.val() !== "") {
-            self.$routerToClear.show();
-          } else {
-            self.$routerToClear.hide();
-          }
         });
 
         routerViewInputWrapper.appendChild(this.toInputWrapper);
@@ -1283,11 +1264,6 @@ import {routingConstants} from "./routing-constants";
         this.$areaFromInput = $(this.areaFromInput);
         this.$areaFromInput.on('change', function () {
           self.performSearch(self.$areaFromInput, "areaValue");
-          if (self.$areaFromInput.val() !== "") {
-            self.$areaFromClear.show();
-          } else {
-            self.$areaFromClear.hide();
-          }
         });
 
         var handleAreaPosition = function(pos) {
@@ -1475,7 +1451,6 @@ import {routingConstants} from "./routing-constants";
         this.areaFromInputWrapper.appendChild(areaPosition);
         this.areaFromInputWrapper.appendChild(this.areaFromInput);
         this.areaFromInputWrapper.appendChild(areaFromClear);
-        this.$areaFromClear.hide();
 
         this.$areaFromClear.on("click", function (event) {
           event.preventDefault();
