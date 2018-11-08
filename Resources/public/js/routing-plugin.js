@@ -616,7 +616,7 @@ import {routingConstants} from "./routing-constants";
       if (!fromPoint) {
         return;
       }
-
+      this.$areaFromClear.css("display", "");
       let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
       let profileId = this.options.mapController.data.profile;
       let url = 'con4gis/areaService/' + profileId + '/' + $(this.areaLayersSelect).val() + '/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
@@ -1284,7 +1284,7 @@ import {routingConstants} from "./routing-constants";
         areaFromLabel.setAttribute('for', 'routingFrom');
         areaFromLabel.innerHTML = langConstants.ROUTER_FROM_LABEL;
 
-        areaFromClear = document.createElement('button');
+        let areaFromClear = document.createElement('button');
         areaFromClear.className = cssConstants.ROUTER_INPUT_CLEAR;
         areaFromClear.title = langConstants.ROUTER_CLEAR_TITLE;
         areaFromClear.innerHTML = langConstants.ROUTER_CLEAR_HTML;
