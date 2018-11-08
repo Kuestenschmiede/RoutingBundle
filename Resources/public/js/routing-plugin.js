@@ -35,6 +35,9 @@ import {routingConstants} from "./routing-constants";
     if (!this.options.mapController) {
       return false;
     }
+    if (this.options.mapController.data.routerHeadline) {
+      this.options.headline = this.options.mapController.data.routerHeadline;
+    }
     this.index=0;
 
     // call parent constructor

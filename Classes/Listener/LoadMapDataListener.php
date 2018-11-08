@@ -38,6 +38,7 @@ class LoadMapDataListener
         $mapData['areaCenterLocstyle'] = $profile->areaCenterLocstyle;
         $mapData['enableOverPoints'] = $profile->enableOverPoints;
         $mapData['enableTargetSwitch'] = $profile->enableTargetSwitch;
+        $mapData['routerHeadline'] = $profile->routerHeadline;
         $event->setMapData($mapData);
     }
 }

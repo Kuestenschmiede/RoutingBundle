@@ -12,6 +12,7 @@
 
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayers'] =            ['Layer für Route', 'Geben Sie hier die Layer an, die an der Route durchsucht werden sollen (Overpass, Table).'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourArea'] =           ['Minimaler Radius Gebietssuche', ''];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerHeadline'] =           ['Überschrift Router', 'Geben Sie eine Überschrift für den Router an.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourArea'] =           ['Maximaler Radius Gebietssuche', ''];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourRoute'] =          ['Minimaler Umweg an Route', ''];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourRoute'] =          ['Maximaler Umweg an Route', ''];
