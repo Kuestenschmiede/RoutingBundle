@@ -92,13 +92,14 @@
     top: -15px;
     display: inline-block;
     transform: translateX(-50%);
-    width: 44px;
+    width: auto;
     height: 50px;
     color: var(--main-color);
     background-color: rgba(0,0,0,0);
     font-size: 1em;
     line-height: 20px;
     text-align: center;
+    white-space: nowrap;
 }
 
 .c4g-routing-toggle:active + output {
