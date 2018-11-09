@@ -1,15 +1,30 @@
 // "namespace"
+import {langConstantsGerman} from "../../../../MapsBundle/Resources/public/js/c4g-maps-constant-i18n-de";
+
 this.c4g = this.c4g || {};
 this.c4g.maps = this.c4g.maps || {};
 this.c4g.maps.control = this.c4g.maps.control || {};
 
 import {Router} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-control-portside-router";
-import {langConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant-i18n-de";
 import {cssConstants} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
 import {utils} from "./../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
 import * as popupFunctions from "./../../../../MapsBundle/Resources/public/js/c4g-maps-popup-info-de";
-
 import {routingConstants} from "./routing-constants";
+import {langConstantsEnglish} from "../../../../MapsBundle/Resources/public/js/c4g-maps-constant-i18n-en";
+
+let langConstants = {};
+
+if (mapData) {
+  if (mapData.lang === "de") {
+    langConstants = langConstantsGerman;
+  } else if (mapData.lang === "en") {
+    langConstants = langConstantsEnglish;
+  } else {
+    // fallback
+    langConstants = langConstantsGerman;
+  }
+}
+
 (function ($, c4g) {
   'use strict';
 
@@ -197,7 +212,8 @@ import {routingConstants} from "./routing-constants";
       this.routerFeaturesSource = new ol.source.Vector();
       this.routerFeaturesLayer = new ol.layer.Vector({
         source: this.routerFeaturesSource,
-        zIndex: 20
+        zIndex: 20,
+        // declutter: true
       });
       this.routerLayerGroup = new ol.layer.Group({
         layers: new ol.Collection([
@@ -473,6 +489,7 @@ import {routingConstants} from "./routing-constants";
         contentFeature.set('locationStyle', locstyle);
         if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
           contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
+          // console.log(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style());
           contentFeatures.push(contentFeature);
         }
         else {
