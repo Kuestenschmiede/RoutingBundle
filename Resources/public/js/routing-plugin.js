@@ -562,7 +562,7 @@ if (mapData) {
       if (scope[mode + "FeatureWrapper"]) {
         $(scope[mode + "FeatureWrapper"]).empty();
         const routerLayers = this.options.mapController.data.routerLayers;
-        const chosenLayerId = $(scope.routerLayersSelect).val();
+        const chosenLayerId = $(scope[mode + "LayersSelect"]).val();
         const chosenOption = mode === "router" ? scope.activeLayerValue : scope.activeLayerValueArea;
         const values = routerLayers[chosenLayerId][chosenOption].keys;
         const labels = routerLayers[chosenLayerId][chosenOption].labels;
