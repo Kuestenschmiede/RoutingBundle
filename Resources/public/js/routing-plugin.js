@@ -227,8 +227,14 @@ if (mapData) {
       });
 
       this.options.mapController.map.addLayer(this.routerLayerGroup);
-      viewArea = this.addUserInterface('area');
-      viewRouter = this.addUserInterface('router');
+      if(false){
+        viewArea = this.addUserInterface('area');
+
+      }
+      if(true){
+        viewRouter = this.addUserInterface('router');
+
+      }
 
       viewRouter.activate();
       //viewArea.activate();
@@ -597,10 +603,12 @@ if (mapData) {
             self.response = response;
             if (response) {
               self.showRouteLayer(response);
-              $(".router-content-switcher").css('display','block');
+              if(false){
+                $(".router-content-switcher").css('display','block');
+              }
               self.showRouteInstructions(response,0);
-              if (response.features) {
-                if (response.features.length > 0 && response.features[0].distance) {
+              if (response.features && response.features.length > 0) {
+                if (response.features[0].distance) {
                   response.features.sort(function(a,b) {
                     return parseFloat(a.distance) - parseFloat(b.distance);
                   });
@@ -1142,6 +1150,9 @@ if (mapData) {
       routerInstructionsHeader.className = cssConstants.ROUTER_INSTRUCTIONS_HEADER;
 
       if (routeResponse) {
+        if(!(routeResponse.features && routeResponse.features.length > 0)){
+          $(".c4g-router-instructions-wrapper").css('display','block');
+        }
         if (this.options.mapController.data.router_api_selection == '1') {//OSRM-API:5.x
           if (routeResponse.routes[routeNumber].legs[0].summary) {
             route_name_0 = routeResponse.routes[routeNumber].legs[0].summary.split(",")[0];
@@ -1579,25 +1590,26 @@ if (mapData) {
         routerContentElement.appendChild(routerViewInputWrapper);
         routerContentElement.appendChild(routerViewContentWrapper);
         self.routerViewContentWrapper = routerViewContentWrapper;
-        self.contentSwitcher = document.createElement("div");
-        self.contentSwitcher.className = "router-content-switcher";
-        $(self.contentSwitcher).hide();
-        let buttonInstructions = document.createElement('button');
-        buttonInstructions.innerHTML = "Instructions";
-        $(buttonInstructions).on('click', function(){
-          $(".c4g-router-instructions-wrapper").css('display','block');
-          $(".router-features-display").css('display','none');
-        });
-        let buttonFeatures = document.createElement("button");
-        buttonFeatures.innerHTML = "Features";
-        $(buttonFeatures).on('click', function(){
-          $(".c4g-router-instructions-wrapper").css('display','none');
-          $(".router-features-display").css('display','block');
-        });
-        self.contentSwitcher.appendChild(buttonFeatures);
-        self.contentSwitcher.appendChild(buttonInstructions);
-        routerViewContentWrapper.appendChild(self.contentSwitcher);
-
+        if(false){
+          self.contentSwitcher = document.createElement("div");
+          self.contentSwitcher.className = "router-content-switcher";
+          $(self.contentSwitcher).hide();
+          let buttonInstructions = document.createElement('button');
+          buttonInstructions.innerHTML = langRouteConstants.INSTRUCTION_HEADLINE;
+          $(buttonInstructions).on('click', function(){
+            $(".c4g-router-instructions-wrapper").css('display','block');
+            $(".router-features-display").css('display','none');
+          });
+          let buttonFeatures = document.createElement("button");
+          buttonFeatures.innerHTML = "Features";
+          $(buttonFeatures).on('click', function(){
+            $(".c4g-router-instructions-wrapper").css('display','none');
+            $(".router-features-display").css('display','block');
+          });
+          self.contentSwitcher.appendChild(buttonFeatures);
+          self.contentSwitcher.appendChild(buttonInstructions);
+          routerViewContentWrapper.appendChild(self.contentSwitcher);
+        }
         this.fromInputWrapper = document.createElement('div');
         this.fromInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
 
@@ -1956,45 +1968,50 @@ if (mapData) {
          */
         // create the layer selection elements when layers are loaded
         if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded){
-          routerUiFunction();
-        } else {
-          // add layer selection creation to proxy hook
-          window.c4gMapsHooks = window.c4gMapsHooks || {};
-          window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
-          window.c4gMapsHooks.proxy_layer_loaded.push(routerUiFunction);
+          if(self.options.mapController.proxy.layers_loaded){
+            routerUiFunction();
+          }
+          else{
+            // add layer selection creation to proxy hook
+            window.c4gMapsHooks = window.c4gMapsHooks || {};
+            window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
+            window.c4gMapsHooks.proxy_layer_loaded.push(routerUiFunction);
+          }
         }
-        self.toggleDetourRoute = document.createElement('input');
-        self.toggleDetourRoute.className = routingConstants.ROUTE_TOGGLE;
-        self.toggleDetourRoute.setAttribute('type','range');
-        self.toggleDetourRoute.setAttribute('min',mapData.detourRoute[0]);
-        self.toggleDetourRoute.setAttribute('max',mapData.detourRoute[1]);
-        self.toggleDetourRoute.setAttribute('value',(mapData.detourRoute[0]+mapData.detourRoute[1])/2);
-        self.toggleDetourRoute.setAttribute('step',0.5);
+        if(false){
+          self.toggleDetourRoute = document.createElement('input');
+          self.toggleDetourRoute.className = routingConstants.ROUTE_TOGGLE;
+          self.toggleDetourRoute.setAttribute('type','range');
+          self.toggleDetourRoute.setAttribute('min',mapData.detourRoute[0]);
+          self.toggleDetourRoute.setAttribute('max',mapData.detourRoute[1]);
+          self.toggleDetourRoute.setAttribute('value',(mapData.detourRoute[0]+mapData.detourRoute[1])/2);
+          self.toggleDetourRoute.setAttribute('step',0.5);
 
-        let toggleDetourWrapper = document.createElement('div');
-        let output = document.createElement('output');
-        output.className = routingConstants.OUTPUT_DETOUR;
-        let p = document.createElement('p');
-        p.innerHTML = langRouteConstants.ROUTE_DETOUR;
-        output.innerHTML = 100;
-        toggleDetourWrapper.appendChild(p);
-        toggleDetourWrapper.appendChild(self.toggleDetourRoute);
-        toggleDetourWrapper.appendChild(output);
-        $(self.toggleDetourRoute).on('input', function(){
-          let control = $(this);
-          let range = control.attr('max') - control.attr('min');
-          let pos = ((control.val() - control.attr('min')) / range) * 100;
-          let posOffset = Math.round(50 * pos / 100) - (25);
-          let output = control.next('output');
-          output
-            .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-            .text(control.val() + " km");
-        });
-        $(self.toggleDetourRoute).on('change', function(){
-          self.recalculateRoute();
-        });
-        $(self.toggleDetourRoute).trigger('input');
-        routerViewInputWrapper.appendChild(toggleDetourWrapper);
+          let toggleDetourWrapper = document.createElement('div');
+          let output = document.createElement('output');
+          output.className = routingConstants.OUTPUT_DETOUR;
+          let p = document.createElement('p');
+          p.innerHTML = langRouteConstants.ROUTE_DETOUR;
+          output.innerHTML = 100;
+          toggleDetourWrapper.appendChild(p);
+          toggleDetourWrapper.appendChild(self.toggleDetourRoute);
+          toggleDetourWrapper.appendChild(output);
+          $(self.toggleDetourRoute).on('input', function(){
+            let control = $(this);
+            let range = control.attr('max') - control.attr('min');
+            let pos = ((control.val() - control.attr('min')) / range) * 100;
+            let posOffset = Math.round(50 * pos / 100) - (25);
+            let output = control.next('output');
+            output
+              .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
+              .text(control.val() + " km");
+          });
+          $(self.toggleDetourRoute).on('change', function(){
+            self.recalculateRoute();
+          });
+          $(self.toggleDetourRoute).trigger('input');
+          routerViewInputWrapper.appendChild(toggleDetourWrapper);
+        }
 
         routerViewInputWrapper.appendChild(this.fromInputWrapper);
         this.toInputWrapper = document.createElement('div');
@@ -2032,24 +2049,26 @@ if (mapData) {
 
         routerViewInputWrapper.appendChild(this.toInputWrapper);
 
-        let routeStartButton = document.createElement("button");
-        routeStartButton.className = "c4g-route-search-start";
-        routeStartButton.innerText = "Suche starten";
-        $(routeStartButton).on("click", function(event) {
-          if (self.fromValue && self.toValue) {
-            self.performViaRoute(self.fromValue, self.toValue);
-          } else {
-            // wait for one second and check the values again
-            self.spinner.show();
-            window.setTimeout(function () {
-              if (self.fromValue && self.toValue) {
-                self.performViaRoute(self.fromValue, self.toValue);
-              }
-              self.spinner.hide();
-            }, 1000);
-          }
-        });
-        routerViewInputWrapper.appendChild(routeStartButton);
+        if(false){
+          let routeStartButton = document.createElement("button");
+          routeStartButton.className = "c4g-route-search-start";
+          routeStartButton.innerText = "Suche starten";
+          $(routeStartButton).on("click", function(event) {
+            if (self.fromValue && self.toValue) {
+              self.performViaRoute(self.fromValue, self.toValue);
+            } else {
+              // wait for one second and check the values again
+              self.spinner.show();
+              window.setTimeout(function () {
+                if (self.fromValue && self.toValue) {
+                  self.performViaRoute(self.fromValue, self.toValue);
+                }
+                self.spinner.hide();
+              }, 1000);
+            }
+          });
+          routerViewInputWrapper.appendChild(routeStartButton);
+        }
 
         self.statusBar.appendChild(this.getAttribution());
         let routerActivateFunction = function(){
