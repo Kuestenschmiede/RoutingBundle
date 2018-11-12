@@ -12,9 +12,5 @@ export  var routingConstants = {
   ROUTE_TOGGLE:         'c4g-routing-toggle',
   OUTPUT_DETOUR:        'c4g-routing-output',
 
-  AREA_NAME:            'Umkreissuche',
-  ROUTE_DETOUR:         'Umweg',
-  AREA_DETOUR:          'Radius',
-
   NONE: '' // last line
 }; // end of "css constants" ---
