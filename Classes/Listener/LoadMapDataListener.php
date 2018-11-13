@@ -67,6 +67,7 @@ class LoadMapDataListener
             $mapData['closeAfterSearch'] = $profile->closeAfterSearch;
             $mapData['showFeatures'] = $profile->showFeatures;
             $mapData['showInstructions'] = $profile->showInstructions;
+            $mapData['initialMode'] = $profile->initialMode;
         }
 
         $event->setMapData($mapData);

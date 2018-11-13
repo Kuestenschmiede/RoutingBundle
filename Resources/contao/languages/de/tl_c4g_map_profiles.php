@@ -26,7 +26,12 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['enableTargetSwitch'] =           ['S
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['closeAfterSearch'] =           ['Router nach Suche schließen', 'Wenn Sie diese Checkbox aktivieren, wird der Router nach Starten der Suche geschlossen.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['showInstructions'] =           ['Button für Routenhinweise einblenden', 'Wenn Sie diese Checkbox aktivieren, werden Routenhinweise angezeigt.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['showFeatures'] =           ['Ergebnisliste einblenden', 'Wenn Sie diese Checkbox aktivieren, werden Ergebnisse im Router dargestellt.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['initialMode'] =           ['Initiale Sicht', 'Wählen Sie aus, welche Sicht im Router initial angezeigt werden soll.'];
+
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'] =      ['Schlüssel'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'] =    ['Wert'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'] =    ['Label'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['mapLabel'] = ['Kartenlabel',' Geben Sie den Schlüssel für das Label aus der Karte ein.'];
+
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_modes']['area'] = "Umkreissuche";
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_modes']['route'] = "Routensuche";

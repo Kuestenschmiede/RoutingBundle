@@ -232,16 +232,16 @@ if (mapData) {
       this.options.mapController.map.addLayer(this.routerLayerGroup);
       if(true){
         viewArea = this.addUserInterface('area');
-
+        if (this.options.mapController.data.initialMode === "area") {
+          viewArea.activate();
+        }
       }
       if(true){
         viewRouter = this.addUserInterface('router');
-
+        if (this.options.mapController.data.initialMode === "route") {
+          viewRouter.activate();
+        }
       }
-
-      viewRouter.activate();
-      //viewArea.activate();
-
       // store some vars for ajax-requests
       profileId = this.options.mapController.data.profile;
       this.geoSearchApi = this.options.mapController.data.api.geosearch + '/' + profileId;
@@ -844,7 +844,6 @@ if (mapData) {
               var styleId = unstyledFeatures[i].get('styleId');
               unstyledFeatures[i].setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[styleId].style);
               self.routerFeaturesSource.addFeature(unstyledFeatures[i]);
-              console.log("style loaded and added");
             }
             missingStyles = undefined;
           }
@@ -2472,7 +2471,7 @@ if (mapData) {
           };
           self.options.mapController.map.on('click', self.fnMapAreaInteraction);
         };
-        let areaDeactivateFunction = function(){
+        let areaDeactivateFunction = function() {
           self.options.mapController.map.un('click', self.fnMapAreaInteraction);
         };
         let areaStartButton = document.createElement("button");
