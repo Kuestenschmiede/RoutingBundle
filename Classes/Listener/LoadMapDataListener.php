@@ -64,6 +64,7 @@ class LoadMapDataListener
             $mapData['routerHeadline'] = $profile->routerHeadline;
             $mapData['priorityFeatures'] = $profile->priorityFeatures;
             $mapData['priorityLocstyle'] = $profile->priorityLocstyle;
+            $mapData['closeAfterSearch'] = $profile->closeAfterSearch;
         }
 
         $event->setMapData($mapData);

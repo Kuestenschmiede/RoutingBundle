@@ -76,14 +76,17 @@ if (mapData) {
       self = this;
       this.spinner.show();
 
-
-      // check and load location styles via map-proxy
-      this.options.mapController.proxy.locationStyleController.loadLocationStyles([
+      let styles = [
         this.options.mapController.data.router_from_locstyle,
         this.options.mapController.data.router_to_locstyle,
         this.options.mapController.data.router_point_locstyle,
         this.options.mapController.data.areaCenterLocstyle,
-      ]);
+      ];
+      if (this.options.mapController.data.priorityFeatures && this.options.mapController.data.priorityLocstyle) {
+        styles.push(this.options.mapController.data.priorityLocstyle);
+      }
+      // check and load location styles via map-proxy
+      this.options.mapController.proxy.locationStyleController.loadLocationStyles(styles);
 
 
       // Add router layer(s)
@@ -349,6 +352,8 @@ if (mapData) {
 
     preHideFunction: function () {
       this.removeMapInputInteraction();
+      console.log("remove");
+      this.options.mapController.map.removeInteraction(this.routeFeatureSelect);
     },
 
     preCloseFunction: function () {
@@ -373,7 +378,6 @@ if (mapData) {
       this.clearInput(this.$toInput);
 
       this.removeMapInputInteraction();
-
     },
 
     removeMapInputInteraction: function () {
@@ -627,7 +631,11 @@ if (mapData) {
             self.routeAjax = undefined;
             self.spinner.hide();
             self.update();
+            if (self.options.mapController.data.closeAfterSearch) {
+              self.close(true);
+            }
           });
+
 
         return '';
 
@@ -760,9 +768,6 @@ if (mapData) {
       self.routeFeatureSelect = null;
       const layerId = mode === "router" ? $(this.routerLayersSelect).val() : $(this.areaLayersSelect).val();
       const layer = self.options.mapController.proxy.layerController.arrLayers[layerId];
-      if (layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup) {
-        self.routerFeaturesLayer.popup = layer.content[0].data.popup;
-      }
       let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
       const unstyledFeatures = [];
       const contentFeatures = [];
@@ -799,7 +804,7 @@ if (mapData) {
         contentFeature.set('hover_location', layer.hover_location);
         contentFeature.set('hover_style', layer.hover_style);
         contentFeature.set('zoom_onclick', layer.zoom_onclick);
-        contentFeature.set('tid', feature['id']);
+        contentFeature.set('tid', feature.id);
         if(type === "overpass"){
           contentFeature.set('osm_type','node');
         }
@@ -840,14 +845,15 @@ if (mapData) {
               var styleId = unstyledFeatures[i].get('styleId');
               unstyledFeatures[i].setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[styleId].style);
               self.routerFeaturesSource.addFeature(unstyledFeatures[i]);
+              console.log("style loaded and added");
             }
             missingStyles = undefined;
           }
         });
       }
       if (features && features.length > 0) {
-        self.routerFeaturesSource.addFeatures(contentFeatures);
-        self.routeFeatureSelect = new ol.interaction.Select({
+        this.routerFeaturesSource.addFeatures(contentFeatures);
+        this.routeFeatureSelect = new ol.interaction.Select({
           filter: function(feature, layer) {
             return self.routerFeaturesSource.hasFeature(feature);
           }
@@ -859,8 +865,8 @@ if (mapData) {
             self.clickFeatureEntryForFeature(feature);
           }
         });
-        self.routeFeatureSelect.setHitTolerance(5);
-        self.options.mapController.map.addInteraction(self.routeFeatureSelect);
+        this.routeFeatureSelect.setHitTolerance(5);
+        this.options.mapController.map.addInteraction(self.routeFeatureSelect);
       }
       this.update();
     },
@@ -1426,6 +1432,18 @@ if (mapData) {
               });
             }
           }
+          let currentFeature = null;
+          scope.routerFeaturesSource.forEachFeature(function(feature) {
+            if (feature.getId() === features[i].id) {
+              currentFeature = feature;
+            }
+          });
+          if (currentFeature) {
+            let popupInfos = {};
+            popupInfos.async = false;
+            popupInfos.content = entry.innerHTML;
+            currentFeature.set('popup', popupInfos);
+          }
           $(entry).addClass("c4g-inactive");
           $(entry).data('id', features[i].id);
           $(entry).on('click', function(event) {
@@ -1450,7 +1468,6 @@ if (mapData) {
                   tmpFeature.setStyle(style);
                 }
               } else {
-                // TODO prüfen ob ich das auf den priority style setzen muss
                 if (scope.bestFeatureIds.includes(tmpFeature.get('tid'))) {
                   let locstyle = scope.options.mapController.data.priorityLocstyle;
                   tmpFeature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
@@ -1521,14 +1538,17 @@ if (mapData) {
           let view = self.options.mapController.map.getView();
           let flippedCoords = ol.proj.fromLonLat(fromCoord.reverse());
           view.setCenter(flippedCoords);
+          view.setZoom(11);
 
         })
         .always(function () {
           self.areaAjax = undefined;
           self.spinner.hide();
           self.update();
+          if (self.options.mapController.data.closeAfterSearch) {
+            self.close(true);
+          }
         });
-        
     },
 
     handleRouteFromPosition: function(coordinates) {

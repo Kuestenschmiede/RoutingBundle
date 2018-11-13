@@ -23,6 +23,7 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['priorityFeatures'] =           ['Pri
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['priorityLocstyle'] =           ['Lokationsstil priorisierte Features', 'Geben Sie hier einen Lokationsstil an, in dem die priorisierten Features dargestellt werden.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['enableOverPoints'] =           ['Zwischenziele', 'Aktivieren Sie diese Checkbox, um die Möglichkeit von Zwischenzielen im Router zu aktivieren.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['enableTargetSwitch'] =           ['Start und Ziel tauschen', 'Aktivieren Sie diese Checkbox, um das Vertauschen von Start und Ziel im Router zu aktivieren.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['closeAfterSearch'] =           ['Router nach Suche schließen', 'Wenn Sie diese Checkbox aktivieren, wird der Router nach Starten der Suche geschlossen.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'] =      ['Schlüssel'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'] =    ['Wert'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'] =    ['Label'];
