@@ -763,9 +763,24 @@ if (mapData) {
       if (layer && layer.content && layer.content[0] && layer.content[0].data && layer.content[0].data.popup) {
         self.routerFeaturesLayer.popup = layer.content[0].data.popup;
       }
+      let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
       const unstyledFeatures = [];
       const contentFeatures = [];
       let missingStyles = [];
+      const priceSortedFeatures = features.slice();
+      let bestFeatures = [];
+      this.bestFeatureIds = [];
+      if (mapData.priorityFeatures && mapData.priorityLocstyle) {
+        // sort by selected value for the map label ascending
+        priceSortedFeatures.sort(function(a, b) {
+          return parseFloat(a[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) - parseFloat(b[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
+        });
+        for (let i = 0; i < parseInt(mapData.priorityFeatures, 10); i++) {
+          bestFeatures[i] = priceSortedFeatures[i];
+          this.bestFeatureIds.push(priceSortedFeatures[i]['id']);
+        }
+      }
+
       for (let i = 0; features && (i < features.length); i++) {
         let feature = features[i];
         let resultCoordinate;
@@ -786,7 +801,7 @@ if (mapData) {
         if(type === "overpass"){
           contentFeature.set('osm_type','node');
         }
-        let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
+
         if(mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]){
           contentFeature.set('label', feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
         }
@@ -796,7 +811,7 @@ if (mapData) {
 
         let locstyle = feature['locstyle'] || layer.locstyle;
         if (mapData.priorityFeatures && mapData.priorityLocstyle) {
-          if (i <= mapData.priorityFeatures - 1) {
+          if (bestFeatures.includes(feature)) {
             locstyle = mapData.priorityLocstyle;
           }
         }
@@ -1433,7 +1448,13 @@ if (mapData) {
                   tmpFeature.setStyle(style);
                 }
               } else {
-                tmpFeature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
+                // TODO prüfen ob ich das auf den priority style setzen muss
+                if (scope.bestFeatureIds.includes(tmpFeature.get('tid'))) {
+                  let locstyle = scope.options.mapController.data.priorityLocstyle;
+                  tmpFeature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
+                } else {
+                  tmpFeature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
+                }
               }
             });
             // refresh css classes
