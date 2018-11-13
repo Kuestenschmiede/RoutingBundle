@@ -770,12 +770,14 @@ if (mapData) {
       const priceSortedFeatures = features.slice();
       let bestFeatures = [];
       this.bestFeatureIds = [];
-      if (mapData.priorityFeatures && mapData.priorityLocstyle) {
+      if (mapData.priorityFeatures && mapData.priorityLocstyle && features.length > 0) {
         // sort by selected value for the map label ascending
         priceSortedFeatures.sort(function(a, b) {
           return parseFloat(a[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) - parseFloat(b[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
         });
-        for (let i = 0; i < parseInt(mapData.priorityFeatures, 10); i++) {
+        let featureCount = parseInt(mapData.priorityFeatures, 10);
+        let upperBound = featureCount > priceSortedFeatures.length ? priceSortedFeatures.length : featureCount;
+        for (let i = 0; i < upperBound; i++) {
           bestFeatures[i] = priceSortedFeatures[i];
           this.bestFeatureIds.push(priceSortedFeatures[i]['id']);
         }
