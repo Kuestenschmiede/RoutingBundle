@@ -227,7 +227,7 @@ if (mapData) {
       });
 
       this.options.mapController.map.addLayer(this.routerLayerGroup);
-      if(false){
+      if(true){
         viewArea = this.addUserInterface('area');
 
       }
@@ -603,7 +603,7 @@ if (mapData) {
             self.response = response;
             if (response) {
               self.showRouteLayer(response);
-              if(false){
+              if(true){
                 $(".router-content-switcher").css('display','block');
               }
               self.showRouteInstructions(response,0);
@@ -794,8 +794,13 @@ if (mapData) {
           contentFeature.set('label', feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
         }
 
-
         let locstyle = feature['locstyle'] || layer.locstyle;
+        if (mapData.priorityFeatures && mapData.priorityLocstyle) {
+          if (i <= mapData.priorityFeatures - 1) {
+            locstyle = mapData.priorityLocstyle;
+          }
+        }
+
         contentFeature.set('locationStyle', locstyle);
         if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
           contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
@@ -1590,7 +1595,7 @@ if (mapData) {
         routerContentElement.appendChild(routerViewInputWrapper);
         routerContentElement.appendChild(routerViewContentWrapper);
         self.routerViewContentWrapper = routerViewContentWrapper;
-        if(false){
+        if(true){
           self.contentSwitcher = document.createElement("div");
           self.contentSwitcher.className = "router-content-switcher";
           $(self.contentSwitcher).hide();
@@ -1967,7 +1972,7 @@ if (mapData) {
          * End routerUiFunction
          */
         // create the layer selection elements when layers are loaded
-        if(mapData.routerLayers && self.options.mapController.proxy.layers_loaded){
+        if(mapData.routerLayers){
           if(self.options.mapController.proxy.layers_loaded){
             routerUiFunction();
           }
@@ -1978,7 +1983,7 @@ if (mapData) {
             window.c4gMapsHooks.proxy_layer_loaded.push(routerUiFunction);
           }
         }
-        if(false){
+        if(true){
           self.toggleDetourRoute = document.createElement('input');
           self.toggleDetourRoute.className = routingConstants.ROUTE_TOGGLE;
           self.toggleDetourRoute.setAttribute('type','range');
@@ -2049,7 +2054,7 @@ if (mapData) {
 
         routerViewInputWrapper.appendChild(this.toInputWrapper);
 
-        if(false){
+        if(true){
           let routeStartButton = document.createElement("button");
           routeStartButton.className = "c4g-route-search-start";
           routeStartButton.innerText = "Suche starten";
