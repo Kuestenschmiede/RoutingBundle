@@ -352,7 +352,6 @@ if (mapData) {
 
     preHideFunction: function () {
       this.removeMapInputInteraction();
-      console.log("remove");
       this.options.mapController.map.removeInteraction(this.routeFeatureSelect);
     },
 
@@ -873,10 +872,12 @@ if (mapData) {
 
     showFeaturesInPortside: function(features, type, mode) {
       const scope = this;
-      if(scope[mode + "FeatureWrapper"] === undefined){
-        scope[mode + "FeatureWrapper"] = document.createElement('div');
-        $(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
-        scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
+      if (this.options.mapController.data.showFeatures) {
+        if(scope[mode + "FeatureWrapper"] === undefined){
+          scope[mode + "FeatureWrapper"] = document.createElement('div');
+          $(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
+          scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
+        }
       }
       scope.features = features;
       scope.type = type;
@@ -1164,7 +1165,9 @@ if (mapData) {
         total_time = "";
 
       self = this;
-
+      if (!this.options.mapController.data.showInstructions) {
+        return;
+      }
 
       if (self.routerInstructionsWrapper === undefined) {
         self.routerInstructionsWrapper = document.createElement('div');
@@ -1178,7 +1181,7 @@ if (mapData) {
       routerInstructionsHeader.className = cssConstants.ROUTER_INSTRUCTIONS_HEADER;
 
       if (routeResponse) {
-        if(!(routeResponse.features && routeResponse.features.length > 0)){
+        if(!(routeResponse.features && routeResponse.features.length > 0) || !this.options.mapController.data.showFeatures){
           $(".c4g-router-instructions-wrapper").css('display','block');
         }
         if (this.options.mapController.data.router_api_selection == '1') {//OSRM-API:5.x
@@ -1638,26 +1641,31 @@ if (mapData) {
         routerContentElement.appendChild(routerViewInputWrapper);
         routerContentElement.appendChild(routerViewContentWrapper);
         self.routerViewContentWrapper = routerViewContentWrapper;
-        if(true){
-          self.contentSwitcher = document.createElement("div");
-          self.contentSwitcher.className = "router-content-switcher";
-          $(self.contentSwitcher).hide();
-          let buttonInstructions = document.createElement('button');
-          buttonInstructions.innerHTML = langRouteConstants.INSTRUCTION_HEADLINE;
-          $(buttonInstructions).on('click', function(){
-            $(".c4g-router-instructions-wrapper").css('display','block');
-            $(".router-features-display").css('display','none');
-          });
+
+        // create feature / instruction
+        if (this.options.mapController.data.showFeatures && this.options.mapController.data.showInstructions) {
           let buttonFeatures = document.createElement("button");
           buttonFeatures.innerHTML = "Features";
           $(buttonFeatures).on('click', function(){
             $(".c4g-router-instructions-wrapper").css('display','none');
             $(".router-features-display").css('display','block');
           });
+
+          let buttonInstructions = document.createElement('button');
+          buttonInstructions.innerHTML = langRouteConstants.INSTRUCTION_HEADLINE;
+          $(buttonInstructions).on('click', function(){
+            $(".c4g-router-instructions-wrapper").css('display','block');
+            $(".router-features-display").css('display','none');
+          });
+
+          self.contentSwitcher = document.createElement("div");
+          self.contentSwitcher.className = "router-content-switcher";
+          $(self.contentSwitcher).hide();
           self.contentSwitcher.appendChild(buttonFeatures);
           self.contentSwitcher.appendChild(buttonInstructions);
           routerViewContentWrapper.appendChild(self.contentSwitcher);
         }
+
         this.fromInputWrapper = document.createElement('div');
         this.fromInputWrapper.className = cssConstants.ROUTER_INPUT_WRAPPER;
 

@@ -65,6 +65,8 @@ class LoadMapDataListener
             $mapData['priorityFeatures'] = $profile->priorityFeatures;
             $mapData['priorityLocstyle'] = $profile->priorityLocstyle;
             $mapData['closeAfterSearch'] = $profile->closeAfterSearch;
+            $mapData['showFeatures'] = $profile->showFeatures;
+            $mapData['showInstructions'] = $profile->showInstructions;
         }
 
         $event->setMapData($mapData);
