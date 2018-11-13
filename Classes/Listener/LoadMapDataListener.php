@@ -62,6 +62,8 @@ class LoadMapDataListener
             $mapData['enableOverPoints'] = $profile->enableOverPoints;
             $mapData['enableTargetSwitch'] = $profile->enableTargetSwitch;
             $mapData['routerHeadline'] = $profile->routerHeadline;
+            $mapData['priorityFeatures'] = $profile->priorityFeatures;
+            $mapData['priorityLocstyle'] = $profile->priorityLocstyle;
         }
 
         $event->setMapData($mapData);
