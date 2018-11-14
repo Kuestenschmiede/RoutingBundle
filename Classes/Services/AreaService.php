@@ -50,7 +50,7 @@ class AreaService
     {
         $valuesProfile = ["driving-car" , "driving-hgv" , "cycling-regular" , "cycling-road" , "cycling-safe" , "cycling-mountain" , "cycling-tour" , "cycling-electric" , "foot-walking" , "foot-hiking" , "wheelchair"];
         $routingProfile = $valuesProfile[$routingProfile] ? $valuesProfile[$routingProfile] : 'driving-car';
-        $matrixUrl = 'https://api.openrouteservice.org/matrix?api_key=' . $mapsProfile->router_api_key . '&profile=' . $routingProfile;
+        $matrixUrl = $mapsProfile->router_viaroute_url.'matrix?api_key=' . $mapsProfile->router_api_key . '&profile=' . $routingProfile;
         $matrixData = [
             'profile'       => $routingProfile,
             'locations'     => $locations,
