@@ -233,7 +233,7 @@ if (mapData) {
       if(true){
         viewArea = this.addUserInterface('area');
         if (this.options.mapController.data.initialMode === "area") {
-          viewArea.activate();
+           viewArea.activate();
         }
       }
       if(true){
@@ -2455,6 +2455,7 @@ if (mapData) {
         $(self.toggleDetourArea).trigger('input');
         areaViewInputWrapper.appendChild(toggleDetourWrapper);
         let areaActivateFunction = function() {
+          areaDeactivateFunction();
           self.fnMapAreaInteraction = function(evt) {
             if ($(self.areaFromInput).val() === "") {
               self.performReverseSearch($(self.areaFromInput),ol.proj.toLonLat(evt.coordinate));
