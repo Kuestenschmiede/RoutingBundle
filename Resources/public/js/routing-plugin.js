@@ -753,9 +753,9 @@ if (mapData) {
         // center on route
         mapView.fit(
           routeFeatures[0].getGeometry(),
-          this.options.mapController.map.getSize(),
           {
-            padding: [0, rightPadding, 0, leftPadding]
+            size:     this.options.mapController.map.getSize(),
+            padding:  [0, rightPadding, 0, leftPadding]
           }
         );
       }
@@ -1524,6 +1524,23 @@ if (mapData) {
               return parseFloat(a.distance) - parseFloat(b.distance);
             });
             self.showFeatures(response[0],response[1], "area");
+            let view = self.options.mapController.map.getView();
+            let leftPadding = 0;
+            if (self.options.mapController.activePortside && self.options.mapController.activePortside.container) {
+              leftPadding = $(self.options.mapController.activePortside.container).outerWidth();
+            }
+
+            let rightPadding = 0;
+            if (self.options.mapController.activeStarboard && self.options.mapController.activeStarboard.container) {
+              rightPadding = $(self.options.mapController.activeStarboard.container).outerWidth();
+            }
+            let extent = self.routerFeaturesSource.getExtent();
+            view.fit(extent,
+              {
+                size: self.options.mapController.map.getSize(),
+                padding: [0, rightPadding, 0, leftPadding]
+              }
+              );
             self.showFeaturesInPortside(response[0], response[1], "area");
             // clear route & route features
             self.routingWaySource.clear();
@@ -1538,10 +1555,6 @@ if (mapData) {
             $(self.toInput).val("");
             self.toValue = null;
           }
-          let view = self.options.mapController.map.getView();
-          let flippedCoords = ol.proj.fromLonLat(fromCoord.reverse());
-          view.setCenter(flippedCoords);
-          view.setZoom(11);
 
         })
         .always(function () {
