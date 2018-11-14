@@ -1535,6 +1535,7 @@ if (mapData) {
               rightPadding = $(self.options.mapController.activeStarboard.container).outerWidth();
             }
             let extent = self.routerFeaturesSource.getExtent();
+            extent = ol.extent.extend(extent, self.areaLayer.getSource().getExtent());
             view.fit(extent,
               {
                 size: self.options.mapController.map.getSize(),
