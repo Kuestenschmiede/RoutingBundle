@@ -823,6 +823,7 @@ if (mapData) {
         }
 
         contentFeature.set('locationStyle', locstyle);
+         contentFeature.set('zIndex',i);
         if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
           contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
           // console.log(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style());
