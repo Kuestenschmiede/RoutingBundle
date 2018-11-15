@@ -231,15 +231,15 @@ if (mapData) {
 
       this.options.mapController.map.addLayer(this.routerLayerGroup);
       if(true){
-        viewArea = this.addUserInterface('area');
+        this.viewArea = this.addUserInterface('area');
         if (this.options.mapController.data.initialMode === "area") {
-           viewArea.activate();
+           this.viewArea.activate();
         }
       }
       if(true){
-        viewRouter = this.addUserInterface('router');
+        this.viewRouter = this.addUserInterface('router');
         if (this.options.mapController.data.initialMode === "route") {
-          viewRouter.activate();
+          this.viewRouter.activate();
         }
       }
       // store some vars for ajax-requests
@@ -266,6 +266,7 @@ if (mapData) {
       if (params) {
         const arrParams = params.split("/");
         if (arrParams[0] === "area") {
+          this.viewArea.activate();
           let center = arrParams[1];
           let detour = arrParams[2];
           let searchtype = arrParams[3];
@@ -301,6 +302,7 @@ if (mapData) {
             $(".c4g-portside-viewtriggerbar .c4g-area-search").click();
           }
         } else if (arrParams[0] === "route") {
+          this.viewRouter.activate();
           let fromAddress = arrParams[1];
           let toAddress = arrParams[2];
           let detour = arrParams[3];
