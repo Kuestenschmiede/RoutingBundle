@@ -347,7 +347,9 @@ if (mapData) {
         this.recalculateRoute();
         this.toValue = new ol.geom.Point([opt_options.toLonLat[1], opt_options.toLonLat[0]]);
       }
-
+      if (this.routeFeatureSelect) {
+        this.options.mapController.map.addInteraction(this.routeFeatureSelect);
+      }
     },
 
     preHideFunction: function () {
