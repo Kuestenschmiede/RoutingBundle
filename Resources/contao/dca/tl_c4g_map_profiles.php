@@ -12,7 +12,7 @@
 //$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['config']['onload_callback'][] = ['tl_c4g_map_profiles_router','updateDCA'];
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['__selector__'][] = 'router';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace('geosearch;','geosearch,router;', $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
-$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'routerHeadline,router_api_selection,router_viaroute_url,router_attribution,router_alternative,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle,enableOverPoints,enableTargetSwitch,priorityFeatures,priorityLocstyle,closeAfterSearch,showFeatures,showInstructions,initialMode;';
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'routerHeadline,router_api_selection,router_api_key,router_viaroute_url,router_attribution,router_alternative,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle,enableOverPoints,enableTargetSwitch,priorityFeatures,priorityLocstyle,closeAfterSearch,showFeatures,showInstructions,initialMode;';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'router' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'],
