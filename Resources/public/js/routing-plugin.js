@@ -615,15 +615,15 @@ if (mapData) {
               }
               self.showRouteInstructions(response,0);
               if (response.features && response.features.length > 0) {
-                if (response.features[0].distance) {
-                  response.features.sort(function(a,b) {
-                    return parseFloat(a.distance) - parseFloat(b.distance);
-                  });
-                }
+                // if (response.features[0].distance) {
+                //   response.features.sort(function(a,b) {
+                //     return parseFloat(a.distance) - parseFloat(b.distance);
+                //   });
+                // }
 
-                self.showFeatures(response.features, response.type, "router");
+                let sortedFeatures = self.showFeatures(response.features, response.type, "router");
 
-                self.showFeaturesInPortside(response.features, response.type, "router");
+                self.showFeaturesInPortside(sortedFeatures, response.type, "router");
                 $(self.areaFeatureWrapper).empty();
                 $(self.areaFromInput).val("");
               }
@@ -872,6 +872,7 @@ if (mapData) {
         this.options.mapController.map.addInteraction(self.routeFeatureSelect);
       }
       this.update();
+      return priceSortedFeatures;
     },
 
     showFeaturesInPortside: function(features, type, mode) {
@@ -1524,10 +1525,13 @@ if (mapData) {
         .done(function (response) {
           self.response = response;
           if (response) {
-            response[0].sort(function(a,b) {
-              return parseFloat(a.distance) - parseFloat(b.distance);
-            });
-            self.showFeatures(response[0],response[1], "area");
+            const routerLayers = self.options.mapController.data.routerLayers;
+            const chosenOption = self.activeLayerValueArea;
+            // response[0].sort(function(a,b) {
+            //   return parseFloat(a.distance) - parseFloat(b.distance);
+            // });
+            // this should be changed soon, as it totally messes up the logic of the structure
+            let sortedFeatures = self.showFeatures(response[0],response[1], "area");
             let view = self.options.mapController.map.getView();
             let leftPadding = 0;
             if (self.options.mapController.activePortside && self.options.mapController.activePortside.container) {
@@ -1543,10 +1547,12 @@ if (mapData) {
             view.fit(extent,
               {
                 size: self.options.mapController.map.getSize(),
-                padding: [0, rightPadding, 0, leftPadding]
+                // padding: [0, rightPadding, 0, leftPadding]
+                // TODO rightPadding & leftPadding do not work as intended in mobile
+                padding: [0, 0, 0, 0]
               }
-              );
-            self.showFeaturesInPortside(response[0], response[1], "area");
+            );
+            self.showFeaturesInPortside(sortedFeatures, response[1], "area");
             // clear route & route features
             self.routingWaySource.clear();
             self.routingAltWaySource.clear();
