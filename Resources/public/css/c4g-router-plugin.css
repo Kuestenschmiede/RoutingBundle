@@ -109,6 +109,31 @@
     flex-direction: row !important;
     justify-content: space-between;
 }
+.c4g-routing-error{
+    position: absolute;
+    display: inline-block;
+    white-space: nowrap;
+    padding: 20px 10px 20px;
+    z-index:100;
+    left:100%;
+    background-color: var(--main-color) !important;
+    border-radius: var(--button-radius-percent);
+}
+.c4g-routing-error label{
+    display: inline-block;
+    white-space: nowrap;
+    float: left;
+
+    overflow: visible;
+    top: 20px;
+    margin: 1px;
+}
+.c4g-routing-error button{
+    display: inline-block;
+    white-space: nowrap;
+    margin: 5px;
+    float: left;
+}
 
 button.c4g-area-search:before {
     content: "\f5a0";
