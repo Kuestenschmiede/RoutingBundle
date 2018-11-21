@@ -2741,7 +2741,23 @@ if (mapData) {
             );
           }
         } else {
-          alert(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
+          let errorDiv = document.createElement('div');
+          $(errorDiv).addClass('c4g-routing-error');
+          $(errorDiv).addClass('contentHeadline');
+
+          let errorText = document.createElement('label');
+          errorText.innerHTML = langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS;
+          errorDiv.appendChild(errorText);
+          let buttonClose = document.createElement('button');
+          $(buttonClose).addClass('c4g-popup-close');
+          $(buttonClose).addClass('c4g-icon');
+          $(buttonClose).on('click',function(){
+              $(this).parent().remove();
+            }
+          )
+          errorDiv.appendChild(buttonClose);
+          let inputDiv = $input.parent()[0];
+          inputDiv.appendChild(errorDiv);
           self.clearInput($input);
           delete self[value];
         }
@@ -2768,6 +2784,8 @@ if (mapData) {
           errorDiv.appendChild(buttonClose);
           let inputDiv = $input.parent()[0];
           inputDiv.appendChild(errorDiv);
+          self.clearInput($input);
+          delete self[value];
         });
 
       return "";
