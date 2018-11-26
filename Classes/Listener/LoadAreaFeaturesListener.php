@@ -45,7 +45,7 @@ class LoadAreaFeaturesListener
         $bounds = $point->getLatLngBounds($point,$distance);
 
         $objLayer = C4gMapsModel::findById($layerId);
-        if($objLayer->location_type == "table" || $objLayer->location_type == "frisia"){
+        if($objLayer->location_type == "table"){
             $sourceTable = $objLayer->tab_source;
             $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
             $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';
@@ -79,7 +79,7 @@ class LoadAreaFeaturesListener
             $event->setReturnData(\GuzzleHttp\json_encode([$finalResponseFeatures,'notOverpass']));
         }
         else if($objLayer->location_type == "overpass"){
-            $url = "https://osm.kartenkueste.de/api/interpreter";
+            $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : "http://overpass-api.de/api/interpreter";
             $strBBox = $bounds['lower']->getLat() . "," . $bounds['left']->getLng() . "," . $bounds['upper']->getLat() . ",". $bounds['right']->getLng();
             $query = $objLayer->ovp_request;
             $strSearch = strrpos($query, "(bbox)") ? "(bbox)" : "{{bbox}}";
