@@ -720,7 +720,30 @@ if (mapData) {
         return '';
 
       } else {//OSRM-API:<5
-        console.log("Please use a more modern API-Version for the Routeservice")
+        try{
+          url = self.routingApi + '?output=json&instructions=true&alt=false&loc_from=' + fromCoord + '&loc_to=' + toCoord;
+          this.spinner.show();
+
+          jQuery.ajax({
+            'url': url})
+            .done(function (response) {
+
+              if (response) {
+                self.showRoute(response);
+              }
+
+            })
+            .always(function () {
+              self.spinner.hide();
+              self.update();
+            });
+
+          return '';
+        }
+        catch(Exception){
+          console.log("Please use a more modern API-Version for the Routeservice")
+        }
+
       }
     },
 
@@ -870,12 +893,44 @@ if (mapData) {
           this.bestFeatureIds.push(priceSortedFeatures[i]['id']);
         }
       }
-
+      featureLoop:
       for (let i = 0; features && (i < features.length); i++) {
         let feature = features[i];
         let resultCoordinate;
         if (type == "overpass") {
-          resultCoordinate = ol.proj.transform([parseFloat(feature['lon']), parseFloat(feature['lat'])], 'EPSG:4326', 'EPSG:3857');
+          if (feature.type === "node") {
+            if (!feature.tags) { //part of way
+              continue;
+            }
+            resultCoordinate = ol.proj.transform([parseFloat(feature['lon']), parseFloat(feature['lat'])], 'EPSG:4326', 'EPSG:3857')
+          }
+          else if (feature.type === "way") {
+            let arrCoords = [];
+            wayLoop:
+            for (let i = 0; i < feature.nodes.length; i++) {
+              let node = features.find(function (objNode) {
+                return objNode.id === feature.nodes[i];
+              });
+              if(!node){
+                continue featureLoop;
+              }
+              arrCoords.push(ol.proj.transform([node.lon, node.lat], 'EPSG:4326', 'EPSG:3857'));
+
+            }
+            if (arrCoords[0][0] == arrCoords[arrCoords.length - 1][0] && arrCoords[0][1] == arrCoords[arrCoords.length - 1][1]) { //polygon
+              delete arrCoords[arrCoords.length - 1];
+              arrCoords.length = arrCoords.length - 1;
+              let polygon = new ol.geom.Polygon([arrCoords]);
+              // convert tracks and areas to points
+              resultCoordinate = polygon.getInteriorPoint().getCoordinates();
+
+            }
+            else { //linestring
+              let lineExtent = ol.extent.boundingExtent(arrCoords);
+              resultCoordinate = ol.extent.getCenter(lineExtent);
+            }
+
+          }
         }
         else {
           resultCoordinate = ol.proj.transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
@@ -1499,13 +1554,19 @@ if (mapData) {
               valueDiv.innerHTML = labels[j] + ": " + features[i][values[j]];
               entry.appendChild(valueDiv);
             }
-          } else if (type === "overpass") {
+          } else if (type === "overpass"){
+            if(!features[i].tags){
+              continue;
+            }
             let currentFeature = null;
             scope.routerFeaturesSource.forEachFeature(function(feature) {
               if (feature.get('tid') === features[i].id) {
                 currentFeature = feature;
               }
             });
+            if(!currentFeature){
+              continue;
+            }
             const featureEntryContent = popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
             let valueDiv = document.createElement('div');
             valueDiv.innerHTML = featureEntryContent;

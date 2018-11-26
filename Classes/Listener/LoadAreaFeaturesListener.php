@@ -1,9 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: cro
- * Date: 19.10.18
- * Time: 13:38
+ * con4gis - the gis-kit
+ *
+ * @version   php 7
+ * @package   con4gis
+ * @author    con4gis contributors (see "authors.txt")
+ * @license   GNU/LGPL http://opensource.org/licenses/lgpl-3.0.html
+ * @copyright Küstenschmiede GmbH Software & Design 2011 - 2018
+ * @link      https://www.kuestenschmiede.de
  */
 
 namespace con4gis\RoutingBundle\Classes\Listener;
@@ -45,7 +49,7 @@ class LoadAreaFeaturesListener
         $bounds = $point->getLatLngBounds($point,$distance);
 
         $objLayer = C4gMapsModel::findById($layerId);
-        if($objLayer->location_type == "table" || $objLayer->location_type == "frisia"){
+        if($objLayer->location_type == "table"){
             $sourceTable = $objLayer->tab_source;
             $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
             $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';
@@ -79,7 +83,7 @@ class LoadAreaFeaturesListener
             $event->setReturnData(\GuzzleHttp\json_encode([$finalResponseFeatures,'notOverpass']));
         }
         else if($objLayer->location_type == "overpass"){
-            $url = "https://osm.kartenkueste.de/api/interpreter";
+            $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : "http://overpass-api.de/api/interpreter";
             $strBBox = $bounds['lower']->getLat() . "," . $bounds['left']->getLng() . "," . $bounds['upper']->getLat() . ",". $bounds['right']->getLng();
             $query = $objLayer->ovp_request;
             $strSearch = strrpos($query, "(bbox)") ? "(bbox)" : "{{bbox}}";
@@ -97,7 +101,7 @@ class LoadAreaFeaturesListener
             $locations = [];
             $locations[] = [$point->getLng(), $point->getLat()];
             foreach($requestData['elements'] as $element){
-                $locations[] = [$element['lon'],$element['lat']];
+                $locations[] = [floatval($element['lon']),floatval($element['lat'])];
             }
             $matrixResponse = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
             $features = [];
