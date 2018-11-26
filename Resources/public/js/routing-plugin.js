@@ -52,17 +52,18 @@ if (mapData) {
       this.options.headline = this.options.mapController.data.routerHeadline;
     }
     this.index=0;
-
-    // call parent constructor
-    Sideboard.call(this, this.options);
-
     this.linkFragments = {
       mode: "",
-      address: [],
+      addressArea: "",
+      addressFrom: "",
+      addressTo: "",
       detour: 0,
       searchType: "",
       forceStart: 1
     };
+
+    // call parent constructor
+    Sideboard.call(this, this.options);
   };
   /**
    * Inherit from "Router"
@@ -269,19 +270,31 @@ if (mapData) {
     },
 
     updateUrl: function() {
-      let url = "";
+      let url = "?mapsParams=";
       const fragments = this.linkFragments;
-      url += fragments.mode + "/";
-      url += fragments.address[0] + "/";
-      if (fragments.mode !== "area") {
-        url += fragments.address[1] + "/";
+      // only attend updating url when every value is set
+      if (fragments.mode && fragments.mode === "area") {
+        if (fragments.mode && fragments.addressArea && fragments.detour && fragments.searchType && fragments.forceStart) {
+          url += fragments.mode + "/";
+          url += fragments.addressArea + "/";
+          url += fragments.detour + "/";
+          url += fragments.searchType + "/";
+          url += fragments.forceStart;
+          let completeUrl = window.location.pathname + url;
+          history.pushState({}, null, completeUrl);
+        }
+      } else if (fragments.mode && fragments.mode === "route") {
+        if (fragments.mode && fragments.addressFrom && fragments.addressTo && fragments.detour && fragments.searchType && fragments.forceStart) {
+          url += fragments.mode + "/";
+          url += fragments.addressFrom + "/";
+          url += fragments.addressTo + "/";
+          url += fragments.detour + "/";
+          url += fragments.searchType + "/";
+          url += fragments.forceStart;
+          let completeUrl = window.location.pathname + url;
+          history.pushState({}, null, completeUrl);
+        }
       }
-      url += fragments.detour + "/";
-      url += fragments.fuelType + "/";
-      url += fragments.forceStart;
-      let searchParams = new URLSearchParams(window.location.search);
-      searchParams.set("mapsParams", url);
-      console.log(url);
     },
 
     /**
@@ -295,6 +308,26 @@ if (mapData) {
       const scope = this;
       if (params) {
         const arrParams = params.split("/");
+        let routerLayers = this.options.mapController.data.routerLayers;
+        let desiredButton = "";
+        iterationLabel:
+          for (let key in routerLayers) {
+            if (routerLayers.hasOwnProperty(key)) {
+              let obj = routerLayers[key];
+              for (let innerKey in obj) {
+                if (obj.hasOwnProperty(innerKey)) {
+                  let singleEntry = obj[innerKey];
+                  let cmpValue = arrParams[0] === "area" ? arrParams[3] : arrParams[4];
+                  if (singleEntry.mapLabel === cmpValue) {
+                    desiredButton = innerKey;
+                    break iterationLabel;
+                  }
+                }
+              }
+            }
+          }
+        // iterate buttons later on when the UI is built
+        this.desiredButtonRouting = desiredButton;
         if (arrParams[0] === "area") {
           this.viewArea.activate();
           let center = arrParams[1];
@@ -302,6 +335,10 @@ if (mapData) {
           let searchtype = arrParams[3];
           let forceStart = arrParams[4];
           if (center && detour && searchtype && forceStart) {
+            this.updateLinkFragments("addressArea", center);
+            this.updateLinkFragments("detour", detour);
+            this.updateLinkFragments("searchType", searchtype);
+            this.updateLinkFragments("forceStart", forceStart);
             $(this.toggleDetourArea).val(detour);
             $(this.toggleDetourArea).trigger('input');
             $(this.areaFromInput).val(center);
@@ -366,8 +403,13 @@ if (mapData) {
                 });
               }
             });
-            // activate area view
+            // activate router view
             $(".c4g-portside-viewtriggerbar .c4g-route-search").click();
+            this.updateLinkFragments("addressFrom", arrParams[1]);
+            this.updateLinkFragments("addressTo", arrParams[2]);
+            this.updateLinkFragments("detour", arrParams[3]);
+            this.updateLinkFragments("searchType", arrParams[4]);
+            this.updateLinkFragments("forceStart", arrParams[5]);
           }
         }
       }
@@ -614,10 +656,11 @@ if (mapData) {
           }
         }
       }
-      this.updateLinkFragments("mode", "route");
-      this.updateLinkFragments("address", [$(this.fromInput).val(), $(this.toInput).val()]);
-      this.updateLinkFragments("detour", $(self.toggleDetourRoute).val());
-      this.updateLinkFragments("searchType", self.activeLayerValue);
+      // this.updateLinkFragments("mode", "route");
+      // this.updateLinkFragments("address", [$(this.fromInput).val(), $(this.toInput).val()]);
+      // this.updateLinkFragments("detour", $(self.toggleDetourRoute).val());
+      // let layerId = $(this.routerLayersSelect).val();
+      // this.updateLinkFragments("searchType", mapData.routerLayers[layerId][self.activeLayerValue]['mapLabel']);
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
         let profileId = this.options.mapController.data.profile;
         url = 'con4gis/routeService/' + profileId + '/' + $(self.routerLayersSelect).val() + '/'+$(self.toggleDetourRoute).val()+'/' + fromCoord;
@@ -1665,6 +1708,17 @@ if (mapData) {
           address += data.address.town;
         }
         $(cssId).val(address);
+        switch (property) {
+          case "fromValue":
+            scope.updateLinkFragments("addressFrom", address);
+            break;
+          case "toValue":
+            scope.updateLinkFragments("addressTo", address);
+            break;
+          case "areaValue":
+            scope.updateLinkFragments("addressArea", address);
+            break;
+        }
         scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
 
         if (mode === "area") {
@@ -2066,6 +2120,8 @@ if (mapData) {
               if(self.response){
                 self.showFeatures(self.response.features, self.response.type, "router")
               }
+              let layerId = $(self.routerLayersSelect).val();
+              self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValue]['mapLabel']);
             };
             for (let i in mapData.routerLayers[selected]) {
               if (mapData.routerLayers[selected].hasOwnProperty(i)) {
@@ -2074,9 +2130,12 @@ if (mapData) {
                 buttonElement.value = mapData.routerLayers[selected][i]['keys'];
                 $(buttonElement).on('click', clickFunction);
                 self.routerLayersValueSelect.appendChild(buttonElement);
+                if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
+                  $(buttonElement).click();
+                }
               }
             }
-            $(self.routerLayersValueSelect.firstChild).trigger('click');
+            // $(self.routerLayersValueSelect.firstChild).trigger('click');
             self.recalculateRoute();
           });
           $(self.routerLayersSelect).trigger('change');
@@ -2131,6 +2190,7 @@ if (mapData) {
             output
               .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
               .text(control.val() + " km");
+            self.updateLinkFragments("detour", control.val());
           });
           $(self.toggleDetourRoute).on('change', function(){
             self.recalculateRoute();
@@ -2200,6 +2260,7 @@ if (mapData) {
         let routerActivateFunction = function(){
           self.removeMapInputInteraction();
           self.addMapInputInteraction();
+          self.updateLinkFragments("mode", "route");
         };
         let routerDeactivateFunction = function(){
           self.removeMapInputInteraction();
@@ -2460,6 +2521,8 @@ if (mapData) {
               if(self.response){
                 self.showFeatures(self.response[0], self.response[1], "area")
               }
+              let layerId = $(self.areaLayersSelect).val();
+              self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']);
             };
             for(let i in mapData.routerLayers[selected]){
               if(mapData.routerLayers[selected].hasOwnProperty(i)){
@@ -2468,9 +2531,12 @@ if (mapData) {
                 buttonElement.value = mapData.routerLayers[selected][i]['keys'];
                 $(buttonElement).on('click', clickFunction);
                 self.areaLayersValueSelect.appendChild(buttonElement);
+                if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
+                  $(buttonElement).trigger("click");
+                }
               }
             }
-            $(self.areaLayersValueSelect.firstChild).trigger('click');
+            // $(self.areaLayersValueSelect.firstChild).trigger('click');
             if(self.areaValue){
               self.performArea(self.areaValue);
             }
@@ -2518,6 +2584,7 @@ if (mapData) {
           output
             .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
             .text(control.val() + " km");
+          self.updateLinkFragments("detour", control.val());
         });
         $(self.toggleDetourArea).on('change', function(){
           self.performArea(self.areaValue);
@@ -2538,10 +2605,12 @@ if (mapData) {
               self.areaSource.clear();
               self.mapSelectInteraction.getFeatures().clear();
               self.areaSource.addFeature(feature);
+              self.updateLinkFragments("addressArea");
               self.performArea(self.areaValue);
             }
           };
           self.options.mapController.map.on('click', self.fnMapAreaInteraction);
+          self.updateLinkFragments("mode", "area");
         };
         let areaDeactivateFunction = function() {
           self.options.mapController.map.un('click', self.fnMapAreaInteraction);
@@ -2734,8 +2803,14 @@ if (mapData) {
 
             if ($input.attr('name') === "routingFrom") {
               self.$routerFromClear.show();
+              // update address in link
+              self.updateLinkFragments("addressFrom", value);
             } else if ($input.attr('name') === "routingTo") {
               self.$routerToClear.show();
+              // update address in link
+              self.updateLinkFragments("addressTo", value);
+            } else if ($input.attr('name') === "areaFrom") {
+              self.updateLinkFragments("addressArea", value);
             }
           }
 
