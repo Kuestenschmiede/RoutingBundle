@@ -1497,15 +1497,22 @@ if (mapData) {
                 layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.routerLayersSelect).val()];
               }
               if (tmpFeature.get('tid') === features[i].id) {
-                if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle]) {
-                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([scope.options.mapController.data.clickLocstyle], {
+                let clickStyleId = scope.options.mapController.data.clickLocstyle;
+                if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId]) {
+                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([clickStyleId], {
                     done: function() {
-                      let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle].style;
-                      tmpFeature.setStyle(style);
+                      let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
+                      // check if feature is still clicked
+                      scope.routeFeatureSelect.getFeatures().forEach(function(elem, index, array) {
+                        if (elem === tmpFeature) {
+                          // feature is still clicked, style it accordingly
+                          tmpFeature.setStyle(style);
+                        }
+                      });
                     }
                   });
                 } else {
-                  let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[scope.options.mapController.data.clickLocstyle].style;
+                  let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
                   tmpFeature.setStyle(style);
                 }
               } else {
