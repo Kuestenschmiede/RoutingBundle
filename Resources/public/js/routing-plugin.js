@@ -55,6 +55,14 @@ if (mapData) {
 
     // call parent constructor
     Sideboard.call(this, this.options);
+
+    this.linkFragments = {
+      mode: "",
+      address: [],
+      detour: 0,
+      searchType: "",
+      forceStart: 1
+    };
   };
   /**
    * Inherit from "Router"
@@ -252,6 +260,27 @@ if (mapData) {
       this.handleInitialParams();
       return true;
 
+    },
+
+    updateLinkFragments: function(key, value) {
+      this.linkFragments[key] = value;
+      this.updateUrl();
+    },
+
+    updateUrl: function() {
+      let url = "";
+      const fragments = this.linkFragments;
+      url += fragments.mode + "/";
+      url += fragments.address[0] + "/";
+      if (fragments.mode !== "area") {
+        url += fragments.address[1] + "/";
+      }
+      url += fragments.detour + "/";
+      url += fragments.fuelType + "/";
+      url += fragments.forceStart;
+      let searchParams = new URLSearchParams(window.location.search);
+      searchParams.set("mapsParams", url);
+      console.log(url);
     },
 
     /**
@@ -584,6 +613,10 @@ if (mapData) {
           }
         }
       }
+      this.updateLinkFragments("mode", "route");
+      this.updateLinkFragments("address", [$(this.fromInput).val(), $(this.toInput).val()]);
+      this.updateLinkFragments("detour", $(self.toggleDetourRoute).val());
+      this.updateLinkFragments("searchType", self.activeLayerValue);
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
         let profileId = this.options.mapController.data.profile;
         url = 'con4gis/routeService/' + profileId + '/' + $(self.routerLayersSelect).val() + '/'+$(self.toggleDetourRoute).val()+'/' + fromCoord;
