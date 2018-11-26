@@ -823,8 +823,7 @@ if (mapData) {
 
             }
             else { //linestring
-              let lineString = new ol.geom.LineString([arrCoords]);
-              let lineExtent = lineString.getGeometry().getExtent();
+              let lineExtent = ol.extent.boundingExtent(arrCoords);
               resultCoordinate = ol.extent.getCenter(lineExtent);
             }
 
