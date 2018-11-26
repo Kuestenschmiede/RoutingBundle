@@ -89,6 +89,7 @@ if (mapData) {
         this.options.mapController.data.router_to_locstyle,
         this.options.mapController.data.router_point_locstyle,
         this.options.mapController.data.areaCenterLocstyle,
+        this.options.mapController.data.clickLocstyle
       ];
       if (this.options.mapController.data.priorityFeatures && this.options.mapController.data.priorityLocstyle) {
         styles.push(this.options.mapController.data.priorityLocstyle);
@@ -801,7 +802,10 @@ if (mapData) {
     showFeatures: function (features, type = "table" , mode = "router") {
       const self = this;
       self.routerFeaturesSource.clear();
-      self.routeFeatureSelect = null;
+      // interim clear of feature selection
+      if (self.routeFeatureSelect) {
+        self.routeFeatureSelect.getFeatures().clear();
+      }
       const layerId = mode === "router" ? $(this.routerLayersSelect).val() : $(this.areaLayersSelect).val();
       const layer = self.options.mapController.proxy.layerController.arrLayers[layerId];
       let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
@@ -863,7 +867,6 @@ if (mapData) {
          contentFeature.set('zIndex',i);
         if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
           contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
-          // console.log(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style());
           contentFeatures.push(contentFeature);
         }
         else {
@@ -889,21 +892,24 @@ if (mapData) {
       }
       if (features && features.length > 0) {
         this.routerFeaturesSource.addFeatures(contentFeatures);
-        this.routeFeatureSelect = new ol.interaction.Select({
-          filter: function(feature, layer) {
-            return self.routerFeaturesSource.hasFeature(feature);
-          }
-        });
-        self.routeFeatureSelect.on('select', function(event) {
-          // should be always only one feature
-          const feature = event.selected[0];
-          if (feature) {
-            self.clickFeatureEntryForFeature(feature);
-          }
-        });
-        this.routeFeatureSelect.setHitTolerance(5);
-        this.options.mapController.map.addInteraction(self.routeFeatureSelect);
+        if (!this.routeFeaturesSelect) {
+          this.routeFeatureSelect = new ol.interaction.Select({
+            filter: function(feature, layer) {
+              return self.routerFeaturesSource.hasFeature(feature);
+            }
+          });
+          self.routeFeatureSelect.on('select', function(event) {
+            // should be always only one feature
+            const feature = event.selected[0];
+            if (feature) {
+              self.clickFeatureEntryForFeature(feature);
+            }
+          });
+          this.routeFeatureSelect.setHitTolerance(5);
+          this.options.mapController.map.addInteraction(self.routeFeatureSelect);
+        }
       }
+      // self.routeFeatureSelect = null;
       this.update();
       return priceSortedFeatures;
     },
