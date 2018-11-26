@@ -643,7 +643,30 @@ if (mapData) {
         return '';
 
       } else {//OSRM-API:<5
-        console.log("Please use a more modern API-Version for the Routeservice")
+        try{
+          url = self.routingApi + '?output=json&instructions=true&alt=false&loc_from=' + fromCoord + '&loc_to=' + toCoord;
+          this.spinner.show();
+
+          jQuery.ajax({
+            'url': url})
+            .done(function (response) {
+
+              if (response) {
+                self.showRoute(response);
+              }
+
+            })
+            .always(function () {
+              self.spinner.hide();
+              self.update();
+            });
+
+          return '';
+        }
+        catch(Exception){
+          console.log("Please use a more modern API-Version for the Routeservice")
+        }
+
       }
     },
 
