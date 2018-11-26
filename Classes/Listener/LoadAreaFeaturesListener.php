@@ -97,7 +97,7 @@ class LoadAreaFeaturesListener
             $locations = [];
             $locations[] = [$point->getLng(), $point->getLat()];
             foreach($requestData['elements'] as $element){
-                $locations[] = [$element['lon'],$element['lat']];
+                $locations[] = [floatval($element['lon']),floatval($element['lat'])];
             }
             $matrixResponse = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
             $features = [];
