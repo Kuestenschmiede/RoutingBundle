@@ -2184,6 +2184,7 @@ if (mapData) {
               let layerId = $(self.routerLayersSelect).val();
               self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValue]['mapLabel']);
             };
+            let buttonActivated = false;
             for (let i in mapData.routerLayers[selected]) {
               if (mapData.routerLayers[selected].hasOwnProperty(i)) {
                 let buttonElement = document.createElement('button');
@@ -2193,10 +2194,13 @@ if (mapData) {
                 self.routerLayersValueSelect.appendChild(buttonElement);
                 if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
                   $(buttonElement).click();
+                  buttonActivated = true;
                 }
               }
             }
-            // $(self.routerLayersValueSelect.firstChild).trigger('click');
+            if (!buttonActivated) {
+              $(self.routerLayersValueSelect.firstChild).trigger('click');
+            }
             self.recalculateRoute();
           });
           $(self.routerLayersSelect).trigger('change');
@@ -2585,6 +2589,7 @@ if (mapData) {
               let layerId = $(self.areaLayersSelect).val();
               self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']);
             };
+            let buttonActivated = false;
             for(let i in mapData.routerLayers[selected]){
               if(mapData.routerLayers[selected].hasOwnProperty(i)){
                 let buttonElement = document.createElement('button');
@@ -2594,10 +2599,13 @@ if (mapData) {
                 self.areaLayersValueSelect.appendChild(buttonElement);
                 if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
                   $(buttonElement).trigger("click");
+                  buttonActivated = true;
                 }
               }
             }
-            // $(self.areaLayersValueSelect.firstChild).trigger('click');
+            if (!buttonActivated) {
+              $(self.areaLayersValueSelect.firstChild).trigger('click');
+            }
             if(self.areaValue){
               self.performArea(self.areaValue);
             }
