@@ -6,9 +6,6 @@
  *  constants
  */
 export  var routingConstantsEnglish = {
-  POPUP_ROUTE_FROM: 'Route from here',
-  POPUP_ROUTE_TO: 'Route to here',
-
   ROUTER_VIEW_ADDRESS_INPUT: 'Find route',
   ROUTER_FROM_LABEL: 'Start',
   ROUTER_TO_LABEL: 'End',
