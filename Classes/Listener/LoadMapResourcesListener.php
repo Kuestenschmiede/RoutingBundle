@@ -25,7 +25,7 @@ class LoadMapResourcesListener
         $eventName,
         EventDispatcherInterface $eventDispatcher
     ) {
-        ResourceLoader::loadJavaScriptDeferred('routing-plugin', "/bundles/con4gisrouting/build/routing-plugin.js");
-        ResourceLoader::loadCssRessource("routing-plugin-css", "bundles/con4gisrouting/css/c4g-router-plugin.css");
+        ResourceLoader::loadJavaScriptDeferred('c4g-routing', "/bundles/con4gisrouting/build/c4g-routing.js");
+        ResourceLoader::loadCssRessource("routing-css", "bundles/con4gisrouting/css/c4g-routing.css");
     }
 }
