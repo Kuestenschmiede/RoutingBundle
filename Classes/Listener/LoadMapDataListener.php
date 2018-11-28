@@ -49,15 +49,17 @@ class LoadMapDataListener
                 $mapData['router_profiles'] = $router_profiles;
             }
             $routerLayers = unserialize($profile->routerLayers);
-            $returnLayers = [];
-            foreach ($routerLayers as $routerLayer) {
-                $routerLayer['key'] = str_replace(" ", "", $routerLayer['key']);
-                $routerLayer['label'] = str_replace(" ", "", $routerLayer['label']);
-                $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(",", $routerLayer['key']);
-                $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
-                $returnLayers[$routerLayer['layers']][$routerLayer['value']]['mapLabel'] = $routerLayer['mapLabel'];
+            if($routerLayers && $routerLayers[0] && $routerLayers[0]['key']){
+                $returnLayers = [];
+                foreach ($routerLayers as $routerLayer) {
+                    $routerLayer['key'] = str_replace(" ", "", $routerLayer['key']);
+                    $routerLayer['label'] = str_replace(" ", "", $routerLayer['label']);
+                    $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(",", $routerLayer['key']);
+                    $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
+                    $returnLayers[$routerLayer['layers']][$routerLayer['value']]['mapLabel'] = $routerLayer['mapLabel'];
+                }
+                $mapData['routerLayers'] = $returnLayers;
             }
-            $mapData['routerLayers'] = $returnLayers;
             $mapData['clickLocstyle'] = $profile->clickLocstyle;
             $mapData['detourArea'] = [$profile->minDetourArea, $profile->maxDetourArea];
             $mapData['detourRoute'] = [$profile->minDetourRoute, $profile->maxDetourRoute];
@@ -72,6 +74,7 @@ class LoadMapDataListener
             $mapData['showFeatures'] = $profile->showFeatures;
             $mapData['showInstructions'] = $profile->showInstructions;
             $mapData['initialMode'] = $profile->initialMode;
+            $mapData['routeStartButton'] = $profile->routeStartButton;
         }
 
         $event->setMapData($mapData);
