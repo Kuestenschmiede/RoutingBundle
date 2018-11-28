@@ -656,11 +656,7 @@ if (mapData) {
           }
         }
       }
-      // this.updateLinkFragments("mode", "route");
-      // this.updateLinkFragments("address", [$(this.fromInput).val(), $(this.toInput).val()]);
-      // this.updateLinkFragments("detour", $(self.toggleDetourRoute).val());
-      // let layerId = $(this.routerLayersSelect).val();
-      // this.updateLinkFragments("searchType", mapData.routerLayers[layerId][self.activeLayerValue]['mapLabel']);
+
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
         let profileId = this.options.mapController.data.profile;
         url = 'con4gis/routeService/' + profileId + '/' + $(self.routerLayersSelect).val() + '/'+$(self.toggleDetourRoute).val()+'/' + fromCoord;
@@ -692,12 +688,6 @@ if (mapData) {
               }
               self.showRouteInstructions(response,0);
               if (response.features && response.features.length > 0) {
-                // if (response.features[0].distance) {
-                //   response.features.sort(function(a,b) {
-                //     return parseFloat(a.distance) - parseFloat(b.distance);
-                //   });
-                // }
-
                 let sortedFeatures = self.showFeatures(response.features, response.type, "router");
 
                 self.showFeaturesInPortside(sortedFeatures, response.type, "router");
