@@ -107,6 +107,10 @@ export  var routingConstantsEnglish = {
   AREA_DETOUR:          'Radius',
   INSTRUCTION_HEADLINE: 'Route Instructions',
   FEATURES_HEADLINE:    'Locations',
+  ROUTE_POSITION:       'Get user position',
+  START_ROUTE:          'Start search',
+
+
 
   NONE: '' // last line
 }; // end of "css constants" ---
