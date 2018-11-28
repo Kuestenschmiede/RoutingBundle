@@ -104,6 +104,8 @@ export  var routingConstantsGerman = {
   AREA_DETOUR:          'Radius',
   INSTRUCTION_HEADLINE: 'Routenbeschreibung',
   FEATURES_HEADLINE:    'Lokationen',
+  ROUTE_POSITION:       'Position ermitteln',
+  START_ROUTE:          'Suche starten',
 
   NONE: '' // last line
 }; // end of "css constants" ---

@@ -17,7 +17,7 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
    */
-  .addEntry('routing-plugin', './Resources/public/js/routing-plugin.js')
+  .addEntry('c4g-routing', './Resources/public/js/c4g-routing.js')
   // .addEntry('c4g-maps-test', './Resources/public/js/c4g-maps-test.js')
 
   .cleanupOutputBeforeBuild()

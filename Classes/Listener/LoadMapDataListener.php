@@ -1,9 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: fsc
- * Date: 22.10.18
- * Time: 15:16
+ * con4gis - the gis-kit
+ *
+ * @version   php 7
+ * @package   con4gis
+ * @author    con4gis contributors (see "authors.txt")
+ * @license   GNU/LGPL http://opensource.org/licenses/lgpl-3.0.html
+ * @copyright Küstenschmiede GmbH Software & Design 2011 - 2018
+ * @link      https://www.kuestenschmiede.de
  */
 
 namespace con4gis\RoutingBundle\Classes\Listener;
@@ -45,15 +49,17 @@ class LoadMapDataListener
                 $mapData['router_profiles'] = $router_profiles;
             }
             $routerLayers = unserialize($profile->routerLayers);
-            $returnLayers = [];
-            foreach ($routerLayers as $routerLayer) {
-                $routerLayer['key'] = str_replace(" ", "", $routerLayer['key']);
-                $routerLayer['label'] = str_replace(" ", "", $routerLayer['label']);
-                $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(",", $routerLayer['key']);
-                $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
-                $returnLayers[$routerLayer['layers']][$routerLayer['value']]['mapLabel'] = $routerLayer['mapLabel'];
+            if($routerLayers && $routerLayers[0] && $routerLayers[0]['key']){
+                $returnLayers = [];
+                foreach ($routerLayers as $routerLayer) {
+                    $routerLayer['key'] = str_replace(" ", "", $routerLayer['key']);
+                    $routerLayer['label'] = str_replace(" ", "", $routerLayer['label']);
+                    $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(",", $routerLayer['key']);
+                    $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
+                    $returnLayers[$routerLayer['layers']][$routerLayer['value']]['mapLabel'] = $routerLayer['mapLabel'];
+                }
+                $mapData['routerLayers'] = $returnLayers;
             }
-            $mapData['routerLayers'] = $returnLayers;
             $mapData['clickLocstyle'] = $profile->clickLocstyle;
             $mapData['detourArea'] = [$profile->minDetourArea, $profile->maxDetourArea];
             $mapData['detourRoute'] = [$profile->minDetourRoute, $profile->maxDetourRoute];
@@ -68,6 +74,7 @@ class LoadMapDataListener
             $mapData['showFeatures'] = $profile->showFeatures;
             $mapData['showInstructions'] = $profile->showInstructions;
             $mapData['initialMode'] = $profile->initialMode;
+            $mapData['routeStartButton'] = $profile->routeStartButton;
         }
 
         $event->setMapData($mapData);
