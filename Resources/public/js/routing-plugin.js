@@ -34,7 +34,7 @@ if (mapData) {
    * @param  {[type]}  mapController  [description]
    * @param  {[type]}  config         [description]
    */
-  c4g.maps.control.RouterPlugin = function (opt_options) {
+  c4g.maps.control.Router = function (opt_options) {
 
     // extend options
     this.options = $.extend({
@@ -48,6 +48,7 @@ if (mapData) {
     if (!this.options.mapController) {
       return false;
     }
+    this.layerController = this.options.mapController.proxy.layerController;
     if (this.options.mapController.data.routerHeadline) {
       this.options.headline = this.options.mapController.data.routerHeadline;
     }
@@ -66,14 +67,14 @@ if (mapData) {
     Sideboard.call(this, this.options);
   };
   /**
-   * Inherit from "Router"
+   * Inherit from "Sideboard"
    */
-  ol.inherits(c4g.maps.control.RouterPlugin, Sideboard);
+  ol.inherits(c4g.maps.control.Router, Sideboard);
 
   /**
    * Methods
    */
-  c4g.maps.control.RouterPlugin.prototype = $.extend(c4g.maps.control.RouterPlugin.prototype, {
+  c4g.maps.control.Router.prototype = $.extend(c4g.maps.control.Router.prototype, {
 
     init: function () {
       var self,
@@ -896,55 +897,26 @@ if (mapData) {
       for (let i = 0; features && (i < features.length); i++) {
         let feature = features[i];
         let resultCoordinate;
+        let contentFeature;
         if (type == "overpass") {
-          if (feature.type === "node") {
-            if (!feature.tags) { //part of way
-              continue;
-            }
-            resultCoordinate = ol.proj.transform([parseFloat(feature['lon']), parseFloat(feature['lat'])], 'EPSG:4326', 'EPSG:3857')
+          if (feature.type === "node" && !feature.tags) {
+            continue;
           }
-          else if (feature.type === "way") {
-            let arrCoords = [];
-            wayLoop:
-            for (let i = 0; i < feature.nodes.length; i++) {
-              let node = features.find(function (objNode) {
-                return objNode.id === feature.nodes[i];
-              });
-              if(!node){
-                continue featureLoop;
-              }
-              arrCoords.push(ol.proj.transform([node.lon, node.lat], 'EPSG:4326', 'EPSG:3857'));
+          contentFeature = self.layerController.featureFromOverpass(feature,features,layer,true);
 
-            }
-            if (arrCoords[0][0] == arrCoords[arrCoords.length - 1][0] && arrCoords[0][1] == arrCoords[arrCoords.length - 1][1]) { //polygon
-              delete arrCoords[arrCoords.length - 1];
-              arrCoords.length = arrCoords.length - 1;
-              let polygon = new ol.geom.Polygon([arrCoords]);
-              // convert tracks and areas to points
-              resultCoordinate = polygon.getInteriorPoint().getCoordinates();
-
-            }
-            else { //linestring
-              let lineExtent = ol.extent.boundingExtent(arrCoords);
-              resultCoordinate = ol.extent.getCenter(lineExtent);
-            }
-
-          }
         }
         else {
           resultCoordinate = ol.proj.transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
+          let point = new ol.geom.Point(resultCoordinate);
+          contentFeature = new ol.Feature(point);
+          contentFeature.setId(feature.id);
+          contentFeature.set('loc_linkurl', layer.loc_linkurl);
+          contentFeature.set('hover_location', layer.hover_location);
+          contentFeature.set('hover_style', layer.hover_style);
+          contentFeature.set('zoom_onclick', layer.zoom_onclick);
+          contentFeature.set('tid', feature.id);
         }
-        let point = new ol.geom.Point(resultCoordinate);
-        let contentFeature = new ol.Feature(point);
-        contentFeature.setId(feature.id);
-        contentFeature.set('loc_linkurl', layer.loc_linkurl);
-        contentFeature.set('hover_location', layer.hover_location);
-        contentFeature.set('hover_style', layer.hover_style);
-        contentFeature.set('zoom_onclick', layer.zoom_onclick);
-        contentFeature.set('tid', feature.id);
-        if(type === "overpass"){
-          contentFeature.set('osm_type','node');
-        }
+
 
         if(mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]){
           contentFeature.set('label', feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
@@ -3035,7 +3007,7 @@ if (mapData) {
     let mapController = params.mapController;
 
     mapController.map.removeControl(mapController.controls.router);
-    let router = new c4g.maps.control.RouterPlugin({
+    let router = new c4g.maps.control.Router({
       tipLabel: langRouteConstants.CTRL_ROUTER,
       target: params.Container,
       mapController: mapController,
