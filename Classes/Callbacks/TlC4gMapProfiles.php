@@ -103,11 +103,11 @@ class TlC4gMapProfiles
         if (!$dc->id) {
             return;
         }
-        $objProfile = $this->db->prepare("SELECT zoom_panel, geosearch_engine, be_optimize_checkboxes_limit, router_api_selection FROM tl_c4g_map_profiles WHERE id=?")
+        $objProfile = $this->db->prepare("SELECT * FROM tl_c4g_map_profiles WHERE id=?")
             ->limit(1)
             ->execute($dc->id);
-        if ($dc->activeRecord->router) {
-            if($dc->activeRecord->router_api_selection == 2){
+        if ($objProfile->router) {
+            if($objProfile->router_api_selection == 2){
                 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] =
                     str_replace('router_api_selection,','router_api_selection,router_api_key,',
                         $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router']);

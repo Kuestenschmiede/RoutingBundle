@@ -70,3 +70,6 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['7'] = 
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['8'] = 'FußgängerIn';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['9'] = 'WandererIn';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['10']= 'Rollstuhl';
+
+/** legend */
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routing_legend'] = 'Routing und Umkreissuche';
