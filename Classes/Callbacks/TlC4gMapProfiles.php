@@ -8,6 +8,9 @@
 
 namespace con4gis\RoutingBundle\Classes\Callbacks;
 
+use Contao\Database;
+use Contao\DataContainer;
+
 /**
  * Class TlC4gMapProfiles
  * Callback class for the tl_c4g_map_profiles DCA file.
@@ -15,6 +18,18 @@ namespace con4gis\RoutingBundle\Classes\Callbacks;
  */
 class TlC4gMapProfiles
 {
+    private $db = null;
+
+    /**
+     * TlC4gMapProfiles constructor.
+     * @param null $db
+     */
+    public function __construct()
+    {
+        $this->db = Database::getInstance();
+    }
+
+
     // TODO im zweifel via saveCallback noch prüfen ob alles notwendige gesetzt ist
     public function getRouterLayer($multiColumnWizard)
     {
@@ -22,7 +37,7 @@ class TlC4gMapProfiles
             'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['layers'],
             'inputType' => 'select'
         ];
-        $arrLayers = $this->Database->prepare('SELECT * FROM tl_c4g_maps WHERE published=1')
+        $arrLayers = $this->db->prepare('SELECT * FROM tl_c4g_maps WHERE published=1')
             ->execute()->fetchAllAssoc();
         $arrOptions =[];
         foreach ($arrLayers as $arrLayer){
@@ -70,12 +85,12 @@ class TlC4gMapProfiles
      */
     public function getLocStyles(DataContainer $dc)
     {
-        $profile = $this->Database->prepare("SELECT locstyles FROM tl_c4g_map_profiles WHERE id=?")->execute($dc->activeRecord->profile);
+        $profile = $this->db->prepare("SELECT locstyles FROM tl_c4g_map_profiles WHERE id=?")->execute($dc->activeRecord->profile);
         $ids = deserialize($profile->locstyles,true);
         if (count($ids)>0) {
-            $locStyles = $this->Database->prepare("SELECT id,name FROM tl_c4g_map_locstyles WHERE id IN (".implode(',',$ids).") ORDER BY name")->execute();
+            $locStyles = $this->db->prepare("SELECT id,name FROM tl_c4g_map_locstyles WHERE id IN (".implode(',',$ids).") ORDER BY name")->execute();
         } else {
-            $locStyles = $this->Database->prepare("SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name")->execute();
+            $locStyles = $this->db->prepare("SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name")->execute();
         }
         while ($locStyles->next()) {
             $return[$locStyles->id] = $locStyles->name;
@@ -88,7 +103,7 @@ class TlC4gMapProfiles
         if (!$dc->id) {
             return;
         }
-        $objProfile = $this->Database->prepare("SELECT zoom_panel, geosearch_engine, be_optimize_checkboxes_limit, router_api_selection FROM tl_c4g_map_profiles WHERE id=?")
+        $objProfile = $this->db->prepare("SELECT zoom_panel, geosearch_engine, be_optimize_checkboxes_limit, router_api_selection FROM tl_c4g_map_profiles WHERE id=?")
             ->limit(1)
             ->execute($dc->id);
         if ($dc->activeRecord->router) {
