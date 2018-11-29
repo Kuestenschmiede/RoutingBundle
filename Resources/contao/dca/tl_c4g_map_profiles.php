@@ -9,8 +9,8 @@
  * @copyright Küstenschmiede GmbH Software & Design 2011 - 2018
  * @link      https://www.kuestenschmiede.de
  */
-//$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['config']['onload_callback'][] = ['tl_c4g_map_profiles_router','updateDCA'];
 $callbackClass = "con4gis\RoutingBundle\Classes\Callbacks\TlC4gMapProfiles";
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['config']['onload_callback'][] = [$callbackClass,'updateDCA'];
 
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['__selector__'][] = 'router';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace('geosearch;','geosearch;{routing_legend:hide},router;', $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
