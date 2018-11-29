@@ -10,6 +10,13 @@
  * @link      https://www.kuestenschmiede.de
  */
 
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_api_selection'] = array('Auswahl der API-Version','Alte API funktioniert nur mit eingenem ORSM-Server');
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_from_locstyle'] = array('Location-Stil für Start-Location', 'Location-Stil für Start-Location');
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_to_locstyle'] = array('Location-Stil für Ziel-Location', 'Location-Stil für Ziel-Location');
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_point_locstyle'] = array('Location-Stil für Unterwegs-Hinweise', 'Location-Stil für Unterwegs-Hinweise');
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_interim_locstyle'] = array('Location-Stil für Zwischenziele', 'Location-Stil für Zwischenziele');
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_alternative'] = array('Alternativroute','Sollen Alternativrouten dargestellt werden?');
+
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayers'] =            ['Layer für Route', 'Geben Sie hier die Layer an, die an der Route durchsucht werden sollen (Overpass, Table).'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourArea'] =           ['Minimaler Radius Gebietssuche', ''];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerHeadline'] =          ['Überschrift Router', 'Geben Sie eine Überschrift für den Router an.'];
@@ -48,6 +55,10 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_modes']['route'] =
 /**
  * References
  */
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x)';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['1'] = 'OpenSourceRroutingMachine (API 5.x)';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['2'] = 'OpenRouteService';
+
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['0'] = 'Auto';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['1'] = 'Lastwagen';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['2'] = 'Fahrrad';
