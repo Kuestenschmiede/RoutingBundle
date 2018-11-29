@@ -21,7 +21,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'default'                 => '',
         'inputType'               => 'checkbox',
-        'eval'                    => ['tl_class'=>'clr'],
+        'eval'                    => ['tl_class'=>'clr','submitOnChange' => true],
         'sql'                     => "char(1) NOT NULL default ''"
     ],
 
@@ -72,7 +72,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'clr w50'],
+        'eval'                    => ['tl_class'=>'w50'],
         'wizard' => [
             ['tl_c4g_map_profiles', 'editLocationStyle']
         ],
@@ -118,7 +118,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'select',
         'options'                 => ['0','1','2','3','4','5','6','8','9','10'],
         'reference'               => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles'],
-        'eval'                    => ['mandatory'=>false, 'multiple'=>true,'chosen'=>true],
+        'eval'                    => ['mandatory'=>false, 'multiple'=>true,'chosen'=>true, 'tl_class' => 'clr m12'],
         'sql'                     => "blob NULL"
     ],
     'minDetourArea' => [

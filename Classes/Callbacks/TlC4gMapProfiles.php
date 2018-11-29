@@ -103,6 +103,7 @@ class TlC4gMapProfiles
         if (!$dc->id) {
             return;
         }
+
         $objProfile = $this->db->prepare("SELECT * FROM tl_c4g_map_profiles WHERE id=?")
             ->limit(1)
             ->execute($dc->id);
