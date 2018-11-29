@@ -10,6 +10,8 @@
  * @link      https://www.kuestenschmiede.de
  */
 //$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['config']['onload_callback'][] = ['tl_c4g_map_profiles_router','updateDCA'];
+$callbackClass = "con4gis\RoutingBundle\Classes\Callbacks\TlC4gMapProfiles";
+
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['__selector__'][] = 'router';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace('geosearch;','geosearch,router;', $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'routerHeadline,router_api_selection,router_api_key,router_viaroute_url,router_attribution,router_alternative,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle,enableOverPoints,enableTargetSwitch,priorityFeatures,priorityLocstyle,,routeStartButton,showFeatures,showInstructions,initialMode;';
@@ -69,7 +71,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_from_locstyle'],
         'exclude'                 => true,
         'inputType'               => 'select',
-        'options_callback'        => ['tl_c4g_map_profiles_router','getLocStyles'],
+        'options_callback'        => [$callbackClass,'getLocStyles'],
         'eval'                    => ['tl_class'=>'clr w50'],
         'wizard' => [
             ['tl_c4g_map_profiles', 'editLocationStyle']
@@ -80,7 +82,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_to_locstyle'],
         'exclude'                 => true,
         'inputType'               => 'select',
-        'options_callback'        => ['tl_c4g_map_profiles_router','getLocStyles'],
+        'options_callback'        => [$callbackClass,'getLocStyles'],
         'eval'                    => ['tl_class'=>'w50'],
         'wizard' => [
             ['tl_c4g_map_profiles', 'editLocationStyle']
@@ -91,7 +93,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_point_locstyle'],
         'exclude'                 => true,
         'inputType'               => 'select',
-        'options_callback'        => ['tl_c4g_map_profiles_router','getLocStyles'],
+        'options_callback'        => [$callbackClass,'getLocStyles'],
         'eval'                    => ['tl_class'=>'w50'],
         'wizard' => [
             ['tl_c4g_map_profiles', 'editLocationStyle']
@@ -102,7 +104,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_interim_locstyle'],
         'exclude'                 => true,
         'inputType'               => 'select',
-        'options_callback'        => ['tl_c4g_map_profiles_router','getLocStyles'],
+        'options_callback'        => [$callbackClass,'getLocStyles'],
         'eval'                    => ['tl_class'=>'w50'],
         'wizard' => [
             ['tl_c4g_map_profiles', 'editLocationStyle']
@@ -141,7 +143,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'multiColumnWizard',
         'eval'                    => [
-            'columnsCallback'        => ['tl_c4g_map_profiles_router','getRouterLayer']
+            'columnsCallback'        => [$callbackClass,'getRouterLayer']
         ],
         'sql'                     => 'blob NULL'
     ],
@@ -166,7 +168,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['clickLocstyle'],
         'exclude'                 => true,
         'inputType'               => 'select',
-        'options_callback'        => ['tl_c4g_map_profiles_router','getLocStyles'],
+        'options_callback'        => [$callbackClass,'getLocStyles'],
         'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
@@ -181,7 +183,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['areaCenterLocstyle'],
         'exclude'                 => true,
         'inputType'               => 'select',
-        'options_callback'        => ['tl_c4g_map_profiles_router','getLocStyles'],
+        'options_callback'        => [$callbackClass,'getLocStyles'],
         'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
@@ -219,7 +221,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['priorityLocstyle'],
         'exclude'                 => true,
         'inputType'               => 'select',
-        'options_callback'        => ['tl_c4g_map_profiles_router','getLocStyles'],
+        'options_callback'        => [$callbackClass,'getLocStyles'],
         'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
@@ -262,92 +264,3 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     ]
 
 ],$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']);
-
-class tl_c4g_map_profiles_router extends Backend
-{
-    // TODO im zweifel via saveCallback noch prüfen ob alles notwendige gesetzt ist
-    public function getRouterLayer($multiColumnWizard)
-    {
-        $arrColumnLayers = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['layers'],
-            'inputType' => 'select'
-        ];
-        $arrLayers = $this->Database->prepare('SELECT * FROM tl_c4g_maps WHERE published=1')
-            ->execute()->fetchAllAssoc();
-        $arrOptions =[];
-        foreach ($arrLayers as $arrLayer){
-            $arrOptions[$arrLayer['id']] = $arrLayer['name'];
-        }
-        $arrColumnLayers['options'] = $arrOptions;
-        $arrColumnKey = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
-        ];
-        $arrColumnValue = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
-        ];
-        $arrColumnLabels = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
-        ];
-        $arrColumnMapLabels = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['mapLabel'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
-        ];
-        $return = [
-            'layers'    => $arrColumnLayers,
-            'key'       => $arrColumnKey,
-            'value'     => $arrColumnValue,
-            'label'     => $arrColumnLabels,
-            'mapLabel'  => $arrColumnMapLabels
-        ];
-        return $return;
-    }
-
-    /**
-     * Return all Location Styles for current Maps Profile as array
-     * @param object
-     * @return array
-     */
-    public function getLocStyles(DataContainer $dc)
-    {
-        $profile = $this->Database->prepare("SELECT locstyles FROM tl_c4g_map_profiles WHERE id=?")->execute($dc->activeRecord->profile);
-        $ids = deserialize($profile->locstyles,true);
-        if (count($ids)>0) {
-            $locStyles = $this->Database->prepare("SELECT id,name FROM tl_c4g_map_locstyles WHERE id IN (".implode(',',$ids).") ORDER BY name")->execute();
-        } else {
-            $locStyles = $this->Database->prepare("SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name")->execute();
-        }
-        while ($locStyles->next()) {
-            $return[$locStyles->id] = $locStyles->name;
-        }
-        return $return;
-    }
-    public function updateDCA(DataContainer $dc){
-        if (!$dc->id) {
-            return;
-        }
-        $objProfile = $this->Database->prepare("SELECT zoom_panel, geosearch_engine, be_optimize_checkboxes_limit, router_api_selection FROM tl_c4g_map_profiles WHERE id=?")
-            ->limit(1)
-            ->execute($dc->id);
-        if($objProfile->router ){
-            if($objProfile->router_api_selection == 2){
-                $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] =
-                    str_replace('router_api_selection,','router_api_selection,router_api_key,',
-                        $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router']);
-                $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] =
-                    str_replace('router_interim_locstyle','router_interim_locstyle,router_profiles',
-                        $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router']);
-            }
-        }
-    }
-}
