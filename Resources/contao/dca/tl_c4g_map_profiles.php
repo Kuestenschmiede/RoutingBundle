@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['config']['onload_callback'][] = [$cal
 
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['__selector__'][] = 'router';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace('geosearch;','geosearch;{routing_legend:hide},router;', $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
-$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'routerHeadline,router_api_selection,router_viaroute_url,router_attribution,router_alternative,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle,enableOverPoints,enableTargetSwitch,priorityFeatures,priorityLocstyle,routeStartButton,showFeatures,showInstructions,initialMode;';
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,routerHeadline,router_attribution,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,showFeatures,initialMode,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle;';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'router' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'],
@@ -72,10 +72,8 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'w50'],
-        'wizard' => [
-            ['tl_c4g_map_profiles', 'editLocationStyle']
-        ],
+        'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true],
+        'wizard'                  => [['tl_c4g_map_profiles', 'editLocationStyle']],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
     'router_to_locstyle' => [
@@ -83,10 +81,8 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'w50'],
-        'wizard' => [
-            ['tl_c4g_map_profiles', 'editLocationStyle']
-        ],
+        'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true],
+        'wizard'                  => [['tl_c4g_map_profiles', 'editLocationStyle']],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
     'router_point_locstyle' => [
@@ -94,10 +90,8 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'w50'],
-        'wizard' => [
-            ['tl_c4g_map_profiles', 'editLocationStyle']
-        ],
+        'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true],
+        'wizard'                  => [['tl_c4g_map_profiles', 'editLocationStyle']],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
     'router_interim_locstyle' => [
@@ -105,10 +99,8 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'w50'],
-        'wizard' => [
-            ['tl_c4g_map_profiles', 'editLocationStyle']
-        ],
+        'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true],
+        'wizard'                  => [['tl_c4g_map_profiles', 'editLocationStyle']],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
     'router_profiles' => [
@@ -143,7 +135,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'multiColumnWizard',
         'eval'                    => [
-            'columnsCallback'        => [$callbackClass,'getRouterLayer']
+            'columnsCallback'     => [$callbackClass,'getRouterLayer']
         ],
         'sql'                     => 'blob NULL'
     ],
@@ -169,7 +161,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
+        'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
     'openRouter' => [
@@ -184,7 +176,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
+        'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
     'enableOverPoints' => [
@@ -222,7 +214,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
+        'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ],
     'closeAfterSearch' => [
