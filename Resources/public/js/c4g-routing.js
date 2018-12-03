@@ -2885,18 +2885,20 @@ window.c4gMapsHooks = window.c4gMapsHooks || {};
 window.c4gMapsHooks.mapController_addControls = window.c4gMapsHooks.mapController_addControls || [];
 window.c4gMapsHooks.mapController_addControls.push(function(params){
   let mapController = params.mapController;
-  mapController.map.removeControl(mapController.controls.router);
-  let router = new Router({
-    tipLabel: langRouteConstants.CTRL_ROUTER,
-    target: params.Container,
-    mapController: mapController,
-    defaultOpen: false,
-    direction: "left",
-    name: "router"
-  });
-  if (mapController.data.router_open) {
-    router.open();
+  if(mapController.data.router_enable){
+    mapController.map.removeControl(mapController.controls.router);
+    let router = new Router({
+      tipLabel: langRouteConstants.CTRL_ROUTER,
+      target: params.Container,
+      mapController: mapController,
+      defaultOpen: false,
+      direction: "left",
+      name: "router"
+    });
+    if (mapController.data.router_open) {
+      router.open();
+    }
+    mapController.map.addControl(router);
+    mapController.controls.router = router;
   }
-  mapController.map.addControl(router);
-  mapController.controls.router = router;
 });
