@@ -10,7 +10,7 @@ let langRouteConstants = {};
 
 if (mapData) {
   if (mapData.lang === "de") {
-    langRouteConstants = routingConstantsGerman
+    langRouteConstants = routingConstantsGerman;
   } else if (mapData.lang === "en") {
     langRouteConstants = routingConstantsEnglish;
   } else {
@@ -30,24 +30,20 @@ export class Router extends Sideboard {
    * @param  {[type]}  config         [description]
    */
   constructor(opt_options) {
-    super(opt_options);
-
     // extend options
-    this.options = $.extend({
+    let options = $.extend({
       name: 'router',
       create: true,
       mapController: undefined,
-      headline: langRouteConstants.ROUTER,
+      headline: opt_options.mapController.data.routerHeadline || langRouteConstants.ROUTER,
       direction: 'left'
     }, opt_options);
-
+    super(options);
+    this.options = options;
     if (!this.options.mapController) {
       return false;
     }
     this.layerController = this.options.mapController.proxy.layerController;
-    if (this.options.mapController.data.routerHeadline) {
-      this.options.headline = this.options.mapController.data.routerHeadline;
-    }
     this.index = 0;
     this.linkFragments = {
       mode: "",
@@ -60,7 +56,7 @@ export class Router extends Sideboard {
     };
 
     // call parent constructor
-    Sideboard.call(this, this.options);
+    // Sideboard.call(this, this.options);
   };
 
   init() {
@@ -2992,9 +2988,13 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     tipLabel: langRouteConstants.CTRL_ROUTER,
     target: params.Container,
     mapController: mapController,
-    defaultOpen: mapController.data.router_open || false,
-    direction: "left"
+    defaultOpen: false,
+    direction: "left",
+    name: "router"
   });
+  if (mapController.data.router_open) {
+    router.open();
+  }
   mapController.map.addControl(router);
   mapController.controls.router = router;
 });
