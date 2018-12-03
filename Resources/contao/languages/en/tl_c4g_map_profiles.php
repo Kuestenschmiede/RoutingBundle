@@ -11,7 +11,7 @@
  */
 
 /** Routing und Umkreissuche  */
-$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'] = ['Activate routing (Please check the <a href="https://github.com/DennisOSRM/Project-OSRM/wiki/Api-usage-policy" target="_blank">terms of use</a> for default API!)','Adds an additional button to activate routing functionality.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'] = ['Activate routing','Please activate search tools in addition. Adds an additional button to activate routing functionality. Please check the <a href="https://github.com/DennisOSRM/Project-OSRM/wiki/Api-usage-policy" target="_blank">terms of use</a> for default API!.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_api_selection'] = ['Routing Server Technology','Choose Server Technology'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_api_key'] = ['API-Key', 'Enter your ORS-API-Key. You can generate the key <a href="https://openrouteservice.org/sign-up/" target="_blank">here</a>. Pay attention to the terms of use.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_viaroute_url'] = ['Alternative URL (mandatory for OSRM-API 4)', 'Enter the URL of a ORS or OSRM Server, for example if you want to use your own. By default, either http://router.project-osrm.org/ or https://api.openrouteservice.org/directions is used. Pay attention to the providers\' copyright information.'];
