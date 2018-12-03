@@ -1740,7 +1740,10 @@ export class Router extends Sideboard {
       }
     });
   }
-  
+
+  /**
+   *
+   */
   addAreaInputInteraction() {
     const scope = this;
     
@@ -1764,8 +1767,13 @@ export class Router extends Sideboard {
     scope.updateLinkFragments("mode", "area");
   }
 
+  /**
+   * Creates a list of controls for the routing profiles. Each profile has a corresponding button, that activates the
+   * profile when clicked.
+   */
   createRouterProfileSelect() {
     const self = this;
+    let routeProfile = [];
 
     if (Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
       this.routeProfile = [];
@@ -1922,6 +1930,13 @@ export class Router extends Sideboard {
     }
   }
 
+  /**
+   * Creates a button that determines the current geolocation (via the browsers Geolocation-API).
+   * @param cssName
+   * @param property
+   * @param mode
+   * @returns {HTMLElement}
+   */
   createPositionButton(cssName, property, mode) {
     const scope = this;
     var handleNewPosition = function (pos) {
@@ -1942,6 +1957,14 @@ export class Router extends Sideboard {
     return positionButton;
   }
 
+  /**
+   * Creates a detour slider for the given mode.
+   * @param mode            Slider mode. Either "route" or "area".
+   * @param min             The minimum value for the slider.
+   * @param max             The maximum value for the slider.
+   * @param initialValue    The initial value the slider should show.
+   * @returns {HTMLElement}
+   */
   createDetourSlider(mode, min, max, initialValue) {
     const scope = this;
     let key = "toggleDetour" + utils.capitalizeFirstLetter(mode);
@@ -1985,6 +2008,11 @@ export class Router extends Sideboard {
     return toggleDetourWrapper;
   }
 
+  /**
+   * Creates the user interface for the router view.
+   * It contains the various input controls and the result containers for the instructions and features.
+   * @returns {boolean|*}
+   */
   addRouterInterface() {
     let self,
       routerView,
@@ -1996,7 +2024,6 @@ export class Router extends Sideboard {
       areaContentElement,
       areaViewContentWrapper,
       print,
-      routeProfile = [],
       routerFromLabel,
       routerOverLabel,
       routerToLabel,
@@ -2325,6 +2352,11 @@ export class Router extends Sideboard {
 
   }
 
+  /**
+   * Creates the user interface for the area view.
+   * It contains the various input controls and the result containers for the instructions and features.
+   * @returns {boolean|*}
+   */
   addAreaInterface() {
     let self,
       areaView,
@@ -2502,6 +2534,11 @@ export class Router extends Sideboard {
     return areaView;
   }
 
+  /**
+   * Creates an interaction for routing instructions. When hovering the instructions in the portside container, the
+   * location of the instruction is highlighted on the route.
+   * @param routerInstruction
+   */
   adjustInstructionMapInteraction(routerInstruction) {
     var self = this,
       fnItemClick,
@@ -2588,6 +2625,10 @@ export class Router extends Sideboard {
     });
   }
 
+  /**
+   * Clears an input field.
+   * @param $input
+   */
   clearInput($input) {
 
     $input.val('');
@@ -2602,6 +2643,11 @@ export class Router extends Sideboard {
     this.update();
   }
 
+  /**
+   * Removes an over point from the route.
+   * @param $input
+   * @param index
+   */
   clearOver($input, index) {
     if (this.overValue) {
       delete this.overValue[index];
@@ -2612,6 +2658,11 @@ export class Router extends Sideboard {
     this.update();
   }
 
+  /**
+   * Converts a given coordinate into the corresponding location.
+   * @param $input    The input field in which the result location should be stored.
+   * @param value     The property that contains the coordinates.
+   */
   performReverseSearch($input, value) {
 
     var self = this,
@@ -2673,6 +2724,13 @@ export class Router extends Sideboard {
 
   }
 
+  /**
+   * Searches the geo-coordinates for a given location.
+   * @param $input        The input field containing the location.
+   * @param value         The property in which the resulting coordinate should be stored.
+   * @param opt_callback  Optional callback. Is executed after successful search.
+   * @returns {string}
+   */
   performSearch($input, value, opt_callback) {
 
     var map,
@@ -2764,9 +2822,12 @@ export class Router extends Sideboard {
 
   }
 
+  /**
+   * Converts a distance in meters to a more readable format.
+   * @param distanceInMeters  The distance to convert.
+   * @returns {string}
+   */
   toHumanDistance(distanceInMeters) {
-
-    // copied from old sources
 
     var distance,
       humanDistance;
@@ -2787,9 +2848,12 @@ export class Router extends Sideboard {
     return humanDistance;
   }
 
+  /**
+   * Converts a time in seconds to a more readable format.
+   * @param timeInSeconds     The time to convert.
+   * @returns {string}
+   */
   toHumanTime(timeInSeconds) {
-
-    // copied from old sources
 
     var seconds,
       minutes,
@@ -2815,6 +2879,7 @@ export class Router extends Sideboard {
   }
 }
 
+// hook to make the mapController load the router at the end of its constructor
 window.c4gMapsHooks = window.c4gMapsHooks || {};
 window.c4gMapsHooks.mapController_addControls = window.c4gMapsHooks.mapController_addControls || [];
 window.c4gMapsHooks.mapController_addControls.push(function(params){
