@@ -225,12 +225,12 @@ export class Router extends Sideboard {
 
     this.options.mapController.map.addLayer(this.routerLayerGroup);
     if (mapData.routerLayers) {
-      this.viewArea = this.addUserInterface('area');
+      this.viewArea = this.addAreaInterface();
       if (this.options.mapController.data.initialMode === "area") {
         this.viewArea.activate();
       }
     }
-    this.viewRouter = this.addUserInterface('router');
+    this.viewRouter = this.addRouterInterface();
     if (this.options.mapController.data.initialMode === "route" || !this.viewArea) {
       this.viewRouter.activate();
     }
@@ -1740,9 +1740,252 @@ export class Router extends Sideboard {
       }
     });
   }
+  
+  addAreaInputInteraction() {
+    const scope = this;
+    
+    scope.fnMapAreaInteraction = function (evt) {
+      if ($(scope.areaFromInput).val() === "") {
+        scope.performReverseSearch($(scope.areaFromInput), ol.proj.toLonLat(evt.coordinate));
+        scope.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
+        let point = $.extend(true, {}, scope.areaValue);
+        point.transform('EPSG:4326', 'EPSG:3857');
+        let feature = new ol.Feature({geometry: point});
+        let locstyleId = scope.options.mapController.data.areaCenterLocstyle;
+        feature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+        scope.areaSource.clear();
+        scope.mapSelectInteraction.getFeatures().clear();
+        scope.areaSource.addFeature(feature);
+        scope.updateLinkFragments("addressArea");
+        scope.performArea(scope.areaValue);
+      }
+    };
+    scope.options.mapController.map.on('click', scope.fnMapAreaInteraction);
+    scope.updateLinkFragments("mode", "area");
+  }
 
-  addUserInterface(type) {
+  createRouterProfileSelect() {
+    const self = this;
 
+    if (Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
+      this.routeProfile = [];
+      this.routeProfile.active = Object.keys(this.options.mapController.data.router_profiles)[0];
+    }
+    else if (Object.keys(this.options.mapController.data.router_profiles).length > 1) { //check for multiple profiles and add profile-changer
+      this.routeProfile = document.createElement('div');
+      $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
+      if (this.options.mapController.data.router_profiles['0']) { //add button for profile driving-car
+        routeProfile.car = document.createElement('button');
+        $(routeProfile.car).addClass(routingConstants.ROUTER_PROFILE_CAR);
+        this.$routeProfileCar = $(routeProfile.car);
+        this.routeProfile.appendChild(routeProfile.car);
+        this.$routeProfileCar.click(function (event) {
+          self.clearSiblings(this);
+          self.routeProfile.active = '0';
+          self.recalculateRoute();
+        });
+      }
+
+      if (this.options.mapController.data.router_profiles['1']) { //add button for profile driving-hgv
+        routeProfile.hgv = document.createElement('button');
+        $(routeProfile.hgv).addClass(routingConstants.ROUTER_PROFILE_HGV);
+        this.routeProfile.appendChild(routeProfile.hgv);
+        this.$routeProfileHgv = $(routeProfile.hgv);
+
+        this.$routeProfileHgv.click(function (event) {
+          self.clearSiblings(this);
+          self.routeProfile.active = '1';
+          self.recalculateRoute();
+        });
+      }
+      if (this.options.mapController.data.router_profiles['2']
+        || this.options.mapController.data.router_profiles['3']
+        || this.options.mapController.data.router_profiles['4']
+        || this.options.mapController.data.router_profiles['5']
+        || this.options.mapController.data.router_profiles['6']
+        || this.options.mapController.data.router_profiles['7']) { //add button and dropdown for cycling profiles
+        let spanBike = document.createElement('span');
+        routeProfile.bike = document.createElement('button');
+        routeProfile.bike.list = document.createElement('ul');
+        this.$routeProfileBike = $(routeProfile.bike);
+        for (let i = 2; i < 8; i++) { //iterate over all possible cycling profiles
+          if (this.options.mapController.data.router_profiles[i]) {
+            let child = document.createElement('li');
+            child.innerHTML = this.options.mapController.data.router_profiles[i];
+            $(child).data('profile', [i]);
+            $(child).click(function (event) {
+              self.childClick($(child));
+            });
+            if (!this.$routeProfileBike.data('profile')) { //add existing default profile to button
+              this.$routeProfileBike.data('profile', i);
+              $(child).addClass(cssConstants.ACTIVE);
+            }
+            routeProfile.bike.list.appendChild(child);
+          }
+        }
+
+        $(routeProfile.bike).addClass(routingConstants.ROUTER_PROFILE_BIKE);
+
+        if (routeProfile.bike.list.children.length == 1) { //ignore dropdown list, if only one cycling profile is enabled
+          this.routeProfile.appendChild(routeProfile.bike);
+          this.$routeProfileBike.click(function (event) {
+            self.clearSiblings(this);
+            self.routeProfile.active = $(this).data('profile');
+            self.recalculateRoute();
+          });
+        }
+        else { //append with dropdown, if multiple cycling profiles are enabled
+          spanBike.appendChild(routeProfile.bike);
+          spanBike.appendChild(routeProfile.bike.list);
+          this.routeProfile.appendChild(spanBike);
+          this.$routeProfileBike.click(function (event) {
+            self.clearSiblings($(this).parent());
+            self.routeProfile.active = $(this).data('profile');
+            self.recalculateRoute();
+          });
+        }
+      }
+      if (this.options.mapController.data.router_profiles['8']
+        || this.options.mapController.data.router_profiles['9']) { //add button and dropdown for walking profiles
+        let spanFoot = document.createElement('span');
+        routeProfile.foot = document.createElement('button');
+        routeProfile.foot.list = document.createElement('ul');
+        this.$routeProfileFoot = $(routeProfile.foot);
+        for (let i = 8; i < 10; i++) { //iterate over possible profiles
+          if (this.options.mapController.data.router_profiles[i]) {
+            let child = document.createElement('li');
+            child.innerHTML = this.options.mapController.data.router_profiles[i];
+            $(child).data('profile', [i]);
+            $(child).click(function (event) {
+              self.childClick($(this));
+            });
+            if (!this.$routeProfileFoot.data('profile')) { //add existing default profile to button
+              this.$routeProfileFoot.data('profile', i);
+              $(child).addClass(cssConstants.ACTIVE);
+            }
+            routeProfile.foot.list.appendChild(child);
+          }
+        }
+
+        $(routeProfile.foot).addClass(routingConstants.ROUTER_PROFILE_FOOT);
+
+        if (routeProfile.foot.list.children.length == 1) { //ignore dropdown list, if only one walking profile is enabled
+          this.routeProfile.appendChild(routeProfile.foot);
+          this.$routeProfileFoot.click(function (event) {
+            self.clearSiblings(this);
+            self.routeProfile.active = $(this).data('profile');
+            self.recalculateRoute();
+          });
+        }
+        else { //append with dropdown, if multiple walking profiles are enabled
+          spanFoot.appendChild(routeProfile.foot);
+          spanFoot.appendChild(routeProfile.foot.list);
+          this.routeProfile.appendChild(spanFoot);
+          this.$routeProfileFoot.click(function (event) {
+            self.clearSiblings($(this).parent());
+            self.routeProfile.active = $(this).data('profile');
+            self.recalculateRoute();
+          });
+        }
+      }
+      if (this.options.mapController.data.router_profiles['10']) { //add button for profile wheelchair
+        routeProfile.wheelchair = document.createElement('button');
+        $(routeProfile.wheelchair).addClass(routingConstants.ROUTER_PROFILE_WHEELCHAIR);
+        this.$routeProfileWheelchair = $(routeProfile.wheelchair);
+        this.routeProfile.appendChild(routeProfile.wheelchair);
+        this.$routeProfileWheelchair.click(function (event) {
+          self.clearSiblings(this);
+          self.routeProfile.active = '10';
+          self.recalculateRoute();
+        });
+      }
+      this.childClick = function ($element) { //handle the click inside the profile dropdown
+        self.routeProfile.active = $element.data('profile'); //activate selected profile
+        self.clearSiblings($element);
+        self.recalculateRoute(); //update the route
+      };
+      this.clearSiblings = function (element) { //function to adjust css-classes after changing profile
+        let siblings = $(element).parent().children();
+        for (let i = 0; i < siblings.length; i++) {
+          $(siblings[i]).removeClass(cssConstants.ACTIVE);
+        }
+        $(element).addClass(cssConstants.ACTIVE);
+      };
+      for (let profile in this.options.mapController.data.router_profiles) { //set default value for initial routing
+        if (this.options.mapController.data.router_profiles.hasOwnProperty(profile)) {
+          this.routeProfile.active = profile;
+          break;
+        }
+      }
+    } else {
+      console.warn('No Router Profiles enabled')
+    }
+  }
+
+  createPositionButton(cssName, property, mode) {
+    const scope = this;
+    var handleNewPosition = function (pos) {
+      scope.handlePosition(pos, cssName, property, mode);
+    };
+
+    let positionButton = document.createElement("button");
+    positionButton.className = routingConstants.ROUTE_POSITION;
+    positionButton.title = langRouteConstants.ROUTE_POSITION;
+    positionButton.innerHTML = "";
+    $(positionButton).on("click", function (event) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(handleNewPosition);
+      } else {
+        console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
+      }
+    });
+    return positionButton;
+  }
+
+  createDetourSlider(mode, min, max, initialValue) {
+    const scope = this;
+    let key = "toggleDetour" + utils.capitalizeFirstLetter(mode);
+    scope[key] = document.createElement('input');
+    scope[key].className = routingConstants.ROUTE_TOGGLE;
+    scope[key].setAttribute('type', 'range');
+    scope[key].setAttribute('min', min);
+    scope[key].setAttribute('max', max);
+    scope[key].setAttribute('value', initialValue);
+    scope[key].setAttribute('step', 0.5);
+
+    let toggleDetourWrapper = document.createElement('div');
+    let output = document.createElement('output');
+    output.className = routingConstants.OUTPUT_DETOUR;
+    let p = document.createElement('p');
+    p.innerHTML = langRouteConstants.ROUTE_DETOUR;
+    output.innerHTML = 100;
+    toggleDetourWrapper.appendChild(p);
+    toggleDetourWrapper.appendChild(scope[key]);
+    toggleDetourWrapper.appendChild(output);
+    $(scope[key]).on('input', function () {
+      let control = $(this);
+      let range = control.attr('max') - control.attr('min');
+      let pos = ((control.val() - control.attr('min')) / range) * 100;
+      let posOffset = Math.round(50 * pos / 100) - (25);
+      let output = control.next('output');
+      output
+        .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
+        .text(control.val() + " km");
+      scope.updateLinkFragments("detour", control.val());
+    });
+    $(scope[key]).on('change', function () {
+      if (mode === "route") {
+        scope.recalculateRoute();
+      } else {
+        // TODO check
+        scope.performArea(scope.fromValue);
+      }
+    });
+    $(scope[key]).trigger('input');
+    return toggleDetourWrapper;
+  }
+
+  addRouterInterface() {
     let self,
       routerView,
       routerContentElement,
@@ -1765,7 +2008,6 @@ export class Router extends Sideboard {
       areaFromClear,
       buttonOver;
 
-    if (type === 'router') {
       self = this;
       routerContentElement = document.createElement('div');
       routerViewInputWrapper = document.createElement('div');
@@ -1774,7 +2016,7 @@ export class Router extends Sideboard {
       routerContentElement.appendChild(routerViewContentWrapper);
       self.routerViewContentWrapper = routerViewContentWrapper;
 
-      // create feature / instruction
+      // create feature / instruction wrappers
       if (this.options.mapController.data.showFeatures && this.options.mapController.data.showInstructions) {
         let buttonFeatures = document.createElement("button");
         buttonFeatures.innerHTML = "Features";
@@ -1815,229 +2057,24 @@ export class Router extends Sideboard {
       routerFromClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
       routerFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
       this.$routerFromClear = $(routerFromClear);
-
-      var handleRouteFromPosition = function (pos) {
-        self.handlePosition(pos, ".c4g-router-input-from", "fromValue", "router");
-      };
-
-      let routerFromPosition = document.createElement("button");
-      routerFromPosition.className = routingConstants.ROUTE_POSITION;
-      routerFromPosition.title = "Position ermitteln";
-      routerFromPosition.innerHTML = "";
-      $(routerFromPosition).on("click", function (event) {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(handleRouteFromPosition);
-        } else {
-          console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
-        }
+      this.$routerFromClear.click(function (event) {
+        event.preventDefault();
+        self.clearInput(self.$fromInput);
       });
 
-      var handleRouteToPosition = function (pos) {
-        self.handlePosition(pos, ".c4g-router-input-to", "toValue", "router");
-      };
-
-      let routerToPosition = document.createElement("button");
-      routerToPosition.className = routingConstants.ROUTE_POSITION;
-      routerToPosition.title = langRouteConstants.ROUTE_POSITION;
-      routerToPosition.innerHTML = "";
-      $(routerToPosition).on("click", function (event) {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(handleRouteToPosition);
-        } else {
-          console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
-        }
-      });
+      let routerFromPosition = this.createPositionButton(".c4g-router-input-from", "fromValue", "router");
 
       this.routerButtonBar = document.createElement('div');
       this.routerButtonBar.className = routingConstants.ROUTER_BUTTONBAR;
 
+      // over points controls
       if (this.options.mapController.data.enableOverPoints) {
         buttonOver = document.createElement('button');
         buttonOver.className = routingConstants.ROUTER_OVER;
         buttonOver.title = langRouteConstants.ROUTER_OVER;
         this.$buttonOver = $(buttonOver);
         this.routerButtonBar.appendChild(buttonOver);
-      }
 
-      if (this.options.mapController.data.enableTargetSwitch) {
-        switchFromTo = document.createElement('button');
-        switchFromTo.className = routingConstants.ROUTER_SWITCH;
-        switchFromTo.title = langRouteConstants.ROUTER_SWITCH;
-        this.$switchFromTo = $(switchFromTo);
-        this.routerButtonBar.appendChild(switchFromTo);
-      }
-
-      if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
-        if (Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
-          this.routeProfile = [];
-          this.routeProfile.active = Object.keys(this.options.mapController.data.router_profiles)[0];
-        }
-        else if (Object.keys(this.options.mapController.data.router_profiles).length > 1) { //check for multiple profiles and add profile-changer
-          this.routeProfile = document.createElement('div');
-          $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
-          if (this.options.mapController.data.router_profiles['0']) { //add button for profile driving-car
-            routeProfile.car = document.createElement('button');
-            $(routeProfile.car).addClass(routingConstants.ROUTER_PROFILE_CAR);
-            this.$routeProfileCar = $(routeProfile.car);
-            this.routeProfile.appendChild(routeProfile.car);
-            this.$routeProfileCar.click(function (event) {
-              self.clearSiblings(this);
-              self.routeProfile.active = '0';
-              self.recalculateRoute();
-            });
-          }
-
-          if (this.options.mapController.data.router_profiles['1']) { //add button for profile driving-hgv
-            routeProfile.hgv = document.createElement('button');
-            $(routeProfile.hgv).addClass(routingConstants.ROUTER_PROFILE_HGV);
-            this.routeProfile.appendChild(routeProfile.hgv);
-            this.$routeProfileHgv = $(routeProfile.hgv);
-
-            this.$routeProfileHgv.click(function (event) {
-              self.clearSiblings(this);
-              self.routeProfile.active = '1';
-              self.recalculateRoute();
-            });
-          }
-          if (this.options.mapController.data.router_profiles['2']
-            || this.options.mapController.data.router_profiles['3']
-            || this.options.mapController.data.router_profiles['4']
-            || this.options.mapController.data.router_profiles['5']
-            || this.options.mapController.data.router_profiles['6']
-            || this.options.mapController.data.router_profiles['7']) { //add button and dropdown for cycling profiles
-            let spanBike = document.createElement('span');
-            routeProfile.bike = document.createElement('button');
-            routeProfile.bike.list = document.createElement('ul');
-            this.$routeProfileBike = $(routeProfile.bike);
-            for (let i = 2; i < 8; i++) { //iterate over all possible cycling profiles
-              if (this.options.mapController.data.router_profiles[i]) {
-                let child = document.createElement('li');
-                child.innerHTML = this.options.mapController.data.router_profiles[i];
-                $(child).data('profile', [i]);
-                $(child).click(function (event) {
-                  self.childClick($(child));
-                });
-                if (!this.$routeProfileBike.data('profile')) { //add existing default profile to button
-                  this.$routeProfileBike.data('profile', i);
-                  $(child).addClass(cssConstants.ACTIVE);
-                }
-                routeProfile.bike.list.appendChild(child);
-              }
-            }
-
-            $(routeProfile.bike).addClass(routingConstants.ROUTER_PROFILE_BIKE);
-
-            if (routeProfile.bike.list.children.length == 1) { //ignore dropdown list, if only one cycling profile is enabled
-              this.routeProfile.appendChild(routeProfile.bike);
-              this.$routeProfileBike.click(function (event) {
-                self.clearSiblings(this);
-                self.routeProfile.active = $(this).data('profile');
-                self.recalculateRoute();
-              });
-            }
-            else { //append with dropdown, if multiple cycling profiles are enabled
-              spanBike.appendChild(routeProfile.bike);
-              spanBike.appendChild(routeProfile.bike.list);
-              this.routeProfile.appendChild(spanBike);
-              this.$routeProfileBike.click(function (event) {
-                self.clearSiblings($(this).parent());
-                self.routeProfile.active = $(this).data('profile');
-                self.recalculateRoute();
-              });
-            }
-          }
-          if (this.options.mapController.data.router_profiles['8']
-            || this.options.mapController.data.router_profiles['9']) { //add button and dropdown for walking profiles
-            let spanFoot = document.createElement('span');
-            routeProfile.foot = document.createElement('button');
-            routeProfile.foot.list = document.createElement('ul');
-            this.$routeProfileFoot = $(routeProfile.foot);
-            for (let i = 8; i < 10; i++) { //iterate over possible profiles
-              if (this.options.mapController.data.router_profiles[i]) {
-                let child = document.createElement('li');
-                child.innerHTML = this.options.mapController.data.router_profiles[i];
-                $(child).data('profile', [i]);
-                $(child).click(function (event) {
-                  self.childClick($(this));
-                });
-                if (!this.$routeProfileFoot.data('profile')) { //add existing default profile to button
-                  this.$routeProfileFoot.data('profile', i);
-                  $(child).addClass(cssConstants.ACTIVE);
-                }
-                routeProfile.foot.list.appendChild(child);
-              }
-            }
-
-            $(routeProfile.foot).addClass(routingConstants.ROUTER_PROFILE_FOOT);
-
-            if (routeProfile.foot.list.children.length == 1) { //ignore dropdown list, if only one walking profile is enabled
-              this.routeProfile.appendChild(routeProfile.foot);
-              this.$routeProfileFoot.click(function (event) {
-                self.clearSiblings(this);
-                self.routeProfile.active = $(this).data('profile');
-                self.recalculateRoute();
-              });
-            }
-            else { //append with dropdown, if multiple walking profiles are enabled
-              spanFoot.appendChild(routeProfile.foot);
-              spanFoot.appendChild(routeProfile.foot.list);
-              this.routeProfile.appendChild(spanFoot);
-              this.$routeProfileFoot.click(function (event) {
-                self.clearSiblings($(this).parent());
-                self.routeProfile.active = $(this).data('profile');
-                self.recalculateRoute();
-              });
-            }
-          }
-          if (this.options.mapController.data.router_profiles['10']) { //add button for profile wheelchair
-            routeProfile.wheelchair = document.createElement('button');
-            $(routeProfile.wheelchair).addClass(routingConstants.ROUTER_PROFILE_WHEELCHAIR);
-            this.$routeProfileWheelchair = $(routeProfile.wheelchair);
-            this.routeProfile.appendChild(routeProfile.wheelchair);
-            this.$routeProfileWheelchair.click(function (event) {
-              self.clearSiblings(this);
-              self.routeProfile.active = '10';
-              self.recalculateRoute();
-            });
-          }
-          this.childClick = function ($element) { //handle the click inside the profile dropdown
-            self.routeProfile.active = $element.data('profile'); //activate selected profile
-            self.clearSiblings($element);
-            self.recalculateRoute(); //update the route
-          };
-          this.clearSiblings = function (element) { //function to adjust css-classes after changing profile
-            let siblings = $(element).parent().children();
-            for (let i = 0; i < siblings.length; i++) {
-              $(siblings[i]).removeClass(cssConstants.ACTIVE);
-            }
-            $(element).addClass(cssConstants.ACTIVE);
-          };
-          for (let profile in this.options.mapController.data.router_profiles) { //set default value for initial routing
-            if (this.options.mapController.data.router_profiles.hasOwnProperty(profile)) {
-              this.routeProfile.active = profile;
-              break;
-            }
-          }
-        }
-        else {
-          console.warn('No Router Profiles enabled')
-        }
-
-      }
-      this.fromInputWrapper.appendChild(routerFromLabel);
-      this.fromInputWrapper.appendChild(routerFromPosition);
-      this.fromInputWrapper.appendChild(this.fromInput);
-      this.fromInputWrapper.appendChild(routerFromClear);
-      if (buttonOver && this.options.mapController.data.router_api_selection == '0') {
-        this.$buttonOver.hide();
-      }
-
-      this.$routerFromClear.click(function (event) {
-        event.preventDefault();
-        self.clearInput(self.$fromInput);
-      });
-
-      if (this.options.mapController.data.enableOverPoints) {
         this.$buttonOver.click(function (event) {
           event.preventDefault();
           self.index++;
@@ -2081,6 +2118,27 @@ export class Router extends Sideboard {
       }
 
       if (this.options.mapController.data.enableTargetSwitch) {
+        switchFromTo = document.createElement('button');
+        switchFromTo.className = routingConstants.ROUTER_SWITCH;
+        switchFromTo.title = langRouteConstants.ROUTER_SWITCH;
+        this.$switchFromTo = $(switchFromTo);
+        this.routerButtonBar.appendChild(switchFromTo);
+      }
+
+      // add profiles selection
+      if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
+        this.createRouterProfileSelect();
+      }
+
+      this.fromInputWrapper.appendChild(routerFromLabel);
+      this.fromInputWrapper.appendChild(routerFromPosition);
+      this.fromInputWrapper.appendChild(this.fromInput);
+      this.fromInputWrapper.appendChild(routerFromClear);
+      if (buttonOver && this.options.mapController.data.router_api_selection == '0') {
+        this.$buttonOver.hide();
+      }
+
+      if (this.options.mapController.data.enableTargetSwitch) {
         this.$switchFromTo.click(function (event) {
           event.preventDefault();
           var switchVarName = document.getElementById("routingFrom").value;
@@ -2102,6 +2160,7 @@ export class Router extends Sideboard {
       if (this.routeProfile && this.routeProfile.children) {
         routerViewInputWrapper.appendChild(this.routeProfile);
       }
+
       /**
        * Begin routerUiFunction
        */
@@ -2161,6 +2220,7 @@ export class Router extends Sideboard {
       /**
        * End routerUiFunction
        */
+
       // create the layer selection elements when layers are loaded
       if (mapData.routerLayers) {
         if (self.options.mapController.proxy.layers_loaded) {
@@ -2172,42 +2232,11 @@ export class Router extends Sideboard {
           window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
           window.c4gMapsHooks.proxy_layer_loaded.push(routerUiFunction);
         }
-
-        self.toggleDetourRoute = document.createElement('input');
-        self.toggleDetourRoute.className = routingConstants.ROUTE_TOGGLE;
-        self.toggleDetourRoute.setAttribute('type', 'range');
-        self.toggleDetourRoute.setAttribute('min', mapData.detourRoute[0]);
-        self.toggleDetourRoute.setAttribute('max', mapData.detourRoute[1]);
-        self.toggleDetourRoute.setAttribute('value', (mapData.detourRoute[0] + mapData.detourRoute[1]) / 2);
-        self.toggleDetourRoute.setAttribute('step', 0.5);
-
-        let toggleDetourWrapper = document.createElement('div');
-        let output = document.createElement('output');
-        output.className = routingConstants.OUTPUT_DETOUR;
-        let p = document.createElement('p');
-        p.innerHTML = langRouteConstants.ROUTE_DETOUR;
-        output.innerHTML = 100;
-        toggleDetourWrapper.appendChild(p);
-        toggleDetourWrapper.appendChild(self.toggleDetourRoute);
-        toggleDetourWrapper.appendChild(output);
-        $(self.toggleDetourRoute).on('input', function () {
-          let control = $(this);
-          let range = control.attr('max') - control.attr('min');
-          let pos = ((control.val() - control.attr('min')) / range) * 100;
-          let posOffset = Math.round(50 * pos / 100) - (25);
-          let output = control.next('output');
-          output
-            .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-            .text(control.val() + " km");
-          self.updateLinkFragments("detour", control.val());
-        });
-        $(self.toggleDetourRoute).on('change', function () {
-          self.recalculateRoute();
-        });
-        $(self.toggleDetourRoute).trigger('input');
+        let toggleDetourWrapper = this.createDetourSlider("route", mapData.detourRoute[0], mapData.detourRoute[1], (mapData.detourRoute[0] + mapData.detourRoute[1]) / 2);
         routerViewInputWrapper.appendChild(toggleDetourWrapper);
       }
 
+      //
       routerViewInputWrapper.appendChild(this.fromInputWrapper);
       this.toInputWrapper = document.createElement('div');
       this.toInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
@@ -2216,6 +2245,8 @@ export class Router extends Sideboard {
       this.toInput.type = "text";
       this.toInput.className = routingConstants.ROUTER_INPUT_TO;
       this.toInput.id = this.toInput.name = "routingTo";
+
+      let routerToPosition = this.createPositionButton(".c4g-router-input-to", "toValue", "router")
 
       routerToLabel = document.createElement('label');
       routerToLabel.setAttribute('for', 'routingTo');
@@ -2244,6 +2275,7 @@ export class Router extends Sideboard {
 
       routerViewInputWrapper.appendChild(this.toInputWrapper);
 
+      // start search button
       if (mapData.routeStartButton) {
         let routeStartButton = document.createElement("button");
         routeStartButton.className = routingConstants.ROUTE_START_BUTTON;
@@ -2290,380 +2322,530 @@ export class Router extends Sideboard {
         deactivateFunction: routerDeactivateFunction
       });
       return routerView;
+
+  }
+
+  addAreaInterface() {
+    let self,
+      areaView,
+      areaViewInputWrapper,
+      areaContentElement,
+      areaViewContentWrapper,
+      print,
+      routeProfile = [],
+      areaFromLabel,
+      areaFromClear;
+
+    self = this;
+    areaContentElement = document.createElement('div');
+    areaViewInputWrapper = document.createElement('div');
+    areaViewContentWrapper = document.createElement('div');
+    areaContentElement.appendChild(areaViewInputWrapper);
+    areaContentElement.appendChild(areaViewContentWrapper);
+    self.areaViewContentWrapper = areaViewContentWrapper;
+
+    this.areaFromInputWrapper = document.createElement('div');
+    this.areaFromInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
+
+    this.areaFromInput = document.createElement("input");
+    this.areaFromInput.type = "text";
+    this.areaFromInput.className = routingConstants.ROUTER_INPUT_FROM;
+    this.areaFromInput.id = this.areaFromInput.name = "areaFrom";
+
+    this.$areaFromInput = $(this.areaFromInput);
+    this.$areaFromInput.on('change', function () {
+      self.performSearch(self.$areaFromInput, "areaValue");
+    });
+    // create area position button
+    let areaPosition = this.createPositionButton(".c4g-router-input-from", "areaValue", "area");
+
+    areaFromLabel = document.createElement('label');
+    areaFromLabel.setAttribute('for', 'areaFrom');
+    areaFromLabel.innerHTML = langRouteConstants.ROUTER_FROM_LABEL;
+
+    areaFromClear = document.createElement('button');
+    areaFromClear.className = routingConstants.ROUTER_INPUT_CLEAR;
+    areaFromClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
+    areaFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
+    this.$areaFromClear = $(areaFromClear);
+
+    // check router profiles
+    if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
+      this.createRouterProfileSelect();
     }
-    else {
-      self = this;
-      areaContentElement = document.createElement('div');
-      areaViewInputWrapper = document.createElement('div');
-      areaViewContentWrapper = document.createElement('div');
-      areaContentElement.appendChild(areaViewInputWrapper);
-      areaContentElement.appendChild(areaViewContentWrapper);
-      self.areaViewContentWrapper = areaViewContentWrapper;
+    this.areaFromInputWrapper.appendChild(areaFromLabel);
+    this.areaFromInputWrapper.appendChild(areaPosition);
+    this.areaFromInputWrapper.appendChild(this.areaFromInput);
+    this.areaFromInputWrapper.appendChild(areaFromClear);
 
-      this.areaFromInputWrapper = document.createElement('div');
-      this.areaFromInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
+    this.$areaFromClear.on("click", function (event) {
+      event.preventDefault();
+      self.clearInput($(self.areaFromInput));
+    });
+    if (this.routeProfile && this.routeProfile.children) {
+      areaViewInputWrapper.appendChild(this.routeProfile);
+    }
 
-      this.areaFromInput = document.createElement("input");
-      this.areaFromInput.type = "text";
-      this.areaFromInput.className = routingConstants.ROUTER_INPUT_FROM;
-      this.areaFromInput.id = this.areaFromInput.name = "areaFrom";
-
-      this.$areaFromInput = $(this.areaFromInput);
-      this.$areaFromInput.on('change', function () {
-        self.performSearch(self.$areaFromInput, "areaValue");
-      });
-
-      var handleAreaPosition = function (pos) {
-        self.handlePosition(pos, ".c4g-router-input-from", "areaValue", "area");
-      };
-
-      let areaPosition = document.createElement("button");
-      areaPosition.className = routingConstants.ROUTE_POSITION;
-      areaPosition.title = langRouteConstants.ROUTE_POSITION;
-      areaPosition.innerHTML = "";
-      $(areaPosition).on("click", function (event) {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(handleAreaPosition);
-        } else {
-          console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
-        }
-      });
-
-      areaFromLabel = document.createElement('label');
-      areaFromLabel.setAttribute('for', 'areaFrom');
-      areaFromLabel.innerHTML = langRouteConstants.ROUTER_FROM_LABEL;
-
-      let areaFromClear = document.createElement('button');
-      areaFromClear.className = routingConstants.ROUTER_INPUT_CLEAR;
-      areaFromClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
-      areaFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
-      this.$areaFromClear = $(areaFromClear);
-      if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
-        if (Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
-          this.routeProfile = [];
-          this.routeProfile.active = Object.keys(this.options.mapController.data.router_profiles)[0];
-        }
-        else if (Object.keys(this.options.mapController.data.router_profiles).length > 1) { //check for multiple profiles and add profile-changer
-          this.routeProfile = document.createElement('div');
-          $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
-          if (this.options.mapController.data.router_profiles['0']) { //add button for profile driving-car
-            routeProfile.car = document.createElement('button');
-            $(routeProfile.car).addClass(routingConstants.ROUTER_PROFILE_CAR);
-            this.$routeProfileCar = $(routeProfile.car);
-            this.routeProfile.appendChild(routeProfile.car);
-            this.$routeProfileCar.click(function (event) {
-              self.clearSiblings(this);
-              self.routeProfile.active = '0';
-              self.recalculateRoute();
-            });
-          }
-
-          if (this.options.mapController.data.router_profiles['1']) { //add button for profile driving-hgv
-            routeProfile.hgv = document.createElement('button');
-            $(routeProfile.hgv).addClass(routingConstants.ROUTER_PROFILE_HGV);
-            this.routeProfile.appendChild(routeProfile.hgv);
-            this.$routeProfileHgv = $(routeProfile.hgv);
-
-            this.$routeProfileHgv.click(function (event) {
-              self.clearSiblings(this);
-              self.routeProfile.active = '1';
-              self.recalculateRoute();
-            });
-          }
-          if (this.options.mapController.data.router_profiles['2']
-            || this.options.mapController.data.router_profiles['3']
-            || this.options.mapController.data.router_profiles['4']
-            || this.options.mapController.data.router_profiles['5']
-            || this.options.mapController.data.router_profiles['6']
-            || this.options.mapController.data.router_profiles['7']) { //add button and dropdown for cycling profiles
-            let spanBike = document.createElement('span');
-            routeProfile.bike = document.createElement('button');
-            routeProfile.bike.list = document.createElement('ul');
-            this.$routeProfileBike = $(routeProfile.bike);
-            for (let i = 2; i < 8; i++) { //iterate over all possible cycling profiles
-              if (this.options.mapController.data.router_profiles[i]) {
-                let child = document.createElement('li');
-                child.innerHTML = this.options.mapController.data.router_profiles[i];
-                $(child).data('profile', [i]);
-                $(child).click(function (event) {
-                  self.childClick($(child));
-                });
-                if (!this.$routeProfileBike.data('profile')) { //add existing default profile to button
-                  this.$routeProfileBike.data('profile', i);
-                  $(child).addClass(cssConstants.ACTIVE);
-                }
-                routeProfile.bike.list.appendChild(child);
-              }
-            }
-
-            $(routeProfile.bike).addClass(routingConstants.ROUTER_PROFILE_BIKE);
-
-            if (routeProfile.bike.list.children.length == 1) { //ignore dropdown list, if only one cycling profile is enabled
-              this.routeProfile.appendChild(routeProfile.bike);
-              this.$routeProfileBike.click(function (event) {
-                self.clearSiblings(this);
-                self.routeProfile.active = $(this).data('profile');
-                self.recalculateRoute();
-              });
-            }
-            else { //append with dropdown, if multiple cycling profiles are enabled
-              spanBike.appendChild(routeProfile.bike);
-              spanBike.appendChild(routeProfile.bike.list);
-              this.routeProfile.appendChild(spanBike);
-              this.$routeProfileBike.click(function (event) {
-                self.clearSiblings($(this).parent());
-                self.routeProfile.active = $(this).data('profile');
-                self.recalculateRoute();
-              });
-            }
-          }
-          if (this.options.mapController.data.router_profiles['8']
-            || this.options.mapController.data.router_profiles['9']) { //add button and dropdown for walking profiles
-            let spanFoot = document.createElement('span');
-            routeProfile.foot = document.createElement('button');
-            routeProfile.foot.list = document.createElement('ul');
-            this.$routeProfileFoot = $(routeProfile.foot);
-            for (let i = 8; i < 10; i++) { //iterate over possible profiles
-              if (this.options.mapController.data.router_profiles[i]) {
-                let child = document.createElement('li');
-                child.innerHTML = this.options.mapController.data.router_profiles[i];
-                $(child).data('profile', [i]);
-                $(child).click(function (event) {
-                  self.childClick($(this));
-                });
-                if (!this.$routeProfileFoot.data('profile')) { //add existing default profile to button
-                  this.$routeProfileFoot.data('profile', i);
-                  $(child).addClass(cssConstants.ACTIVE);
-                }
-                routeProfile.foot.list.appendChild(child);
-              }
-            }
-
-            $(routeProfile.foot).addClass(routingConstants.ROUTER_PROFILE_FOOT);
-
-            if (routeProfile.foot.list.children.length == 1) { //ignore dropdown list, if only one walking profile is enabled
-              this.routeProfile.appendChild(routeProfile.foot);
-              this.$routeProfileFoot.click(function (event) {
-                self.clearSiblings(this);
-                self.routeProfile.active = $(this).data('profile');
-                self.recalculateRoute();
-              });
-            }
-            else { //append with dropdown, if multiple walking profiles are enabled
-              spanFoot.appendChild(routeProfile.foot);
-              spanFoot.appendChild(routeProfile.foot.list);
-              this.routeProfile.appendChild(spanFoot);
-              this.$routeProfileFoot.click(function (event) {
-                self.clearSiblings($(this).parent());
-                self.routeProfile.active = $(this).data('profile');
-                self.recalculateRoute();
-              });
-            }
-          }
-          if (this.options.mapController.data.router_profiles['10']) { //add button for profile wheelchair
-            routeProfile.wheelchair = document.createElement('button');
-            $(routeProfile.wheelchair).addClass(routingConstants.ROUTER_PROFILE_WHEELCHAIR);
-            this.$routeProfileWheelchair = $(routeProfile.wheelchair);
-            this.routeProfile.appendChild(routeProfile.wheelchair);
-            this.$routeProfileWheelchair.click(function (event) {
-              self.clearSiblings(this);
-              self.routeProfile.active = '10';
-              self.recalculateRoute();
-            });
-          }
-          this.childClick = function ($element) { //handle the click inside the profile dropdown
-            self.routeProfile.active = $element.data('profile'); //activate selected profile
-            self.clearSiblings($element);
-            self.recalculateRoute(); //update the route
-          };
-          this.clearSiblings = function (element) { //function to adjust css-classes after changing profile
-            let siblings = $(element).parent().children();
-            for (let i = 0; i < siblings.length; i++) {
-              $(siblings[i]).removeClass(cssConstants.ACTIVE);
-            }
-            $(element).addClass(cssConstants.ACTIVE);
-          };
-          for (let profile in this.options.mapController.data.router_profiles) { //set default value for initial routing
-            if (this.options.mapController.data.router_profiles.hasOwnProperty(profile)) {
-              this.routeProfile.active = profile;
-              break;
-            }
-          }
-        }
-        else {
-          console.warn('No Router Profiles enabled')
-        }
+    /**
+     * Area UI callback
+     */
+    const areaUiFunction = function () {
+      self.areaLayersInput = document.createElement('div');
+      self.areaLayersSelect = document.createElement('select');
+      self.areaLayersInput.appendChild(self.areaLayersSelect);
+      for (let i in mapData.routerLayers) {
+        let option = document.createElement('option');
+        option.value = i;
+        option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
+        self.areaLayersSelect.add(option);
       }
-      this.areaFromInputWrapper.appendChild(areaFromLabel);
-      this.areaFromInputWrapper.appendChild(areaPosition);
-      this.areaFromInputWrapper.appendChild(this.areaFromInput);
-      this.areaFromInputWrapper.appendChild(areaFromClear);
-
-      this.$areaFromClear.on("click", function (event) {
-        event.preventDefault();
-        self.clearInput($(self.areaFromInput));
-      });
-      if (this.routeProfile && this.routeProfile.children) {
-        areaViewInputWrapper.appendChild(this.routeProfile);
-      }
-
-      const areaUiFunction = function () {
-        self.areaLayersInput = document.createElement('div');
-        self.areaLayersSelect = document.createElement('select');
-        self.areaLayersInput.appendChild(self.areaLayersSelect);
-        for (let i in mapData.routerLayers) {
-          let option = document.createElement('option');
-          option.value = i;
-          option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
-          self.areaLayersSelect.add(option);
+      self.areaLayersValueSelect = document.createElement('div');
+      self.areaLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
+      $(self.areaLayersSelect).on('change', function () {
+        $(self.areaLayersValueSelect).empty();
+        let selected = $(this).val();
+        let clickFunction = function () {
+          self.activeLayerValueArea = this.innerHTML;
+          $(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
+          $(this).siblings().addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
+          self.reloadFeatureValues("area");
+          if (self.response) {
+            self.showFeatures(self.response[0], self.response[1], "area")
+          }
+          let layerId = $(self.areaLayersSelect).val();
+          self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']);
+        };
+        let buttonActivated = false;
+        for (let i in mapData.routerLayers[selected]) {
+          if (mapData.routerLayers[selected].hasOwnProperty(i)) {
+            let buttonElement = document.createElement('button');
+            buttonElement.innerHTML = i;
+            buttonElement.value = mapData.routerLayers[selected][i]['keys'];
+            $(buttonElement).on('click', clickFunction);
+            self.areaLayersValueSelect.appendChild(buttonElement);
+            if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
+              $(buttonElement).trigger("click");
+              buttonActivated = true;
+            }
+          }
         }
-        self.areaLayersValueSelect = document.createElement('div');
-        self.areaLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
-        $(self.areaLayersSelect).on('change', function () {
-          $(self.areaLayersValueSelect).empty();
-          let selected = $(this).val();
-          let clickFunction = function () {
-            self.activeLayerValueArea = this.innerHTML;
-            $(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
-            $(this).siblings().addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
-            self.reloadFeatureValues("area");
-            if (self.response) {
-              self.showFeatures(self.response[0], self.response[1], "area")
-            }
-            let layerId = $(self.areaLayersSelect).val();
-            self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']);
-          };
-          let buttonActivated = false;
-          for (let i in mapData.routerLayers[selected]) {
-            if (mapData.routerLayers[selected].hasOwnProperty(i)) {
-              let buttonElement = document.createElement('button');
-              buttonElement.innerHTML = i;
-              buttonElement.value = mapData.routerLayers[selected][i]['keys'];
-              $(buttonElement).on('click', clickFunction);
-              self.areaLayersValueSelect.appendChild(buttonElement);
-              if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
-                $(buttonElement).trigger("click");
-                buttonActivated = true;
-              }
-            }
-          }
-          if (!buttonActivated) {
-            $(self.areaLayersValueSelect.firstChild).trigger('click');
-          }
+        if (!buttonActivated) {
+          $(self.areaLayersValueSelect.firstChild).trigger('click');
+        }
+        if (self.areaValue) {
+          self.performArea(self.areaValue);
+        }
+      });
+      $(self.areaLayersSelect).trigger('change');
+      if (Object.keys(mapData.routerLayers).length <= 1) {
+        $(self.areaLayersSelect).css('display', 'none');
+      }
+      $(self.areaLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
+      $(self.areaLayersInput).insertBefore($(areaViewInputWrapper));
+      $(self.areaLayersValueSelect).insertBefore($(areaViewInputWrapper));
+    };
+    /**
+     * Area UI callback
+     */
+
+    if (mapData.routerLayers && self.options.mapController.proxy.layers_loaded) {
+      areaUiFunction();
+    } else {
+      window.c4gMapsHooks = window.c4gMapsHooks || {};
+      window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
+      window.c4gMapsHooks.proxy_layer_loaded.push(areaUiFunction);
+    }
+
+    let toggleDetourWrapper = this.createDetourSlider("area", mapData.detourArea[0], mapData.detourArea[1], (mapData.detourArea[0] + mapData.detourArea[1]) / 2);
+    areaViewInputWrapper.appendChild(toggleDetourWrapper);
+    let areaActivateFunction = function () {
+      areaDeactivateFunction();
+      self.addAreaInputInteraction();
+      self.updateLinkFragments("mode", "area");
+    };
+    let areaDeactivateFunction = function () {
+      self.options.mapController.map.un('click', self.fnMapAreaInteraction);
+    };
+    let areaStartButton = document.createElement("button");
+    areaStartButton.className = "c4g-area-search-start";
+    areaStartButton.innerText = "Suche starten";
+    $(areaStartButton).on("click", function (event) {
+      if (self.areaValue) {
+        self.performArea(self.areaValue);
+      } else {
+        // wait for one second and check the values again
+        self.spinner.show();
+        window.setTimeout(function () {
           if (self.areaValue) {
             self.performArea(self.areaValue);
           }
-        });
-        $(self.areaLayersSelect).trigger('change');
-        if (Object.keys(mapData.routerLayers).length <= 1) {
-          $(self.areaLayersSelect).css('display', 'none');
-        }
-        $(self.areaLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
-        $(self.areaLayersInput).insertBefore($(areaViewInputWrapper));
-        $(self.areaLayersValueSelect).insertBefore($(areaViewInputWrapper));
-        // areaViewInputWrapper.appendChild(self.areaLayersInput);
-        // areaViewInputWrapper.appendChild(self.areaLayersValueSelect);
-      };
-
-      if (mapData.routerLayers && self.options.mapController.proxy.layers_loaded) {
-        areaUiFunction();
-      } else {
-        window.c4gMapsHooks = window.c4gMapsHooks || {};
-        window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
-        window.c4gMapsHooks.proxy_layer_loaded.push(areaUiFunction);
+          self.spinner.hide();
+        }, 1000);
       }
-      self.toggleDetourArea = document.createElement('input');
-      self.toggleDetourArea.className = routingConstants.ROUTE_TOGGLE;
-      self.toggleDetourArea.setAttribute('type', 'range');
-      self.toggleDetourArea.setAttribute('min', mapData.detourArea[0]);
-      self.toggleDetourArea.setAttribute('max', mapData.detourArea[1]);
-      self.toggleDetourArea.setAttribute('value', (mapData.detourArea[0] + mapData.detourArea[1]) / 2);
-      self.toggleDetourArea.setAttribute('step', 0.5);
-      let toggleDetourWrapper = document.createElement('div');
-      let output = document.createElement('output');
-      output.className = routingConstants.OUTPUT_DETOUR;
-      let p = document.createElement('p');
-      p.innerHTML = langRouteConstants.AREA_DETOUR;
-      output.innerHTML = 100;
-      toggleDetourWrapper.appendChild(p);
-      toggleDetourWrapper.appendChild(self.toggleDetourArea);
-      toggleDetourWrapper.appendChild(output);
-      $(self.toggleDetourArea).on('input', function () {
-        let control = $(this);
-        let range = control.attr('max') - control.attr('min');
-        let pos = ((control.val() - control.attr('min')) / range) * 100;
-        let posOffset = Math.round(50 * pos / 100) - (25);
-        let output = control.next('output');
-        output
-          .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-          .text(control.val() + " km");
-        self.updateLinkFragments("detour", control.val());
-      });
-      $(self.toggleDetourArea).on('change', function () {
-        self.performArea(self.areaValue);
-      });
-      $(self.toggleDetourArea).trigger('input');
-      areaViewInputWrapper.appendChild(toggleDetourWrapper);
-      let areaActivateFunction = function () {
-        areaDeactivateFunction();
-        self.fnMapAreaInteraction = function (evt) {
-          if ($(self.areaFromInput).val() === "") {
-            self.performReverseSearch($(self.areaFromInput), ol.proj.toLonLat(evt.coordinate));
-            self.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
-            let point = $.extend(true, {}, self.areaValue);
-            point.transform('EPSG:4326', 'EPSG:3857');
-            let feature = new ol.Feature({geometry: point});
-            let locstyleId = self.options.mapController.data.areaCenterLocstyle;
-            feature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
-            self.areaSource.clear();
-            self.mapSelectInteraction.getFeatures().clear();
-            self.areaSource.addFeature(feature);
-            self.updateLinkFragments("addressArea");
-            self.performArea(self.areaValue);
-          }
-        };
-        self.options.mapController.map.on('click', self.fnMapAreaInteraction);
-        self.updateLinkFragments("mode", "area");
-      };
-      let areaDeactivateFunction = function () {
-        self.options.mapController.map.un('click', self.fnMapAreaInteraction);
-      };
-      let areaStartButton = document.createElement("button");
-      areaStartButton.className = "c4g-area-search-start";
-      areaStartButton.innerText = "Suche starten";
-      $(areaStartButton).on("click", function (event) {
-        if (self.areaValue) {
-          self.performArea(self.areaValue);
-        } else {
-          // wait for one second and check the values again
-          self.spinner.show();
-          window.setTimeout(function () {
-            if (self.areaValue) {
-              self.performArea(self.areaValue);
-            }
-            self.spinner.hide();
-          }, 1000);
-        }
-      });
-      areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
-      areaViewInputWrapper.appendChild(areaStartButton);
-      areaView = this.addView({
-        name: 'area-view',
-        triggerConfig: {
-          tipLabel: langRouteConstants.AREA_NAME,
-          className: "c4g-area-search",
-          withHeadline: true
-        },
-        sectionElements: [
-          {section: this.contentContainer, element: areaContentElement},
-          {section: this.topToolbar, element: this.viewTriggerBar}
-        ],
-        activateFunction: areaActivateFunction,
-        deactivateFunction: areaDeactivateFunction
-      });
-      return areaView;
-    }
+    });
+    areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
+    areaViewInputWrapper.appendChild(areaStartButton);
+    areaView = this.addView({
+      name: 'area-view',
+      triggerConfig: {
+        tipLabel: langRouteConstants.AREA_NAME,
+        className: "c4g-area-search",
+        withHeadline: true
+      },
+      sectionElements: [
+        {section: this.contentContainer, element: areaContentElement},
+        {section: this.topToolbar, element: this.viewTriggerBar}
+      ],
+      activateFunction: areaActivateFunction,
+      deactivateFunction: areaDeactivateFunction
+    });
+    return areaView;
   }
+
+  // addUserInterface(type) {
+  //
+  //   let self,
+  //     routerView,
+  //     routerContentElement,
+  //     routerViewInputWrapper,
+  //     routerViewContentWrapper,
+  //     areaView,
+  //     areaViewInputWrapper,
+  //     areaContentElement,
+  //     areaViewContentWrapper,
+  //     print,
+  //     routeProfile = [],
+  //     routerFromLabel,
+  //     routerOverLabel,
+  //     routerToLabel,
+  //     routerFromClear,
+  //     routerOverClear,
+  //     routerToClear,
+  //     switchFromTo,
+  //     areaFromLabel,
+  //     areaFromClear,
+  //     buttonOver;
+  //
+  //   if (type === 'router') {
+  //     self = this;
+  //     routerContentElement = document.createElement('div');
+  //     routerViewInputWrapper = document.createElement('div');
+  //     routerViewContentWrapper = document.createElement('div');
+  //     routerContentElement.appendChild(routerViewInputWrapper);
+  //     routerContentElement.appendChild(routerViewContentWrapper);
+  //     self.routerViewContentWrapper = routerViewContentWrapper;
+  //
+  //     // create feature / instruction wrappers
+  //     if (this.options.mapController.data.showFeatures && this.options.mapController.data.showInstructions) {
+  //       let buttonFeatures = document.createElement("button");
+  //       buttonFeatures.innerHTML = "Features";
+  //       $(buttonFeatures).on('click', function () {
+  //         $(".c4g-router-instructions-wrapper").css('display', 'none');
+  //         $(".router-features-display").css('display', 'block');
+  //       });
+  //
+  //       let buttonInstructions = document.createElement('button');
+  //       buttonInstructions.innerHTML = langRouteConstants.INSTRUCTION_HEADLINE;
+  //       $(buttonInstructions).on('click', function () {
+  //         $(".c4g-router-instructions-wrapper").css('display', 'block');
+  //         $(".router-features-display").css('display', 'none');
+  //       });
+  //
+  //       self.contentSwitcher = document.createElement("div");
+  //       self.contentSwitcher.className = "router-content-switcher";
+  //       $(self.contentSwitcher).hide();
+  //       self.contentSwitcher.appendChild(buttonFeatures);
+  //       self.contentSwitcher.appendChild(buttonInstructions);
+  //       routerViewContentWrapper.appendChild(self.contentSwitcher);
+  //     }
+  //
+  //     this.fromInputWrapper = document.createElement('div');
+  //     this.fromInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
+  //
+  //     this.fromInput = document.createElement("input");
+  //     this.fromInput.type = "text";
+  //     this.fromInput.className = routingConstants.ROUTER_INPUT_FROM;
+  //     this.fromInput.id = this.fromInput.name = "routingFrom";
+  //
+  //     routerFromLabel = document.createElement('label');
+  //     routerFromLabel.setAttribute('for', 'routingFrom');
+  //     routerFromLabel.innerHTML = langRouteConstants.ROUTER_FROM_LABEL;
+  //
+  //     routerFromClear = document.createElement('button');
+  //     routerFromClear.className = routingConstants.ROUTER_INPUT_CLEAR;
+  //     routerFromClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
+  //     routerFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
+  //     this.$routerFromClear = $(routerFromClear);
+  //     this.$routerFromClear.click(function (event) {
+  //       event.preventDefault();
+  //       self.clearInput(self.$fromInput);
+  //     });
+  //
+  //     let routerFromPosition = this.createPositionButton(".c4g-router-input-from", "fromValue", "router");
+  //
+  //     this.routerButtonBar = document.createElement('div');
+  //     this.routerButtonBar.className = routingConstants.ROUTER_BUTTONBAR;
+  //
+  //     // over points controls
+  //     if (this.options.mapController.data.enableOverPoints) {
+  //       buttonOver = document.createElement('button');
+  //       buttonOver.className = routingConstants.ROUTER_OVER;
+  //       buttonOver.title = langRouteConstants.ROUTER_OVER;
+  //       this.$buttonOver = $(buttonOver);
+  //       this.routerButtonBar.appendChild(buttonOver);
+  //
+  //       this.$buttonOver.click(function (event) {
+  //         event.preventDefault();
+  //         self.index++;
+  //         self.$buttonOver.prop("disabled", true);
+  //
+  //         self.overInputWrapper = document.createElement('div');
+  //         self.overInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
+  //
+  //         self.overInput = document.createElement("input");
+  //         self.overInput.type = "text";
+  //         self.overInput.className = routingConstants.ROUTER_INPUT_FROM;
+  //         self.overInput.id = self.overInput.name = "routingOver";
+  //
+  //         routerOverLabel = document.createElement('label');
+  //         routerOverLabel.setAttribute('for', 'routingFrom');
+  //         routerOverLabel.innerHTML = langRouteConstants.ROUTER_Label_Interim;
+  //
+  //         routerOverClear = document.createElement('button');
+  //         routerOverClear.className = routingConstants.ROUTER_INPUT_CLEAR;
+  //         routerOverClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
+  //         routerOverClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
+  //         routerOverClear.id = self.index;
+  //         self.$routerOverClear = $(routerOverClear);
+  //
+  //         self.overInputWrapper.appendChild(routerOverLabel);
+  //         self.overInputWrapper.appendChild(self.overInput);
+  //         self.overInputWrapper.appendChild(routerOverClear);
+  //
+  //         routerViewInputWrapper.appendChild(self.overInputWrapper);
+  //         self.$routerOverClear.click(function (event) {
+  //           event.preventDefault();
+  //           self.clearOver(self.$overInput, this.id);
+  //           $(this).parent().remove();
+  //           //buttonOver.show();
+  //         });
+  //         self.$overInput = $(self.overInput);
+  //         self.$overInput.on('change', function () {
+  //           self.performSearch(self.$overInput, "overValue");
+  //         });
+  //       });
+  //     }
+  //
+  //     if (this.options.mapController.data.enableTargetSwitch) {
+  //       switchFromTo = document.createElement('button');
+  //       switchFromTo.className = routingConstants.ROUTER_SWITCH;
+  //       switchFromTo.title = langRouteConstants.ROUTER_SWITCH;
+  //       this.$switchFromTo = $(switchFromTo);
+  //       this.routerButtonBar.appendChild(switchFromTo);
+  //     }
+  //
+  //     // add profiles selection
+  //     if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
+  //       this.createRouterProfileSelect();
+  //     }
+  //
+  //     this.fromInputWrapper.appendChild(routerFromLabel);
+  //     this.fromInputWrapper.appendChild(routerFromPosition);
+  //     this.fromInputWrapper.appendChild(this.fromInput);
+  //     this.fromInputWrapper.appendChild(routerFromClear);
+  //     if (buttonOver && this.options.mapController.data.router_api_selection == '0') {
+  //       this.$buttonOver.hide();
+  //     }
+  //
+  //     if (this.options.mapController.data.enableTargetSwitch) {
+  //       this.$switchFromTo.click(function (event) {
+  //         event.preventDefault();
+  //         var switchVarName = document.getElementById("routingFrom").value;
+  //         document.getElementById("routingFrom").value = document.getElementById("routingTo").value;
+  //         document.getElementById("routingTo").value = switchVarName;
+  //         var switchVarVal = self.fromValue;
+  //         self.fromValue = self.toValue;
+  //         self.toValue = switchVarVal;
+  //         self.recalculateRoute();
+  //       });
+  //     }
+  //
+  //     this.$fromInput = $(this.fromInput);
+  //     this.$fromInput.on('change', function () {
+  //       self.performSearch(self.$fromInput, "fromValue");
+  //     });
+  //
+  //     routerViewInputWrapper.appendChild(this.routerButtonBar);
+  //     if (this.routeProfile && this.routeProfile.children) {
+  //       routerViewInputWrapper.appendChild(this.routeProfile);
+  //     }
+  //
+  //     /**
+  //      * Begin routerUiFunction
+  //      */
+  //     const routerUiFunction = function () {
+  //       self.routerLayersInput = document.createElement('div');
+  //       self.routerLayersSelect = document.createElement('select');
+  //       self.routerLayersInput.appendChild(self.routerLayersSelect);
+  //       for (let i in mapData.routerLayers) {
+  //         let option = document.createElement('option');
+  //         option.value = i;
+  //         option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
+  //         self.routerLayersSelect.add(option);
+  //       }
+  //       self.routerLayersValueSelect = document.createElement('div');
+  //       self.routerLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
+  //       $(self.routerLayersSelect).on('change', function () {
+  //         $(self.routerLayersValueSelect).empty();
+  //         let selected = $(this).val();
+  //         let clickFunction = function () {
+  //           self.activeLayerValue = this.innerHTML;
+  //           $(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
+  //           $(this).siblings().addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
+  //           self.reloadFeatureValues("router");
+  //           if (self.response) {
+  //             self.showFeatures(self.response.features, self.response.type, "router")
+  //           }
+  //           let layerId = $(self.routerLayersSelect).val();
+  //           self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValue]['mapLabel']);
+  //         };
+  //         let buttonActivated = false;
+  //         for (let i in mapData.routerLayers[selected]) {
+  //           if (mapData.routerLayers[selected].hasOwnProperty(i)) {
+  //             let buttonElement = document.createElement('button');
+  //             buttonElement.innerHTML = i;
+  //             buttonElement.value = mapData.routerLayers[selected][i]['keys'];
+  //             $(buttonElement).on('click', clickFunction);
+  //             self.routerLayersValueSelect.appendChild(buttonElement);
+  //             if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
+  //               $(buttonElement).click();
+  //               buttonActivated = true;
+  //             }
+  //           }
+  //         }
+  //         if (!buttonActivated) {
+  //           $(self.routerLayersValueSelect.firstChild).trigger('click');
+  //         }
+  //         self.recalculateRoute();
+  //       });
+  //       $(self.routerLayersSelect).trigger('change');
+  //       if (Object.keys(mapData.routerLayers).length <= 1) {
+  //         $(self.routerLayersSelect).css('display', 'none');
+  //       }
+  //       $(self.routerLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
+  //       $(self.routerLayersInput).insertBefore($(routerViewInputWrapper));
+  //       $(self.routerLayersValueSelect).insertBefore($(routerViewInputWrapper));
+  //     };
+  //     /**
+  //      * End routerUiFunction
+  //      */
+  //
+  //     // create the layer selection elements when layers are loaded
+  //     if (mapData.routerLayers) {
+  //       if (self.options.mapController.proxy.layers_loaded) {
+  //         routerUiFunction();
+  //       }
+  //       else {
+  //         // add layer selection creation to proxy hook
+  //         window.c4gMapsHooks = window.c4gMapsHooks || {};
+  //         window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
+  //         window.c4gMapsHooks.proxy_layer_loaded.push(routerUiFunction);
+  //       }
+  //       let toggleDetourWrapper = this.createDetourSlider("route", mapData.detourRoute[0], mapData.detourRoute[1], (mapData.detourRoute[0] + mapData.detourRoute[1]) / 2);
+  //       routerViewInputWrapper.appendChild(toggleDetourWrapper);
+  //     }
+  //
+  //     //
+  //     routerViewInputWrapper.appendChild(this.fromInputWrapper);
+  //     this.toInputWrapper = document.createElement('div');
+  //     this.toInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
+  //
+  //     this.toInput = document.createElement("input");
+  //     this.toInput.type = "text";
+  //     this.toInput.className = routingConstants.ROUTER_INPUT_TO;
+  //     this.toInput.id = this.toInput.name = "routingTo";
+  //
+  //     let routerToPosition = this.createPositionButton(".c4g-router-input-to", "toValue", "router")
+  //
+  //     routerToLabel = document.createElement('label');
+  //     routerToLabel.setAttribute('for', 'routingTo');
+  //     routerToLabel.innerHTML = langRouteConstants.ROUTER_TO_LABEL;
+  //
+  //     routerToClear = document.createElement('button');
+  //     routerToClear.className = routingConstants.ROUTER_INPUT_CLEAR;
+  //     routerToClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
+  //     routerToClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
+  //     this.$routerToClear = $(routerToClear);
+  //
+  //     this.toInputWrapper.appendChild(routerToLabel);
+  //     this.toInputWrapper.appendChild(routerToPosition);
+  //     this.toInputWrapper.appendChild(this.toInput);
+  //     this.toInputWrapper.appendChild(routerToClear);
+  //
+  //     self.$routerToClear.click(function (event) {
+  //       event.preventDefault();
+  //       self.clearInput(self.$toInput);
+  //     });
+  //
+  //     this.$toInput = $(this.toInput);
+  //     this.$toInput.on('change', function () {
+  //       self.performSearch(self.$toInput, "toValue");
+  //     });
+  //
+  //     routerViewInputWrapper.appendChild(this.toInputWrapper);
+  //
+  //     // start search button
+  //     if (mapData.routeStartButton) {
+  //       let routeStartButton = document.createElement("button");
+  //       routeStartButton.className = routingConstants.ROUTE_START_BUTTON;
+  //       routeStartButton.innerText = langRouteConstants.START_ROUTE;
+  //       $(routeStartButton).on("click", function (event) {
+  //         if (self.fromValue && self.toValue) {
+  //           self.performViaRoute(self.fromValue, self.toValue);
+  //         } else {
+  //           // wait for one second and check the values again
+  //           self.spinner.show();
+  //           window.setTimeout(function () {
+  //             if (self.fromValue && self.toValue) {
+  //               self.performViaRoute(self.fromValue, self.toValue);
+  //             }
+  //             self.spinner.hide();
+  //           }, 1000);
+  //         }
+  //       });
+  //       routerViewInputWrapper.appendChild(routeStartButton);
+  //     }
+  //
+  //     self.statusBar.appendChild(this.getAttribution());
+  //     let routerActivateFunction = function () {
+  //       self.removeMapInputInteraction();
+  //       self.addMapInputInteraction();
+  //       self.updateLinkFragments("mode", "route");
+  //     };
+  //     let routerDeactivateFunction = function () {
+  //       self.removeMapInputInteraction();
+  //     };
+  //
+  //     routerView = this.addView({
+  //       name: 'router-view',
+  //       triggerConfig: {
+  //         tipLabel: langRouteConstants.ROUTER_VIEW_ADDRESS_INPUT,
+  //         className: routingConstants.ROUTER_SEARCH,
+  //         withHeadline: true
+  //       },
+  //       sectionElements: [
+  //         {section: this.contentContainer, element: routerContentElement},
+  //         {section: this.topToolbar, element: this.viewTriggerBar}
+  //       ],
+  //       activateFunction: routerActivateFunction,
+  //       deactivateFunction: routerDeactivateFunction
+  //     });
+  //     return routerView;
+  //   }
+  //   else {
+  //
+  //   }
+  // }
 
   adjustInstructionMapInteraction(routerInstruction) {
     var self = this,
