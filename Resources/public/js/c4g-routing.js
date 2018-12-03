@@ -231,7 +231,7 @@ export class Router extends Sideboard {
       }
     }
     this.viewRouter = this.addUserInterface('router');
-    if (this.options.mapController.data.initialMode === "route") {
+    if (this.options.mapController.data.initialMode === "route" || !this.viewArea) {
       this.viewRouter.activate();
     }
 
