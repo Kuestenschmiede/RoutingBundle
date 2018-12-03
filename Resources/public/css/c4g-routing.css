@@ -174,3 +174,250 @@ button.c4g-router-position:before {
 .c4g-route-search-start {
     width: auto !important;
 }
+
+.c4g-router-instruction-table td {
+    min-width: 20px;
+}
+.c4g-router.c4g-portside-control button:before {
+    content: "R";
+}
+.c4g-popup-route-wrapper {
+    white-space: nowrap;
+    margin-top: 8px;
+}
+.c4g-router-input-wrapper {
+    display: flex;
+    justify-content: flex-start;
+}
+.c4g-router-input-wrapper > input {
+    box-sizing: border-box;
+    padding: 5px;
+    margin: 2px;
+}
+.c4g-router-input-wrapper > label {
+    margin-right: 5px;
+    vertical-align: middle;
+    margin-top: auto;
+    margin-bottom: auto;
+    min-width: 100px;
+}
+.c4g-router-buttonbar {
+    text-align: left;
+}
+.c4g-router-buttonbar button {
+    border-radius: 0%;
+    border-radius: var(--button-radius-percent);
+}
+.c4g-router-instructions-header {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.c4g-router-instructions-header > em {
+    float: right;
+    font-weight: normal;
+}
+.c4g-router-instruction-table td {
+    padding: 5px;
+}
+.c4g-router-attribution-wrapper {
+    font-size: 9px;
+    line-height: 18px;
+    text-align: center;
+}
+button.c4g-popup-route-from,
+button.c4g-popup-route-to,
+.c4g_brick_popup_button a {
+    border: 1px solid;
+    padding: 6px 10px;
+    cursor: pointer;
+    outline: none;
+}
+
+button.c4g-popup-route-from {
+    border-right: 0;
+    border-radius: 3px 0 0 3px;
+}
+button.c4g-popup-route-to {
+    border-radius: 0 3px 3px 0;
+}
+.c4g-router-profile-wrapper .c4g-active ul {
+    /*border-radius: var(--button-radius-pixel);*/
+    border: 2px solid;
+}
+.c4g-content-select input ,.c4g-portside-top-toolbar select, .c4g-portside-top-toolbar input, .c4g-portside-top-toolbar button, .c4g-router-input-wrapper button, .c4g-router-input-wrapper input {
+    color: rgba(24, 61, 93,.8);
+    color: var(--main-color);
+    border-color: rgba(0,155,222,.5);
+    border-color: var(--shadow-color);
+    background-color: rgba(255,255,255,.9);
+    background-color: var(--font-color);
+}
+.c4g-router-profile-wrapper button {
+    color: rgba(255,255,255,.9);
+    color: var(--font-color);
+    border-color: rgba(0,155,222,.5);
+    border-color: var(--shadow-color);
+    background-color: rgba(24, 61, 93,.8);
+    background-color: var(--main-color);
+}
+.c4g-router-profile-wrapper .c4g-active ul {
+    color: rgba(24, 61, 93,.8);
+    color: var(--main-color);
+}
+
+.c4g-router-profile-wrapper .c4g-active button,
+.c4g-router-profile-wrapper button.c4g-active {
+    color: rgba(0,155,222,.5);
+    color: var(--shadow-color);
+}
+
+.c4g-router-profile-wrapper span.c4g-active ul {
+    border-color: rgba(0,155,222,.5);
+    border-color: var(--shadow-color);
+    background-color: rgba(255,255,255,.9);
+    background-color: var(--font-color);
+    padding: 2px;
+}
+
+.c4g-router-profile-wrapper span.c4g-active ul li {
+    color: rgba(24, 61, 93,.8);
+    color: var(--main-color);
+    background-color: rgba(255,255,255,.9);
+    background-color: var(--font-color);
+    padding: 2px;
+}
+
+.c4g-router-profile-wrapper span.c4g-active ul li::before {
+    padding: 2px;
+}
+
+.c4g-router-profile-wrapper span.c4g-active ul li.c4g-active {
+    color: rgba(0,155,222,.5);
+    color: var(--shadow-color);
+    background-color: rgba(255,255,255,.9);
+    background-color: var(--font-color);
+}
+.c4g-router-input-wrapper {
+    color: rgba(255,255,255,.9);
+    color: var(--font-color);
+}
+.c4g-router-instruction-table {
+    color: rgba(255,255,255,.9);
+    color: var(--font-color);
+}
+.c4g-router-instruction-table img {
+    background-color: rgba(255,255,255,.9);
+    background-color: var(--font-color);
+}
+.c4g-router-instruction-table td {
+    border-color: rgba(24, 61, 93,.8);
+    border-color: var(--main-color);
+}
+.c4g-router-attribution-wrapper {
+    color: rgba(255,255,255,.9);
+    color: var(--font-color);
+}
+.c4g-router-attribution-wrapper a {
+    color: rgba(255,255,255,.9);
+    color: var(--font-color);
+}
+.c4g-router.c4g-open > button:before {
+    content: "\f4d7";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-print:before {
+    content: "\f02f";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-profile-car:before {
+    content: "\f1b9";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-profile-hgv:before {
+    content: "\f0d1";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-profile-bike:before {
+    content: "\f206";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-profile-foot:before {
+    content: "\f554";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-profile-wheelchair:before {
+    content: "\f193";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-popup-route-from,
+button.c4g-popup-route-to,
+.c4g_brick_popup_button a {
+    color: rgba(24, 61, 93,.8);
+    color: var(--main-color);
+    background-color: rgba(255,255,255,.9);
+    background-color: var(--font-color);
+    border-color: rgba(255,255,255,.9);
+    border-color: var(--font-color);
+}
+button.c4g-popup-route-from:hover,
+button.c4g-popup-route-to:hover,
+.c4g_brick_popup_button a:hover {
+    background-color: rgba(255,255,255,.9);
+    background-color: var(--font-color);
+}
+.c4g-popup-route-from,.c4g-popup-route-to, .c4g_brick_popup_button a {
+    color: rgba(24, 61, 93,.8);
+    color: var(--main-color);
+}
+button.c4g-router-switch:before {
+    content: "\f0dc";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-over:before {
+    content: "\f067";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-input-clear:before {
+    content: "\f1f8";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+.c4g-router.c4g-close > button:before {
+    content: "\f4d7";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-popup-route-from:before {
+    content: "\f024";
+    margin: 0 5px 0 -3px;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-popup-route-to:before {
+    content: "\f11e";
+    margin: 0 5px 0 -3px;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
