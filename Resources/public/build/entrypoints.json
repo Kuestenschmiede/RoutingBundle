@@ -1,0 +1,9 @@
+{
+  "entrypoints": {
+    "c4g-routing": {
+      "js": [
+        "/build/c4g-routing.js"
+      ]
+    }
+  }
+}

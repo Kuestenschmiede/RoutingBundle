@@ -7,13 +7,14 @@ The routing brick of the Contao GIS-kit **con4gis**. Extends con4gis MapsBundle.
 **Website:** [con4gis.org](https://con4gis.org)
 
 **Requires:**
-- [Contao](https://github.com/contao/core) (***>=4.4***)   
+- [Contao](https://github.com/contao/core) (>=4.4)   
 - [CoreBundle](https://github.com/Kuestenschmiede/CoreBundle/releases) (*latest stable release*)
 - [MapsBundle](https://github.com/Kuestenschmiede/MapsBundle/releases) (*latest stable release*)
 
 Adds a control to the con4gis-map, which allows the user to calculate a route and display it on the map.
 Furthermore it is possible to display features from the OpenStreetMap or from the servers database along the route or in a perimeter around a center.
 
+<<<<<<< HEAD
 ## Router
 - [OSRM](http://project-osrm.org/) (***4/5***)   
 - [OpenRouteService](https://openrouteservice.org/) (Directions)
@@ -22,6 +23,16 @@ Furthermore it is possible to display features from the OpenStreetMap or from th
 - [OpenRouteService](https://openrouteservice.org/) (Matrix)
 
 ## configuration
+=======
+***Router***
+- [OSRM](http://project-osrm.org/) (4/5)   
+- [OpenRouteService](https://openrouteservice.org/) (Directions)
+
+***Area (perimeter search)***
+- [OpenRouteService](https://openrouteservice.org/) (Matrix)
+
+***configuration***
+>>>>>>> master
 - Custom Router-headline
 - Choose your routing-API (ORS AND OSRM)
 - Custom routing-server
