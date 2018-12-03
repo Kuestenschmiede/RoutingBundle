@@ -97,6 +97,8 @@ export  var routingConstantsEnglish = {
   ROUTER_ERROR_SEARCHING: 'Fault! Can not find address',
   ROUTER_CALC_ROUTE: 'Calc route...',
   ROUTER_ERROR_CALC_ROUTE: 'Fault! Can not calc address',
+  CTRL_ROUTER: 'Toggle router',
+
 
   //new Router
   AREA_NAME:            'Search perimeter',

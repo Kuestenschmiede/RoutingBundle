@@ -179,6 +179,7 @@ export class Router extends Sideboard {
       }
       self.overValue[self.index] = overPoint;
       self.$buttonOver.prop("disabled", false);
+      self.recalculateRoute();
     });
 
     self.options.mapController.map.addInteraction(selectInteraction);
