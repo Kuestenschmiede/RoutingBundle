@@ -902,7 +902,9 @@ export class Router extends Sideboard {
             continue;
           }
           contentFeature = self.layerController.featureFromOverpass(feature, features, layer, true);
-
+          if(!contentFeature){
+            continue;
+          }
         }
         else {
           resultCoordinate = ol.proj.transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
