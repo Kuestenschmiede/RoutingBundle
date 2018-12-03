@@ -6,8 +6,8 @@ import {routingConstants} from "./routing-constants";
 import {routingConstantsEnglish} from "./routing-constant-i18n-en";
 import {routingConstantsGerman} from "./routing-constant-i18n-de";
 
+// language stuff
 let langRouteConstants = {};
-
 if (mapData) {
   if (mapData.lang === "de") {
     langRouteConstants = routingConstantsGerman;
@@ -59,6 +59,10 @@ export class Router extends Sideboard {
     // Sideboard.call(this, this.options);
   };
 
+  /**
+   * Initializes the router.
+   * @returns {boolean}
+   */
   init() {
     var self,
       viewRouter,
@@ -248,6 +252,11 @@ export class Router extends Sideboard {
 
   }
 
+  /**
+   * Sets one key of this.linkFragments to the given value.
+   * @param key
+   * @param value
+   */
   updateLinkFragments(key, value) {
     if (!this.linkFragments) {
       this.linkFragments = {};
@@ -256,6 +265,9 @@ export class Router extends Sideboard {
     this.updateUrl();
   }
 
+  /**
+   * Checks the current values in this.linkFragments and updates the browser URL, when an update is possible yet.
+   */
   updateUrl() {
     let url = "?mapsParams=";
     const fragments = this.linkFragments;
@@ -402,6 +414,10 @@ export class Router extends Sideboard {
     }
   }
 
+  /**
+   * Executes setup code on opening the router.
+   * @param opt_options
+   */
   preOpenFunction(opt_options) {
     if (opt_options && opt_options.toLonLat) {
       this.performReverseSearch(this.$toInput, opt_options.toLonLat);
@@ -413,11 +429,17 @@ export class Router extends Sideboard {
     }
   }
 
+  /**
+   * Removes the router click interaction from the map upon hiding the router.
+   */
   preHideFunction() {
     this.removeMapInputInteraction();
     this.options.mapController.map.removeInteraction(this.routeFeatureSelect);
   }
 
+  /**
+   * Clears all router input elements, feature sources and removes every map interaction.
+   */
   preCloseFunction() {
 
     this.routingWaySource.clear();
@@ -442,12 +464,19 @@ export class Router extends Sideboard {
     this.removeMapInputInteraction();
   }
 
+  /**
+   * Removes the router click interaction from the map.
+   */
   removeMapInputInteraction() {
 
     var self = this;
     this.options.mapController.map.un('click', self.fnMapRouterInteraction);
   }
 
+  /**
+   * Adds a click interaction for the router. Upon map click, the clicked points are converted to locations and the
+   * route search is started, as long as all mandatory properties are set.
+   */
   addMapInputInteraction() {
 
     var self = this,
@@ -491,33 +520,10 @@ export class Router extends Sideboard {
     }
   }
 
-  setInput(from, coordinate) {
-    // perform geoSearch on given location
-    // fill from/to field
-    //
-
-    if (!coordinate) {
-      return false;
-    }
-
-    coordinate = ol.proj.toLonLat(coordinate);
-
-    if (from) {
-      this.performReverseSearch(this.$fromInput, coordinate);
-      this.recalculateRoute();
-      this.fromValue = new ol.geom.Point(coordinate);
-
-      //this.$fromInput.trigger('change');
-    }
-    else {
-      this.performReverseSearch(this.$toInput, coordinate);
-      this.recalculateRoute();
-      this.toValue = new ol.geom.Point(coordinate);
-    }
-
-    this.recalculateRoute();
-  }
-
+  /**
+   * Creates a wrapper element for the router attribution.
+   * @returns {HTMLElement}
+   */
   getAttribution() {
     let self = this,
       attributionSearch,
@@ -577,6 +583,9 @@ export class Router extends Sideboard {
 
   }
 
+  /**
+   * Checks the routing properties and triggers a new route search, when the mandatory parameters are set.
+   */
   recalculateRoute() {
     var tmpFeature,
       proxy = this.options.mapController.proxy;
@@ -622,6 +631,14 @@ export class Router extends Sideboard {
 
   }
 
+  /**
+   * Executes a route search with the given from and to points. Displays features and feature entries on success. Uses
+   * overpoints, if any are given.
+   * @param fromPoint
+   * @param toPoint
+   * @param overPoint
+   * @returns {string}
+   */
   performViaRoute(fromPoint, toPoint, overPoint) {
 
     var url,
@@ -725,17 +742,31 @@ export class Router extends Sideboard {
     }
   }
 
+  /**
+   * Displays the main route.
+   * @param routeResponse
+   */
   showRoute(routeResponse) {
 
     this.showRouteLayer(routeResponse, 0);
     this.showRouteInstructions(routeResponse, 0);
   }
 
+  /**
+   * Show an alternate route.
+   * @param routeResponse
+   * @param routeNumber
+   */
   showAltRoute(routeResponse, routeNumber) {
     this.showRouteLayer(routeResponse, routeNumber);
     this.showRouteInstructions(routeResponse, routeNumber);
   }
 
+  /**
+   * Displays a route on the map.
+   * @param routeResponse
+   * @param routeNumber
+   */
   showRouteLayer(routeResponse, routeNumber) {
 
     var mapView,
@@ -808,18 +839,6 @@ export class Router extends Sideboard {
         center: [0, 0]
         //rotation: Math.PI
       });
-      // this.options.mapController.map.beforeRender(
-      //     ol.animation.pan({
-      //       start: +new Date(),
-      //       duration: 2000,
-      //       source: mapView.getCenter()
-      //     }),
-      //     ol.animation.zoom({
-      //       start: +new Date(),
-      //       duration: 2000,
-      //       resolution: mapView.getResolution()
-      //     })
-      // );
 
       // calculate padding
       leftPadding = 0;
@@ -843,6 +862,14 @@ export class Router extends Sideboard {
     }
   }
 
+  /**
+   * Clears the current features from the map and displays the given new features. The features are sorted by the configured
+   * property. The function takes the backend configuration according to prioritized features into account.
+   * @param features
+   * @param type
+   * @param mode
+   * @returns {*}
+   */
   showFeatures(features, type = "table", mode = "router") {
     const self = this;
     self.routerFeaturesSource.clear();
@@ -961,6 +988,12 @@ export class Router extends Sideboard {
     return priceSortedFeatures;
   }
 
+  /**
+   * Renders the feature list in the portside router, if configured.
+   * @param features
+   * @param type
+   * @param mode
+   */
   showFeaturesInPortside(features, type, mode) {
     const scope = this;
     if (this.options.mapController.data.showFeatures) {
@@ -975,6 +1008,12 @@ export class Router extends Sideboard {
     scope.reloadFeatureValues(mode);
   }
 
+  /**
+   * Translates a string description into the correct instruction icon (OpenSourceRoutingMachine icons).
+   * @param strMod
+   * @param strType
+   * @returns {string}
+   */
   getInstructionIcon(strMod, strType) {
     var image = "";
 
@@ -1024,6 +1063,11 @@ export class Router extends Sideboard {
     return "bundles/con4gismaps/vendor/osrm/images/" + image;
   }
 
+  /**
+   * Translates an integer number into the correct instruction icon (OpenRouteService icons).
+   * @param intType
+   * @returns {string}
+   */
   getInstructionIconORS(intType) {
     let image;
     switch (intType) {
@@ -1074,6 +1118,11 @@ export class Router extends Sideboard {
     return document.getElementsByTagName('base')[0].href + "bundles/con4gismaps/vendor/osrm/images/" + image;
   }
 
+  /**
+   * Translates the type of an instruction into a string representation.
+   * @param strType
+   * @returns {*}
+   */
   getTypeText(strType) {
     var textID;
 
@@ -1131,6 +1180,11 @@ export class Router extends Sideboard {
     return langRouteConstants[textID];
   }
 
+  /**
+   * Translates a modifier into a string representation.
+   * @param strModifier
+   * @returns {*}
+   */
   getModifierText(strModifier) {
     var textID;
 
@@ -1165,6 +1219,11 @@ export class Router extends Sideboard {
     return langRouteConstants[textID];
   }
 
+  /**
+   * Get the icon for a given instruction ID.
+   * @param instructionId
+   * @returns {string}
+   */
   getDrivingInstructionIcon(instructionId) {
     var id,
       image;
@@ -1212,6 +1271,11 @@ export class Router extends Sideboard {
 
   }
 
+  /**
+   * Gets instruction text.
+   * @param id
+   * @returns {*}
+   */
   getText(id) {
 
     var text_id = "ROUTER_" + id;
@@ -1222,6 +1286,11 @@ export class Router extends Sideboard {
     return langRouteConstants[text_id];
   }
 
+  /**
+   * Translates an instruction ID into a readable string representation.
+   * @param instructionId
+   * @returns {*}
+   */
   getDrivingInstruction(instructionId) {
 
     var id,
@@ -1237,6 +1306,11 @@ export class Router extends Sideboard {
     return description;
   }
 
+  /**
+   * Displays the route instructions in the portside router.
+   * @param routeResponse
+   * @param routeNumber
+   */
   showRouteInstructions(routeResponse, routeNumber) {
 
     var self,
@@ -1468,6 +1542,10 @@ export class Router extends Sideboard {
     }
   }
 
+  /**
+   * Takes a feature as input and simulates a click on the feature entry that is connected to the given feature.
+   * @param feature
+   */
   clickFeatureEntryForFeature(feature) {
     const featureId = feature.get('tid');
     if (this.entryWrapper) {
@@ -1479,6 +1557,11 @@ export class Router extends Sideboard {
     }
   }
 
+  /**
+   * Rerenders the feature list in the portside router. The function checks the current configuration on each call and
+   * displays the feature list according to the type of the selected layer.
+   * @param mode
+   */
   reloadFeatureValues(mode) {
     const scope = this;
     const features = scope.features;
@@ -1599,6 +1682,11 @@ export class Router extends Sideboard {
     }
   }
 
+  /**
+   * Executes an area search with the given point as center. If there are any, the features in the perimeter will be
+   * drawn onto the map and displayed in the feature container.
+   * @param fromPoint
+   */
   performArea(fromPoint) {
     const self = this;
 
@@ -1676,18 +1764,14 @@ export class Router extends Sideboard {
       });
   }
 
-  handleRouteFromPosition(coordinates) {
-    this.handlePosition(coordinates, "#routingFrom", "fromValue");
-  }
-
-  handleRouteToPosition(coordinates) {
-    this.handlePosition(coordinates, "#routingTo", "toValue");
-  }
-
-  handleAreaPosition(coordinates) {
-    this.handlePosition(coordinates, "#areaFrom", "areaValue");
-  }
-
+  /**
+   * Takes the input coordinates and executes the reverse search. On success, the result location is inserted in the
+   * given input field and the given property of this.
+   * @param coordinates
+   * @param cssId
+   * @param property
+   * @param mode
+   */
   handlePosition(coordinates, cssId, property, mode) {
     const scope = this;
     let coords = coordinates.coords;
@@ -1743,7 +1827,8 @@ export class Router extends Sideboard {
   }
 
   /**
-   *
+   * Adds an interaction for the area search. When the map is clicked, the location of the click will be taken as center
+   * and gets converted into an address. Afterwards, the area search is triggered.
    */
   addAreaInputInteraction() {
     const scope = this;
