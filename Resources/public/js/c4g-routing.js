@@ -2901,8 +2901,7 @@ export class Router extends Sideboard {
       if (opt_callback && typeof opt_callback === "function") {
         opt_callback();
       }
-    })
-      .error(function () {
+    }).fail(function () {
         let errorDiv = document.createElement('div');
         $(errorDiv).addClass(routingConstants.ROUTE_ERROR);
         $(errorDiv).addClass('contentHeadline');
