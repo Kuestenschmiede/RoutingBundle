@@ -36,7 +36,7 @@ class TlC4gMapProfiles
         $arrColumnLayers = [
             'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['layers'],
             'inputType' => 'select',
-            'eval'      => ['chosen'=>true, 'includeBlankOption'=>true]
+            'eval'      => ['chosen'=>true, 'includeBlankOption'=>true, 'style'=>'min-width:200px;width:200px;']
         ];
         $arrLayers = $this->db->prepare('SELECT * FROM tl_c4g_maps WHERE published=1')
             ->execute()->fetchAllAssoc();
