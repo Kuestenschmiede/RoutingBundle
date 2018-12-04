@@ -54,9 +54,6 @@ export class Router extends Sideboard {
       searchType: "",
       forceStart: 1
     };
-
-    // call parent constructor
-    // Sideboard.call(this, this.options);
   };
 
   /**
