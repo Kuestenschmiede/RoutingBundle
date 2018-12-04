@@ -2277,8 +2277,13 @@ export class Router extends Sideboard {
         for (let i in mapData.routerLayers) {
           let option = document.createElement('option');
           option.value = i;
-          option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
-          self.routerLayersSelect.add(option);
+          let layer = self.options.mapController.proxy.layerController.arrLayers[i];
+          if (layer) {
+            option.textContent = layer.name;
+            self.routerLayersSelect.add(option);
+          } else {
+            console.warn("The layer with the ID " + i + " is not included in the map. Please include it to use it for route search.");
+          }
         }
         self.routerLayersValueSelect = document.createElement('div');
         self.routerLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
@@ -2507,8 +2512,13 @@ export class Router extends Sideboard {
       for (let i in mapData.routerLayers) {
         let option = document.createElement('option');
         option.value = i;
-        option.textContent = self.options.mapController.proxy.layerController.arrLayers[i].name;
-        self.areaLayersSelect.add(option);
+        let layer = self.options.mapController.proxy.layerController.arrLayers[i];
+        if (layer) {
+          option.textContent = layer.name;
+          self.areaLayersSelect.add(option);
+        } else {
+          console.warn("The layer with the ID " + i + " is not included in the map. Please include it to use it for area search.");
+        }
       }
       self.areaLayersValueSelect = document.createElement('div');
       self.areaLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
