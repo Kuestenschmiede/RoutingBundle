@@ -2318,6 +2318,11 @@ export class Router extends Sideboard {
           if (!buttonActivated) {
             $(self.routerLayersValueSelect.firstChild).trigger('click');
           }
+          if (self.routerLayersValueSelect.childElementCount === 1) {
+            // only one button for selection, the bar can be hidden
+            $(self.routerLayersValueSelect.firstChild).css("display", "none");
+          }
+
           self.recalculateRoute();
         });
         $(self.routerLayersSelect).trigger('change');
@@ -2484,7 +2489,7 @@ export class Router extends Sideboard {
     areaFromClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
     areaFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
     this.$areaFromClear = $(areaFromClear);
-    
+
     this.areaFromInputWrapper.appendChild(areaFromLabel);
     this.areaFromInputWrapper.appendChild(areaPosition);
     this.areaFromInputWrapper.appendChild(this.areaFromInput);
@@ -2548,6 +2553,10 @@ export class Router extends Sideboard {
         }
         if (!buttonActivated) {
           $(self.areaLayersValueSelect.firstChild).trigger('click');
+        }
+        if (self.areaLayersValueSelect.childElementCount === 1) {
+          // only one button for selection, the bar can be hidden
+          $(self.areaLayersValueSelect.firstChild).css("display", "none");
         }
         if (self.areaValue) {
           self.performArea(self.areaValue);
