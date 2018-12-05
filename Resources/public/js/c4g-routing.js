@@ -2484,11 +2484,7 @@ export class Router extends Sideboard {
     areaFromClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
     areaFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
     this.$areaFromClear = $(areaFromClear);
-
-    // check router profiles
-    if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
-      this.createRouterProfileSelect();
-    }
+    
     this.areaFromInputWrapper.appendChild(areaFromLabel);
     this.areaFromInputWrapper.appendChild(areaPosition);
     this.areaFromInputWrapper.appendChild(this.areaFromInput);
