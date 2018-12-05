@@ -421,3 +421,6 @@ button.c4g-popup-route-to:before {
     font-weight: 900;
     font-size: inherit;
 }
+.route-features-list-element > div {
+    padding: 10px 0px 15px;
+}
