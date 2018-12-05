@@ -72,7 +72,9 @@ class LoadMapDataListener
             $mapData['priorityLocstyle'] = $profile->priorityLocstyle;
             $mapData['closeAfterSearch'] = $profile->closeAfterSearch;
             $mapData['showFeatures'] = $profile->showFeatures;
+            $mapData['featureLabel'] = $profile->featureLabel;
             $mapData['showInstructions'] = $profile->showInstructions;
+            $mapData['instructionLabel'] = $profile->instructionLabel;
             $mapData['initialMode'] = $profile->initialMode;
             $mapData['routeStartButton'] = $profile->routeStartButton;
         }

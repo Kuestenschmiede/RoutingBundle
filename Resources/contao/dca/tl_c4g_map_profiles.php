@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['config']['onload_callback'][] = [$cal
 
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['__selector__'][] = 'router';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace('geosearch;','geosearch;{routing_legend:hide},router;', $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
-$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,routerHeadline,router_attribution,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,showFeatures,initialMode,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle';
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,routerHeadline,router_attribution,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel,showFeatures,featureLabel,initialMode,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'router' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'],
@@ -238,12 +238,28 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'checkbox',
         'sql'                     => "char(1) NOT NULL default '0'"
     ],
+    'featureLabel' => [
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['featureLabel'],
+        'filter'                  => false,
+        'inputType'               => 'text',
+        'default'                 => 'In der Nähe',
+        'eval'                    => [ 'tl_class'=>'clr', "maxlength" => 100],
+        'sql'                     => "varchar(100) NOT NULL default ''"
+    ],
     'showInstructions' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['showInstructions'],
         'exclude'                 => true,
         'default'                 => true,
         'inputType'               => 'checkbox',
         'sql'                     => "char(1) NOT NULL default '0'"
+    ],
+    'instructionLabel' => [
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['instructionLabel'],
+        'filter'                  => false,
+        'inputType'               => 'text',
+        'default'                 => 'Routenhinweise',
+        'eval'                    => [ 'tl_class'=>'clr', "maxlength" => 100],
+        'sql'                     => "varchar(100) NOT NULL default ''"
     ],
     'initialMode' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['initialMode'],

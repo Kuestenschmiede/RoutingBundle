@@ -2125,14 +2125,14 @@ export class Router extends Sideboard {
       // create feature / instruction wrappers
       if (this.options.mapController.data.showFeatures && this.options.mapController.data.showInstructions) {
         let buttonFeatures = document.createElement("button");
-        buttonFeatures.innerHTML = "Features";
+        buttonFeatures.innerHTML = this.options.mapController.data.featureLabel;
         $(buttonFeatures).on('click', function () {
           $(".c4g-router-instructions-wrapper").css('display', 'none');
           $(".router-features-display").css('display', 'block');
         });
 
         let buttonInstructions = document.createElement('button');
-        buttonInstructions.innerHTML = langRouteConstants.INSTRUCTION_HEADLINE;
+        buttonInstructions.innerHTML = this.options.mapController.data.instructionLabel;
         $(buttonInstructions).on('click', function () {
           $(".c4g-router-instructions-wrapper").css('display', 'block');
           $(".router-features-display").css('display', 'none');
