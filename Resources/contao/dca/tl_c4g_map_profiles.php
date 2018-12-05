@@ -28,10 +28,9 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'router_viaroute_url' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_viaroute_url'],
         'exclude'                 => true,
-        'default'                 => 'https://api.openrouteservice.org/',
         'inputType'               => 'text',
         'eval'                    => ['rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'long'],
-        'sql'                     => "varchar(255) NOT NULL default 'https://api.openrouteservice.org/'"
+        'sql'                     => "varchar(255) NOT NULL default ''"
     ],
 
     'router_attribution' => [
