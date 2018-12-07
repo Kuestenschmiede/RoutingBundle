@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['config']['onload_callback'][] = [$cal
 
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['__selector__'][] = 'router';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace('geosearch;','geosearch;{routing_legend:hide},router;', $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
-$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,routerHeadline,router_attribution,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel,showFeatures,featureLabel,initialMode,routerLayers,minDetourArea,maxDetourArea,minDetourRoute,maxDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle';
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,routerHeadline,router_attribution,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel,showFeatures,featureLabel,initialMode,routerLayers,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'router' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'],
@@ -129,6 +129,15 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 30],
     'sql'                     => "decimal(10) NOT NULL default '20'"
     ],
+    'initialDetourArea' => [
+
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['initialDetourArea'],
+        'filter'                  => false,
+        'inputType'               => 'text',
+        'default'                 => '10',
+        'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 30],
+        'sql'                     => "decimal(10) NOT NULL default '10'"
+    ],
     'routerLayers' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayers'],
         'exclude'                 => true,
@@ -149,6 +158,15 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'maxDetourRoute' => [
 
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourRoute'],
+        'filter'                  => false,
+        'inputType'               => 'text',
+        'default'                 => '5',
+        'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 10],
+        'sql'                     => "decimal(10) NOT NULL default '5'"
+    ],
+    'initialDetourRoute' => [
+
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['initialDetourRoute'],
         'filter'                  => false,
         'inputType'               => 'text',
         'default'                 => '5',

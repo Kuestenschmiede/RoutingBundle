@@ -2348,7 +2348,8 @@ export class Router extends Sideboard {
           window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
           window.c4gMapsHooks.proxy_layer_loaded.push(routerUiFunction);
         }
-        let toggleDetourWrapper = this.createDetourSlider("route", mapData.detourRoute[0], mapData.detourRoute[1], (mapData.detourRoute[0] + mapData.detourRoute[1]) / 2);
+        console.log(mapData.detourRoute);
+        let toggleDetourWrapper = this.createDetourSlider("route", mapData.detourRoute.min, mapData.detourRoute.max, mapData.detourRoute.initial);
         routerViewInputWrapper.appendChild(toggleDetourWrapper);
       }
 
@@ -2582,7 +2583,7 @@ export class Router extends Sideboard {
       window.c4gMapsHooks.proxy_layer_loaded.push(areaUiFunction);
     }
 
-    let toggleDetourWrapper = this.createDetourSlider("area", mapData.detourArea[0], mapData.detourArea[1], (mapData.detourArea[0] + mapData.detourArea[1]) / 2);
+    let toggleDetourWrapper = this.createDetourSlider("area", mapData.detourArea.min, mapData.detourArea.max, mapData.detourArea.initial);
     areaViewInputWrapper.appendChild(toggleDetourWrapper);
     let areaActivateFunction = function () {
       areaDeactivateFunction();

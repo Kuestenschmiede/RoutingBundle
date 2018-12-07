@@ -61,8 +61,16 @@ class LoadMapDataListener
                 $mapData['routerLayers'] = $returnLayers;
             }
             $mapData['clickLocstyle'] = $profile->clickLocstyle;
-            $mapData['detourArea'] = [$profile->minDetourArea, $profile->maxDetourArea];
-            $mapData['detourRoute'] = [$profile->minDetourRoute, $profile->maxDetourRoute];
+            $mapData['detourArea'] = [
+                "min" => $profile->minDetourArea,
+                "max" => $profile->maxDetourArea,
+                "initial" => $profile->initialDetourArea
+            ];
+            $mapData['detourRoute'] = [
+                "min" => $profile->minDetourRoute,
+                "max" => $profile->maxDetourRoute,
+                "initial" => $profile->initialDetourRoute
+            ];
             $mapData['router_open'] = $profile->openRouter;
             $mapData['areaCenterLocstyle'] = $profile->areaCenterLocstyle;
             $mapData['enableOverPoints'] = $profile->enableOverPoints;
