@@ -1807,7 +1807,9 @@ export class Router extends Sideboard {
       }
       scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
 
+
       if (mode === "area") {
+        scope.setAreaPoint([coords.longitude, coords.latitude]);
         if (scope[property]) {
           scope.performArea(scope[property]);
         }
@@ -1830,20 +1832,32 @@ export class Router extends Sideboard {
       if ($(scope.areaFromInput).val() === "") {
         scope.performReverseSearch($(scope.areaFromInput), ol.proj.toLonLat(evt.coordinate));
         scope.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
-        let point = $.extend(true, {}, scope.areaValue);
-        point.transform('EPSG:4326', 'EPSG:3857');
-        let feature = new ol.Feature({geometry: point});
-        let locstyleId = scope.options.mapController.data.areaCenterLocstyle;
-        feature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
-        scope.areaSource.clear();
-        scope.mapSelectInteraction.getFeatures().clear();
-        scope.areaSource.addFeature(feature);
-        scope.updateLinkFragments("addressArea");
+        scope.setAreaPoint(evt.coordinate);
         scope.performArea(scope.areaValue);
       }
     };
     scope.options.mapController.map.on('click', scope.fnMapAreaInteraction);
     scope.updateLinkFragments("mode", "area");
+  }
+
+  /**
+   * Takes a set of coordinates as input and sets these coordinates as new center for the area search.
+   * @param coordinates   Coordinate pair in WGS:84 projection (Lat/Lon)
+   */
+  setAreaPoint(coordinates) {
+    if (this.areaValue) {
+      let point = $.extend(true, {}, this.areaValue);
+      point.transform('EPSG:4326', 'EPSG:3857');
+      let feature = new ol.Feature({geometry: point});
+      let locstyleId = this.options.mapController.data.areaCenterLocstyle;
+      feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+      this.areaSource.clear();
+      this.routerFeaturesSource.clear();
+      this.mapSelectInteraction.getFeatures().clear();
+      this.areaSource.addFeature(feature);
+
+      this.updateLinkFragments("addressArea");
+    }
   }
 
   /**
@@ -2348,7 +2362,6 @@ export class Router extends Sideboard {
           window.c4gMapsHooks.proxy_layer_loaded = window.c4gMapsHooks.proxy_layer_loaded || [];
           window.c4gMapsHooks.proxy_layer_loaded.push(routerUiFunction);
         }
-        console.log(mapData.detourRoute);
         let toggleDetourWrapper = this.createDetourSlider("route", mapData.detourRoute.min, mapData.detourRoute.max, mapData.detourRoute.initial);
         routerViewInputWrapper.appendChild(toggleDetourWrapper);
       }
@@ -2476,7 +2489,14 @@ export class Router extends Sideboard {
 
     this.$areaFromInput = $(this.areaFromInput);
     this.$areaFromInput.on('change', function () {
-      self.performSearch(self.$areaFromInput, "areaValue");
+      self.performSearch(self.$areaFromInput, "areaValue", function() {
+        // check if areaValue is set
+        // if yes, add a marker to map
+        if (self.areaValue) {
+          self.setAreaPoint(self.areaValue.getCoordinates());
+          self.performArea(self.areaValue);
+        }
+      });
     });
     // create area position button
     let areaPosition = this.createPositionButton(".c4g-router-input-from", "areaValue", "area");
@@ -2596,15 +2616,18 @@ export class Router extends Sideboard {
     let areaStartButton = document.createElement("button");
     areaStartButton.className = "c4g-area-search-start";
     areaStartButton.innerText = "Suche starten";
+    let callCnt = 0;
     $(areaStartButton).on("click", function (event) {
       if (self.areaValue) {
         self.performArea(self.areaValue);
       } else {
-        // wait for one second and check the values again
         self.spinner.show();
-        window.setTimeout(function () {
+        // wait for one second and check the values again
+        window.setTimeout(function() {
           if (self.areaValue) {
             self.performArea(self.areaValue);
+          } else {
+            console.warn("Address search cancelled after waiting for address too long...");
           }
           self.spinner.hide();
         }, 1000);
