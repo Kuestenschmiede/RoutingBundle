@@ -116,9 +116,9 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourArea'],
         'filter'                  => false,
         'inputType'               => 'text',
-        'default'                 => '0',
+        'default'                 => '0.5',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 0],
-        'sql'                     => "decimal(10) NOT NULL default '0'"
+        'sql'                     => "decimal(10) NOT NULL default '0.5'"
     ],
     'maxDetourArea' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourArea'],
@@ -150,9 +150,9 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourRoute'],
         'filter'                  => false,
         'inputType'               => 'text',
-        'default'                 => '0',
+        'default'                 => '0.5',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 0],
-        'sql'                     => "decimal(10) NOT NULL default '0'"
+        'sql'                     => "decimal(10) NOT NULL default '0.5'"
     ],
     'maxDetourRoute' => [
 
@@ -168,9 +168,9 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['initialDetourRoute'],
         'filter'                  => false,
         'inputType'               => 'text',
-        'default'                 => '5',
+        'default'                 => '2.5',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 10],
-        'sql'                     => "decimal(10) NOT NULL default '5'"
+        'sql'                     => "decimal(10) NOT NULL default '2.5'"
     ],
     'clickLocstyle' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['clickLocstyle'],
