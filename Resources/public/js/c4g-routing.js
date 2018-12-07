@@ -871,6 +871,10 @@ export class Router extends Sideboard {
     if (self.routeFeatureSelect) {
       self.routeFeatureSelect.getFeatures().clear();
     }
+    if (!features) {
+      // TODO the calling function expects a return value; should probably be fixed
+      return [];
+    }
     const layerId = mode === "router" ? $(this.routerLayersSelect).val() : $(this.areaLayersSelect).val();
     const layer = self.options.mapController.proxy.layerController.arrLayers[layerId];
     let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
@@ -1856,9 +1860,10 @@ export class Router extends Sideboard {
       feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
       this.areaSource.clear();
       this.routerFeaturesSource.clear();
+      this.routerWayLayer.getSource().clear();
+      this.routerAltWayLayer.getSource().clear();
       this.mapSelectInteraction.getFeatures().clear();
       this.areaSource.addFeature(feature);
-
       this.updateLinkFragments("addressArea");
     }
   }
@@ -2312,7 +2317,7 @@ export class Router extends Sideboard {
             $(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
             $(this).siblings().addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
             self.reloadFeatureValues("router");
-            if (self.response) {
+            if (self.response && self.response.features) {
               self.showFeatures(self.response.features, self.response.type, "router")
             }
             let layerId = $(self.routerLayersSelect).val();
