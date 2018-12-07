@@ -85,6 +85,7 @@ class LoadMapDataListener
             $mapData['instructionLabel'] = $profile->instructionLabel;
             $mapData['initialMode'] = $profile->initialMode;
             $mapData['routeStartButton'] = $profile->routeStartButton;
+            $mapData['usePermalink'] = $profile->usePermalink;
         }
 
         $event->setMapData($mapData);

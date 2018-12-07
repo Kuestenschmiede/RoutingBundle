@@ -54,6 +54,7 @@ export class Router extends Sideboard {
       searchType: "",
       forceStart: 1
     };
+    this.usePermalink = this.options.mapController.data.usePermalink;
   };
 
   /**
@@ -255,11 +256,13 @@ export class Router extends Sideboard {
    * @param value
    */
   updateLinkFragments(key, value) {
-    if (!this.linkFragments) {
-      this.linkFragments = {};
+    if (this.usePermalink) {
+      if (!this.linkFragments) {
+        this.linkFragments = {};
+      }
+      this.linkFragments[key] = value;
+      this.updateUrl();
     }
-    this.linkFragments[key] = value;
-    this.updateUrl();
   }
 
   /**
@@ -3012,7 +3015,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       direction: "left",
       name: "router"
     });
-    if (mapController.data.router_open) {
+    if (mapController.data.router_open || mapController.data.initialParams) {
       router.open();
     }
     mapController.map.addControl(router);

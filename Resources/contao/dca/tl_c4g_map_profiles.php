@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['config']['onload_callback'][] = [$cal
 
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['__selector__'][] = 'router';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace('geosearch;','geosearch;{routing_legend:hide},router;', $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
-$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,routerHeadline,router_attribution,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel,showFeatures,featureLabel,initialMode,routerLayers,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle';
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] = 'router_api_selection,router_viaroute_url,routerHeadline,router_attribution,router_from_locstyle,router_to_locstyle,router_point_locstyle,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel,showFeatures,featureLabel,initialMode,routerLayers,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle,usePermalink';
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'router' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'],
@@ -121,13 +121,12 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'sql'                     => "decimal(10) NOT NULL default '0'"
     ],
     'maxDetourArea' => [
-
-    'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourArea'],
-    'filter'                  => false,
-    'inputType'               => 'text',
-    'default'                 => '20',
-    'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 30],
-    'sql'                     => "decimal(10) NOT NULL default '20'"
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourArea'],
+        'filter'                  => false,
+        'inputType'               => 'text',
+        'default'                 => '20',
+        'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 30],
+        'sql'                     => "decimal(10) NOT NULL default '20'"
     ],
     'initialDetourArea' => [
 
@@ -148,12 +147,12 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'sql'                     => 'blob NULL'
     ],
     'minDetourRoute' => [
-    'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourRoute'],
-    'filter'                  => false,
-    'inputType'               => 'text',
-    'default'                 => '0',
-    'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 0],
-    'sql'                     => "decimal(10) NOT NULL default '0'"
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['minDetourRoute'],
+        'filter'                  => false,
+        'inputType'               => 'text',
+        'default'                 => '0',
+        'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 0],
+        'sql'                     => "decimal(10) NOT NULL default '0'"
     ],
     'maxDetourRoute' => [
 
@@ -286,6 +285,13 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'options'                 => ['area', 'route'],
         'reference'               => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_modes'],
         'sql'                     => "varchar(10) NOT NULL default 'area'"
+    ],
+    'usePermalink' => [
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['usePermalink'],
+        'exclude'                 => true,
+        'default'                 => true,
+        'inputType'               => 'checkbox',
+        'sql'                     => "char(1) NOT NULL default '0'"
     ]
 
 ],$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']);

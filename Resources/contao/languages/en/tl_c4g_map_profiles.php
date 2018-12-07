@@ -49,6 +49,7 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['clickLocstyle'] = ['Location Style a
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['areaCenterLocstyle'] = ['Location Style Center (Area Search)', 'Choose the location style which will place a marker in the center of the search.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['priorityFeatures'] = ['Prioritized Features', 'The number of features with the lowest value to be displayed differently on the map.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['priorityLocstyle'] = ['Location Style prioritized features', 'Location Style for prioritized features.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['usePermalink'] = ['Generate router permalink', 'Check this to save the current search parameters in the URL.'];
 
 /**
  * References
