@@ -485,7 +485,9 @@ export class Router extends Sideboard {
     self.fnMapRouterInteraction = function (evt) {
 
       coordinate = ol.proj.toLonLat(evt.coordinate);
-
+      // clear old features
+      self.areaSource.clear();
+      self.routerFeaturesSource.clear();
       if (self.$fromInput.val() === "") {
         //self.$fromInput.val(ol.proj.toLonLat(evt.coordinate));
         self.performReverseSearch(self.$fromInput, coordinate);
@@ -1862,6 +1864,7 @@ export class Router extends Sideboard {
       this.routerFeaturesSource.clear();
       this.routerWayLayer.getSource().clear();
       this.routerAltWayLayer.getSource().clear();
+      this.locationsSource.clear();
       this.mapSelectInteraction.getFeatures().clear();
       this.areaSource.addFeature(feature);
       this.updateLinkFragments("addressArea");
