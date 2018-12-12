@@ -193,13 +193,14 @@ button.c4g-router-position:before {
     box-sizing: border-box;
     padding: 5px;
     margin: 2px;
+    min-width: 141px;
 }
 .c4g-router-input-wrapper > label {
     margin-right: 5px;
     vertical-align: middle;
     margin-top: auto;
     margin-bottom: auto;
-    min-width: 100px;
+    min-width: 40px;
 }
 .c4g-router-buttonbar {
     text-align: left;
