@@ -487,7 +487,6 @@ export class Router extends Sideboard {
       coordinate = ol.proj.toLonLat(evt.coordinate);
       // clear old features
       self.areaSource.clear();
-      self.routerFeaturesSource.clear();
       if (self.$fromInput.val() === "") {
         //self.$fromInput.val(ol.proj.toLonLat(evt.coordinate));
         self.performReverseSearch(self.$fromInput, coordinate);
