@@ -2178,6 +2178,8 @@ export class Router extends Sideboard {
       this.fromInput.className = routingConstants.ROUTER_INPUT_FROM;
       this.fromInput.id = this.fromInput.name = "routingFrom";
 
+
+
       routerFromLabel = document.createElement('label');
       routerFromLabel.setAttribute('for', 'routingFrom');
       routerFromLabel.innerHTML = langRouteConstants.ROUTER_FROM_LABEL;
@@ -2386,6 +2388,8 @@ export class Router extends Sideboard {
       this.toInput.className = routingConstants.ROUTER_INPUT_TO;
       this.toInput.id = this.toInput.name = "routingTo";
 
+
+
       let routerToPosition = this.createPositionButton(".c4g-router-input-to", "toValue", "router")
 
       routerToLabel = document.createElement('label');
@@ -2437,11 +2441,21 @@ export class Router extends Sideboard {
         routerViewInputWrapper.appendChild(routeStartButton);
       }
 
+      self.fromInputLoaded = false;
+      self.toInputLoaded = false;
       self.statusBar.appendChild(this.getAttribution());
       let routerActivateFunction = function () {
         self.removeMapInputInteraction();
         self.addMapInputInteraction();
         self.updateLinkFragments("mode", "route");
+        if (!self.fromInputLoaded) {
+          let fromInputCacheable = new CachedInputfield("#routingFrom", true, "c4g-router-address", "pink");
+          self.fromInputLoaded = true;
+        }
+        if (!self.toInputLoaded) {
+          let toInputCacheable = new CachedInputfield("#routingTo", true, "c4g-router-address", "pink");
+          self.toInputLoaded = true;
+        }
       };
       let routerDeactivateFunction = function () {
         self.removeMapInputInteraction();
@@ -2461,6 +2475,7 @@ export class Router extends Sideboard {
         activateFunction: routerActivateFunction,
         deactivateFunction: routerDeactivateFunction
       });
+
       return routerView;
 
   }
@@ -2508,6 +2523,7 @@ export class Router extends Sideboard {
         }
       });
     });
+
     // create area position button
     let areaPosition = this.createPositionButton(".c4g-router-input-from", "areaValue", "area");
 
@@ -2615,10 +2631,15 @@ export class Router extends Sideboard {
 
     let toggleDetourWrapper = this.createDetourSlider("area", mapData.detourArea.min, mapData.detourArea.max, mapData.detourArea.initial);
     areaViewInputWrapper.appendChild(toggleDetourWrapper);
+    this.areaInputLoaded = false;
     let areaActivateFunction = function () {
       areaDeactivateFunction();
       self.addAreaInputInteraction();
       self.updateLinkFragments("mode", "area");
+      if (!self.areaInputLoaded) {
+        let areaInputCacheable = new CachedInputfield("#areaFrom", true, "c4g-router-address");
+        self.areaInputLoaded = true;
+      }
     };
     let areaDeactivateFunction = function () {
       self.options.mapController.map.un('click', self.fnMapAreaInteraction);
