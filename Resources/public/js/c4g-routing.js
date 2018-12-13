@@ -2124,8 +2124,7 @@ export class Router extends Sideboard {
       if (mode === "route") {
         scope.recalculateRoute();
       } else {
-        // TODO check
-        scope.performArea(scope.fromValue);
+        scope.performArea(scope.areaValue);
       }
     });
     $(scope[key]).trigger('input');
