@@ -645,6 +645,12 @@ export class Router extends Sideboard {
     self = this;
     this.areaSource.clear();
     this.mapSelectInteraction.getFeatures().clear();
+    if (!fromPoint) {
+      fromPoint = this.fromValue;
+    }
+    if (!toPoint) {
+      toPoint = this.toValue;
+    }
     fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
     toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
     if (overPoint) {
@@ -899,6 +905,7 @@ export class Router extends Sideboard {
     }
     featureLoop:
       for (let i = 0; features && (i < features.length); i++) {
+        let label = "";
         let feature = features[i];
         let resultCoordinate;
         let contentFeature;
@@ -925,10 +932,10 @@ export class Router extends Sideboard {
 
 
         if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
-          contentFeature.set('label', feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
+          label = feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
         }
         else if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature.tags && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
-          contentFeature.set('label', feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
+          label = feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
         }
 
         let locstyle = feature['locstyle'] || layer.locstyle;
@@ -940,14 +947,28 @@ export class Router extends Sideboard {
 
         contentFeature.set('locationStyle', locstyle);
         contentFeature.set('zIndex', i);
+        contentFeature.set('label', label);
         if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
           contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
-          contentFeatures.push(contentFeature);
+          if (self.options.mapController.data.hideFeaturesWithoutLabel) {
+            if (label && label !== "") {
+              contentFeatures.push(contentFeature);
+            }
+          } else {
+            contentFeatures.push(contentFeature);
+          }
         }
         else {
           contentFeature.set('styleId', locstyle);
-          unstyledFeatures.push(contentFeature);
-          missingStyles[locstyle] = locstyle;
+          if (self.options.mapController.data.hideFeaturesWithoutLabel) {
+            if (label && label !== "") {
+              unstyledFeatures.push(contentFeature);
+              missingStyles[locstyle] = locstyle;
+            }
+          } else {
+            unstyledFeatures.push(contentFeature);
+            missingStyles[locstyle] = locstyle;
+          }
         }
         for (let tags in feature.tags) {
           contentFeature.set(tags, feature.tags[tags]);
@@ -2415,6 +2436,19 @@ export class Router extends Sideboard {
       this.$toInput = $(this.toInput);
       this.$toInput.on('change', function () {
         self.performSearch(self.$toInput, "toValue");
+      });
+      // add enter listener
+      this.$toInput.on('keydown', function(event) {
+        if (event.keyCode === 13) {
+          const performSearchCallback = function() {
+            self.performViaRoute();
+          };
+          if (!self.toValue) {
+            self.performSearch(self.$toInput, "toValue", performSearchCallback);
+          } else {
+            performSearchCallback();
+          }
+        }
       });
 
       routerViewInputWrapper.appendChild(this.toInputWrapper);

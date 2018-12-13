@@ -28,6 +28,7 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'] = ['Key','Key f
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'] = ['Button Text','The text for the corresponding button.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'] = ['Label','Label for the map elements.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['mapLabel'] = ['Label Field','Fieldname for the label generation.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['hideFeaturesWithoutLabel'] = ['Hide features without label','Check this to hide features that have no label.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['openRouter'] = ['Router initially opened', 'Check this to open the router initially.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_alternative'] = ['Alternative Routes', 'Should alternative routes be displayed?'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['enableOverPoints'] = ['Interim Targets', 'Check this to enable the possibility to create interim targets.'];
