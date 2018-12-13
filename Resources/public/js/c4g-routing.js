@@ -5,6 +5,7 @@ import * as popupFunctions from "./../../../../MapsBundle/Resources/public/js/c4
 import {routingConstants} from "./routing-constants";
 import {routingConstantsEnglish} from "./routing-constant-i18n-en";
 import {routingConstantsGerman} from "./routing-constant-i18n-de";
+import {CachedInputfield} from "./../../../../CoreBundle/Resources/public/js/c4g-cached-inputfield";
 
 // language stuff
 let langRouteConstants = {};
@@ -140,18 +141,15 @@ export class Router extends Sideboard {
           })
         })
       ]
-
     });
     selectInteraction.on('select', function (event) {
-
+      console.log("selected");
       if (event.selected[0]) {
         var geometry = event.selected[0].getGeometry();
         if (geometry && geometry instanceof ol.geom.LineString) {
           self.showAltRoute(self.response, event.selected[0].getId());
         }
-
       }
-
     });
     this.mapSelectInteraction = selectInteraction;
     this.modWayInteraction = new ol.interaction.Modify({
@@ -170,7 +168,6 @@ export class Router extends Sideboard {
           })
         })
       ]
-
     });
     this.modWayInteraction.on('modifyend', function (event) {
       self.$buttonOver.trigger('click');
@@ -995,6 +992,7 @@ export class Router extends Sideboard {
           }
         });
         self.routeFeatureSelect.on('select', function (event) {
+          console.log("routeFeatureSelect select");
           // should be always only one feature
           const feature = event.selected[0];
           if (feature) {
