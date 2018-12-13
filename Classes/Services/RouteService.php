@@ -122,7 +122,7 @@ class RouteService extends \Frontend
             }
             $profile = $valuesProfile[$profile] ? $valuesProfile[$profile] : 'driving-car';
 
-            $profile = "&profile=".$profile."&format=json&language=".$language."&geometry_format=encodedpolyline&maneuvers=true&preference=fastest";
+            $profile = "&profile=".$profile."&format=json&language=".$language."&geometry_format=encodedpolyline&maneuvers=true&preference=recommended";
             $url = $strRoutingUrl.$apiKey.$coordinates.$profile;
             $REQUEST = new \Request();
             if ($_SERVER['HTTP_REFERER']) {
@@ -141,7 +141,7 @@ class RouteService extends \Frontend
                 if ($_SERVER['HTTP_USER_AGENT']) {
                     $REQUEST2->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
                 }
-                $url = str_replace("preference=fastest","preference=shortest",$url);
+                $url = str_replace("preference=recommended","preference=shortest",$url);
                 $REQUEST2->send($url);
                 $response = \GuzzleHttp\json_decode($response, true);
                 $response['routes'][1] = \GuzzleHttp\json_decode($REQUEST2->response, true)['routes'][0];
