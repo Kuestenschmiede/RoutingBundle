@@ -25,6 +25,7 @@ export  var routingConstantsEnglish = {
 
   ROUTER_VIEW_ALERT_ADDRESS: 'Address not found.',
   ROUTER_VIEW_ALERT_GOCODING: 'No access to geocoding.',
+  ROUTER_ERROR_POLYLINE: 'Could not calculate route.',
 
   ROUTER: 'Router',
   ROUTER_N: 'Head north',

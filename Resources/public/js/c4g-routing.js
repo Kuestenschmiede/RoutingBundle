@@ -19,6 +19,7 @@ if (mapData) {
     langRouteConstants = routingConstantsEnglish;
   }
 }
+
 'use strict';
 export class Router extends Sideboard {
 
@@ -684,18 +685,24 @@ export class Router extends Sideboard {
         .done(function (response) {
           self.response = response;
           if (response) {
-            self.showRouteLayer(response);
-            if (response.features) {
-              $(".router-content-switcher").css('display', 'block');
-            }
-            self.showRouteInstructions(response, 0);
-            if (response.features && response.features.length > 0) {
-              let sortedFeatures = self.showFeatures(response.features, response.type, "router");
+            if (response.error) {
+              let errorDiv = self.showRouterError(langRouteConstants[response.error]);
+              $(self.fromInput).parent()[0].appendChild(errorDiv);
+            } else {
+              self.showRouteLayer(response);
+              if (response.features) {
+                $(".router-content-switcher").css('display', 'block');
+              }
+              self.showRouteInstructions(response, 0);
+              if (response.features && response.features.length > 0) {
+                let sortedFeatures = self.showFeatures(response.features, response.type, "router");
 
-              self.showFeaturesInPortside(sortedFeatures, response.type, "router");
-              $(self.areaFeatureWrapper).empty();
-              $(self.areaFromInput).val("");
+                self.showFeaturesInPortside(sortedFeatures, response.type, "router");
+                $(self.areaFeatureWrapper).empty();
+                $(self.areaFromInput).val("");
+              }
             }
+
           }
 
         })
@@ -2952,21 +2959,8 @@ export class Router extends Sideboard {
           );
         }
       } else {
-        let errorDiv = document.createElement('div');
-        $(errorDiv).addClass(routingConstants.ROUTE_ERROR);
-        $(errorDiv).addClass('contentHeadline');
-
-        let errorText = document.createElement('label');
-        errorText.innerHTML = langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS;
-        errorDiv.appendChild(errorText);
-        let buttonClose = document.createElement('button');
-        $(buttonClose).addClass(cssConstants.POPUP_CLOSE);
-        $(buttonClose).addClass(cssConstants.ICON);
-        $(buttonClose).on('click', function () {
-            $(this).parent().remove();
-          }
-        )
-        errorDiv.appendChild(buttonClose);
+        // show error hint
+        let errorDiv = self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
         let inputDiv = $input.parent()[0];
         inputDiv.appendChild(errorDiv);
         self.clearInput($input);
@@ -2977,29 +2971,38 @@ export class Router extends Sideboard {
         opt_callback();
       }
     }).fail(function () {
-        let errorDiv = document.createElement('div');
-        $(errorDiv).addClass(routingConstants.ROUTE_ERROR);
-        $(errorDiv).addClass('contentHeadline');
-
-        let errorText = document.createElement('label');
-        errorText.innerHTML = langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS;
-        errorDiv.appendChild(errorText);
-        let buttonClose = document.createElement('button');
-        $(buttonClose).addClass(cssConstants.POPUP_CLOSE);
-        $(buttonClose).addClass(cssConstants.ICON);
-        $(buttonClose).on('click', function () {
-            $(this).parent().remove();
-          }
-        )
-        errorDiv.appendChild(buttonClose);
         let inputDiv = $input.parent()[0];
-        inputDiv.appendChild(errorDiv);
+        inputDiv.appendChild(self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS));
         self.clearInput($input);
         delete self[value];
       });
 
     return "";
 
+  }
+
+  /**
+   * Creates a div element that containts the given error text.
+   * @param $field
+   * @param errorText
+   */
+  showRouterError(errorText) {
+    let errorDiv = document.createElement('div');
+    $(errorDiv).addClass(routingConstants.ROUTE_ERROR);
+    $(errorDiv).addClass('contentHeadline');
+
+    let errorLabel = document.createElement('label');
+    errorLabel.innerHTML = errorText;
+    errorDiv.appendChild(errorLabel);
+    let buttonClose = document.createElement('button');
+    $(buttonClose).addClass(cssConstants.POPUP_CLOSE);
+    $(buttonClose).addClass(cssConstants.ICON);
+    $(buttonClose).on('click', function () {
+        $(this).parent().remove();
+      }
+    )
+    errorDiv.appendChild(buttonClose);
+    return errorDiv;
   }
 
   /**
