@@ -2310,7 +2310,23 @@ export class Router extends Sideboard {
 
       this.$fromInput = $(this.fromInput);
       this.$fromInput.on('change', function () {
+        self.fromValue = null;
         self.performSearch(self.$fromInput, "fromValue");
+      });
+      // add enter listener
+      this.$fromInput.on('keydown', function(event) {
+        if (event.keyCode === 13) {
+          // trigger new search
+          self.$fromInput.trigger('change');
+          const performSearchCallback = function() {
+            self.performViaRoute();
+          };
+          if (!self.fromValue) {
+            self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
+          } else {
+            performSearchCallback();
+          }
+        }
       });
 
       routerViewInputWrapper.appendChild(this.routerButtonBar);
@@ -2439,11 +2455,15 @@ export class Router extends Sideboard {
 
       this.$toInput = $(this.toInput);
       this.$toInput.on('change', function () {
+        // reset toValue for keydown listener
+        self.toValue = null;
         self.performSearch(self.$toInput, "toValue");
       });
       // add enter listener
       this.$toInput.on('keydown', function(event) {
         if (event.keyCode === 13) {
+          // trigger new search
+          self.$toInput.trigger('change');
           const performSearchCallback = function() {
             self.performViaRoute();
           };
