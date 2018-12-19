@@ -7,7 +7,9 @@
     width: auto !important;
 }
 .c4g-routing-layers-select{
+    background-color: rgba(24, 61, 93,.8);
     background-color: var(--main-color);
+    color: rgba(255,255,255,.9);
     color: var(--font-color);
     width:100%
 }
@@ -31,19 +33,25 @@
 .c4g-routing-toggle::-webkit-slider-runnable-track{
     position: relative;
     height: 12px;
+    border-radius: 0%;
     border-radius: var(--button-radius-percent);
+    background-color: rgba(255,255,255,.9);
     background-color:var(--font-color);
 }
 .c4g-routing-toggle::-moz-range-track{
     position: relative;
     height: 12px;
+    border-radius: 0%;
     border-radius: var(--button-radius-percent);
+    background-color: rgba(255,255,255,.9);
     background-color:var(--font-color);
 }
 .c4g-routing-toggle::-ms-track{
     position: relative;
     height: 12px;
+    border-radius: 0%;
     border-radius: var(--button-radius-percent);
+    background-color: rgba(255,255,255,.9);
     background-color:var(--font-color);
 }
 .c4g-routing-toggle::-webkit-slider-thumb{
@@ -51,10 +59,13 @@
     top: -5px;
     width: 50px;
     height: 24px;
+    border: 1px solid rgba(0,155,222,.5);
     border: 1px solid var(--shadow-color);
     -webkit-appearance: none;
+    background-color: rgba(255,255,255,.9);
     background-color: var(--font-color);
     box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 0%;
     border-radius:var(--button-radius-percent);
     cursor: pointer;
 }
@@ -63,10 +74,13 @@
     top: -5px;
     width: 50px;
     height: 24px;
+    border: 1px solid rgba(0,155,222,.5);
     border: 1px solid var(--shadow-color);
     -webkit-appearance: none;
+    background-color: rgba(255,255,255,.9);
     background-color: var(--font-color);
     box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 0%;
     border-radius: var(--button-radius-percent);
     cursor: pointer;
 }
@@ -75,10 +89,13 @@
     top: -5px;
     width: 50px;
     height: 24px;
+    border: 1px solid rgba(0,155,222,.5);
     border: 1px solid var(--shadow-color);
     -webkit-appearance: none;
+    background-color: rgba(255,255,255,.9);
     background-color: var(--font-color);
     box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 0%;
     border-radius: var(--button-radius-percent);
     cursor: pointer;
 }
@@ -92,6 +109,7 @@
     display: inline-block;
     transform: translateX(-50%);
     width: auto;
+    color: rgba(24, 61, 93,.8);
     color: var(--main-color);
     background-color: rgba(0,0,0,0);
     font-size: 13px;
@@ -116,7 +134,9 @@
     padding: 20px 10px 20px;
     z-index:100;
     left:100%;
+    background-color: rgba(24, 61, 93,.8) !important;
     background-color: var(--main-color) !important;
+    border-radius: 0%;
     border-radius: var(--button-radius-percent);
 }
 .c4g-routing-error label{
@@ -144,10 +164,12 @@ button.c4g-router-search:before {
 }
 
 .route-features-list-element.c4g-active {
+    background-color: rgba(0,155,222,.5);
     background-color: var(--shadow-color);
 }
 
 .route-features-list-element.c4g-inactive {
+    background-color: rgba(24, 61, 93,.8);
     background-color: var(--main-color);
 }
 .router-content-switcher button{
@@ -163,7 +185,9 @@ button.c4g-router-position:before {
 }
 
 .c4g-routing-layer-values > .c4g-active {
+    color: rgba(24, 61, 93,.8) !important;
     color: var(--main-color) !important;
+    background-color: rgba(255,255,255,.9) !important;
     background-color: var(--font-color) !important;
 }
 
@@ -193,13 +217,14 @@ button.c4g-router-position:before {
     box-sizing: border-box;
     padding: 5px;
     margin: 2px;
+    min-width: 141px;
 }
 .c4g-router-input-wrapper > label {
     margin-right: 5px;
     vertical-align: middle;
     margin-top: auto;
     margin-bottom: auto;
-    min-width: 100px;
+    min-width: 40px;
 }
 .c4g-router-buttonbar {
     text-align: left;

@@ -28,6 +28,7 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'] = ['Feldname','
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'] = ['Buttontext','Die Bezeichnung wird am entsprechenden Button für die Auswahl dargestellt.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'] = ['Label','Label für die Kartenelemente.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['mapLabel'] = ['Labelfeld','Feldname für die Labelgenerierung.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['hideFeaturesWithoutLabel'] = ['Features ohne Label verstecken','Kreuzen Sie diese Checkbox an, um Features an der Route ohne Label zu verstecken.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['openRouter'] = ['Router initial öffnen', 'Aktivieren Sie diese Checkbox, um den Router initial zu öffnen.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_alternative'] = ['Alternativroute','Sollen Alternativrouten dargestellt werden?'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['enableOverPoints'] = ['Zwischenziele', 'Aktivieren Sie diese Checkbox, um die Möglichkeit von Zwischenzielen im Router zu aktivieren.'];

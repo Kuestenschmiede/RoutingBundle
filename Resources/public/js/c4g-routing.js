@@ -5,6 +5,7 @@ import * as popupFunctions from "./../../../../MapsBundle/Resources/public/js/c4
 import {routingConstants} from "./routing-constants";
 import {routingConstantsEnglish} from "./routing-constant-i18n-en";
 import {routingConstantsGerman} from "./routing-constant-i18n-de";
+import {CachedInputfield} from "./../../../../CoreBundle/Resources/public/js/c4g-cached-inputfield";
 
 // language stuff
 let langRouteConstants = {};
@@ -18,6 +19,7 @@ if (mapData) {
     langRouteConstants = routingConstantsEnglish;
   }
 }
+
 'use strict';
 export class Router extends Sideboard {
 
@@ -139,18 +141,20 @@ export class Router extends Sideboard {
           })
         })
       ]
-
     });
     selectInteraction.on('select', function (event) {
-
-      if (event.selected[0]) {
-        var geometry = event.selected[0].getGeometry();
+      let feature = event.selected[0];
+      if (feature) {
+        var geometry = feature.getGeometry();
         if (geometry && geometry instanceof ol.geom.LineString) {
-          self.showAltRoute(self.response, event.selected[0].getId());
+          self.showAltRoute(self.response, feature.getId());
+        } else {
+          if (feature) {
+            self.clickFeatureEntryForFeature(feature);
+          }
         }
 
       }
-
     });
     this.mapSelectInteraction = selectInteraction;
     this.modWayInteraction = new ol.interaction.Modify({
@@ -169,7 +173,6 @@ export class Router extends Sideboard {
           })
         })
       ]
-
     });
     this.modWayInteraction.on('modifyend', function (event) {
       this.$overInput = self.addInterimField();
@@ -457,9 +460,6 @@ export class Router extends Sideboard {
       this.recalculateRoute();
       this.toValue = new ol.geom.Point([opt_options.toLonLat[1], opt_options.toLonLat[0]]);
     }
-    if (this.routeFeatureSelect) {
-      this.options.mapController.map.addInteraction(this.routeFeatureSelect);
-    }
   }
 
   /**
@@ -467,7 +467,6 @@ export class Router extends Sideboard {
    */
   preHideFunction() {
     this.removeMapInputInteraction();
-    this.options.mapController.map.removeInteraction(this.routeFeatureSelect);
   }
 
   /**
@@ -518,7 +517,8 @@ export class Router extends Sideboard {
     self.fnMapRouterInteraction = function (evt) {
 
       coordinate = ol.proj.toLonLat(evt.coordinate);
-
+      // clear old features
+      self.areaSource.clear();
       if (self.$fromInput.val() === "") {
         //self.$fromInput.val(ol.proj.toLonLat(evt.coordinate));
         self.performReverseSearch(self.$fromInput, coordinate);
@@ -677,6 +677,12 @@ export class Router extends Sideboard {
     self = this;
     this.areaSource.clear();
     this.mapSelectInteraction.getFeatures().clear();
+    if (!fromPoint) {
+      fromPoint = this.fromValue;
+    }
+    if (!toPoint) {
+      toPoint = this.toValue;
+    }
     fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
     toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
     if (overPoint) {
@@ -713,18 +719,24 @@ export class Router extends Sideboard {
         .done(function (response) {
           self.response = response;
           if (response) {
-            self.showRouteLayer(response);
-            if (response.features) {
-              $(".router-content-switcher").css('display', 'block');
-            }
-            self.showRouteInstructions(response, 0);
-            if (response.features && response.features.length > 0) {
-              let sortedFeatures = self.showFeatures(response.features, response.type, "router");
+            if (response.error) {
+              let errorDiv = self.showRouterError(langRouteConstants[response.error]);
+              $(self.fromInput).parent()[0].appendChild(errorDiv);
+            } else {
+              self.showRouteLayer(response);
+              if (response.features) {
+                $(".router-content-switcher").css('display', 'block');
+              }
+              self.showRouteInstructions(response, 0);
+              if (response.features && response.features.length > 0) {
+                let sortedFeatures = self.showFeatures(response.features, response.type, "router");
 
-              self.showFeaturesInPortside(sortedFeatures, response.type, "router");
-              $(self.areaFeatureWrapper).empty();
-              $(self.areaFromInput).val("");
+                self.showFeaturesInPortside(sortedFeatures, response.type, "router");
+                $(self.areaFeatureWrapper).empty();
+                $(self.areaFromInput).val("");
+              }
             }
+
           }
 
         })
@@ -901,9 +913,6 @@ export class Router extends Sideboard {
     const self = this;
     self.routerFeaturesSource.clear();
     // interim clear of feature selection
-    if (self.routeFeatureSelect) {
-      self.routeFeatureSelect.getFeatures().clear();
-    }
     if (!features) {
       // TODO the calling function expects a return value; should probably be fixed
       return [];
@@ -931,6 +940,7 @@ export class Router extends Sideboard {
     }
     featureLoop:
       for (let i = 0; features && (i < features.length); i++) {
+        let label = "";
         let feature = features[i];
         let resultCoordinate;
         let contentFeature;
@@ -957,10 +967,10 @@ export class Router extends Sideboard {
 
 
         if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
-          contentFeature.set('label', feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
+          label = feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
         }
         else if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature.tags && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
-          contentFeature.set('label', feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
+          label = feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
         }
 
         let locstyle = feature['locstyle'] || layer.locstyle;
@@ -972,14 +982,28 @@ export class Router extends Sideboard {
 
         contentFeature.set('locationStyle', locstyle);
         contentFeature.set('zIndex', i);
+        contentFeature.set('label', label);
         if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
           contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
-          contentFeatures.push(contentFeature);
+          if (self.options.mapController.data.hideFeaturesWithoutLabel) {
+            if (label && label !== "") {
+              contentFeatures.push(contentFeature);
+            }
+          } else {
+            contentFeatures.push(contentFeature);
+          }
         }
         else {
           contentFeature.set('styleId', locstyle);
-          unstyledFeatures.push(contentFeature);
-          missingStyles[locstyle] = locstyle;
+          if (self.options.mapController.data.hideFeaturesWithoutLabel) {
+            if (label && label !== "") {
+              unstyledFeatures.push(contentFeature);
+              missingStyles[locstyle] = locstyle;
+            }
+          } else {
+            unstyledFeatures.push(contentFeature);
+            missingStyles[locstyle] = locstyle;
+          }
         }
         for (let tags in feature.tags) {
           contentFeature.set(tags, feature.tags[tags]);
@@ -999,24 +1023,7 @@ export class Router extends Sideboard {
     }
     if (features && features.length > 0) {
       this.routerFeaturesSource.addFeatures(contentFeatures);
-      if (!this.routeFeaturesSelect) {
-        this.routeFeatureSelect = new ol.interaction.Select({
-          filter: function (feature, layer) {
-            return self.routerFeaturesSource.hasFeature(feature);
-          }
-        });
-        self.routeFeatureSelect.on('select', function (event) {
-          // should be always only one feature
-          const feature = event.selected[0];
-          if (feature) {
-            self.clickFeatureEntryForFeature(feature);
-          }
-        });
-        this.routeFeatureSelect.setHitTolerance(5);
-        this.options.mapController.map.addInteraction(self.routeFeatureSelect);
-      }
     }
-    // self.routeFeatureSelect = null;
     this.update();
     return priceSortedFeatures;
   }
@@ -1677,7 +1684,7 @@ export class Router extends Sideboard {
                   done: function () {
                     let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
                     // check if feature is still clicked
-                    scope.routeFeatureSelect.getFeatures().forEach(function (elem, index, array) {
+                    scope.mapSelectInteraction.getFeatures().forEach(function (elem, index, array) {
                       if (elem === tmpFeature) {
                         // feature is still clicked, style it accordingly
                         tmpFeature.setStyle(style);
@@ -1895,6 +1902,7 @@ export class Router extends Sideboard {
       this.routerFeaturesSource.clear();
       this.routerWayLayer.getSource().clear();
       this.routerAltWayLayer.getSource().clear();
+      this.locationsSource.clear();
       this.mapSelectInteraction.getFeatures().clear();
       this.areaSource.addFeature(feature);
       this.updateLinkFragments("addressArea");
@@ -2134,8 +2142,7 @@ export class Router extends Sideboard {
       if (mode === "route") {
         scope.recalculateRoute();
       } else {
-        // TODO check
-        scope.performArea(scope.fromValue);
+        scope.performArea(scope.areaValue);
       }
     });
     $(scope[key]).trigger('input');
@@ -2249,6 +2256,8 @@ export class Router extends Sideboard {
       this.fromInput.className = routingConstants.ROUTER_INPUT_FROM;
       this.fromInput.id = this.fromInput.name = "routingFrom";
 
+
+
       routerFromLabel = document.createElement('label');
       routerFromLabel.setAttribute('for', 'routingFrom');
       routerFromLabel.innerHTML = langRouteConstants.ROUTER_FROM_LABEL;
@@ -2315,7 +2324,23 @@ export class Router extends Sideboard {
 
       this.$fromInput = $(this.fromInput);
       this.$fromInput.on('change', function () {
+        self.fromValue = null;
         self.performSearch(self.$fromInput, "fromValue");
+      });
+      // add enter listener
+      this.$fromInput.on('keydown', function(event) {
+        if (event.keyCode === 13) {
+          // trigger new search
+          self.$fromInput.trigger('change');
+          const performSearchCallback = function() {
+            self.performViaRoute();
+          };
+          if (!self.fromValue) {
+            self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
+          } else {
+            performSearchCallback();
+          }
+        }
       });
 
       routerViewInputWrapper.appendChild(this.routerButtonBar);
@@ -2418,6 +2443,8 @@ export class Router extends Sideboard {
       this.toInput.className = routingConstants.ROUTER_INPUT_TO;
       this.toInput.id = this.toInput.name = "routingTo";
 
+
+
       let routerToPosition = this.createPositionButton(".c4g-router-input-to", "toValue", "router")
 
       routerToLabel = document.createElement('label');
@@ -2442,7 +2469,24 @@ export class Router extends Sideboard {
 
       this.$toInput = $(this.toInput);
       this.$toInput.on('change', function () {
+        // reset toValue for keydown listener
+        self.toValue = null;
         self.performSearch(self.$toInput, "toValue");
+      });
+      // add enter listener
+      this.$toInput.on('keydown', function(event) {
+        if (event.keyCode === 13) {
+          // trigger new search
+          self.$toInput.trigger('change');
+          const performSearchCallback = function() {
+            self.performViaRoute();
+          };
+          if (!self.toValue) {
+            self.performSearch(self.$toInput, "toValue", performSearchCallback);
+          } else {
+            performSearchCallback();
+          }
+        }
       });
 
       routerViewInputWrapper.appendChild(this.toInputWrapper);
@@ -2469,11 +2513,21 @@ export class Router extends Sideboard {
         routerViewInputWrapper.appendChild(routeStartButton);
       }
 
+      self.fromInputLoaded = false;
+      self.toInputLoaded = false;
       self.statusBar.appendChild(this.getAttribution());
       let routerActivateFunction = function () {
         self.removeMapInputInteraction();
         self.addMapInputInteraction();
         self.updateLinkFragments("mode", "route");
+        if (!self.fromInputLoaded) {
+          let fromInputCacheable = new CachedInputfield("#routingFrom", true, "c4g-router-address", "pink");
+          self.fromInputLoaded = true;
+        }
+        if (!self.toInputLoaded) {
+          let toInputCacheable = new CachedInputfield("#routingTo", true, "c4g-router-address", "pink");
+          self.toInputLoaded = true;
+        }
       };
       let routerDeactivateFunction = function () {
         self.removeMapInputInteraction();
@@ -2493,6 +2547,7 @@ export class Router extends Sideboard {
         activateFunction: routerActivateFunction,
         deactivateFunction: routerDeactivateFunction
       });
+
       return routerView;
 
   }
@@ -2540,6 +2595,7 @@ export class Router extends Sideboard {
         }
       });
     });
+
     // create area position button
     let areaPosition = this.createPositionButton(".c4g-router-input-from", "areaValue", "area");
 
@@ -2647,10 +2703,15 @@ export class Router extends Sideboard {
 
     let toggleDetourWrapper = this.createDetourSlider("area", mapData.detourArea.min, mapData.detourArea.max, mapData.detourArea.initial);
     areaViewInputWrapper.appendChild(toggleDetourWrapper);
+    this.areaInputLoaded = false;
     let areaActivateFunction = function () {
       areaDeactivateFunction();
       self.addAreaInputInteraction();
       self.updateLinkFragments("mode", "area");
+      if (!self.areaInputLoaded) {
+        let areaInputCacheable = new CachedInputfield("#areaFrom", true, "c4g-router-address");
+        self.areaInputLoaded = true;
+      }
     };
     let areaDeactivateFunction = function () {
       self.options.mapController.map.un('click', self.fnMapAreaInteraction);
@@ -2932,21 +2993,8 @@ export class Router extends Sideboard {
           );
         }
       } else {
-        let errorDiv = document.createElement('div');
-        $(errorDiv).addClass(routingConstants.ROUTE_ERROR);
-        $(errorDiv).addClass('contentHeadline');
-
-        let errorText = document.createElement('label');
-        errorText.innerHTML = langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS;
-        errorDiv.appendChild(errorText);
-        let buttonClose = document.createElement('button');
-        $(buttonClose).addClass(cssConstants.POPUP_CLOSE);
-        $(buttonClose).addClass(cssConstants.ICON);
-        $(buttonClose).on('click', function () {
-            $(this).parent().remove();
-          }
-        )
-        errorDiv.appendChild(buttonClose);
+        // show error hint
+        let errorDiv = self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
         let inputDiv = $input.parent()[0];
         inputDiv.appendChild(errorDiv);
         self.clearInput($input);
@@ -2957,29 +3005,38 @@ export class Router extends Sideboard {
         opt_callback();
       }
     }).fail(function () {
-        let errorDiv = document.createElement('div');
-        $(errorDiv).addClass(routingConstants.ROUTE_ERROR);
-        $(errorDiv).addClass('contentHeadline');
-
-        let errorText = document.createElement('label');
-        errorText.innerHTML = langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS;
-        errorDiv.appendChild(errorText);
-        let buttonClose = document.createElement('button');
-        $(buttonClose).addClass(cssConstants.POPUP_CLOSE);
-        $(buttonClose).addClass(cssConstants.ICON);
-        $(buttonClose).on('click', function () {
-            $(this).parent().remove();
-          }
-        )
-        errorDiv.appendChild(buttonClose);
         let inputDiv = $input.parent()[0];
-        inputDiv.appendChild(errorDiv);
+        inputDiv.appendChild(self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS));
         self.clearInput($input);
         delete self[value];
       });
 
     return "";
 
+  }
+
+  /**
+   * Creates a div element that containts the given error text.
+   * @param $field
+   * @param errorText
+   */
+  showRouterError(errorText) {
+    let errorDiv = document.createElement('div');
+    $(errorDiv).addClass(routingConstants.ROUTE_ERROR);
+    $(errorDiv).addClass('contentHeadline');
+
+    let errorLabel = document.createElement('label');
+    errorLabel.innerHTML = errorText;
+    errorDiv.appendChild(errorLabel);
+    let buttonClose = document.createElement('button');
+    $(buttonClose).addClass(cssConstants.POPUP_CLOSE);
+    $(buttonClose).addClass(cssConstants.ICON);
+    $(buttonClose).on('click', function () {
+        $(this).parent().remove();
+      }
+    )
+    errorDiv.appendChild(buttonClose);
+    return errorDiv;
   }
 
   /**

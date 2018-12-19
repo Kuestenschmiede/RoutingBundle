@@ -26,6 +26,10 @@ class LoadMapResourcesListener
         EventDispatcherInterface $eventDispatcher
     ) {
         ResourceLoader::loadJavaScriptDeferred('c4g-routing', "/bundles/con4gisrouting/build/c4g-routing.js");
+        ResourceLoader::loadJavaScriptDeferred('jquery-ui', "/bundles/con4giscore/vendor/jQuery/jquery-ui-1.12.1.custom/jquery-ui.js");
+
+        ResourceLoader::loadCssRessource('jquery-ui-css', "/bundles/con4giscore/vendor/jQuery/jquery-ui-1.12.1.custom/jquery-ui.css");
         ResourceLoader::loadCssRessource("routing-css", "bundles/con4gisrouting/css/c4g-routing.css");
+        ResourceLoader::loadCssRessource("c4g-cached-inputfield", "/bundles/con4giscore/css/c4g-cached-inputfield.css");
     }
 }
