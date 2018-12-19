@@ -144,12 +144,17 @@ export class Router extends Sideboard {
       ]
     });
     selectInteraction.on('select', function (event) {
-      console.log("selected");
-      if (event.selected[0]) {
-        var geometry = event.selected[0].getGeometry();
+      let feature = event.selected[0];
+      if (feature) {
+        var geometry = feature.getGeometry();
         if (geometry && geometry instanceof ol.geom.LineString) {
-          self.showAltRoute(self.response, event.selected[0].getId());
+          self.showAltRoute(self.response, feature.getId());
+        } else {
+          if (feature) {
+            self.clickFeatureEntryForFeature(feature);
+          }
         }
+
       }
     });
     this.mapSelectInteraction = selectInteraction;
@@ -422,9 +427,6 @@ export class Router extends Sideboard {
       this.recalculateRoute();
       this.toValue = new ol.geom.Point([opt_options.toLonLat[1], opt_options.toLonLat[0]]);
     }
-    if (this.routeFeatureSelect) {
-      this.options.mapController.map.addInteraction(this.routeFeatureSelect);
-    }
   }
 
   /**
@@ -432,7 +434,6 @@ export class Router extends Sideboard {
    */
   preHideFunction() {
     this.removeMapInputInteraction();
-    this.options.mapController.map.removeInteraction(this.routeFeatureSelect);
   }
 
   /**
@@ -879,9 +880,6 @@ export class Router extends Sideboard {
     const self = this;
     self.routerFeaturesSource.clear();
     // interim clear of feature selection
-    if (self.routeFeatureSelect) {
-      self.routeFeatureSelect.getFeatures().clear();
-    }
     if (!features) {
       // TODO the calling function expects a return value; should probably be fixed
       return [];
@@ -992,25 +990,7 @@ export class Router extends Sideboard {
     }
     if (features && features.length > 0) {
       this.routerFeaturesSource.addFeatures(contentFeatures);
-      if (!this.routeFeaturesSelect) {
-        this.routeFeatureSelect = new ol.interaction.Select({
-          filter: function (feature, layer) {
-            return self.routerFeaturesSource.hasFeature(feature);
-          }
-        });
-        self.routeFeatureSelect.on('select', function (event) {
-          console.log("routeFeatureSelect select");
-          // should be always only one feature
-          const feature = event.selected[0];
-          if (feature) {
-            self.clickFeatureEntryForFeature(feature);
-          }
-        });
-        this.routeFeatureSelect.setHitTolerance(5);
-        this.options.mapController.map.addInteraction(self.routeFeatureSelect);
-      }
     }
-    // self.routeFeatureSelect = null;
     this.update();
     return priceSortedFeatures;
   }
@@ -1671,7 +1651,7 @@ export class Router extends Sideboard {
                   done: function () {
                     let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
                     // check if feature is still clicked
-                    scope.routeFeatureSelect.getFeatures().forEach(function (elem, index, array) {
+                    scope.mapSelectInteraction.getFeatures().forEach(function (elem, index, array) {
                       if (elem === tmpFeature) {
                         // feature is still clicked, style it accordingly
                         tmpFeature.setStyle(style);
