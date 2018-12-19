@@ -44,7 +44,6 @@ export class Router extends Sideboard {
       return false;
     }
     this.layerController = this.options.mapController.proxy.layerController;
-    this.index = 0;
     this.linkFragments = {
       mode: "",
       addressArea: "",
@@ -173,13 +172,47 @@ export class Router extends Sideboard {
 
     });
     this.modWayInteraction.on('modifyend', function (event) {
-      self.$buttonOver.trigger('click');
+      this.$overInput = self.addInterimField();
       let overPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
-      self.performReverseSearch(self.$overInput, overPoint.getCoordinates());
+      self.performReverseSearch(this.$overInput, overPoint.getCoordinates());
+      let minDistance = Infinity;
+      let insertId;
       if (!self.overValue) {
-        self.overValue = {};
+        self.overValue = [];
       }
-      self.overValue[self.index] = overPoint;
+      else{
+        for(let id in self.overValue){
+          let distX = overPoint.getCoordinates()[0] - self.overValue[id].getCoordinates()[0];
+          let distY = overPoint.getCoordinates()[1] - self.overValue[id].getCoordinates()[1];
+          let dist = Math.sqrt(distX * distX + distY * distY);
+          if(dist < minDistance){
+            minDistance = dist;
+            insertId = id;
+          }
+        }
+        let distStartX = self.fromValue.getCoordinates()[0] - overPoint.getCoordinates()[0];
+        let distStartY = self.fromValue.getCoordinates()[1] - overPoint.getCoordinates()[1];
+        let distStart = Math.sqrt(distStartX * distStartX + distStartY * distStartY);
+
+        let distEndX = self.toValue.getCoordinates()[0] - overPoint.getCoordinates()[0];
+        let distEndY = self.toValue.getCoordinates()[1] - overPoint.getCoordinates()[1];
+        let distEnd = Math.sqrt(distEndX * distEndX + distEndY * distEndY);
+
+        distStartX = self.fromValue.getCoordinates()[0] - self.overValue[0].getCoordinates()[0];
+        distStartY = self.fromValue.getCoordinates()[1] - self.overValue[0].getCoordinates()[1];
+        let distStartOld = Math.sqrt(distStartX * distStartX + distStartY * distStartY);
+
+        distEndX = self.toValue.getCoordinates()[0] - self.overValue[self.overValue.length - 1].getCoordinates()[0];
+        distEndY = self.toValue.getCoordinates()[1] - self.overValue[self.overValue.length - 1].getCoordinates()[1];
+        let distEndOld = Math.sqrt(distEndX * distEndX + distEndY * distEndY);
+        if(distStart < distStartOld){
+          insertId = 0;
+        }
+        else if(distEnd < distEndOld){
+          insertId++;
+        }
+      }
+      self.overValue.splice(insertId,0,overPoint);
       self.$buttonOver.prop("disabled", false);
       self.recalculateRoute();
     });
@@ -502,9 +535,9 @@ export class Router extends Sideboard {
         if (self.$overInput.val() === "") {
           self.performReverseSearch(self.$overInput, coordinate);
           if (!self.overValue) {
-            self.overValue = {};
+            self.overValue = [];
           }
-          self.overValue[self.index] = new ol.geom.Point(coordinate);
+          self.overValue.push(new ol.geom.Point(coordinate));
           self.recalculateRoute();
           self.$buttonOver.prop("disabled", false);
         }
@@ -2108,6 +2141,46 @@ export class Router extends Sideboard {
     $(scope[key]).trigger('input');
     return toggleDetourWrapper;
   }
+  addInterimField(){
+    const scope = this;
+    this.$buttonOver.prop("disabled", true);
+
+    this.overInputWrapper = document.createElement('div');
+    this.overInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
+
+    this.overInput = document.createElement("input");
+    this.overInput.type = "text";
+    this.overInput.className = routingConstants.ROUTER_INPUT_FROM;
+    this.overInput.id = this.overInput.name = "routingOver";
+
+    let routerOverLabel = document.createElement('label');
+    routerOverLabel.setAttribute('for', 'routingFrom');
+    routerOverLabel.innerHTML = langRouteConstants.ROUTER_Label_Interim;
+
+    let routerOverClear = document.createElement('button');
+    routerOverClear.className = routingConstants.ROUTER_INPUT_CLEAR;
+    routerOverClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
+    routerOverClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
+    routerOverClear.id = this.overValue && this.overValue.length ? this.overValue.length -1 : 0;
+    this.$routerOverClear = $(routerOverClear);
+
+    this.overInputWrapper.appendChild(routerOverLabel);
+    this.overInputWrapper.appendChild(this.overInput);
+    this.overInputWrapper.appendChild(routerOverClear);
+
+    this.routerViewInputWrapper.appendChild(this.overInputWrapper);
+    this.$routerOverClear.click(function (event) {
+      event.preventDefault();
+      scope.clearOver(scope.$overInput, scope.id);
+      $(scope).parent().remove();
+      //buttonOver.show();
+    });
+    scope.$overInput = $(scope.overInput);
+    this.$overInput.on('change', function () {
+      scope.performSearch(scope.$overInput, "overValue");
+    });
+    return this.$overInput;
+  }
 
   /**
    * Creates the user interface for the router view.
@@ -2129,7 +2202,6 @@ export class Router extends Sideboard {
       routerOverLabel,
       routerToLabel,
       routerFromClear,
-      routerOverClear,
       routerToClear,
       switchFromTo,
       areaFromLabel,
@@ -2139,6 +2211,7 @@ export class Router extends Sideboard {
       self = this;
       routerContentElement = document.createElement('div');
       routerViewInputWrapper = document.createElement('div');
+      this.routerViewInputWrapper = routerViewInputWrapper;
       routerViewContentWrapper = document.createElement('div');
       routerContentElement.appendChild(routerViewInputWrapper);
       routerContentElement.appendChild(routerViewContentWrapper);
@@ -2203,46 +2276,7 @@ export class Router extends Sideboard {
         this.$buttonOver = $(buttonOver);
         this.routerButtonBar.appendChild(buttonOver);
 
-        this.$buttonOver.click(function (event) {
-          event.preventDefault();
-          self.index++;
-          self.$buttonOver.prop("disabled", true);
-
-          self.overInputWrapper = document.createElement('div');
-          self.overInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
-
-          self.overInput = document.createElement("input");
-          self.overInput.type = "text";
-          self.overInput.className = routingConstants.ROUTER_INPUT_FROM;
-          self.overInput.id = self.overInput.name = "routingOver";
-
-          routerOverLabel = document.createElement('label');
-          routerOverLabel.setAttribute('for', 'routingFrom');
-          routerOverLabel.innerHTML = langRouteConstants.ROUTER_Label_Interim;
-
-          routerOverClear = document.createElement('button');
-          routerOverClear.className = routingConstants.ROUTER_INPUT_CLEAR;
-          routerOverClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
-          routerOverClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
-          routerOverClear.id = self.index;
-          self.$routerOverClear = $(routerOverClear);
-
-          self.overInputWrapper.appendChild(routerOverLabel);
-          self.overInputWrapper.appendChild(self.overInput);
-          self.overInputWrapper.appendChild(routerOverClear);
-
-          routerViewInputWrapper.appendChild(self.overInputWrapper);
-          self.$routerOverClear.click(function (event) {
-            event.preventDefault();
-            self.clearOver(self.$overInput, this.id);
-            $(this).parent().remove();
-            //buttonOver.show();
-          });
-          self.$overInput = $(self.overInput);
-          self.$overInput.on('change', function () {
-            self.performSearch(self.$overInput, "overValue");
-          });
-        });
+        this.$buttonOver.on('click', function(){self.addInterimField()});
       }
 
       if (this.options.mapController.data.enableTargetSwitch) {
@@ -2887,9 +2921,9 @@ export class Router extends Sideboard {
       if (response.length > 0) {
         if (value === "overValue") {
           if (!self.overValue) {
-            self.overValue = {};
+            self.overValue = [];
           }
-          self.overValue[self.index] = new ol.geom.Point([parseFloat(response[0].lon), parseFloat(response[0].lat)]);
+          self.overValue.push(new ol.geom.Point([parseFloat(response[0].lon), parseFloat(response[0].lat)]));
           self.$buttonOver.prop("disabled", false);
         }
         else {
