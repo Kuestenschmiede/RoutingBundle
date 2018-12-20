@@ -683,6 +683,11 @@ export class Router extends Sideboard {
     if (!toPoint) {
       toPoint = this.toValue;
     }
+    if (!overPoint) {
+      if (this.overValue) {
+        overPoint = this.overValue;
+      }
+    }
     fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
     toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
     if (overPoint) {
@@ -736,9 +741,7 @@ export class Router extends Sideboard {
                 $(self.areaFromInput).val("");
               }
             }
-
           }
-
         })
         .always(function () {
           self.routeAjax = undefined;
@@ -2184,7 +2187,9 @@ export class Router extends Sideboard {
     });
     scope.$overInput = $(scope.overInput);
     this.$overInput.on('change', function () {
-      scope.performSearch(scope.$overInput, "overValue");
+      scope.performSearch(scope.$overInput, "overValue", function() {
+        scope.performViaRoute();
+      });
     });
     return this.$overInput;
   }
@@ -2991,6 +2996,19 @@ export class Router extends Sideboard {
           self[value] = new ol.geom.Point(
             [parseFloat(response[0].lon), parseFloat(response[0].lat)]
           );
+          switch(value) {
+            case "fromValue":
+              self.updateLinkFragments("addressFrom", $input.val());
+              break;
+            case "toValue":
+              self.updateLinkFragments("addressTo", $input.val());
+              break;
+            case "areaValue":
+              self.updateLinkFragments("addressArea", $input.val());
+              break;
+            default:
+              break;
+          }
         }
       } else {
         // show error hint
