@@ -1822,27 +1822,35 @@ export class Router extends Sideboard {
     let url = "/con4gis/reverseNominatimService/" + profileId + '?format=json&lat=' + coords.latitude + '&lon=' + coords.longitude;
     $.ajax({url: url}).done(function (data) {
       let address = "";
-      if (data.address.pedestrian) {
-        address += data.address.pedestrian + " ";
-        if (data.address.house_number) {
-          address += data.address.house_number + ", ";
+      if (data.address) {
+        if (data.address.city) {
+          address = data.address.city;
+          if (data.address.road) {
+            address = ', ' + value;
+          }
         }
-      } else if (data.address.path) {
-        address += data.address.path + " ";
-        if (data.address.house_number) {
-          address += data.address.house_number;
+        if (data.address.postcode) {
+          address += data.address.postcode + " ";
+        }
+
+        if (data.address.town) {
+          address = data.address.town;
+          if (data.address.road) {
+            address = ', ' + value;
+          }
+        }
+        if (data.address.road) {
+          if (data.address.house_number) {
+            address = ' ' + data.address.house_number + value;
+          }
+          address = data.address.road + value;
         }
       }
+
       if (address.length > 0) {
         address += ", ";
       }
 
-      if (data.address.postcode) {
-        address += data.address.postcode + " ";
-      }
-      if (data.address.town) {
-        address += data.address.town;
-      }
       $(cssId).val(address);
       switch (property) {
         case "fromValue":
