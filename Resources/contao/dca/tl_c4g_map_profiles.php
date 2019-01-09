@@ -118,7 +118,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'text',
         'default'                 => '0.5',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 0],
-        'sql'                     => "decimal(10, 2) NOT NULL default '0.5'"
+        'sql'                     => "float(5, 2) NOT NULL default '0.5'"
     ],
     'maxDetourArea' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['maxDetourArea'],
@@ -126,7 +126,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'text',
         'default'                 => '20',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 30],
-        'sql'                     => "decimal(10, 2) NOT NULL default '20'"
+        'sql'                     => "float(5, 2) NOT NULL default '20'"
     ],
     'initialDetourArea' => [
 
@@ -135,7 +135,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'text',
         'default'                 => '10',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 30],
-        'sql'                     => "decimal(10, 2) NOT NULL default '10'"
+        'sql'                     => "float(5, 2) NOT NULL default '10'"
     ],
     'routerLayers' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayers'],
@@ -159,7 +159,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'text',
         'default'                 => '0.5',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 0],
-        'sql'                     => "decimal(10,2) NOT NULL default '0.5'"
+        'sql'                     => "float(5,2) NOT NULL default '0.5'"
     ],
     'maxDetourRoute' => [
 
@@ -168,7 +168,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'text',
         'default'                 => '5',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 10],
-        'sql'                     => "decimal(10,2) NOT NULL default '5'"
+        'sql'                     => "float(5,2) NOT NULL default '5'"
     ],
     'initialDetourRoute' => [
 
@@ -177,7 +177,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'text',
         'default'                 => '2.5',
         'eval'                    => [ 'tl_class'=>'w50', 'rgxp'=>'digit', "minval" => 1, "maxval" => 10],
-        'sql'                     => "decimal(10,2) NOT NULL default '2.5'"
+        'sql'                     => "float(5,2) NOT NULL default '2.5'"
     ],
     'clickLocstyle' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['clickLocstyle'],
