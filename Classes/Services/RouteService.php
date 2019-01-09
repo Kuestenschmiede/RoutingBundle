@@ -98,8 +98,55 @@ class RouteService extends \Frontend
         $objMapsProfile = C4gMapProfilesModel::findBy('id', $intProfileId);
         if($objMapsProfile->router_api_selection == '1' || $objMapsProfile->router_api_selection == '0') {
             $response = $this->getORSMResponse($objMapsProfile, $arrInput, $strParams);
-        } else {
+        }
+        else if($objMapsProfile->router_api_selection == '2' && false){
             $response = $this->getORSResponse($arrInput, $strParams, $intProfileId, $profile);
+        }
+        else if($objMapsProfile->router_api_selection == '3' || true){
+            $response = $this->getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile);
+        }
+        return $response;
+    }
+    /**
+     * Calls the Graphhopper and returns the routing response.
+     * @param $objMapsProfile
+     * @param $arrInput
+     * @param $strParams
+     * @return string
+     */
+    private function getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile){
+        $valuesProfile = ["driving-car" , "driving-hgv" , "cycling-regular" , "cycling-road" , "cycling-safe" , "cycling-mountain" , "cycling-tour" , "cycling-electric" , "foot-walking" , "foot-hiking" , "wheelchair"];
+
+        $valuesProfile = ["car" , "small_truck" , "truck" , "scooter" , "foot" , "hike" , "bike" , "mtb" , "racingbike"];
+        $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
+        $strRoutingUrl = "https://graphhopper.com/api/1/route?";
+        $objMapsProfile = C4gMapProfilesModel::findBy('id', $intProfileId);
+        $apiKey = "&key=".$objMapsProfile->router_api_key;
+        $points = "point=" . explode(",",$arrInput[0])[0].','.explode(",",$arrInput[0])[1];
+        for($i = 0; $i < sizeof($arrInput); $i++){
+            $points .=  "&point=" . explode(",",$arrInput[$i])[0].','.explode(",",$arrInput[$i])[1];
+        }
+        $points = substr($points,0,strlen($points)-1);
+        $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+        if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+            $language = $GLOBALS['TL_LANGUAGE'];
+            if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+                $language = "en";
+            }
+        }
+        $profile = $valuesProfile[$profile] ? $valuesProfile[$profile] : 'car';
+
+        $profile = "&vehicle=".$profile."&locale=".$language;
+        $url = $strRoutingUrl.$points.$profile.$apiKey;
+        $request = $this->createRequest();
+        $request->send($url);
+        $response = $request->response;
+        try {
+            $response = \GuzzleHttp\json_decode($response, true);
+        } catch(\Exception $exception) {
+            $response = [];
+            $response['error'] = "ROUTER_ERROR_POLYLINE";
+            return $response;
         }
         return $response;
     }
