@@ -21,7 +21,7 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_from_locstyle'] = ['Location 
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_to_locstyle'] = ['Location Style for Target Point', 'Choose a location style for the target point.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_point_locstyle'] = ['Location Style for on-the-fly hints', 'Choose a location style for the on-the-fly hints.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_interim_locstyle'] = ['Location Style for interim targets', 'Choose a location style for interim targets.'];
-$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_profiles'] = ['Router Profile', 'Determines the OpenRouteService profiles.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_profiles'] = ['Router Profile', 'Determines the OpenRouteService or Graphhopper profiles.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayers'] = ['Layer for routes', 'Enter the layers to show on the route or in a perimeter (default: Overpass & Table).'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['layers'] = ['Layer','Layer to be evaluated for the router or area search.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'] = ['Key','Key for the evaluation.'];
@@ -61,9 +61,10 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_modes']['route'] =
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x)';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['1'] = 'OpenSourceRroutingMachine (API 5.x)';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['2'] = 'OpenRouteService';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['3'] = 'Graphhopper';
 
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['0'] = 'Car';
-$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['1'] = 'Lorry';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['1'] = 'Truck';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['2'] = 'Bicycle';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['3'] = 'Road Bike';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['4'] = 'Bicycle (secure)';
@@ -73,6 +74,8 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['7'] = 
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['8'] = 'Pedestrian';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['9'] = 'Hiker';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['10']= 'Wheelchair';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['11']= 'Small Truck';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['12']= 'Scooter';
 
 /** legend */
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routing_legend'] = 'Routing and Area Search';

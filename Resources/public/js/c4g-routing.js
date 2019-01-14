@@ -568,6 +568,9 @@ export class Router extends Sideboard {
       case "2":
         attributionRouter = '<a target="_blank" href="https://openrouteservice.org/">openrouteservice</a>';
         break;
+      case "3":
+        attributionRouter = 'Powered by <a href="https://www.graphhopper.com/">GraphHopper API</a>';
+        break;
     }
     switch (self.options.mapController.data.geosearch.geosearch_engine) {
       case "1": //OSM
@@ -593,6 +596,8 @@ export class Router extends Sideboard {
       case "2":
         attributionRouterHost = '\'- ORS hosting by <a target="_blank" href="https://www.geog.uni-heidelberg.de/gis/heigit_en.html">HeiGIT</a>\'';
         break;
+      case "3":
+        attributionRouterHost = '';
     }
 
     //ToDo check params
@@ -699,7 +704,7 @@ export class Router extends Sideboard {
       }
     }
 
-    if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x or ORS- API
+    if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2' || this.options.mapController.data.router_api_selection == '3') {//OSRM-API:5.x or ORS- API
       let profileId = this.options.mapController.data.profile;
       url = 'con4gis/routeService/' + profileId + '/' + $(self.routerLayersSelect).val() + '/' + $(self.toggleDetourRoute).val() + '/' + fromCoord;
 
@@ -724,7 +729,7 @@ export class Router extends Sideboard {
         .done(function (response) {
           self.response = response;
           if (response) {
-            if (response.error) {
+            if (response.error && response.error != "ROUTER_ERROR_POLYLINE") {
               let errorDiv = self.showRouterError(langRouteConstants[response.error]);
               $(self.fromInput).parent()[0].appendChild(errorDiv);
             } else {
@@ -852,7 +857,8 @@ export class Router extends Sideboard {
         routeFeatures[0].setId(routeNumber);
 
 
-      } else {//OSRM-API:<5
+      }
+      else if(this.options.mapController.data.router_api_selection == '0'){//OSRM-API:<5
         wayPolyline = new ol.format.Polyline({
           'factor': this.options.mapController.data.router_viaroute_precision || 1e6
         });
@@ -863,8 +869,32 @@ export class Router extends Sideboard {
           featureProjection: mapView.getProjection()
         });
       }
+      else if (this.options.mapController.data.router_api_selection == '3'){
+        wayPolyline = new ol.format.Polyline();
+        if (routeResponse.paths && routeResponse.paths[1]) {//check for alternative route
+          if (routeNumber == 1) {
+            altRouteFeatures = wayPolyline.readFeatures(routeResponse.paths[0].points, {
+              dataProjection: 'EPSG:4326',
+              featureProjection: mapView.getProjection()
+            });
+            altRouteFeatures[0].setId(0);
+          }
+          else {
+            altRouteFeatures = wayPolyline.readFeatures(routeResponse.paths[1].points, {
+              dataProjection: 'EPSG:4326',
+              featureProjection: mapView.getProjection()
+            });
+            altRouteFeatures[0].setId(1);
+          }
+        }
+        routeFeatures = wayPolyline.readFeatures(routeResponse.paths[routeNumber].points, {
+          dataProjection: 'EPSG:4326',
+          featureProjection: mapView.getProjection()
+        });
+        routeFeatures[0].setId(routeNumber);
+      }
       if (this.options.mapController.data.router_alternative == '1') {
-        if (routeResponse.routes && (routeResponse.routes.length > 1) && (routeResponse.routes[1])) {
+        if ((routeResponse.routes && (routeResponse.routes.length > 1) && (routeResponse.routes[1])) || (routeResponse.paths && (routeResponse.paths.length > 1) && (routeResponse.paths[1]))) {
           this.routingAltWaySource.addFeatures(altRouteFeatures);
         }
       }
@@ -1162,6 +1192,61 @@ export class Router extends Sideboard {
   }
 
   /**
+   * Translates an integer number into the correct instruction icon (Graphhopper icons).
+   * @param intType
+   * @returns {string}
+   */
+  getInstructionIconGraphhopper(intType) {
+    let image;
+    switch (intType) {
+      case 0:
+        image = "continue.png";
+        break;
+      case -2:
+        image = "turn-left.png";
+        break;
+      case 2:
+        image = "turn-right.png";
+        break;
+      case -1:
+        image = "turn-left.png";
+        break;
+      case 1:
+        image = "turn-right.png";
+        break;
+      case -3:
+        image = "sharp-left.png";
+        break;
+      case 3:
+        image = "sharp-right.png";
+        break;
+      case -7:
+        image = "slight-left.png";
+        break;
+      case 7:
+        image = "slight-right.png";
+        break;
+      case 6:
+        image = "round-about.png";
+        break;
+      case 4:
+        image = "target.png";
+        break;
+      case 5:
+        image = "target.png";
+        break;
+      case -98:
+        image = "u-turn.png";
+        break;
+      case 99:
+        image = "head.png";
+        break;
+
+    }
+    return document.getElementsByTagName('base')[0].href + "bundles/con4gismaps/vendor/osrm/images/" + image;
+  }
+
+  /**
    * Translates the type of an instruction into a string representation.
    * @param strType
    * @returns {*}
@@ -1422,11 +1507,15 @@ export class Router extends Sideboard {
         total_time = this.toHumanTime(routeResponse.routes[routeNumber].summary.duration);
         total_distance = this.toHumanDistance(routeResponse.routes[routeNumber].summary.distance);
       }
+      else if (this.options.mapController.data.router_api_selection == '3') { //Graphhopper
+        total_distance = this.toHumanDistance(routeResponse.paths[0].distance);
+        total_time = this.toHumanTime(routeResponse.paths[0].time / 1000) ;
+      }
 
       if (route_name_0 && route_name_1) {
         routerInstructionsHeader.innerHTML = '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_ROUTE + '</label> <em>' + route_name_0 + ' &#8594; ' + route_name_1 + '</em><br>' + '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
       }
-      else if (this.routeProfile.active) {
+      else if (this.routeProfile && this.routeProfile.active) {
         routerInstructionsHeader.innerHTML = '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_PROFILE + '</label> <em>' + this.options.mapController.data.router_profiles[this.routeProfile.active] + '</em><br>' + '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
       }
 
@@ -1570,6 +1659,51 @@ export class Router extends Sideboard {
 
             routerInstructionsHtml += "</tr>";
           }
+        }
+      }
+      else if (this.options.mapController.data.router_api_selection === '3') { // Graphhopper
+        for (j = 0; j < routeResponse.paths[routeNumber].instructions.length; j += 1) {
+          instr = routeResponse.paths[routeNumber].instructions[j];
+
+          strType = (j == 0) ? 99 : instr.sign;
+
+          rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
+
+          if (i % 2 === 0) {
+            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
+          }
+
+          rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
+
+          routerInstructionsHtml += '<tr class="' + rowstyle + '">';
+
+          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
+          routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconGraphhopper(strType) + '" alt=""/>';
+          routerInstructionsHtml += '</td>';
+
+          if (instr.maneuver) {
+            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
+          }
+          else {
+            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + 0 + '">';
+          }
+
+
+          // build route description
+
+          routerInstructionsHtml += instr.text;
+
+
+          routerInstructionsHtml += '</div>';
+          routerInstructionsHtml += "</td>";
+
+          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
+          if (j !== routeResponse.paths[routeNumber].instructions.length - 1 && j != 0) {
+            routerInstructionsHtml += this.toHumanDistance(instr.distance);
+          }
+          routerInstructionsHtml += "</td>";
+
+          routerInstructionsHtml += "</tr>";
         }
       }
 
@@ -1947,17 +2081,60 @@ export class Router extends Sideboard {
         });
       }
 
-      if (this.options.mapController.data.router_profiles['1']) { //add button for profile driving-hgv
-        routeProfile.hgv = document.createElement('button');
-        $(routeProfile.hgv).addClass(routingConstants.ROUTER_PROFILE_HGV);
-        this.routeProfile.appendChild(routeProfile.hgv);
-        this.$routeProfileHgv = $(routeProfile.hgv);
+      if (this.options.mapController.data.router_profiles['1']
+        || this.options.mapController.data.router_profiles['11']) { //add button for profile driving-truck
+        let spanTruck = document.createElement('span');
+        routeProfile.truck = document.createElement('button');
+        routeProfile.truck.list = document.createElement('ul');
+        this.$routeProfileTruck = $(routeProfile.truck);
+        if (this.options.mapController.data.router_profiles['1']) {
+          let child = document.createElement('li');
+          child.innerHTML = this.options.mapController.data.router_profiles[1];
+          $(child).data('profile', [1]);
+          $(child).click(function (event) {
+            self.childClick($(this));
+          });
+          if (!this.$routeProfileTruck.data('profile')) { //add existing default profile to button
+            this.$routeProfileTruck.data('profile', 1);
+            $(child).addClass(cssConstants.ACTIVE);
+          }
+          routeProfile.truck.list.appendChild(child);
+        }
+        if (this.options.mapController.data.router_profiles['11']) {
+          let child = document.createElement('li');
+          child.innerHTML = this.options.mapController.data.router_profiles[11];
+          $(child).data('profile', [11]);
+          $(child).click(function (event) {
+            self.childClick($(this));
+          });
+          if (!this.$routeProfileTruck.data('profile')) { //add existing default profile to button
+            this.$routeProfileTruck.data('profile', 11);
+            $(child).addClass(cssConstants.ACTIVE);
+          }
+          routeProfile.truck.list.appendChild(child);
+        }
 
-        this.$routeProfileHgv.click(function (event) {
-          self.clearSiblings(this);
-          self.routeProfile.active = '1';
-          self.recalculateRoute();
-        });
+
+        $(routeProfile.truck).addClass(routingConstants.ROUTER_PROFILE_TRUCK);
+
+        if (routeProfile.truck.list.children.length == 1) { //ignore dropdown list, if only one truck profile is enabled
+          this.routeProfile.appendChild(routeProfile.truck);
+          this.$routeProfileTruck.click(function (event) {
+            self.clearSiblings(this);
+            self.routeProfile.active = $(this).data('profile');
+            self.recalculateRoute();
+          });
+        }
+        else { //append with dropdown, if multiple walking profiles are enabled
+          spanTruck.appendChild(routeProfile.truck);
+          spanTruck.appendChild(routeProfile.truck.list);
+          this.routeProfile.appendChild(spanTruck);
+          this.$routeProfileTruck.click(function (event) {
+            self.clearSiblings($(this).parent());
+            self.routeProfile.active = $(this).data('profile');
+            self.recalculateRoute();
+          });
+        }
       }
       if (this.options.mapController.data.router_profiles['2']
         || this.options.mapController.data.router_profiles['3']
@@ -2057,6 +2234,17 @@ export class Router extends Sideboard {
         this.$routeProfileWheelchair.click(function (event) {
           self.clearSiblings(this);
           self.routeProfile.active = '10';
+          self.recalculateRoute();
+        });
+      }
+      if (this.options.mapController.data.router_profiles['12']) { //add button for profile scooter
+        routeProfile.scooter = document.createElement('button');
+        $(routeProfile.scooter).addClass(routingConstants.ROUTER_PROFILE_SCOOTER);
+        this.$routeProfileScooter = $(routeProfile.scooter);
+        this.routeProfile.appendChild(routeProfile.scooter);
+        this.$routeProfileScooter.click(function (event) {
+          self.clearSiblings(this);
+          self.routeProfile.active = '12';
           self.recalculateRoute();
         });
       }
@@ -2310,7 +2498,7 @@ export class Router extends Sideboard {
       }
 
       // add profiles selection
-      if (this.options.mapController.data.router_api_selection == '2') { //OpenRouteService
+      if (this.options.mapController.data.router_api_selection > 1) { //OpenRouteService
         this.createRouterProfileSelect();
       }
 

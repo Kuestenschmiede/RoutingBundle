@@ -78,6 +78,15 @@ class TlC4gMapProfiles
         ];
         return $return;
     }
+    public function getRouterProfiles(DataContainer $dc){
+        $activeAPI = $dc->activeRecord->router_api_selection;
+        if ($activeAPI == 2) {
+            return ['0','1','2','3','4','5','6','8','9','10'];
+        }
+        else if ($activeAPI == 3){
+            return ['0', '1', '2', '3', '5', '8', '9', '11', '12'];
+        }
+    }
 
     /**
      * Return all Location Styles for current Maps Profile as array
@@ -109,7 +118,7 @@ class TlC4gMapProfiles
             ->limit(1)
             ->execute($dc->id);
         if ($objProfile->router) {
-            if($objProfile->router_api_selection == 2){
+            if($objProfile->router_api_selection > 1){
                 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] =
                     str_replace('router_api_selection,','router_api_selection,router_api_key,',
                         $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router']);

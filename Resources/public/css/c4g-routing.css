@@ -388,6 +388,12 @@ button.c4g-router-profile-wheelchair:before {
     font-weight: 900;
     font-size: inherit;
 }
+button.c4g-router-profile-scooter:before {
+    content: "\f21c";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
 button.c4g-popup-route-from,
 button.c4g-popup-route-to,
 .c4g_brick_popup_button a {

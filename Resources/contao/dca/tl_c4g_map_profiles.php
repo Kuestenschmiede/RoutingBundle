@@ -45,11 +45,10 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'default'                 => '2',
-        'options'                 => ['0','1','2'],
+        'options'                 => ['0','1','2','3'],
         'reference'               => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection'],
         'eval'                    => ['tl_class'=>'clr long','submitOnChange' => true],
         'sql'                     => "char(1) NOT NULL default '2'"
-
     ],
     'router_alternative'=> [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_alternative'],
@@ -107,7 +106,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'default'                 => ['0','2','8'],
         'inputType'               => 'select',
-        'options'                 => ['0','1','2','3','4','5','6','8','9','10'],
+        'options_callback'        => [$callbackClass, 'getRouterProfiles'],
         'reference'               => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles'],
         'eval'                    => ['mandatory'=>false, 'multiple'=>true,'chosen'=>true, 'tl_class' => 'clr m12'],
         'sql'                     => "blob NULL"

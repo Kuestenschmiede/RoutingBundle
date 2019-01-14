@@ -99,10 +99,10 @@ class RouteService extends \Frontend
         if($objMapsProfile->router_api_selection == '1' || $objMapsProfile->router_api_selection == '0') {
             $response = $this->getORSMResponse($objMapsProfile, $arrInput, $strParams);
         }
-        else if($objMapsProfile->router_api_selection == '2' && false){
+        else if($objMapsProfile->router_api_selection == '2'){
             $response = $this->getORSResponse($arrInput, $strParams, $intProfileId, $profile);
         }
-        else if($objMapsProfile->router_api_selection == '3' || true){
+        else if($objMapsProfile->router_api_selection == '3'){
             $response = $this->getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile);
         }
         return $response;
@@ -115,15 +115,12 @@ class RouteService extends \Frontend
      * @return string
      */
     private function getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile){
-        $valuesProfile = ["driving-car" , "driving-hgv" , "cycling-regular" , "cycling-road" , "cycling-safe" , "cycling-mountain" , "cycling-tour" , "cycling-electric" , "foot-walking" , "foot-hiking" , "wheelchair"];
-
-        $valuesProfile = ["car" , "small_truck" , "truck" , "scooter" , "foot" , "hike" , "bike" , "mtb" , "racingbike"];
         $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
         $strRoutingUrl = "https://graphhopper.com/api/1/route?";
         $objMapsProfile = C4gMapProfilesModel::findBy('id', $intProfileId);
         $apiKey = "&key=".$objMapsProfile->router_api_key;
         $points = "point=" . explode(",",$arrInput[0])[0].','.explode(",",$arrInput[0])[1];
-        for($i = 0; $i < sizeof($arrInput); $i++){
+        for($i = 1; $i < sizeof($arrInput); $i++){
             $points .=  "&point=" . explode(",",$arrInput[$i])[0].','.explode(",",$arrInput[$i])[1];
         }
         $points = substr($points,0,strlen($points)-1);
@@ -136,8 +133,13 @@ class RouteService extends \Frontend
         }
         $profile = $valuesProfile[$profile] ? $valuesProfile[$profile] : 'car';
 
-        $profile = "&vehicle=".$profile."&locale=".$language;
-        $url = $strRoutingUrl.$points.$profile.$apiKey;
+        $profile = "&vehicle=" . $profile;
+        $locale = "&locale=" . $language;
+        $url = $strRoutingUrl . $points . $profile . $locale;
+        if ($objMapsProfile->router_alternative == "1" && sizeof($arrInput) == 2) {
+            $url .= "&algorithm=alternative_route&ch.disable=true";
+        }
+        $url .= $apiKey;
         $request = $this->createRequest();
         $request->send($url);
         $response = $request->response;

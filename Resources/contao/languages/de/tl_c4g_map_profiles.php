@@ -21,7 +21,7 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_from_locstyle'] = ['Lokations
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_to_locstyle'] = ['Lokationstil für Zielpunkt', 'Wählen Sie einen Lokationstil für den Zielpunkt aus.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_point_locstyle'] = ['Lokationstil für Unterwegs-Hinweise', 'Wählen Sie einen Lokationstil für Unterwegs-Hinweise aus.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_interim_locstyle'] = ['Lokationstil für Zwischenziele', 'Wählen Sie einen Lokationstil für Zwischenziele aus.'];
-$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_profiles'] = ['Router-Profile', 'Legt die OpenRouteService-Profile fest.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router_profiles'] = ['Router-Profile', 'Legt die OpenRouteService und Graphhopper-Profile fest.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayers'] = ['Kartenstrukturelemente an der Route', 'Geben Sie hier die Strukturelemente an, die an der Route durchsucht werden sollen ("Anfrage an Overpass API (nur QL)", "Aus anderer Tabelle").'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['layers'] = ['Strukturelement','Strukturelement welches an der Route- und/oder für die Umkreissuche ausgewertet werden soll.'];
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'] = ['Feldname','Feldname (key) für die Auswertung.'];
@@ -60,6 +60,7 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_modes']['route'] =
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x)';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['1'] = 'OpenSourceRroutingMachine (API 5.x)';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['2'] = 'OpenRouteService';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['3'] = 'Graphhopper';
 
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['0'] = 'Auto';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['1'] = 'Lastwagen';
@@ -72,6 +73,8 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['7'] = 
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['8'] = 'FußgängerIn';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['9'] = 'WandererIn';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['10']= 'Rollstuhl';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['11']= 'Transporter';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['12']= 'Roller';
 
 /** legend */
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routing_legend'] = 'Routing und Umkreissuche';
