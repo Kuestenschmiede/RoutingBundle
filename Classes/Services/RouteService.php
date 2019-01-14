@@ -67,8 +67,14 @@ class RouteService extends \Frontend
         $routeData = $this->generate($profileId, $locations, $profile);
         $polyline = new Polyline([]);
         $objLayer = C4gMapsModel::findById($layer);
+        $objMapsProfile = C4gMapProfilesModel::findBy('id', $profileId);
         try {
-            $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
+            if ($objMapsProfile->router_api_selection == '2') {
+                $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
+            }
+            else if ($objMapsProfile->router_api_selection == '3'){
+                $points = $polyline->fromEncodedString($routeData['paths'][0]['points']);
+            }
             $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
             $event = new LoadRouteFeaturesEvent();
             $event->setLayerId($layer);
@@ -115,9 +121,9 @@ class RouteService extends \Frontend
      * @return string
      */
     private function getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile){
-        $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
-        $strRoutingUrl = "https://graphhopper.com/api/1/route?";
         $objMapsProfile = C4gMapProfilesModel::findBy('id', $intProfileId);
+        $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
+        $strRoutingUrl = $objMapsProfile->router_viaroute_url ? $objMapsProfile->router_viaroute_url : "https://graphhopper.com/api/1/route?";
         $apiKey = "&key=".$objMapsProfile->router_api_key;
         $points = "point=" . explode(",",$arrInput[0])[0].','.explode(",",$arrInput[0])[1];
         for($i = 1; $i < sizeof($arrInput); $i++){
