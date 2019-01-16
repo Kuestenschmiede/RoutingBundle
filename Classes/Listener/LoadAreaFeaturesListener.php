@@ -101,14 +101,27 @@ class LoadAreaFeaturesListener
             $locations = [];
             $locations[] = [$point->getLng(), $point->getLat()];
             foreach($requestData['elements'] as $element){
-                $locations[] = [floatval($element['lon']),floatval($element['lat'])];
+                if($element['type'] == "node") {
+                    $locations[] = [floatval($element['lon']),floatval($element['lat'])];
+                }
+                else{
+                    break;
+                }
             }
             $matrixResponse = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
             $features = [];
             for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
-                if($matrixResponse['distances'][0][$i] < $distance){
-                    $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
-                    $features[] = $requestData['elements'][$i-1];
+                if ($objMapsProfile->router_api_selection == "2") {
+                    if ($matrixResponse['distances'][0][$i] < $distance) {
+                        $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                        $features[] = $requestData['elements'][$i-1];
+                    }
+                }
+                else if ($objMapsProfile->router_api_selection == "3") {
+                    if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
+                        $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                        $features[] = $requestData['elements'][$i-1];
+                    }
                 }
             }
             $event->setReturnData(\GuzzleHttp\json_encode([$features,'overpass']));
