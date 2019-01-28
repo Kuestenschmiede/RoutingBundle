@@ -17,22 +17,16 @@ Furthermore it is possible to display features from the OpenStreetMap or from th
 ## Router
 - [OSRM](http://project-osrm.org/) (***4/5***)   
 - [OpenRouteService](https://openrouteservice.org/) (Directions)
+- [Graphhopper](https://graphhopper.com/) (Routing)
 
 ## Area (perimeter search)
 - [OpenRouteService](https://openrouteservice.org/) (Matrix)
+- [Graphhopper](https://graphhopper.com/) (Matrix)
+
 
 ## configuration
-=======
-***Router***
-- [OSRM](http://project-osrm.org/) (4/5)   
-- [OpenRouteService](https://openrouteservice.org/) (Directions)
-
-***Area (perimeter search)***
-- [OpenRouteService](https://openrouteservice.org/) (Matrix)
-
-***configuration***
 - Custom Router-headline
-- Choose your routing-API (ORS AND OSRM)
+- Choose your routing-API (ORS, OSRM or Graphhopper)
 - Custom routing-server
 - display alternative routes
 - route over several targets
@@ -41,6 +35,6 @@ Furthermore it is possible to display features from the OpenStreetMap or from th
 - choose layers to load OpenStreetMap-data over OverpassQL along route or in perimeter
 - choose layers to load georeferenced data from your own database along route or in perimeter
 - specify a minimal and maximal detour for features along a route
-- specify a minimal and maximal distance for features in a perimeter (calculated over the OpenRouteService Matrix-Service)
+- specify a minimal and maximal distance for features in a perimeter (calculated over the OpenRouteService or Graphhopper Matrix-Service)
 - show a list with all features along a route and in a perimeter
 
