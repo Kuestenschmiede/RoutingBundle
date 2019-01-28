@@ -76,10 +76,18 @@ class LoadAreaFeaturesListener
             $requestData = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
             $finalResponseFeatures = [];
             for($i = 1; $i < count($requestData['distances'][0]); $i++) {
-                if($requestData['distances'][0][$i] < $distance){
-                    $finalResponseFeatures[] = $responseFeatures[$i-1];
+                if ($objMapsProfile->router_api_selection == "2") {
+                    if($requestData['distances'][0][$i] < $distance){
+                        $finalResponseFeatures[] = $responseFeatures[$i-1];
+                    }
+                }
+                else if ($objMapsProfile->router_api_selection == "3") {
+                    if($requestData['distances'][0][$i] < floatval($distance)*1000){
+                        $finalResponseFeatures[] = $responseFeatures[$i-1];
+                    }
                 }
             }
+
             $event->setReturnData(\GuzzleHttp\json_encode([$finalResponseFeatures,'notOverpass']));
         }
         else if($objLayer->location_type == "overpass"){
@@ -118,7 +126,7 @@ class LoadAreaFeaturesListener
                     }
                 }
                 else if ($objMapsProfile->router_api_selection == "3") {
-                    if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
+                    if ($matrixResponse['distances'][0][$i] < floatval($distance) * 1000) {
                         $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
                         $features[] = $requestData['elements'][$i-1];
                     }
