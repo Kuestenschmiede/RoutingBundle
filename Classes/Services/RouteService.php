@@ -113,6 +113,7 @@ class RouteService extends \Frontend
         }
         return $response;
     }
+    
     /**
      * Calls the Graphhopper and returns the routing response.
      * @param $objMapsProfile
@@ -120,7 +121,8 @@ class RouteService extends \Frontend
      * @param $strParams
      * @return string
      */
-    private function getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile){
+    private function getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile)
+    {
         $objMapsProfile = C4gMapProfilesModel::findBy('id', $intProfileId);
         $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
         $strRoutingUrl = $objMapsProfile->router_viaroute_url ? $objMapsProfile->router_viaroute_url : "https://graphhopper.com/api/1/route?";

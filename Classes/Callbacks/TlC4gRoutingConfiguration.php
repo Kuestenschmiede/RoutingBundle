@@ -8,21 +8,22 @@
 
 namespace con4gis\RoutingBundle\Classes\Callbacks;
 
+use con4gis\RoutingBundle\Entity\RoutingConfiguration;
 use Contao\Database;
 use Contao\DataContainer;
+use Contao\System;
 
 /**
  * Class TlC4gMapProfiles
  * Callback class for the tl_c4g_map_profiles DCA file.
  * @package con4gis\routing\Classes\Callbacks
  */
-class TlC4gMapProfiles
+class TlC4gRoutingConfiguration
 {
     private $db = null;
 
     /**
      * TlC4gMapProfiles constructor.
-     * @param null $db
      */
     public function __construct()
     {
@@ -127,5 +128,16 @@ class TlC4gMapProfiles
                         $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router']);
             }
         }
+    }
+    
+    public function getRouterConfigs(DataContainer $dc)
+    {
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+        $configs = $em->getRepository(RoutingConfiguration::class)->findAll();
+        $arrConfigs = [];
+        foreach ($configs as $config) {
+            $arrConfigs[$config->getId()] = $config->getName();
+        }
+        return $arrConfigs;
     }
 }
