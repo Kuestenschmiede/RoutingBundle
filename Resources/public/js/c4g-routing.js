@@ -9,7 +9,7 @@ import {CachedInputfield} from "./../../../../CoreBundle/Resources/public/js/c4g
 
 // language stuff
 let langRouteConstants = {};
-if (mapData) {
+if (typeof mapData !== 'undefined') {
   if (mapData.lang === "de") {
     langRouteConstants = routingConstantsGerman;
   } else if (mapData.lang === "en") {
