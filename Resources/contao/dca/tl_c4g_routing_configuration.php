@@ -24,7 +24,6 @@ $GLOBALS['TL_DCA'][$strName] = array
     (
         'dataContainer'               => 'Table',
         'enableVersioning'            => true,
-//        'onload_callback'             => array(array($strName, 'updateDCA')),
         'onsubmit_callback'             => array(
             array('\con4gis\CoreBundle\Resources\contao\classes\C4GAutomator', 'purgeApiCache')
         )
@@ -89,7 +88,7 @@ $GLOBALS['TL_DCA'][$strName] = array
     (
         '__selector__'                => array('router_api_selection'),
         'default'                     => '{general_legend},name,router_api_selection,router_viaroute_url,router_from_locstyle,router_to_locstyle,router_point_locstyle;'
-                                        .'{extended_legend:hide},routerHeadline,router_attribution,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel;'
+                                        .'{extended_legend:hide},routerHeadline,router_profiles,router_attribution,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel;'
                                         .'{search_legend:hide},showFeatures,featureLabel,initialMode,routerLayers,hideFeaturesWithoutLabel,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle,usePermalink;'
     ),
     

@@ -14,6 +14,7 @@ use con4gis\MapsBundle\Resources\contao\modules\api\RoutingApi;
 use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
 use con4gis\RoutingBundle\Classes\LatLng;
 use con4gis\RoutingBundle\Classes\Polyline;
+use con4gis\RoutingBundle\Entity\RoutingConfiguration;
 use Contao\System;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -35,7 +36,7 @@ class RouteService extends \Frontend
      * @param  array $arrInput Fragments from request uri
      * @return mixed           JSON data
      */
-    public function generate($profileId, $locations, $profile = null)
+    public function generate($profileId, $locations, $routerConfig, $profile = null)
     {
         $strParams = "";
         foreach ($_GET as $key=>$value) {
@@ -50,7 +51,7 @@ class RouteService extends \Frontend
                 }
             }
         }
-        return $this->getRoutingResponse($locations, $strParams, $profileId, $profile);
+        return $this->getRoutingResponse($locations, $strParams, $routerConfig, $profileId, $profile);
     }
 
     /**
@@ -64,15 +65,18 @@ class RouteService extends \Frontend
      */
     public function getResponse($profileId, $layer, $locations, $detour, $profile)
     {
-        $routeData = $this->generate($profileId, $locations, $profile);
+        $objMapsProfile = C4gMapProfilesModel::findBy('id', $profileId);
+        $routerConfigRepo = System::getContainer()->get('doctrine.orm.default_entity_manager')
+            ->getRepository(RoutingConfiguration::class);
+        $routerConfig = $routerConfigRepo->findOneBy(['id' => $objMapsProfile->routerConfig]);
+        $routeData = $this->generate($profileId, $locations,$routerConfig, $profile);
         $polyline = new Polyline([]);
         $objLayer = C4gMapsModel::findById($layer);
-        $objMapsProfile = C4gMapProfilesModel::findBy('id', $profileId);
         try {
-            if ($objMapsProfile->router_api_selection == '2') {
+            if ($routerConfig->getRouterApiSelection() == '2') {
                 $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
             }
-            else if ($objMapsProfile->router_api_selection == '3'){
+            else if ($routerConfig->getRouterApiSelection() == '3'){
                 $points = $polyline->fromEncodedString($routeData['paths'][0]['points']);
             }
             $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
@@ -99,19 +103,21 @@ class RouteService extends \Frontend
      * @param $profile
      * @return string
      */
-    protected function getRoutingResponse($arrInput, $strParams, $intProfileId, $profile)
+    protected function getRoutingResponse($arrInput, $strParams, $routerConfig, $intProfileId, $profile)
     {
-        $objMapsProfile = C4gMapProfilesModel::findBy('id', $intProfileId);
-        if($objMapsProfile->router_api_selection == '1' || $objMapsProfile->router_api_selection == '0') {
-            $response = $this->getORSMResponse($objMapsProfile, $arrInput, $strParams);
+
+        if($routerConfig instanceof RoutingConfiguration) {
+            if($routerConfig->getRouterApiSelection() == '1' || $routerConfig->getRouterApiSelection() == '0') {
+                $response = $this->getORSMResponse($arrInput, $strParams, $routerConfig);
+            }
+            else if($routerConfig->getRouterApiSelection() == '2'){
+                $response = $this->getORSResponse($arrInput, $strParams, $profile, $routerConfig);
+            }
+            else if($routerConfig->getRouterApiSelection() == '3'){
+                $response = $this->getGraphhopperResponse($arrInput, $strParams, $profile, $routerConfig);
+            }
+            return $response;
         }
-        else if($objMapsProfile->router_api_selection == '2'){
-            $response = $this->getORSResponse($arrInput, $strParams, $intProfileId, $profile);
-        }
-        else if($objMapsProfile->router_api_selection == '3'){
-            $response = $this->getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile);
-        }
-        return $response;
     }
     
     /**
@@ -121,44 +127,46 @@ class RouteService extends \Frontend
      * @param $strParams
      * @return string
      */
-    private function getGraphhopperResponse($arrInput, $strParams, $intProfileId, $profile)
+    private function getGraphhopperResponse($arrInput, $strParams, $profile, $routerConfig)
     {
-        $objMapsProfile = C4gMapProfilesModel::findBy('id', $intProfileId);
-        $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
-        $strRoutingUrl = $objMapsProfile->router_viaroute_url ? $objMapsProfile->router_viaroute_url : "https://graphhopper.com/api/1/route?";
-        $apiKey = "&key=".$objMapsProfile->router_api_key;
-        $points = "point=" . explode(",",$arrInput[0])[0].','.explode(",",$arrInput[0])[1];
-        for($i = 1; $i < sizeof($arrInput); $i++){
-            $points .=  "&point=" . explode(",",$arrInput[$i])[0].','.explode(",",$arrInput[$i])[1];
-        }
-        $points = substr($points,0,strlen($points)-1);
-        $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-        if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
-            $language = $GLOBALS['TL_LANGUAGE'];
-            if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
-                $language = "en";
+        if($routerConfig instanceof RoutingConfiguration){
+            $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
+            $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://graphhopper.com/api/1/route?";
+            $apiKey = "&key=".$routerConfig->getRouterApiKey();
+            $points = "point=" . explode(",",$arrInput[0])[0].','.explode(",",$arrInput[0])[1];
+            for($i = 1; $i < sizeof($arrInput); $i++){
+                $points .=  "&point=" . explode(",",$arrInput[$i])[0].','.explode(",",$arrInput[$i])[1];
             }
-        }
-        $profile = $valuesProfile[$profile] ? $valuesProfile[$profile] : 'car';
+            $points = substr($points,0,strlen($points)-1);
+            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+            if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+                $language = $GLOBALS['TL_LANGUAGE'];
+                if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+                    $language = "en";
+                }
+            }
+            $profile = $valuesProfile[$profile] ? $valuesProfile[$profile] : 'car';
 
-        $profile = "&vehicle=" . $profile;
-        $locale = "&locale=" . $language;
-        $url = $strRoutingUrl . $points . $profile . $locale;
-        if ($objMapsProfile->router_alternative == "1" && sizeof($arrInput) == 2) {
-            $url .= "&algorithm=alternative_route&ch.disable=true";
-        }
-        $url .= $apiKey;
-        $request = $this->createRequest();
-        $request->send($url);
-        $response = $request->response;
-        try {
-            $response = \GuzzleHttp\json_decode($response, true);
-        } catch(\Exception $exception) {
-            $response = [];
-            $response['error'] = "ROUTER_ERROR_POLYLINE";
+            $profile = "&vehicle=" . $profile;
+            $locale = "&locale=" . $language;
+            $url = $strRoutingUrl . $points . $profile . $locale;
+            if ($routerConfig->getRouterAlternative() == "1" && sizeof($arrInput) == 2) {
+                $url .= "&algorithm=alternative_route&ch.disable=true";
+            }
+            $url .= $apiKey;
+            $request = $this->createRequest();
+            $request->send($url);
+            $response = $request->response;
+            try {
+                $response = \GuzzleHttp\json_decode($response, true);
+            } catch(\Exception $exception) {
+                $response = [];
+                $response['error'] = "ROUTER_ERROR_POLYLINE";
+                return $response;
+            }
             return $response;
         }
-        return $response;
+
     }
 
     /**
@@ -168,7 +176,7 @@ class RouteService extends \Frontend
      * @param $strParams
      * @return string
      */
-    private function getORSMResponse($objMapsProfile, $arrInput, $strParams)
+    private function getORSMResponse($objMapsProfile, $arrInput, $strParams, $routerConfig)
     {
         $strRoutingUrl = "http://router.project-osrm.org/";
         if ($objMapsProfile->router_viaroute_url)
@@ -202,58 +210,59 @@ class RouteService extends \Frontend
      * @param $profile
      * @return array|mixed|string
      */
-    private function getORSResponse($arrInput, $strParams, $intProfileId, $profile)
+    private function getORSResponse($arrInput, $strParams, $profile, $routerConfig)
     {
-        $valuesProfile = ["driving-car" , "driving-hgv" , "cycling-regular" , "cycling-road" , "cycling-safe" , "cycling-mountain" , "cycling-tour" , "cycling-electric" , "foot-walking" , "foot-hiking" , "wheelchair"];
-        $strRoutingUrl = "https://api.openrouteservice.org/directions?";
-        $objMapsProfile = C4gMapProfilesModel::findBy('id', $intProfileId);
-        $apiKey = "api_key=".$objMapsProfile->router_api_key;
-        $coordinates = "&coordinates=";
-        for($i = 0; $i < sizeof($arrInput); $i++){
-            $coordinates .=  explode(",",$arrInput[$i])[1].','.explode(",",$arrInput[$i])[0].'|';
-        }
-        $coordinates = substr($coordinates,0,strlen($coordinates)-1);
-        $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-        if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
-            $language = $GLOBALS['TL_LANGUAGE'];
-            if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
-                $language = "en";
+        if($routerConfig instanceof RoutingConfiguration) {
+            $valuesProfile = ["driving-car" , "driving-hgv" , "cycling-regular" , "cycling-road" , "cycling-safe" , "cycling-mountain" , "cycling-tour" , "cycling-electric" , "foot-walking" , "foot-hiking" , "wheelchair"];
+            $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://api.openrouteservice.org/directions?";
+            $apiKey = "api_key=".$routerConfig->getRouterApiKey();
+            $coordinates = "&coordinates=";
+            for($i = 0; $i < sizeof($arrInput); $i++){
+                $coordinates .=  explode(",",$arrInput[$i])[1].','.explode(",",$arrInput[$i])[0].'|';
             }
-        }
-        $profile = $valuesProfile[$profile] ? $valuesProfile[$profile] : 'driving-car';
+            $coordinates = substr($coordinates,0,strlen($coordinates)-1);
+            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+            if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+                $language = $GLOBALS['TL_LANGUAGE'];
+                if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+                    $language = "en";
+                }
+            }
+            $profile = $valuesProfile[$profile] ? $valuesProfile[$profile] : 'driving-car';
 
-        $profile = "&profile=".$profile."&format=json&language=".$language."&geometry_format=encodedpolyline&maneuvers=true&preference=recommended";
-        $url = $strRoutingUrl.$apiKey.$coordinates.$profile;
-        $request = $this->createRequest();
-        $request->send($url);
-        $response = $request->response;
-        try {
-            $response = \GuzzleHttp\json_decode($response, true);
-        } catch(\Exception $exception) {
-            $response = [];
-            $response['error'] = "ROUTER_ERROR_POLYLINE";
-            return $response;
-        }
-
-        // error handling
-        if ($response['error'] && $response['error']['code'] === 2004) {
-            // try again with another preference
-            $url = str_replace("preference=recommended","preference=fastest", $url);
+            $profile = "&profile=".$profile."&format=json&language=".$language."&geometry_format=encodedpolyline&maneuvers=true&preference=recommended";
+            $url = $strRoutingUrl.$apiKey.$coordinates.$profile;
+            $request = $this->createRequest();
             $request->send($url);
             $response = $request->response;
-            $response = json_decode($response, true);
-            if ($response['error'] && $response['error']['code'] === 2004) {
+            try {
+                $response = \GuzzleHttp\json_decode($response, true);
+            } catch(\Exception $exception) {
+                $response = [];
+                $response['error'] = "ROUTER_ERROR_POLYLINE";
                 return $response;
             }
-        }
 
-        if ($objMapsProfile->router_alternative == "1") {
-            $request = $this->createRequest();
-            $url = str_replace("preference=recommended","preference=shortest",$url);
-            $request->send($url);
-            $response['routes'][1] = \GuzzleHttp\json_decode($request->response, true)['routes'][0];
+            // error handling
+            if ($response['error'] && $response['error']['code'] === 2004) {
+                // try again with another preference
+                $url = str_replace("preference=recommended","preference=fastest", $url);
+                $request->send($url);
+                $response = $request->response;
+                $response = json_decode($response, true);
+                if ($response['error'] && $response['error']['code'] === 2004) {
+                    return $response;
+                }
+            }
+
+            if ($routerConfig->getRouterAlternative() == "1") {
+                $request = $this->createRequest();
+                $url = str_replace("preference=recommended","preference=shortest",$url);
+                $request->send($url);
+                $response['routes'][1] = \GuzzleHttp\json_decode($request->response, true)['routes'][0];
+            }
+            return $response;
         }
-        return $response;
     }
 
     /**
