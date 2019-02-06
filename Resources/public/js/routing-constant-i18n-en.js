@@ -110,7 +110,12 @@ export  var routingConstantsEnglish = {
   ROUTE_POSITION:       'Get user position',
   START_ROUTE:          'Start search',
 
-
+  CAR:                  'Car',
+  BIKE:                 'Bike',
+  TRUCK:                'Truck',
+  WALK:                 'Pedestrian',
+  WHEEL:                'Wheelchair',
+  SCOOT:                'Router',
 
   NONE: '' // last line
 }; // end of "css constants" ---

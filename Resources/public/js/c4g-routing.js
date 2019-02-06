@@ -2072,6 +2072,7 @@ export class Router extends Sideboard {
       if (this.options.mapController.data.router_profiles['0']) { //add button for profile driving-car
         routeProfile.car = document.createElement('button');
         $(routeProfile.car).addClass(routingConstants.ROUTER_PROFILE_CAR);
+        $(routeProfile.car).prop('title',langRouteConstants.CAR);
         this.$routeProfileCar = $(routeProfile.car);
         this.routeProfile.appendChild(routeProfile.car);
         this.$routeProfileCar.click(function (event) {
@@ -2116,6 +2117,8 @@ export class Router extends Sideboard {
 
 
         $(routeProfile.truck).addClass(routingConstants.ROUTER_PROFILE_TRUCK);
+        $(routeProfile.truck).prop('title',langRouteConstants.TRUCK);
+
 
         if (routeProfile.truck.list.children.length == 1) { //ignore dropdown list, if only one truck profile is enabled
           this.routeProfile.appendChild(routeProfile.truck);
@@ -2163,6 +2166,7 @@ export class Router extends Sideboard {
         }
 
         $(routeProfile.bike).addClass(routingConstants.ROUTER_PROFILE_BIKE);
+        $(routeProfile.bike).prop('title',langRouteConstants.BIKE);
 
         if (routeProfile.bike.list.children.length == 1) { //ignore dropdown list, if only one cycling profile is enabled
           this.routeProfile.appendChild(routeProfile.bike);
@@ -2206,6 +2210,8 @@ export class Router extends Sideboard {
         }
 
         $(routeProfile.foot).addClass(routingConstants.ROUTER_PROFILE_FOOT);
+        $(routeProfile.foot).prop('title',langRouteConstants.WALK);
+
 
         if (routeProfile.foot.list.children.length == 1) { //ignore dropdown list, if only one walking profile is enabled
           this.routeProfile.appendChild(routeProfile.foot);
@@ -2229,6 +2235,7 @@ export class Router extends Sideboard {
       if (this.options.mapController.data.router_profiles['10']) { //add button for profile wheelchair
         routeProfile.wheelchair = document.createElement('button');
         $(routeProfile.wheelchair).addClass(routingConstants.ROUTER_PROFILE_WHEELCHAIR);
+        $(routeProfile.wheelchair).prop('title',langRouteConstants.WHEEL);
         this.$routeProfileWheelchair = $(routeProfile.wheelchair);
         this.routeProfile.appendChild(routeProfile.wheelchair);
         this.$routeProfileWheelchair.click(function (event) {
@@ -2240,6 +2247,7 @@ export class Router extends Sideboard {
       if (this.options.mapController.data.router_profiles['12']) { //add button for profile scooter
         routeProfile.scooter = document.createElement('button');
         $(routeProfile.scooter).addClass(routingConstants.ROUTER_PROFILE_SCOOTER);
+        $(routeProfile.scooter).prop('title',langRouteConstants.SCOOT);
         this.$routeProfileScooter = $(routeProfile.scooter);
         this.routeProfile.appendChild(routeProfile.scooter);
         this.$routeProfileScooter.click(function (event) {

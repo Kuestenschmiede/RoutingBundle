@@ -108,5 +108,12 @@ export  var routingConstantsGerman = {
   ROUTE_POSITION:       'Position ermitteln',
   START_ROUTE:          'Suche starten',
 
+  CAR:                  'Auto',
+  BIKE:                 'Fahrrad',
+  TRUCK:                'Lastkraftwagen',
+  WALK:                 'Fußgänger',
+  WHEEL:                'Rollstuhl',
+  SCOOT:                'Roller',
+
   NONE: '' // last line
 }; // end of "css constants" ---
