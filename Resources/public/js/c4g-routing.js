@@ -84,7 +84,7 @@ export class Router extends Sideboard {
     }
     // check and load location styles via map-proxy
     this.options.mapController.proxy.locationStyleController.loadLocationStyles(styles);
-
+    mapData = mapData[this.options.mapController.data.mapId];
 
     // Add router layer(s)
     this.routingAltWaySource = new ol.source.Vector();
@@ -309,26 +309,22 @@ export class Router extends Sideboard {
     const fragments = this.linkFragments;
     // only attend updating url when every value is set
     if (fragments.mode && fragments.mode === "area") {
-      if (fragments.mode && fragments.addressArea && fragments.detour && fragments.searchType && fragments.forceStart) {
-        url += fragments.mode + "/";
-        url += fragments.addressArea + "/";
-        url += fragments.detour + "/";
-        url += fragments.searchType + "/";
-        url += fragments.forceStart;
+        url += fragments.mode ? "m:" + fragments.mode + "/" : "";
+        url += fragments.addressArea ? "a:" + fragments.addressArea + "/" : "";
+        url += fragments.detour ? "d:" + fragments.detour + "/" : "";
+        url += fragments.searchType ? "s:" + fragments.searchType + "/" : "";
+        url += fragments.forceStart ? "f:" + fragments.forceStart : "";
         let completeUrl = window.location.pathname + url;
         history.pushState({}, null, completeUrl);
-      }
     } else if (fragments.mode && fragments.mode === "route") {
-      if (fragments.mode && fragments.addressFrom && fragments.addressTo && fragments.detour && fragments.searchType && fragments.forceStart) {
-        url += fragments.mode + "/";
-        url += fragments.addressFrom + "/";
-        url += fragments.addressTo + "/";
-        url += fragments.detour + "/";
-        url += fragments.searchType + "/";
-        url += fragments.forceStart;
+        url += fragments.mode ? "m:" + fragments.mode + "/" : "";
+        url += fragments.addressFrom ? "af:" + fragments.addressFrom + "/" : "";
+        url += fragments.addressTo ? "at:" + fragments.addressTo + "/" : "";
+        url += fragments.detour ? "d:" + fragments.detour + "/" : "";
+        url += fragments.searchType ? "s:" + fragments.searchType + "/" : "";
+        url += fragments.forceStart ? "f:" + fragments.forceStart : "";
         let completeUrl = window.location.pathname + url;
         history.pushState({}, null, completeUrl);
-      }
     }
   }
 
@@ -342,7 +338,9 @@ export class Router extends Sideboard {
     const params = this.options.mapController.data.initialParams;
     const scope = this;
     if (params) {
-      const arrParams = params.split("/");
+      const arrParams = params.split("/").map(pair => pair.split(":"));
+      const objParams = {};
+      arrParams.forEach(([key,value]) => objParams[key] = value);
       let routerLayers = this.options.mapController.data.routerLayers;
       let desiredButton = "";
       iterationLabel:
@@ -352,7 +350,7 @@ export class Router extends Sideboard {
             for (let innerKey in obj) {
               if (obj.hasOwnProperty(innerKey)) {
                 let singleEntry = obj[innerKey];
-                let cmpValue = arrParams[0] === "area" ? arrParams[3] : arrParams[4];
+                let cmpValue = objParams.s
                 if (singleEntry.mapLabel === cmpValue) {
                   desiredButton = innerKey;
                   break iterationLabel;
@@ -363,19 +361,20 @@ export class Router extends Sideboard {
         }
       // iterate buttons later on when the UI is built
       this.desiredButtonRouting = desiredButton;
-      if (arrParams[0] === "area") {
+      if (objParams.m === "area") {
         this.viewArea.activate();
-        let center = arrParams[1];
-        let detour = arrParams[2];
-        let searchtype = arrParams[3];
-        let forceStart = arrParams[4];
-        if (center && detour && searchtype && forceStart) {
-          this.updateLinkFragments("addressArea", center);
+        let center = objParams.m;
+        let detour = objParams.d;
+        let searchtype = objParams.s;
+        let forceStart = objParams.f;
+
+        if (detour || detour > 1) {
           this.updateLinkFragments("detour", detour);
-          this.updateLinkFragments("searchType", searchtype);
-          this.updateLinkFragments("forceStart", forceStart);
           $(this.toggleDetourArea).val(detour);
           $(this.toggleDetourArea).trigger('input');
+        }
+        if (center) {
+          this.updateLinkFragments("addressArea", center);
           $(this.areaFromInput).val(center);
           this.performSearch($(this.areaFromInput), "areaValue", function () {
             if (scope.areaValue) {
@@ -400,21 +399,43 @@ export class Router extends Sideboard {
               }
             }
           });
-          // activate area view
-          $(".c4g-portside-viewtriggerbar .c4g-area-search").click();
         }
-      } else if (arrParams[0] === "route") {
+        if (searchtype) {
+          this.updateLinkFragments("searchType", searchtype);
+        }
+        if (forceStart) {
+          this.updateLinkFragments("forceStart", forceStart);
+        }
+        // activate area view
+        $(".c4g-portside-viewtriggerbar .c4g-area-search").click();
+
+      } else if (objParams.m === "route") {
         this.viewRouter.activate();
-        let fromAddress = arrParams[1];
-        let toAddress = arrParams[2];
-        let detour = arrParams[3];
-        let searchtype = arrParams[4];
-        let forceStart = arrParams[5];
-        if (fromAddress && toAddress && detour && searchtype && forceStart) {
+        let fromAddress = objParams.af;
+        let toAddress = objParams.at;
+        let detour = objParams.d;
+        let searchtype = objParams.s;
+        let forceStart = objParams.f;
+        if (detour) {
           $(this.toggleDetourRoute).val(detour);
           $(this.toggleDetourRoute).trigger('input');
+          this.updateLinkFragments("detour", objParams.d);
+        }
+        if (fromAddress) {
           $(this.fromInput).val(fromAddress);
+          this.updateLinkFragments("addressFrom", fromAddress);
+        }
+        if (toAddress) {
           $(this.toInput).val(toAddress);
+          this.updateLinkFragments("addressTo", toAddress);
+        }
+        if (searchtype) {
+          this.updateLinkFragments("searchType", objParams.s);
+        }
+        if (forceStart) {
+          this.updateLinkFragments("forceStart", objParams.f);
+        }
+        if (fromAddress && toAddress) {
           this.performSearch($(this.fromInput), "fromValue", function () {
             if (scope.fromValue) {
               scope.performSearch($(scope.toInput), "toValue", function () {
@@ -433,19 +454,16 @@ export class Router extends Sideboard {
                   toFeature.setStyle(toStyle);
                   scope.locationsSource.addFeature(fromFeature);
                   scope.locationsSource.addFeature(toFeature);
-                  scope.performViaRoute(scope.fromValue, scope.toValue);
+                  if (forceStart) {
+                    scope.performViaRoute(scope.fromValue, scope.toValue);
+                  }
                 }
               });
             }
           });
-          // activate router view
-          $(".c4g-portside-viewtriggerbar .c4g-route-search").click();
-          this.updateLinkFragments("addressFrom", arrParams[1]);
-          this.updateLinkFragments("addressTo", arrParams[2]);
-          this.updateLinkFragments("detour", arrParams[3]);
-          this.updateLinkFragments("searchType", arrParams[4]);
-          this.updateLinkFragments("forceStart", arrParams[5]);
         }
+        // activate router view
+        $(".c4g-portside-viewtriggerbar .c4g-route-search").click();
       }
     }
   }

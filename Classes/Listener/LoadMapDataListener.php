@@ -67,7 +67,7 @@ class LoadMapDataListener
                     }
                     $mapData['router_profiles'] = $router_profiles;
                 }
-                $routerLayers = unserialize($routerConfig->getRouterLayers());
+                $routerLayers = $routerConfig->getRouterLayers();
                 if($routerLayers && $routerLayers[0] && $routerLayers[0]['key']){
                     $returnLayers = [];
                     foreach ($routerLayers as $routerLayer) {

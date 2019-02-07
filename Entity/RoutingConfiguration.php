@@ -120,7 +120,7 @@ class RoutingConfiguration extends BaseEntity
     
     /**
      * @var null
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="array")
      */
     protected $routerLayers = null;
     
