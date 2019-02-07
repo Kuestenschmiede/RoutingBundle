@@ -284,7 +284,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['routerHeadline'],
             'filter'                  => false,
             'inputType'               => 'text',
-            'default'                 => '',
+            'default'                 => 'Router',
             'eval'                    => [ 'tl_class'=>'clr', "maxlength" => 100],
         ],
         'priorityFeatures' => [

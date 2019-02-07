@@ -6,19 +6,7 @@ import {routingConstants} from "./routing-constants";
 import {routingConstantsEnglish} from "./routing-constant-i18n-en";
 import {routingConstantsGerman} from "./routing-constant-i18n-de";
 import {CachedInputfield} from "./../../../../CoreBundle/Resources/public/js/c4g-cached-inputfield";
-
-// language stuff
 let langRouteConstants = {};
-if (typeof mapData !== 'undefined') {
-  if (mapData.lang === "de") {
-    langRouteConstants = routingConstantsGerman;
-  } else if (mapData.lang === "en") {
-    langRouteConstants = routingConstantsEnglish;
-  } else {
-    // fallback
-    langRouteConstants = routingConstantsEnglish;
-  }
-}
 
 'use strict';
 export class Router extends Sideboard {
@@ -41,6 +29,19 @@ export class Router extends Sideboard {
       direction: 'left'
     }, opt_options);
     super(options);
+    let mapData = this.options.mapController.data;
+    // language stuff
+    this.mapData = mapData;
+    if (typeof mapData !== 'undefined') {
+      if (mapData.lang === "de") {
+        langRouteConstants = routingConstantsGerman;
+      } else if (mapData.lang === "en") {
+        langRouteConstants = routingConstantsEnglish;
+      } else {
+        // fallback
+        langRouteConstants = routingConstantsEnglish;
+      }
+    }
     this.options = options;
     if (!this.options.mapController) {
       return false;
@@ -263,7 +264,7 @@ export class Router extends Sideboard {
     });
 
     this.options.mapController.map.addLayer(this.routerLayerGroup);
-    if (mapData.routerLayers) {
+    if (this.mapData.routerLayers) {
       this.viewArea = this.addAreaInterface();
       if (this.options.mapController.data.initialMode === "area") {
         this.viewArea.activate();
@@ -968,6 +969,7 @@ export class Router extends Sideboard {
       // TODO the calling function expects a return value; should probably be fixed
       return [];
     }
+    const mapData = this.mapData;
     const layerId = mode === "router" ? $(this.routerLayersSelect).val() : $(this.areaLayersSelect).val();
     const layer = self.options.mapController.proxy.layerController.arrLayers[layerId];
     let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
@@ -2443,6 +2445,7 @@ export class Router extends Sideboard {
       buttonOver;
 
       self = this;
+      const mapData = this.mapData;
       routerContentElement = document.createElement('div');
       routerViewInputWrapper = document.createElement('div');
       this.routerViewInputWrapper = routerViewInputWrapper;

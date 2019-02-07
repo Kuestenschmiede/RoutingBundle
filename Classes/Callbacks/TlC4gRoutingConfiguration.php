@@ -35,7 +35,7 @@ class TlC4gRoutingConfiguration
     public function getRouterLayer($multiColumnWizard)
     {
         $arrColumnLayers = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['layers'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['layers'],
             'inputType' => 'select',
             'eval'      => ['chosen'=>true, 'includeBlankOption'=>true, 'style'=>'min-width:200px;width:200px;']
         ];
@@ -47,25 +47,25 @@ class TlC4gRoutingConfiguration
         }
         $arrColumnLayers['options'] = $arrOptions;
         $arrColumnKey = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['key'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['key'],
             'filter'                  => false,
             'inputType'               => 'text',
             'eval'                    => ['tl_class'=>'w50']
         ];
         $arrColumnValue = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['value'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['value'],
             'filter'                  => false,
             'inputType'               => 'text',
             'eval'                    => ['tl_class'=>'w50']
         ];
         $arrColumnLabels = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['label'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['label'],
             'filter'                  => false,
             'inputType'               => 'text',
             'eval'                    => ['tl_class'=>'w50']
         ];
         $arrColumnMapLabels = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerLayer']['mapLabel'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['mapLabel'],
             'filter'                  => false,
             'inputType'               => 'text',
             'eval'                    => ['tl_class'=>'w50']
