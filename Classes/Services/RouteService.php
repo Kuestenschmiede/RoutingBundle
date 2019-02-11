@@ -73,10 +73,13 @@ class RouteService extends \Frontend
         $polyline = new Polyline([]);
         $objLayer = C4gMapsModel::findById($layer);
         try {
-            if ($routerConfig->getRouterApiSelection() == '2') {
+            if ($routerConfig->getRouterApiSelection() == '1') {
                 $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
             }
-            else if ($routerConfig->getRouterApiSelection() == '3'){
+            else if ($routerConfig->getRouterApiSelection() == '2'){
+                $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
+            }
+            else if ($routerConfig->getRouterApiSelection() == '3') {
                 $points = $polyline->fromEncodedString($routeData['paths'][0]['points']);
             }
             $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
@@ -176,19 +179,19 @@ class RouteService extends \Frontend
      * @param $strParams
      * @return string
      */
-    private function getORSMResponse($objMapsProfile, $arrInput, $strParams, $routerConfig)
+    private function getORSMResponse($arrInput, $strParams, $routerConfig)
     {
         $strRoutingUrl = "http://router.project-osrm.org/";
-        if ($objMapsProfile->router_viaroute_url)
+        if ($routerConfig->getRouterViarouteUrl())
         {
-            $strRoutingUrl = $objMapsProfile->router_viaroute_url;
+            $strRoutingUrl = $routerConfig->getRouterViarouteUrl();
             if(substr($strRoutingUrl,-1,1) != '/') {
                 $strRoutingUrl= $strRoutingUrl.'/';
             }
         }
 
         $request = $this->createRequest();
-        if ($objMapsProfile && $objMapsProfile->router_api_selection == '1') {
+        if ($routerConfig && $routerConfig->getRouterApiSelection() == '1') {
             $url = "";
             for ($i = 0; $i< sizeof($arrInput); $i++) {
                 $url = $url. explode(",",$arrInput[$i])[1].','.explode(",",$arrInput[$i])[0].';';
@@ -199,6 +202,13 @@ class RouteService extends \Frontend
             $request->send($strRoutingUrl . '?' . $strParams);
         }
         $response = $request->response;
+        try {
+            $response = \GuzzleHttp\json_decode($response, true);
+        } catch(\Exception $exception) {
+            $response = [];
+            $response['error'] = "ROUTER_ERROR_POLYLINE";
+            return $response;
+        }
         return $response;
     }
 
