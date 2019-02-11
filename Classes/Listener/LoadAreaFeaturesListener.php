@@ -18,6 +18,7 @@ use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use con4gis\RoutingBundle\Classes\Event\LoadAreaFeaturesEvent;
 use con4gis\RoutingBundle\Classes\LatLng;
 use con4gis\RoutingBundle\Classes\Services\AreaService;
+use con4gis\RoutingBundle\Entity\RoutingConfiguration;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class LoadAreaFeaturesListener
@@ -49,90 +50,106 @@ class LoadAreaFeaturesListener
         $bounds = $point->getLatLngBounds($point,$distance);
 
         $objLayer = C4gMapsModel::findById($layerId);
-        if($objLayer->location_type == "table"){
-            $sourceTable = $objLayer->tab_source;
-            $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
-            $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';
-            $onClause = $objLayer->tabJoinclause ? ' ' . htmlspecialchars_decode($objLayer->tabJoinclause) : '';
-            $sqlLoc = " WHERE ". $arrConfig['geox'] . " BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND " . $arrConfig['geoy'] . " BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
-            $sqlSelect = $sourceTable.".". $arrConfig['geox']." AS geox,".$sourceTable.".".$arrConfig['geoy']." AS geoy";
-            $sqlSelect = $arrConfig['locstyle'] ? $sqlSelect . ", " .$sourceTable."." . $arrConfig['locstyle'] . " AS locstyle" : $sqlSelect;
-            $sqlSelect = $arrConfig['label'] ? $sqlSelect . ", " . $sourceTable.".". $arrConfig['label'] . " AS label" : $sqlSelect;
-            $sqlSelect = $arrConfig['tooltip'] ? $sqlSelect . ", ". $sourceTable."." . $arrConfig['tooltip'] . " AS tooltip" : $sqlSelect;
-            $sqlWhere = $arrConfig['sqlwhere'] ? $arrConfig['sqlwhere'] : '';
-            $sqlAnd = $sqlWhere ? ' AND ' : '';
-            $strQuery = "SELECT ".$sourceTable.".id,". $sqlSelect ." FROM ".$sourceTable . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
-            $pointFeatures = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
-            $responseFeatures = [];
-            $locations = [];
-            $locations[] = [$point->getLng(), $point->getLat()];
-            foreach($pointFeatures as $pointFeature){
-                $pTemp = new LatLng($pointFeature['geoy'],$pointFeature['geox']);
-                if($pTemp->getDistance($point) < $distance){
-                    $responseFeatures[] = $pointFeature;
-                    $locations[] = [$pTemp->getLng(), $pTemp->getLat()];
-                }
-            }
-            $requestData = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
-            $finalResponseFeatures = [];
-            for($i = 1; $i < count($requestData['distances'][0]); $i++) {
-                if ($objMapsProfile->router_api_selection == "2") {
-                    if($requestData['distances'][0][$i] < $distance){
-                        $finalResponseFeatures[] = $responseFeatures[$i-1];
+        $routerConfigRepo = \System::getContainer()->get('doctrine.orm.default_entity_manager')
+            ->getRepository(RoutingConfiguration::class);
+        $routerConfig = $routerConfigRepo->findOneBy(['id' => $objMapsProfile->routerConfig]);
+        if($routerConfig instanceof RoutingConfiguration){
+            if($objLayer->location_type == "table"){
+                $sourceTable = $objLayer->tab_source;
+                $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
+                $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';
+                $onClause = $objLayer->tabJoinclause ? ' ' . htmlspecialchars_decode($objLayer->tabJoinclause) : '';
+                $sqlLoc = " WHERE ". $arrConfig['geox'] . " BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND " . $arrConfig['geoy'] . " BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
+                $sqlSelect = $sourceTable.".". $arrConfig['geox']." AS geox,".$sourceTable.".".$arrConfig['geoy']." AS geoy";
+                $sqlSelect = $arrConfig['locstyle'] ? $sqlSelect . ", " .$sourceTable."." . $arrConfig['locstyle'] . " AS locstyle" : $sqlSelect;
+                $sqlSelect = $arrConfig['label'] ? $sqlSelect . ", " . $sourceTable.".". $arrConfig['label'] . " AS label" : $sqlSelect;
+                $sqlSelect = $arrConfig['tooltip'] ? $sqlSelect . ", ". $sourceTable."." . $arrConfig['tooltip'] . " AS tooltip" : $sqlSelect;
+                $sqlWhere = $arrConfig['sqlwhere'] ? $arrConfig['sqlwhere'] : '';
+                $sqlAnd = $sqlWhere ? ' AND ' : '';
+                $strQuery = "SELECT ".$sourceTable.".id,". $sqlSelect ." FROM ".$sourceTable . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
+                $pointFeatures = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
+                $responseFeatures = [];
+                $locations = [];
+                $locations[] = [$point->getLng(), $point->getLat()];
+                foreach($pointFeatures as $pointFeature){
+                    $pTemp = new LatLng($pointFeature['geoy'],$pointFeature['geox']);
+                    if($pTemp->getDistance($point) < $distance){
+                        $responseFeatures[] = $pointFeature;
+                        $locations[] = [$pTemp->getLng(), $pTemp->getLat()];
                     }
                 }
-                else if ($objMapsProfile->router_api_selection == "3") {
-                    if($requestData['distances'][0][$i] < floatval($distance)*1000){
-                        $finalResponseFeatures[] = $responseFeatures[$i-1];
+                $requestData = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
+                $finalResponseFeatures = [];
+                for($i = 1; $i < count($requestData['distances'][0]); $i++) {
+                    if ($routerConfig->getRouterApiSelection() == "1") {
+                        if($requestData['distances'][0][$i] < $distance){
+                            $finalResponseFeatures[] = $responseFeatures[$i-1];
+                        }
+                    }
+                    else if ($routerConfig->getRouterApiSelection() == "2") {
+                        if($requestData['distances'][0][$i] < $distance){
+                            $finalResponseFeatures[] = $responseFeatures[$i-1];
+                        }
+                    }
+                    else if ($routerConfig->getRouterApiSelection() == "3") {
+                        if($requestData['distances'][0][$i] < floatval($distance)*1000){
+                            $finalResponseFeatures[] = $responseFeatures[$i-1];
+                        }
                     }
                 }
-            }
 
-            $event->setReturnData(\GuzzleHttp\json_encode([$finalResponseFeatures,'notOverpass']));
-        }
-        else if($objLayer->location_type == "overpass"){
-            $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : "http://overpass-api.de/api/interpreter";
-            $strBBox = $bounds['lower']->getLat() . "," . $bounds['left']->getLng() . "," . $bounds['upper']->getLat() . ",". $bounds['right']->getLng();
-            $query = $objLayer->ovp_request;
-            $strSearch = strrpos($query, "(bbox)") ? "(bbox)" : "{{bbox}}";
-            $query = str_replace($strSearch, $strBBox, $query);
-            $REQUEST = new \Request();
-            $REQUEST->setHeader('Content-Type', 'POST');
-            if ($_SERVER['HTTP_REFERER']) {
-                $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+                $event->setReturnData(\GuzzleHttp\json_encode([$finalResponseFeatures,'notOverpass']));
             }
-            if ($_SERVER['HTTP_USER_AGENT']) {
-                $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
-            }
-            $REQUEST->send($url,$query);
-            $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
-            $locations = [];
-            $locations[] = [$point->getLng(), $point->getLat()];
-            foreach($requestData['elements'] as $element){
-                if($element['type'] == "node") {
-                    $locations[] = [floatval($element['lon']),floatval($element['lat'])];
+            else if($objLayer->location_type == "overpass"){
+                $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : "http://overpass-api.de/api/interpreter";
+                $strBBox = $bounds['lower']->getLat() . "," . $bounds['left']->getLng() . "," . $bounds['upper']->getLat() . ",". $bounds['right']->getLng();
+                $query = $objLayer->ovp_request;
+                $strSearch = strrpos($query, "(bbox)") ? "(bbox)" : "{{bbox}}";
+                $query = str_replace($strSearch, $strBBox, $query);
+                $REQUEST = new \Request();
+                $REQUEST->setHeader('Content-Type', 'POST');
+                if ($_SERVER['HTTP_REFERER']) {
+                    $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
                 }
-                else{
-                    break;
+                if ($_SERVER['HTTP_USER_AGENT']) {
+                    $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
                 }
-            }
-            $matrixResponse = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
-            $features = [];
-            for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
-                if ($objMapsProfile->router_api_selection == "2") {
-                    if ($matrixResponse['distances'][0][$i] < $distance) {
-                        $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
-                        $features[] = $requestData['elements'][$i-1];
+                $REQUEST->send($url,$query);
+                $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
+                $locations = [];
+                $locations[] = [$point->getLng(), $point->getLat()];
+                foreach($requestData['elements'] as $element){
+                    if($element['type'] == "node") {
+                        $locations[] = [floatval($element['lon']),floatval($element['lat'])];
+                    }
+                    else{
+                        break;
                     }
                 }
-                else if ($objMapsProfile->router_api_selection == "3") {
-                    if ($matrixResponse['distances'][0][$i] < floatval($distance) * 1000) {
-                        $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
-                        $features[] = $requestData['elements'][$i-1];
+                $matrixResponse = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
+                $features = [];
+                for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
+                    if ($routerConfig->getRouterApiSelection() == "1") {
+                        if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
+                            $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                            $features[] = $requestData['elements'][$i-1];
+                        }
+                    }
+                    else if ($routerConfig->getRouterApiSelection() == "2") {
+                        if ($matrixResponse['distances'][0][$i] < $distance) {
+                            $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                            $features[] = $requestData['elements'][$i-1];
+                        }
+                    }
+                    else if ($routerConfig->getRouterApiSelection() == "3") {
+                        if ($matrixResponse['distances'][0][$i] < floatval($distance) * 1000) {
+                            $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                            $features[] = $requestData['elements'][$i-1];
+                        }
                     }
                 }
+                $event->setReturnData(\GuzzleHttp\json_encode([$features,'overpass']));
             }
-            $event->setReturnData(\GuzzleHttp\json_encode([$features,'overpass']));
         }
     }
 

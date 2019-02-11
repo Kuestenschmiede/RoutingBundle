@@ -364,7 +364,7 @@ export class Router extends Sideboard {
       this.desiredButtonRouting = desiredButton;
       if (objParams.m === "area") {
         this.viewArea.activate();
-        let center = objParams.m;
+        let center = objParams.a;
         let detour = objParams.d;
         let searchtype = objParams.s;
         let forceStart = objParams.f;
