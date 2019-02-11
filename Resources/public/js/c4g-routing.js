@@ -2299,7 +2299,9 @@ export class Router extends Sideboard {
       this.routeProfile = document.createElement('div');
       $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
       this.customProfiles = [];
+      self.routeProfile.active = this.options.mapController.data.customProfiles[0].profileKey;
       for (let customProfileId in this.options.mapController.data.customProfiles) {
+        //set fontawesome logo for custom profile
         let customProfile = this.options.mapController.data.customProfiles[customProfileId];
         let selector = "c4g-custom-router-" + customProfile.profileKey;
         let styleEl = document.createElement('style')
@@ -2335,6 +2337,9 @@ export class Router extends Sideboard {
         }
         $(element).addClass(cssConstants.ACTIVE);
       };
+    }
+    else if (this.options.mapController.data.customProfiles){ //fallback for only one custom profile
+      self.routeProfile.active = this.options.mapController.data.customProfiles[0].profileKey;
     }
     else {
       console.warn('No Router Profiles enabled')
