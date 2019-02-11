@@ -2339,6 +2339,7 @@ export class Router extends Sideboard {
       };
     }
     else if (this.options.mapController.data.customProfiles){ //fallback for only one custom profile
+      self.routeProfile = {};
       self.routeProfile.active = this.options.mapController.data.customProfiles[0].profileKey;
     }
     else {
