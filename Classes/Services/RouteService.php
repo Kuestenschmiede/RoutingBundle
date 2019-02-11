@@ -111,7 +111,7 @@ class RouteService extends \Frontend
 
         if($routerConfig instanceof RoutingConfiguration) {
             if($routerConfig->getRouterApiSelection() == '1' || $routerConfig->getRouterApiSelection() == '0') {
-                $response = $this->getORSMResponse($arrInput, $strParams, $routerConfig);
+                $response = $this->getORSMResponse($arrInput, $strParams, $routerConfig, $profile);
             }
             else if($routerConfig->getRouterApiSelection() == '2'){
                 $response = $this->getORSResponse($arrInput, $strParams, $profile, $routerConfig);
@@ -179,7 +179,7 @@ class RouteService extends \Frontend
      * @param $strParams
      * @return string
      */
-    private function getORSMResponse($arrInput, $strParams, $routerConfig)
+    private function getORSMResponse($arrInput, $strParams, $routerConfig, $profile = "driving")
     {
         $strRoutingUrl = "http://router.project-osrm.org/";
         if ($routerConfig->getRouterViarouteUrl())
@@ -197,7 +197,7 @@ class RouteService extends \Frontend
                 $url = $url. explode(",",$arrInput[$i])[1].','.explode(",",$arrInput[$i])[0].';';
             }
             $url = substr($url,0,strlen($url)-1);
-            $request->send($strRoutingUrl . 'route/v1/driving/'.$url.'?steps=true&overview=full&alternatives=true');
+            $request->send($strRoutingUrl . 'route/v1/driving/'. $profile . '/' .$url.'?steps=true&overview=full&alternatives=true');
         } else {
             $request->send($strRoutingUrl . '?' . $strParams);
         }

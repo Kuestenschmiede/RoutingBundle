@@ -67,6 +67,9 @@ class LoadMapDataListener
                     }
                     $mapData['router_profiles'] = $router_profiles;
                 }
+                if($routerConfig->getCustomProfiles()) {
+                    $mapData['customProfiles'] = $routerConfig->getCustomProfiles();
+                }
                 $routerLayers = $routerConfig->getRouterLayers();
                 if($routerLayers && $routerLayers[0] && $routerLayers[0]['key']){
                     $returnLayers = [];

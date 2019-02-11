@@ -2082,11 +2082,11 @@ export class Router extends Sideboard {
     const self = this;
     let routeProfile = [];
 
-    if (Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
+    if (this.options.mapController.data.router_profiles && Object.keys(this.options.mapController.data.router_profiles).length == 1) {//check for single profile and set this as  active routing profile
       this.routeProfile = [];
       this.routeProfile.active = Object.keys(this.options.mapController.data.router_profiles)[0];
     }
-    else if (Object.keys(this.options.mapController.data.router_profiles).length > 1) { //check for multiple profiles and add profile-changer
+    else if (this.options.mapController.data.router_profiles && Object.keys(this.options.mapController.data.router_profiles).length > 1) { //check for multiple profiles and add profile-changer
       this.routeProfile = document.createElement('div');
       $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
       if (this.options.mapController.data.router_profiles['0']) { //add button for profile driving-car
@@ -2294,7 +2294,49 @@ export class Router extends Sideboard {
           break;
         }
       }
-    } else {
+    }
+    else if (this.options.mapController.data.customProfiles.length > 1) {
+      this.routeProfile = document.createElement('div');
+      $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
+      this.customProfiles = [];
+      for (let customProfileId in this.options.mapController.data.customProfiles) {
+        let customProfile = this.options.mapController.data.customProfiles[customProfileId];
+        let selector = "c4g-custom-router-" + customProfile.profileKey;
+        let styleEl = document.createElement('style')
+        document.head.appendChild(styleEl);
+
+        // Grab style sheet
+        let styleSheet = styleEl.sheet;
+        // catch firefox, because FF does not know "addRule"
+        if (styleSheet.addRule && typeof document.styleSheets[0].addRule === 'function') {
+          styleSheet.addRule("button." + selector + ':before', 'content: "\\' + customProfile.fontAwesome + '";');
+        } else {
+          styleSheet.insertRule("button." + selector + ':before { content: "\\' + customProfile.fontAwesome + '";}', 0);
+        }
+
+        routeProfile[customProfile.profileKey] = document.createElement('button');
+        $(routeProfile[customProfile.profileKey]).prop('title', customProfile.showName);
+        $(routeProfile[customProfile.profileKey]).click(function (event) {
+            self.clearSiblings(this);
+            self.routeProfile.active = customProfile.profileKey;
+            self.recalculateRoute();
+        });
+        $(routeProfile[customProfile.profileKey]).addClass(selector);
+        if (customProfileId == 0) {
+          $(routeProfile[customProfile.profileKey]).addClass(cssConstants.ACTIVE);
+        }
+        this.routeProfile.appendChild(routeProfile[customProfile.profileKey]);
+        this.customProfiles.push($(routeProfile[customProfile.profileKey]));
+      }
+      this.clearSiblings = function (element) { //function to adjust css-classes after changing profile
+        let siblings = $(element).parent().children();
+        for (let i = 0; i < siblings.length; i++) {
+          $(siblings[i]).removeClass(cssConstants.ACTIVE);
+        }
+        $(element).addClass(cssConstants.ACTIVE);
+      };
+    }
+    else {
       console.warn('No Router Profiles enabled')
     }
   }
@@ -2527,7 +2569,7 @@ export class Router extends Sideboard {
       }
 
       // add profiles selection
-      if (this.options.mapController.data.router_api_selection > 1) { //OpenRouteService
+      if (this.options.mapController.data.router_api_selection >= 1) {
         this.createRouterProfileSelect();
       }
 

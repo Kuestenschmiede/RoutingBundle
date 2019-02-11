@@ -1,9 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: cro
- * Date: 31.01.19
- * Time: 13:47
+ * con4gis - the gis-kit
+ *
+ * @version   php 7
+ * @package   con4gis
+ * @author    con4gis contributors (see "authors.txt")
+ * @license   GNU/LGPL http://opensource.org/licenses/lgpl-3.0.html
+ * @copyright Küstenschmiede GmbH Software & Design 2011 - 2018
+ * @link      https://www.kuestenschmiede.de
  */
 $strName = 'tl_c4g_routing_configuration';
 $GLOBALS['TL_LANG'][$strName]['router_api_selection'] = ['Routing-Servertechnik','Auswahl der Servertechnik.'];
@@ -17,12 +21,19 @@ $GLOBALS['TL_LANG'][$strName]['router_to_locstyle'] = ['Lokationstil für Zielpu
 $GLOBALS['TL_LANG'][$strName]['router_point_locstyle'] = ['Lokationstil für Unterwegs-Hinweise', 'Wählen Sie einen Lokationstil für Unterwegs-Hinweise aus.'];
 $GLOBALS['TL_LANG'][$strName]['router_interim_locstyle'] = ['Lokationstil für Zwischenziele', 'Wählen Sie einen Lokationstil für Zwischenziele aus.'];
 $GLOBALS['TL_LANG'][$strName]['router_profiles'] = ['Router-Profile', 'Legt die OpenRouteService und Graphhopper-Profile fest.'];
+
 $GLOBALS['TL_LANG'][$strName]['routerLayers'] = ['Kartenstrukturelemente an der Route', 'Geben Sie hier die Strukturelemente an, die an der Route durchsucht werden sollen ("Anfrage an Overpass API (nur QL)", "Aus anderer Tabelle").'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['layers'] = ['Strukturelement','Strukturelement welches an der Route- und/oder für die Umkreissuche ausgewertet werden soll.'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['key'] = ['Feldname','Feldname (key) für die Auswertung.'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['value'] = ['Buttontext','Die Bezeichnung wird am entsprechenden Button für die Auswahl dargestellt.'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['label'] = ['Label','Label für die Kartenelemente.'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['mapLabel'] = ['Labelfeld','Feldname für die Labelgenerierung.'];
+
+$GLOBALS['TL_LANG'][$strName]['customProfiles'] = ['Eigene Routingprofile', 'Geben Sie eigene Profile für das Routing ein (eigener OSRM-Server).'];
+$GLOBALS['TL_LANG'][$strName]['customProfile']['profileKey'] = ['Schlüssel für das Profil','Schlüssel für das Profil bei der Ansprache der API.'];
+$GLOBALS['TL_LANG'][$strName]['customProfile']['showName'] = ['Anzeigename','Name des Profils für die Darstellung im Frontend.'];
+$GLOBALS['TL_LANG'][$strName]['customProfile']['fontAwesome'] = ['Fontawesome Unicode','Fontawesome Unicode für die Darstellung im Frontend.'];
+
 $GLOBALS['TL_LANG'][$strName]['hideFeaturesWithoutLabel'] = ['Features ohne Label verstecken','Kreuzen Sie diese Checkbox an, um Features an der Route ohne Label zu verstecken.'];
 $GLOBALS['TL_LANG'][$strName]['openRouter'] = ['Router initial öffnen', 'Aktivieren Sie diese Checkbox, um den Router initial zu öffnen.'];
 $GLOBALS['TL_LANG'][$strName]['router_alternative'] = ['Alternativroute','Sollen Alternativrouten dargestellt werden?'];

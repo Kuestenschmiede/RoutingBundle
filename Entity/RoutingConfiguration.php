@@ -99,6 +99,13 @@ class RoutingConfiguration extends BaseEntity
      * @ORM\Column(type="array", name="router_profiles")
      */
     protected $routerProfiles = [];
+
+
+    /**
+     * @var null
+     * @ORM\Column(type="array")
+     */
+    protected $customProfiles = [];
     
     /**
      * @var float
@@ -450,6 +457,22 @@ class RoutingConfiguration extends BaseEntity
     public function setRouterProfiles(array $routerProfiles): void
     {
         $this->routerProfiles = $routerProfiles;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCustomProfiles()
+    {
+        return $this->customProfiles;
+    }
+
+    /**
+     * @param null $customProfiles
+     */
+    public function setCustomProfiles($customProfiles): void
+    {
+        $this->customProfiles = $customProfiles;
     }
     
     /**

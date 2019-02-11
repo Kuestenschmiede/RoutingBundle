@@ -96,6 +96,7 @@ $GLOBALS['TL_DCA'][$strName] = array
     // Subpalettes
     'subpalettes' => array
     (
+        'router_api_selection_1' => 'customProfiles',
         'router_api_selection_2' => 'router_api_key,router_profiles',
         'router_api_selection_3' => 'router_api_key,router_profiles',
     ),
@@ -217,6 +218,14 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'multiColumnWizard',
             'eval'                    => [
                 'columnsCallback'     => [$callbackClass,'getRouterLayer']
+            ],
+        ],
+        'customProfiles' => [
+            'label'                   => &$GLOBALS['TL_LANG'][$strName]['customProfiles'],
+            'exclude'                 => true,
+            'inputType'               => 'multiColumnWizard',
+            'eval'                    => [
+                'columnsCallback'     => [$callbackClass,'getCustomProfileStructure']
             ],
         ],
         'hideFeaturesWithoutLabel' => [

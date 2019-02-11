@@ -67,10 +67,10 @@ class AreaService
 
     }
 
-    protected function performMatrixOSRM($routerConfig, $locations, $routingProfile = null, $opt_options = null){
+    protected function performMatrixOSRM($routerConfig, $locations, $routingProfile = "driving", $opt_options = null){
         if ($routerConfig instanceof RoutingConfiguration) {
             $matrixUrl = $routerConfig->getRouterViaRouteUrl() ? $routerConfig->getRouterViaRouteUrl() : "http://router.project-osrm.org/";
-            $matrixUrl .= "table/v1/driving/";
+            $matrixUrl .= "table/v1/" . $routingProfile . "/";
             foreach ($locations as $location) {
                 $matrixUrl .= $location[0] . ',' . $location[1]. ';';
             };

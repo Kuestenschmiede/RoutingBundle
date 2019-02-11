@@ -140,4 +140,32 @@ class TlC4gRoutingConfiguration
         }
         return $arrConfigs;
     }
+
+    public function getCustomProfileStructure($multiColumnwizard)
+    {
+        $arrColumnProfileKey = [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['profileKey'],
+            'filter'                  => false,
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class'=>'w50']
+        ];
+        $arrColumnShowName = [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['showName'],
+            'filter'                  => false,
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class'=>'w50']
+        ];
+        $arrColumnFA = [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['fontAwesome'],
+            'filter'                  => false,
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class'=>'w50']
+        ];
+        $return = [
+            'profileKey'    => $arrColumnProfileKey,
+            'showName'      => $arrColumnShowName,
+            'fontAwesome'   => $arrColumnFA
+        ];
+        return $return;
+    }
 }
