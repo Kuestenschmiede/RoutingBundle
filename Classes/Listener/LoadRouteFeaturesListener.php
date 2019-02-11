@@ -76,7 +76,7 @@ class LoadRouteFeaturesListener
             $strSearch = strrpos($query, "(bbox)") ? "(bbox)" : "{{bbox}}";
             $query = str_replace($strSearch, $strBBox, $query);
             $REQUEST = new \Request();
-            $REQUEST->setHeader('Content-Type', 'POST');
+            $REQUEST->setHeader('Content-Type', 'json');
             if ($_SERVER['HTTP_REFERER']) {
                 $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
             }
