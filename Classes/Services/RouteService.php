@@ -197,7 +197,7 @@ class RouteService extends \Frontend
                 $url = $url. explode(",",$arrInput[$i])[1].','.explode(",",$arrInput[$i])[0].';';
             }
             $url = substr($url,0,strlen($url)-1);
-            $request->send($strRoutingUrl . 'route/v1/driving/'. $profile . '/' .$url.'?steps=true&overview=full&alternatives=true');
+            $request->send($strRoutingUrl . 'route/v1/'. $profile . '/' .$url.'?steps=true&overview=full&alternatives=true');
         } else {
             $request->send($strRoutingUrl . '?' . $strParams);
         }
