@@ -48,7 +48,9 @@ class LoadRouteFeaturesListener
                 $sqlAnd = $sqlWhere ? ' AND ' : '';
                 $strQuery = "SELECT ".$sourceTable.".id,". $sqlSelect ." FROM ".$sourceTable . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
                 $featurePoint = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
-                $features = array_merge($features,$featurePoint);
+                if (!$this->checkIfArrayContainsFeature($featurePoint[0], $features)) {
+                    $features = array_merge($features,$featurePoint);
+                }
             }
         }
         else if ($objLayer->location_type == "overpass") {
@@ -91,5 +93,15 @@ class LoadRouteFeaturesListener
             $event->setBbox($jsonPolygon);
         }
         $event->setFeatures($features);
+    }
+    
+    private function checkIfArrayContainsFeature($feature, $array)
+    {
+        foreach ($array as $entry) {
+            if ($entry['id'] === $feature['id']) {
+                return true;
+            }
+        }
+        return false;
     }
 }
