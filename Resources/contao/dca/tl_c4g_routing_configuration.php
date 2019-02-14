@@ -99,6 +99,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_api_selection_1' => 'customProfiles',
         'router_api_selection_2' => 'router_api_key,router_profiles',
         'router_api_selection_3' => 'router_api_key,router_profiles',
+        'router_api_selection_4' => 'router_api_key'
     ),
     
     // Fields
@@ -132,7 +133,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'exclude'                 => true,
             'inputType'               => 'select',
             'default'                 => '2',
-            'options'                 => ['0','1','2','3'],
+            'options'                 => ['0','1','2','3','4'],
             'reference'               => &$GLOBALS['TL_LANG'][$strName]['references_router_api_selection'],
             'eval'                    => ['tl_class'=>'clr long','submitOnChange' => true],
         ],

@@ -61,6 +61,7 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['0
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['1'] = 'OpenSourceRroutingMachine (API 5.x)';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['2'] = 'OpenRouteService';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['3'] = 'Graphhopper';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_api_selection']['4'] = 'Valhalla';
 
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['0'] = 'Car';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references_router_profiles']['1'] = 'Truck';

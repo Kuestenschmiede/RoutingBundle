@@ -82,6 +82,9 @@ class RouteService extends \Frontend
             else if ($routerConfig->getRouterApiSelection() == '3') {
                 $points = $polyline->fromEncodedString($routeData['paths'][0]['points']);
             }
+            else if ($routerConfig->getRouterApiSelection() == '4') {
+                $points = $polyline->fromEncodedString($routeData['trip']['legs'][0]['shape']);
+            }
             $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
             $event = new LoadRouteFeaturesEvent();
             $event->setLayerId($layer);
@@ -113,16 +116,78 @@ class RouteService extends \Frontend
             if($routerConfig->getRouterApiSelection() == '1' || $routerConfig->getRouterApiSelection() == '0') {
                 $response = $this->getORSMResponse($arrInput, $strParams, $routerConfig, $profile);
             }
-            else if($routerConfig->getRouterApiSelection() == '2'){
+            else if($routerConfig->getRouterApiSelection() == '2') {
                 $response = $this->getORSResponse($arrInput, $strParams, $profile, $routerConfig);
             }
-            else if($routerConfig->getRouterApiSelection() == '3'){
+            else if($routerConfig->getRouterApiSelection() == '3') {
                 $response = $this->getGraphhopperResponse($arrInput, $strParams, $profile, $routerConfig);
+            }
+            else if ($routerConfig->getRouterApiSelection() == '4') {
+                $response = $this->getValhallaResponse($arrInput, $strParams, $routerConfig, $profile);
             }
             return $response;
         }
     }
-    
+    private function getValhallaResponse($arrInput, $strParams, $routerConfig, $profile = null) {
+        if($routerConfig instanceof RoutingConfiguration){
+            $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://api.mapbox.com/valhalla/v1/";
+            $strRoutingUrl .= "route";
+            $apiKey = $routerConfig->getRouterApiKey() ? "&access_token=" . $routerConfig->getRouterApiKey() : "";
+
+            $locations = [];
+            for($i = 0; $i < sizeof($arrInput); $i++){
+                $location = [];
+                $location['lat'] = explode(",",$arrInput[$i])[0];
+                $location['lon'] = explode(",",$arrInput[$i])[1];
+                $location['type'] = "through";
+                $locations[] = $location;
+            }
+            $locations[0]['type'] = "break";
+            $locations[sizeof($locations) - 1]['type'] = "break";
+            $costing = "auto";
+
+
+            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+            if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+                $language = $GLOBALS['TL_LANGUAGE'];
+                if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+                    $language = "en";
+                }
+            }
+            $directionOptions = [
+                "units"     => "meters",
+                "language"  => 'en-US-x-pirate'
+            ];
+            $REQUEST = new \Request();
+            if ($_SERVER['HTTP_REFERER']) {
+                $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+            }
+            if ($_SERVER['HTTP_USER_AGENT']) {
+                $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+            }
+            $REQUEST->setHeader('Content-Type', "application/json");
+            $REQUEST->method = "POST";
+            $routeData = [
+                "locations"         => $locations,
+                "costing"           => $costing,
+                "directions_options" => $directionOptions
+            ];
+            $encodedData = \GuzzleHttp\json_encode($routeData);
+            $time = microtime(true);
+
+            $REQUEST->send($strRoutingUrl, $encodedData);
+            $time = microtime(true) - $time;
+            $response = $REQUEST->response;
+            try {
+                $response = \GuzzleHttp\json_decode($response, true);
+            } catch(\Exception $exception) {
+                $response = [];
+                $response['error'] = "ROUTER_ERROR_POLYLINE";
+                return $response;
+            }
+            return $response;
+        }
+    }
     /**
      * Calls the Graphhopper and returns the routing response.
      * @param $objMapsProfile

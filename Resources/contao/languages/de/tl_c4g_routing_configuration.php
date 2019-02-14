@@ -64,9 +64,10 @@ $GLOBALS['TL_LANG'][$strName]['references_router_modes']['area'] = "Umkreissuche
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['route'] = "Routensuche";
 
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRroutingMachine (API 5.x)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x)';
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService';
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla';
 
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['0'] = 'Auto';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['1'] = 'Lastwagen';

@@ -723,7 +723,7 @@ export class Router extends Sideboard {
       }
     }
 
-    if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2' || this.options.mapController.data.router_api_selection == '3') {//OSRM-API:5.x or ORS- API
+    if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2' || this.options.mapController.data.router_api_selection == '3' || this.options.mapController.data.router_api_selection == '4') {//OSRM-API:5.x or ORS- API
       let profileId = this.options.mapController.data.profile;
       url = 'con4gis/routeService/' + profileId + '/' + $(self.routerLayersSelect).val() + '/' + $(self.toggleDetourRoute).val() + '/' + fromCoord;
 
@@ -844,6 +844,7 @@ export class Router extends Sideboard {
       routeNumber = routeNumber || 0;
 
     if (routeResponse) {
+      console.log(routeResponse);
       this.routingWaySource.clear();
       this.routingAltWaySource.clear();
       mapView = this.options.mapController.map.getView();
@@ -907,6 +908,32 @@ export class Router extends Sideboard {
           }
         }
         routeFeatures = wayPolyline.readFeatures(routeResponse.paths[routeNumber].points, {
+          dataProjection: 'EPSG:4326',
+          featureProjection: mapView.getProjection()
+        });
+        routeFeatures[0].setId(routeNumber);
+      }
+      else if (this.options.mapController.data.router_api_selection == "4") {
+        wayPolyline = new ol.format.Polyline({
+          'factor': 1e6
+        });
+        if (routeResponse.trip && routeResponse.trip.legs && routeResponse.trip.legs[1]) {//check for alternative route
+          if (routeNumber == 1) {
+            altRouteFeatures = wayPolyline.readFeatures(routeResponse.trip.legs[1].shape, {
+              dataProjection: 'EPSG:4326',
+              featureProjection: mapView.getProjection()
+            });
+            altRouteFeatures[0].setId(0);
+          }
+          else {
+            altRouteFeatures = wayPolyline.readFeatures(routeResponse.trip.legs[1].shape, {
+              dataProjection: 'EPSG:4326',
+              featureProjection: mapView.getProjection()
+            });
+            altRouteFeatures[0].setId(1);
+          }
+        }
+        routeFeatures = wayPolyline.readFeatures(routeResponse.trip.legs[routeNumber].shape, {
           dataProjection: 'EPSG:4326',
           featureProjection: mapView.getProjection()
         });
@@ -1530,6 +1557,10 @@ export class Router extends Sideboard {
       else if (this.options.mapController.data.router_api_selection == '3') { //Graphhopper
         total_distance = this.toHumanDistance(routeResponse.paths[0].distance);
         total_time = this.toHumanTime(routeResponse.paths[0].time / 1000) ;
+      }
+      else if (this.options.mapController.data.router_api_selection == '4') { //Valhalla
+        total_distance = this.toHumanDistance(routeResponse.trip.summary.length *1000);
+        total_time = this.toHumanTime(routeResponse.trip.summary.time) ;
       }
 
       if (route_name_0 && route_name_1) {
@@ -2295,7 +2326,8 @@ export class Router extends Sideboard {
         }
       }
     }
-    else if (this.options.mapController.data.customProfiles.length > 1) {
+    else if (this.options.mapController.data.customProfiles && this.options.mapController.data.customProfiles.length > 1) {
+      console.log(this.options.mapController.data.customProfiles);
       this.routeProfile = document.createElement('div');
       $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
       this.customProfiles = [];
