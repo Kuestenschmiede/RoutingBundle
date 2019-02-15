@@ -1292,6 +1292,103 @@ export class Router extends Sideboard {
     }
     return document.getElementsByTagName('base')[0].href + "bundles/con4gismaps/vendor/osrm/images/" + image;
   }
+ /**
+   * Translates an integer number into the correct instruction icon (Graphhopper icons).
+   * @param intType
+   * @returns {string}
+   */
+  getInstructionIconValhalla(intType) {
+    let image;
+    switch (intType) {
+      case 0:
+        image = "default.png";
+        break;
+      case 1:
+        image = "head.png";
+        break;
+      case 2:
+        image = "head.png";
+        break;
+      case 3:
+        image = "head.png";
+        break;
+      case 4:
+        image = "target.png";
+        break;
+      case 5:
+        image = "target.png";
+        break;
+      case 6:
+        image = "target.png";
+        break;
+      case 7:
+        image = "continue.png";
+        break;
+      case 8:
+        image = "continue.png";
+        break;
+      case 9:
+        image = "slight-right.png";
+        break;
+      case 10:
+        image = "turn-right.png";
+        break;
+      case 11:
+        image = "sharp-right.png";
+        break;
+      case 12:
+        image = "u-turn.png";
+        break;
+      case 13:
+        image = "u-turn.png";
+        break;
+      case 14:
+        image = "sharp-left.png";
+        break;
+      case 15:
+        image = "turn-left.png";
+        break;
+      case 16:
+        image = "slight-left.png";
+        break;
+      case 17:
+        image = "continue.png";
+        break;
+      case 18:
+        image = "slight-right.png";
+        break;
+      case 19:
+        image = "slight-left.png";
+      case 20:
+        image = "slight-right.png";
+        break;
+      case 21:
+        image = "slight-left.png";
+        break;
+      case 22:
+        image = "continue.png";
+        break;
+      case 23:
+        image = "slight-right.png";
+        break;
+      case 24:
+        image = "slight-left.png";
+      case 25:
+        image = "continue.png";
+        break;
+      case 26:
+        image = "round-about.png";
+        break;
+      case 27:
+        image = "round-about.png";
+        break;
+      default:
+        image = "default.png";
+        break;
+
+    }
+    return document.getElementsByTagName('base')[0].href + "bundles/con4gismaps/vendor/osrm/images/" + image;
+  }
 
   /**
    * Translates the type of an instruction into a string representation.
@@ -1751,6 +1848,51 @@ export class Router extends Sideboard {
           routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
           if (j !== routeResponse.paths[routeNumber].instructions.length - 1 && j != 0) {
             routerInstructionsHtml += this.toHumanDistance(instr.distance);
+          }
+          routerInstructionsHtml += "</td>";
+
+          routerInstructionsHtml += "</tr>";
+        }
+      }
+      else if (this.options.mapController.data.router_api_selection === '4') {
+        for (j = 0; j < routeResponse.trip.legs[routeNumber].maneuvers.length; j += 1) {
+          instr = routeResponse.trip.legs[routeNumber].maneuvers[j];
+
+          strType = instr.type;
+
+          rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
+
+          if (i % 2 === 0) {
+            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
+          }
+
+          rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
+
+          routerInstructionsHtml += '<tr class="' + rowstyle + '">';
+
+          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
+          routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconValhalla(strType) + '" alt=""/>';
+          routerInstructionsHtml += '</td>';
+
+          if (instr.maneuver) {
+            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
+          }
+          else {
+            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + 0 + '">';
+          }
+
+
+          // build route description
+
+          routerInstructionsHtml += instr.instruction;
+
+
+          routerInstructionsHtml += '</div>';
+          routerInstructionsHtml += "</td>";
+
+          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
+          if (j !== routeResponse.trip.legs[routeNumber].maneuvers.length - 1 && j != 0) {
+            routerInstructionsHtml += this.toHumanDistance(instr.length * 1000);
           }
           routerInstructionsHtml += "</td>";
 
@@ -2485,8 +2627,8 @@ export class Router extends Sideboard {
     this.routerViewInputWrapper.appendChild(this.overInputWrapper);
     this.$routerOverClear.click(function (event) {
       event.preventDefault();
-      scope.clearOver(scope.$overInput, scope.id);
-      $(scope).parent().remove();
+      scope.clearOver(scope.$overInput, this.id);
+      $(this).parent().remove();
       //buttonOver.show();
     });
     scope.$overInput = $(scope.overInput);
