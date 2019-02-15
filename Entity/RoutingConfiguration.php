@@ -250,6 +250,11 @@ class RoutingConfiguration extends BaseEntity
      * @ORM\Column(type="string", length=1)
      */
     protected $usePermalink = '';
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=1)
+     */
+    protected $pirate = '';
     
     /**
      * @return int
@@ -857,5 +862,21 @@ class RoutingConfiguration extends BaseEntity
     public function setUsePermalink(string $usePermalink): void
     {
         $this->usePermalink = $usePermalink;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPirate(): string
+    {
+        return $this->pirate;
+    }
+
+    /**
+     * @param string $pirate
+     */
+    public function setPirate(string $pirate): void
+    {
+        $this->pirate = $pirate;
     }
 }

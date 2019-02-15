@@ -146,15 +146,49 @@ class RouteService extends \Frontend
             }
             $locations[0]['type'] = "break";
             $locations[sizeof($locations) - 1]['type'] = "break";
-            $costing = "auto";
+            switch($profile){
+                case 0:
+                    $costing = "auto";
+                    break;
+                case 1:
+                    $costing = "truck";
+                    break;
+                case 2:
+                    $costing = "bicycle";
+                    break;
+                case 3:
+                    $costing = "bicycle";
+                    $costing_option = [
+                        "bicycle_type" => "Road"
+                    ];
+                    break;
+                case 5:
+                    $costing = "bicycle";
+                    $costing_option = [
+                        "bicycle_type" => "Mountain"
+                    ];
+                    break;
+                case 8:
+                    $costing = "pedestrian";
+                    break;
+                case 12:
+                    $costing = "motor_scooter";
+                    break;
+                default:
+                    $costing = "auto";
+                    break;
+            }
 
 
             $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 5);
             if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, en-US-x-pirate, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE', $language)){
                 $language = $GLOBALS['TL_LANGUAGE'];
-                if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, en-US-x-pirate, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE',$language)){
+                if(!substr_count('ca-ES, cs-CZ, de-DE, en-US,C, es-ES, fr-FR, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE',$language)){
                     $language = "en-US";
                 }
+            }
+            if($routerConfig->getPirate()) {
+                $language = "en-US-x-pirate";
             }
             $directionOptions = [
                 "units"     => "meters",
@@ -175,10 +209,8 @@ class RouteService extends \Frontend
                 "directions_options" => $directionOptions
             ];
             $encodedData = \GuzzleHttp\json_encode($routeData);
-            $time = microtime(true);
 
             $REQUEST->send($strRoutingUrl, $encodedData);
-            $time = microtime(true) - $time;
             $response = $REQUEST->response;
             try {
                 $response = \GuzzleHttp\json_decode($response, true);

@@ -99,7 +99,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_api_selection_1' => 'customProfiles',
         'router_api_selection_2' => 'router_api_key,router_profiles',
         'router_api_selection_3' => 'router_api_key,router_profiles',
-        'router_api_selection_4' => 'router_api_key'
+        'router_api_selection_4' => 'router_api_key,router_profiles,pirate'
     ),
     
     // Fields
@@ -190,6 +190,12 @@ $GLOBALS['TL_DCA'][$strName] = array
             'options_callback'        => [$callbackClass, 'getRouterProfiles'],
             'reference'               => &$GLOBALS['TL_LANG'][$strName]['references_router_profiles'],
             'eval'                    => ['mandatory'=>false, 'multiple'=>true,'chosen'=>true, 'tl_class' => 'clr m12'],
+        ],
+        'pirate' => [
+            'label'                   => &$GLOBALS['TL_LANG'][$strName]['pirate'],
+            'exclude'                 => true,
+            'default'                 => '',
+            'inputType'               => 'checkbox',
         ],
         'minDetourArea' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['minDetourArea'],
