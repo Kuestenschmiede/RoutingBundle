@@ -32,7 +32,7 @@ class LoadRouteFeaturesListener
         $layerId = $event->getLayerId();
         $detour = $event->getDetour();
         $objLayer = C4gMapsModel::findById($layerId);
-        if ($objLayer->location_type == "table" || $objLayer->location_type == "frisia") {
+        if ($objLayer->location_type == "table") {
             $sourceTable = $objLayer->tab_source;
             $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
             foreach ($points as $point) {

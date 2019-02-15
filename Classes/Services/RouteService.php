@@ -72,31 +72,33 @@ class RouteService extends \Frontend
         $routeData = $this->generate($profileId, $locations,$routerConfig, $profile);
         $polyline = new Polyline([]);
         $objLayer = C4gMapsModel::findById($layer);
-        try {
-            if ($routerConfig->getRouterApiSelection() == '1') {
-                $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
+        if($routerConfig->getRouterLayers()){
+            try {
+                if ($routerConfig->getRouterApiSelection() == '1') {
+                    $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
+                }
+                else if ($routerConfig->getRouterApiSelection() == '2'){
+                    $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
+                }
+                else if ($routerConfig->getRouterApiSelection() == '3') {
+                    $points = $polyline->fromEncodedString($routeData['paths'][0]['points']);
+                }
+                else if ($routerConfig->getRouterApiSelection() == '4') {
+                    $points = $polyline->fromEncodedString($routeData['trip']['legs'][0]['shape'], 1e-6);
+                }
+                $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
+                $event = new LoadRouteFeaturesEvent();
+                $event->setLayerId($layer);
+                $event->setPoints($points);
+                $event->setDetour($detour);
+                $this->eventDispatcher->dispatch($event::NAME, $event);
+                $routeData['features'] = $event->getFeatures();
+                $routeData['bbox'] = $event->getBbox();
+                $routeData['type'] = $objLayer->location_type;
+            } catch(\InvalidArgumentException $exception) {
+                // return error to frontend
+                $routeData['error'] = "ROUTER_ERROR_POLYLINE";
             }
-            else if ($routerConfig->getRouterApiSelection() == '2'){
-                $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
-            }
-            else if ($routerConfig->getRouterApiSelection() == '3') {
-                $points = $polyline->fromEncodedString($routeData['paths'][0]['points']);
-            }
-            else if ($routerConfig->getRouterApiSelection() == '4') {
-                $points = $polyline->fromEncodedString($routeData['trip']['legs'][0]['shape']);
-            }
-            $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
-            $event = new LoadRouteFeaturesEvent();
-            $event->setLayerId($layer);
-            $event->setPoints($points);
-            $event->setDetour($detour);
-            $this->eventDispatcher->dispatch($event::NAME, $event);
-            $routeData['features'] = $event->getFeatures();
-            $routeData['bbox'] = $event->getBbox();
-            $routeData['type'] = $objLayer->location_type;
-        } catch(\InvalidArgumentException $exception) {
-            // return error to frontend
-            $routeData['error'] = "ROUTER_ERROR_POLYLINE";
         }
         return \GuzzleHttp\json_encode($routeData);
     }
@@ -132,7 +134,7 @@ class RouteService extends \Frontend
         if($routerConfig instanceof RoutingConfiguration){
             $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://api.mapbox.com/valhalla/v1/";
             $strRoutingUrl .= "route";
-            $apiKey = $routerConfig->getRouterApiKey() ? "&access_token=" . $routerConfig->getRouterApiKey() : "";
+            $strRoutingUrl .= $routerConfig->getRouterApiKey() ? "?access_token=" . $routerConfig->getRouterApiKey() : "";
 
             $locations = [];
             for($i = 0; $i < sizeof($arrInput); $i++){
@@ -147,16 +149,16 @@ class RouteService extends \Frontend
             $costing = "auto";
 
 
-            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-            if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
+            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 5);
+            if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, en-US-x-pirate, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE', $language)){
                 $language = $GLOBALS['TL_LANGUAGE'];
-                if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
-                    $language = "en";
+                if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, en-US-x-pirate, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE',$language)){
+                    $language = "en-US";
                 }
             }
             $directionOptions = [
                 "units"     => "meters",
-                "language"  => 'en-US-x-pirate'
+                "language"  => $language
             ];
             $REQUEST = new \Request();
             if ($_SERVER['HTTP_REFERER']) {

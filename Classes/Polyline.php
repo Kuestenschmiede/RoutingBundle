@@ -39,7 +39,7 @@ class Polyline {
         return count($this->points);
     }
 
-    public function fromEncodedString($string = null) {
+    public function fromEncodedString($string = null, $encoding = 1e-5) {
         if (!is_string($string)) {
             throw new \InvalidArgumentException(sprintf('Expecting string, %s given', gettype($string)));
         }
@@ -59,7 +59,7 @@ class Polyline {
             $number = $previous[$index % 2] + $diff;
             $previous[$index % 2] = $number;
             $index++;
-            $points[] = $number * 1e-5;
+            $points[] = $number *$encoding;
         }
 
         $return = array();
