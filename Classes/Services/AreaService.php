@@ -63,6 +63,9 @@ class AreaService
             else if ($routerConfig->getRouterApiSelection() == "3") {
                 return $this->performMatrixGraphhopper($routerConfig, $routingProfile, $locations, $opt_options);
             }
+            else if ($routerConfig->getRouterApiSelection() == "4") {
+                return $this->performMatrixValhalla($routerConfig, $routingProfile, $locations, $opt_options);
+            }
         }
 
     }
@@ -134,6 +137,42 @@ class AreaService
                 'to_points'      => $locations,
                 'out_arrays'      => ['distances']
             ];
+            $REQUEST = new \Request();
+            if ($_SERVER['HTTP_REFERER']) {
+                $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+            }
+            if ($_SERVER['HTTP_USER_AGENT']) {
+                $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+            }
+            $REQUEST->setHeader('Content-Type', "application/json");
+            $REQUEST->method = "POST";
+            $encodedData = \GuzzleHttp\json_encode($matrixData);
+            $REQUEST->send($matrixUrl, $encodedData);
+            return $REQUEST->response;
+        }
+    }
+    protected function performMatrixValhalla($routerConfig, $routingProfile, $locations, $opt_options = null) {
+        if ($routerConfig instanceof RoutingConfiguration) {
+            $matrixUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://api.mapbox.com/valhalla/v1/";
+            $matrixUrl .= 'sources_to_targets';
+            $matrixUrl .= $routerConfig->getRouterApiKey() ? '?access_token=' . $routerConfig->getRouterApiKey() : "";
+
+            $latLonLocations = [];
+            foreach($locations as $location) {
+                $latLonLocations[] = [
+                    'lon'   => $location[0],
+                    'lat'   => $location[1]
+                ];
+            }
+
+            $startlocation = [$latLonLocations[0]];
+            array_splice($latLonLocations, 1, 1);
+            $matrixData = [
+                'sources' => $startlocation,
+                'targets' => $latLonLocations,
+                'costing' => "auto"
+            ];
+
             $REQUEST = new \Request();
             if ($_SERVER['HTTP_REFERER']) {
                 $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);

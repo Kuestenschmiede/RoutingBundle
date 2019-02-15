@@ -72,7 +72,7 @@ class RouteService extends \Frontend
         $routeData = $this->generate($profileId, $locations,$routerConfig, $profile);
         $polyline = new Polyline([]);
         $objLayer = C4gMapsModel::findById($layer);
-        if($routerConfig->getRouterLayers()){
+        if($routerConfig->getRouterLayers()){ //prevent listener and decoding of polyline if not necessary
             try {
                 if ($routerConfig->getRouterApiSelection() == '1') {
                     $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);

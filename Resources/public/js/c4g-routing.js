@@ -844,7 +844,6 @@ export class Router extends Sideboard {
       routeNumber = routeNumber || 0;
 
     if (routeResponse) {
-      console.log(routeResponse);
       this.routingWaySource.clear();
       this.routingAltWaySource.clear();
       mapView = this.options.mapController.map.getView();
