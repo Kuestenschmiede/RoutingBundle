@@ -12,7 +12,7 @@
 
 /** Routing und Umkreissuche  */
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'] = ['Activate routing','Please activate search tools in addition. Adds an additional button to activate routing functionality. Please check the <a href="https://github.com/DennisOSRM/Project-OSRM/wiki/Api-usage-policy" target="_blank">terms of use</a> for default API!.'];
-$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerConfig'] = ['Router-Konfiguration',  'Bitte wählen Sie die Routing-Konfiguration aus. Diese können Sie im Backend-Bereich "Routing" anlegen.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerConfig'] = ['Router-configuration',  'Please choose your routing-configuration.'];
 
 
 /** legend */

@@ -64,6 +64,7 @@ $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSou
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService';
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper';
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io Routing';
 
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['0'] = 'Car';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['1'] = 'Truck';

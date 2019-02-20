@@ -723,7 +723,7 @@ export class Router extends Sideboard {
       }
     }
 
-    if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2' || this.options.mapController.data.router_api_selection == '3' || this.options.mapController.data.router_api_selection == '4') {//OSRM-API:5.x or ORS- API
+    if (this.options.mapController.data.router_api_selection >= '1') {//OSRM-API:5.x or ORS- API
       let profileId = this.options.mapController.data.profile;
       url = 'con4gis/routeService/' + profileId + '/' + $(self.routerLayersSelect).val() + '/' + $(self.toggleDetourRoute).val() + '/' + fromCoord;
 
@@ -781,7 +781,7 @@ export class Router extends Sideboard {
 
     } else {//OSRM-API:<5
       try {
-        url = self.routingApi + '?output=json&instructions=true&alt=false&loc_from=' + fromCoord + '&loc_to=' + toCoord;
+        url = 'con4gis/routeService/' + profileId + '?output=json&instructions=true&alt=false&loc_from=' + fromCoord + '&loc_to=' + toCoord;
         this.spinner.show();
 
         jQuery.ajax({
@@ -848,7 +848,7 @@ export class Router extends Sideboard {
       this.routingAltWaySource.clear();
       mapView = this.options.mapController.map.getView();
 
-      if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2') {//OSRM-API:5.x
+      if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2' || routeResponse.routeType == '1' || routeResponse.routeType == '2') {//OSRM-API:5.x
         wayPolyline = new ol.format.Polyline();
 
         // add route
@@ -877,7 +877,7 @@ export class Router extends Sideboard {
 
 
       }
-      else if(this.options.mapController.data.router_api_selection == '0'){//OSRM-API:<5
+      else if(this.options.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0'){//OSRM-API:<5
         wayPolyline = new ol.format.Polyline({
           'factor': this.options.mapController.data.router_viaroute_precision || 1e6
         });
@@ -912,7 +912,7 @@ export class Router extends Sideboard {
         });
         routeFeatures[0].setId(routeNumber);
       }
-      else if (this.options.mapController.data.router_api_selection == "4") {
+      else if (this.options.mapController.data.router_api_selection == "4" || routeResponse.routeType == '4') {
         wayPolyline = new ol.format.Polyline({
           'factor': 1e6
         });
@@ -1620,7 +1620,7 @@ export class Router extends Sideboard {
       if (!(routeResponse.features && routeResponse.features.length > 0) || !this.options.mapController.data.showFeatures) {
         $(".c4g-router-instructions-wrapper").css('display', 'block');
       }
-      if (this.options.mapController.data.router_api_selection == '1') {//OSRM-API:5.x
+      if (this.options.mapController.data.router_api_selection == '1' || routeResponse.routeType == '1') {//OSRM-API:5.x
         if (routeResponse.routes[routeNumber].legs[0].summary) {
           route_name_0 = routeResponse.routes[routeNumber].legs[0].summary.split(",")[0];
           route_name_1 = routeResponse.routes[routeNumber].legs[0].summary.split(",")[1];
@@ -1633,7 +1633,7 @@ export class Router extends Sideboard {
         total_time = this.toHumanTime(routeResponse.routes[routeNumber].duration);
       }
 
-      else if (this.options.mapController.data.router_api_selection == '0') {//OSRM-API:<5
+      else if (this.options.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0') {//OSRM-API:<5
         if (routeResponse.route_name) {
           route_name_0 = routeResponse.route_name[0];
           route_name_1 = routeResponse.route_name[1];
@@ -1646,15 +1646,15 @@ export class Router extends Sideboard {
 
 
       }
-      else if (this.options.mapController.data.router_api_selection == '2') {//OSR-API
+      else if (this.options.mapController.data.router_api_selection == '2' || routeResponse.routeType == '2') {//OSR-API
         total_time = this.toHumanTime(routeResponse.routes[routeNumber].summary.duration);
         total_distance = this.toHumanDistance(routeResponse.routes[routeNumber].summary.distance);
       }
-      else if (this.options.mapController.data.router_api_selection == '3') { //Graphhopper
+      else if (this.options.mapController.data.router_api_selection == '3' || routeResponse.routeType == '3') { //Graphhopper
         total_distance = this.toHumanDistance(routeResponse.paths[0].distance);
         total_time = this.toHumanTime(routeResponse.paths[0].time / 1000) ;
       }
-      else if (this.options.mapController.data.router_api_selection == '4') { //Valhalla
+      else if (this.options.mapController.data.router_api_selection == '4' || routeResponse.routeType == '4') { //Valhalla
         total_distance = this.toHumanDistance(routeResponse.trip.summary.length *1000);
         total_time = this.toHumanTime(routeResponse.trip.summary.time) ;
       }
@@ -1672,7 +1672,7 @@ export class Router extends Sideboard {
       routerInstruction = document.createElement('div');
 
       routerInstructionsHtml = '<table class="' + routingConstants.ROUTER_INSTRUCTIONS_TABLE + '" cellpadding="0" cellspacing="0">';
-      if (this.options.mapController.data.router_api_selection === '1') {//OSRM-API:5.x
+      if (this.options.mapController.data.router_api_selection === '1' || routeResponse.routeType == '1') {//OSRM-API:5.x
         for (j = 0; j < routeResponse.routes[routeNumber].legs.length; j += 1) {
           for (i = 0; i < routeResponse.routes[routeNumber].legs[j].steps.length; i += 1) {
             instr = routeResponse.routes[routeNumber].legs[j].steps[i];
@@ -1722,7 +1722,7 @@ export class Router extends Sideboard {
           }
         }
 
-      } else if (this.options.mapController.data.router_api_selection === '0') {//OSRM-API:<5
+      } else if (this.options.mapController.data.router_api_selection === '0' || routeResponse.routeType == '0') {//OSRM-API:<5
         for (i = 0; i < routeResponse.route_instructions.length; i += 1) {
           instr = routeResponse.route_instructions[i];
           rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
@@ -1761,7 +1761,7 @@ export class Router extends Sideboard {
           routerInstructionsHtml += "</tr>";
         }
       }
-      else if (this.options.mapController.data.router_api_selection === '2') {//OpenRouteService
+      else if (this.options.mapController.data.router_api_selection === '2' || routeResponse.routeType == '2') {//OpenRouteService
         for (j = 0; j < routeResponse.routes[routeNumber].segments.length; j += 1) {
           for (i = 0; i < routeResponse.routes[routeNumber].segments[j].steps.length; i += 1) {
             instr = routeResponse.routes[routeNumber].segments[j].steps[i];
@@ -1808,7 +1808,7 @@ export class Router extends Sideboard {
           }
         }
       }
-      else if (this.options.mapController.data.router_api_selection === '3') { // Graphhopper
+      else if (this.options.mapController.data.router_api_selection === '3' || routeResponse.routeType == '3') { // Graphhopper
         for (j = 0; j < routeResponse.paths[routeNumber].instructions.length; j += 1) {
           instr = routeResponse.paths[routeNumber].instructions[j];
 
@@ -1853,7 +1853,7 @@ export class Router extends Sideboard {
           routerInstructionsHtml += "</tr>";
         }
       }
-      else if (this.options.mapController.data.router_api_selection === '4') {
+      else if (this.options.mapController.data.router_api_selection === '4' || routeResponse.routeType == '4') {
         for (j = 0; j < routeResponse.trip.legs[routeNumber].maneuvers.length; j += 1) {
           instr = routeResponse.trip.legs[routeNumber].maneuvers[j];
 
@@ -3261,14 +3261,16 @@ export class Router extends Sideboard {
         if (feature) {
           self.routingHintSource.clear();
           var coordLonLat = element.data('pos');
-          var stringlonlat = coordLonLat.split(",");
-          stringlonlat[0] = parseFloat(stringlonlat[0]);
-          stringlonlat[1] = parseFloat(stringlonlat[1]);
-          var newCoord = ol.proj.fromLonLat(stringlonlat);
-          var currentHintFeature = new ol.Feature({
-            geometry: new ol.geom.Point(newCoord)
-          });
-          self.routingHintSource.addFeature(currentHintFeature);
+          if (coordLonLat) {
+            var stringlonlat = coordLonLat.split(",");
+            stringlonlat[0] = parseFloat(stringlonlat[0]);
+            stringlonlat[1] = parseFloat(stringlonlat[1]);
+            var newCoord = ol.proj.fromLonLat(stringlonlat);
+            var currentHintFeature = new ol.Feature({
+              geometry: new ol.geom.Point(newCoord)
+            });
+            self.routingHintSource.addFeature(currentHintFeature);
+          }
         }
       }
     };

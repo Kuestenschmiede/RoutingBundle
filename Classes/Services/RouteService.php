@@ -9,10 +9,9 @@
 namespace con4gis\RoutingBundle\Classes\Services;
 
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
+use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
-use con4gis\MapsBundle\Resources\contao\modules\api\RoutingApi;
 use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
-use con4gis\RoutingBundle\Classes\LatLng;
 use con4gis\RoutingBundle\Classes\Polyline;
 use con4gis\RoutingBundle\Entity\RoutingConfiguration;
 use Contao\System;
@@ -74,16 +73,16 @@ class RouteService extends \Frontend
         $objLayer = C4gMapsModel::findById($layer);
         if($routerConfig->getRouterLayers()){ //prevent listener and decoding of polyline if not necessary
             try {
-                if ($routerConfig->getRouterApiSelection() == '1') {
+                if ($routerConfig->getRouterApiSelection() == '1' || $routeData['routeType'] == '1') {
                     $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
                 }
-                else if ($routerConfig->getRouterApiSelection() == '2'){
+                else if ($routerConfig->getRouterApiSelection() == '2' || $routeData['routeType'] == '2'){
                     $points = $polyline->fromEncodedString($routeData['routes'][0]['geometry']);
                 }
-                else if ($routerConfig->getRouterApiSelection() == '3') {
+                else if ($routerConfig->getRouterApiSelection() == '3' || $routeData['routeType'] == '3') {
                     $points = $polyline->fromEncodedString($routeData['paths'][0]['points']);
                 }
-                else if ($routerConfig->getRouterApiSelection() == '4') {
+                else if ($routerConfig->getRouterApiSelection() == '4' || $routeData['routeType'] == '4') {
                     $points = $polyline->fromEncodedString($routeData['trip']['legs'][0]['shape'], 1e-6);
                 }
                 $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
@@ -126,6 +125,46 @@ class RouteService extends \Frontend
             }
             else if ($routerConfig->getRouterApiSelection() == '4') {
                 $response = $this->getValhallaResponse($arrInput, $strParams, $routerConfig, $profile);
+            }
+            else if ($routerConfig->getRouterApiSelection() == '5') {
+                $response = $this->getCon4gisIOResponse($arrInput, $strParams, $routerConfig, $profile);
+            }
+            return $response;
+        }
+    }
+    private function getCon4gisIOResponse ($arrInput, $strParams, $routerConfig, $profile = null){
+        if($routerConfig instanceof RoutingConfiguration){
+            $objSettings = C4gMapSettingsModel::findOnly();
+            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 5);
+            if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE', $language)){
+                $language = $GLOBALS['TL_LANGUAGE'];
+                if(!substr_count('ca-ES, cs-CZ, de-DE, en-US,C, es-ES, fr-FR, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE',$language)){
+                    $language = "en-US";
+                }
+            }
+            $strInput = "";
+            foreach($arrInput as $elementInput) {
+                $strInput .= $elementInput .";";
+            }
+            $strInput = rtrim($strInput,';');
+            $REQUEST = new \Request();
+            if ($_SERVER['HTTP_REFERER']) {
+                $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+            }
+            if ($_SERVER['HTTP_USER_AGENT']) {
+                $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+            }
+            $REQUEST->setHeader('Content-Type', "application/json");
+            $REQUEST->method = "GET";
+            $sendUrl = $objSettings->con4gisIoUrl . "routing.php?input=" . $strInput . "&language=" . $language . "&profile=" . $profile . "&key=" . $objSettings->con4gisIoKey;
+            $REQUEST->send($sendUrl);
+            $response = $REQUEST->response;
+            try {
+                $response = \GuzzleHttp\json_decode($response, true);
+            } catch(\Exception $exception) {
+                $response = [];
+                $response['error'] = "ROUTER_ERROR_POLYLINE";
+                return $response;
             }
             return $response;
         }
