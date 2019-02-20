@@ -1873,11 +1873,11 @@ export class Router extends Sideboard {
           routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconValhalla(strType) + '" alt=""/>';
           routerInstructionsHtml += '</td>';
 
-          if (instr.maneuver) {
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
+          if ((instr.begin_shape_index || instr.begin_shape_index > -1) && instr.end_shape_index) {
+            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-start="' + instr.begin_shape_index + '"  data-end="' + instr.end_shape_index + '">';
           }
-          else {
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + 0 + '">';
+          else{
+            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-start="0"  data-end="0">';
           }
 
 
@@ -3232,16 +3232,45 @@ export class Router extends Sideboard {
       }
       if (self.routingWaySource && self.options.mapController.data.router_api_selection >= '1') {
         self.routingHintSource.clear();
+        feature = self.routingWaySource.getFeatures()[0];
+        let coordinates = feature.getGeometry().getCoordinates();
         var coordLonLat = element.data('pos');
-        var stringlonlat = coordLonLat.split(",");
-        stringlonlat[0] = parseFloat(stringlonlat[0]);
-        stringlonlat[1] = parseFloat(stringlonlat[1]);
-        var newCoord = ol.proj.fromLonLat(stringlonlat);
-        var currentHintFeature = new ol.Feature({
-          geometry: new ol.geom.Point(newCoord)
-        })
-        self.routingHintSource.addFeature(currentHintFeature);
-        self.options.mapController.map.getView().setCenter(newCoord);
+        if (coordLonLat) {
+          var stringlonlat = coordLonLat.split(",");
+          stringlonlat[0] = parseFloat(stringlonlat[0]);
+          stringlonlat[1] = parseFloat(stringlonlat[1]);
+          var newCoord = ol.proj.fromLonLat(stringlonlat);
+          var currentHintFeature = new ol.Feature({
+            geometry: new ol.geom.Point(newCoord)
+          })
+          self.routingHintSource.addFeature(currentHintFeature);
+          self.options.mapController.map.getView().setCenter(newCoord);
+        }
+        if (coordinates) {
+          let start = element.data('start');
+          let end = element.data('end');
+          if (start, end) {
+            let geom = new ol.geom.LineString(coordinates.slice(start, end))
+            var currentHintFeature = new ol.Feature({
+              geometry: geom
+            })
+            currentHintFeature.setStyle(
+              new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                  color: 'rgba(255, 0, 0, 1)',
+                  width: 20
+                })
+              }),
+            );
+            let currentZoom = self.options.mapController.map.getView().getZoom();
+            self.routingHintSource.addFeature(currentHintFeature);
+            self.options.mapController.map.getView().fit(geom);
+            let afterZoom = self.options.mapController.map.getView().getZoom();
+            let endZoom = Math.round((currentZoom + afterZoom)/2)
+            endZoom = (endZoom > afterZoom) ? afterZoom : endZoom;
+            self.options.mapController.map.getView().setZoom(endZoom);
+          }
+        }
       }
     };
 
@@ -3271,6 +3300,26 @@ export class Router extends Sideboard {
             });
             self.routingHintSource.addFeature(currentHintFeature);
           }
+          feature = self.routingWaySource.getFeatures()[0];
+          let coordinates = feature.getGeometry().getCoordinates();
+          if (coordinates) {
+            let start = element.data('start');
+            let end = element.data('end');
+            if (start, end) {
+              var currentHintFeature = new ol.Feature({
+                geometry: new ol.geom.LineString(coordinates.slice(start, end))
+              })
+              currentHintFeature.setStyle(
+                new ol.style.Style({
+                  stroke: new ol.style.Stroke({
+                    color: 'rgba(255, 0, 0, 1)',
+                    width: 15
+                  })
+                }),
+              );
+              self.routingHintSource.addFeature(currentHintFeature);
+            }
+          }
         }
       }
     };
@@ -3280,6 +3329,23 @@ export class Router extends Sideboard {
     };
 
 
+    $('[data-start]', routerInstruction).each(function (index, element) {
+
+      var $element = $(element);
+
+      $element.click(function () {
+        fnItemClick($element);
+      });
+
+      $element.on('mouseenter', function () {
+        fnItemOver($element);
+      });
+
+      $element.on('mouseleave', function () {
+        fnItemOut();
+      });
+
+    });
     $('[data-pos]', routerInstruction).each(function (index, element) {
 
       var $element = $(element);
