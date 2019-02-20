@@ -175,6 +175,9 @@ export class Router extends Sideboard {
         })
       ]
     });
+    this.modWayInteraction.on('modifystart', function (event) {
+      self.modifyStartPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
+    });
     this.modWayInteraction.on('modifyend', function (event) {
       this.$overInput = self.addInterimField();
       let overPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
@@ -186,20 +189,20 @@ export class Router extends Sideboard {
       }
       else{
         for(let id in self.overValue){
-          let distX = overPoint.getCoordinates()[0] - self.overValue[id].getCoordinates()[0];
-          let distY = overPoint.getCoordinates()[1] - self.overValue[id].getCoordinates()[1];
+          let distX = self.modifyStartPoint.getCoordinates()[0] - self.overValue[id].getCoordinates()[0];
+          let distY = self.modifyStartPoint.getCoordinates()[1] - self.overValue[id].getCoordinates()[1];
           let dist = Math.sqrt(distX * distX + distY * distY);
           if(dist < minDistance){
             minDistance = dist;
             insertId = id;
           }
         }
-        let distStartX = self.fromValue.getCoordinates()[0] - overPoint.getCoordinates()[0];
-        let distStartY = self.fromValue.getCoordinates()[1] - overPoint.getCoordinates()[1];
+        let distStartX = self.fromValue.getCoordinates()[0] - self.modifyStartPoint.getCoordinates()[0];
+        let distStartY = self.fromValue.getCoordinates()[1] - self.modifyStartPoint.getCoordinates()[1];
         let distStart = Math.sqrt(distStartX * distStartX + distStartY * distStartY);
 
-        let distEndX = self.toValue.getCoordinates()[0] - overPoint.getCoordinates()[0];
-        let distEndY = self.toValue.getCoordinates()[1] - overPoint.getCoordinates()[1];
+        let distEndX = self.toValue.getCoordinates()[0] - self.modifyStartPoint.getCoordinates()[0];
+        let distEndY = self.toValue.getCoordinates()[1] - self.modifyStartPoint.getCoordinates()[1];
         let distEnd = Math.sqrt(distEndX * distEndX + distEndY * distEndY);
 
         distStartX = self.fromValue.getCoordinates()[0] - self.overValue[0].getCoordinates()[0];
