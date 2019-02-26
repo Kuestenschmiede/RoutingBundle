@@ -11,74 +11,9 @@
  */
 
 /** Routing und Umkreissuche  */
-$GLOBALS['TL_LANG'][$strName]['router_api_selection'] = ['Routing Server Technology','Choose Server Technology'];
-$GLOBALS['TL_LANG'][$strName]['router_api_key'] = ['API-Key', 'Enter your ORS- or Graphhopper-API-Key. You can generate the key <a href="https://openrouteservice.org/sign-up/" target="_blank">here (OpenRouteService)</a> or <a href="https://graphhopper.com/dashboard/#/register" target="_blank"> here (Graphhopper)</a>. Pay attention to the terms of use.'];
-$GLOBALS['TL_LANG'][$strName]['router_viaroute_url'] = ['Alternative URL (mandatory for OSRM-API 4)', 'Enter the URL of a ORS or OSRM Server, for example if you want to use your own. By default, either http://router.project-osrm.org/ , https://api.openrouteservice.org/ or https://graphhopper.com/api/1/route? is used. Pay attention to the providers\' copyright information.'];
-$GLOBALS['TL_LANG'][$strName]['routerHeadline'] = ['Headline Router', 'Default: Router'];
-$GLOBALS['TL_LANG'][$strName]['router_attribution'] = ['Override Router Copyright', 'Overrides the default attriubution. Recommended only if you are using an alternative API-Server, or if you have placed it in another, clearly visible, spot on your website!'];
-$GLOBALS['TL_LANG'][$strName]['router_from_locstyle'] = ['Location Style for Starting Point', 'Choose a location style for the starting point.'];
-$GLOBALS['TL_LANG'][$strName]['router_to_locstyle'] = ['Location Style for Target Point', 'Choose a location style for the target point.'];
-$GLOBALS['TL_LANG'][$strName]['router_point_locstyle'] = ['Location Style for on-the-fly hints', 'Choose a location style for the on-the-fly hints.'];
-$GLOBALS['TL_LANG'][$strName]['router_interim_locstyle'] = ['Location Style for interim targets', 'Choose a location style for interim targets.'];
-$GLOBALS['TL_LANG'][$strName]['router_profiles'] = ['Router Profile', 'Determines the OpenRouteService or Graphhopper profiles.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'] = ['Routing aktivieren','Fügt einen Button in der Karte hinzu, mit dem der Router geöffnet werden kann.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerConfig'] = ['Routing-Konfiguration',  'Bitte wählen Sie die entsprechende Routing-Konfiguration aus. Diese können Sie im Backend-Bereich "Routing" anlegen.'];
 
-$GLOBALS['TL_LANG'][$strName]['routerLayers'] = ['Layer for routes', 'Enter the layers to show on the route or in a perimeter (default: Overpass & Table).'];
-$GLOBALS['TL_LANG'][$strName]['routerLayer']['layers'] = ['Layer','Layer to be evaluated for the router or area search.'];
-$GLOBALS['TL_LANG'][$strName]['routerLayer']['key'] = ['Key','Key for the evaluation.'];
-$GLOBALS['TL_LANG'][$strName]['routerLayer']['value'] = ['Button Text','The text for the corresponding button.'];
-$GLOBALS['TL_LANG'][$strName]['routerLayer']['label'] = ['Label','Label for the map elements.'];
-$GLOBALS['TL_LANG'][$strName]['routerLayer']['mapLabel'] = ['Label Field','Fieldname for the label generation.'];
 
-$GLOBALS['TL_LANG'][$strName]['customProfiles'] = ['Custom Router Profile', 'Please enter custom profiles (custom OSRM-server).'];
-$GLOBALS['TL_LANG'][$strName]['customProfile']['profileKey'] = ['Key','Enter the key of the profile to communicate with the API.'];
-$GLOBALS['TL_LANG'][$strName]['customProfile']['showName'] = ['Name','Name of the profile in frontend.'];
-$GLOBALS['TL_LANG'][$strName]['customProfile']['fontAwesome'] = ['Fontawesome Unicode','Fontawesome Unicode for display in frontend.'];
-
-$GLOBALS['TL_LANG'][$strName]['hideFeaturesWithoutLabel'] = ['Hide features without label','Check this to hide features that have no label.'];
-$GLOBALS['TL_LANG'][$strName]['openRouter'] = ['Router initially opened', 'Check this to open the router initially.'];
-$GLOBALS['TL_LANG'][$strName]['router_alternative'] = ['Alternative Routes', 'Should alternative routes be displayed?'];
-$GLOBALS['TL_LANG'][$strName]['enableOverPoints'] = ['Interim Targets', 'Check this to enable the possibility to create interim targets.'];
-$GLOBALS['TL_LANG'][$strName]['enableTargetSwitch'] = ['Swap Start and Target', 'Check this to enable swapping of start and target.'];
-$GLOBALS['TL_LANG'][$strName]['routeStartButton'] = ['Button: "Start Search"', 'Choose if a button should be generated with which the search can be triggered manually.'];
-$GLOBALS['TL_LANG'][$strName]['closeAfterSearch'] = ['Close Router after Search', 'If this is checked, the router will be closed automatically after the search has been initiated.'];
-$GLOBALS['TL_LANG'][$strName]['showInstructions'] = ['Show Route Information', 'Check this top show information about the route.'];
-$GLOBALS['TL_LANG'][$strName]['instructionLabel'] = ['Route information button caption', 'Enter a caption for the route information button.'];
-$GLOBALS['TL_LANG'][$strName]['showFeatures'] = ['Show Result List', 'If this is checked, results will be shown in the router.'];
-$GLOBALS['TL_LANG'][$strName]['featureLabel'] = ['Result list button caption', 'Enter a caption for the result list button.'];
-$GLOBALS['TL_LANG'][$strName]['initialMode'] = ['Initial View', 'Choose the initial view in the router.'];
-$GLOBALS['TL_LANG'][$strName]['minDetourArea'] = ['Minimum Radius Area Search (km)', 'The minimum radius to search.'];
-$GLOBALS['TL_LANG'][$strName]['maxDetourArea'] = ['Maximum Radius Area Search (km)', 'The maximum radius to search.'];
-$GLOBALS['TL_LANG'][$strName]['initialDetourArea'] = ['Initial Radius Area Search (km)', 'The initial radius to search.'];
-$GLOBALS['TL_LANG'][$strName]['minDetourRoute'] = ['Minimum Detour along Route (km)', 'The minimum detour to be calculated.'];
-$GLOBALS['TL_LANG'][$strName]['maxDetourRoute'] = ['Maximum Detour along Route (km)', 'The maximum detour to be calculated.'];
-$GLOBALS['TL_LANG'][$strName]['initialDetourRoute'] = ['Initial Detour along Route (km)', 'The initial detour to be calculated.'];
-$GLOBALS['TL_LANG'][$strName]['clickLocstyle'] = ['Location Style active element', 'Enter the location style for the active element.'];
-$GLOBALS['TL_LANG'][$strName]['areaCenterLocstyle'] = ['Location Style Center (Area Search)', 'Choose the location style which will place a marker in the center of the search.'];
-$GLOBALS['TL_LANG'][$strName]['priorityFeatures'] = ['Prioritized Features', 'The number of features with the lowest value to be displayed differently on the map.'];
-$GLOBALS['TL_LANG'][$strName]['priorityLocstyle'] = ['Location Style prioritized features', 'Location Style for prioritized features.'];
-$GLOBALS['TL_LANG'][$strName]['usePermalink'] = ['Generate router permalink', 'Check this to save the current search parameters in the URL.'];
-
-/**
- * References
- */
-$GLOBALS['TL_LANG'][$strName]['references_router_modes']['area'] = "Area Search";
-$GLOBALS['TL_LANG'][$strName]['references_router_modes']['route'] = "Route Search";
-
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRroutingMachine (API 5.x)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper';
-
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['0'] = 'Car';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['1'] = 'Truck';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['2'] = 'Bicycle';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['3'] = 'Road Bike';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['4'] = 'Bicycle (secure)';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['5'] = 'Mountainbike';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['6'] = 'Trekking Bike';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['7'] = 'Electronic Bicycle';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['8'] = 'Pedestrian';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['9'] = 'Hiker';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['10']= 'Wheelchair';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['11']= 'Small Truck';
-$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['12']= 'Scooter';
+/** legend */
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routing_legend'] = 'Routen- und Umkreissuche';
