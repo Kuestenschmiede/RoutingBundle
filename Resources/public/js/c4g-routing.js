@@ -706,8 +706,14 @@ export class Router extends Sideboard {
     this.mapSelectInteraction.getFeatures().clear();
     if (!fromPoint) {
       fromPoint = this.fromValue;
+      if (!fromPoint) {
+        return;
+      }
     }
     if (!toPoint) {
+      if (!toPoint) {
+        return;
+      }
       toPoint = this.toValue;
     }
     if (!overPoint) {
@@ -3325,6 +3331,22 @@ export class Router extends Sideboard {
           }
         }
       }
+      // var msg = new SpeechSynthesisUtterance();
+      // var voices = window.speechSynthesis.getVoices();
+      // msg.voice = voices[10]; // Note: some voices don't support altering params
+      // msg.voiceURI = 'native';
+      // msg.volume = 1; // 0 to 1
+      // msg.rate = 1; // 0.1 to 10
+      // msg.pitch = 1.5; //0 to 2
+      // msg.text = element.html();
+      // msg.lang = 'en-US';
+      //
+      // msg.onend = function(e) {
+      //   console.log('Finished in ' + event.elapsedTime + ' seconds.');
+      // };
+      //
+      // speechSynthesis.speak(msg);
+
     };
 
     fnItemOut = function () {
@@ -3412,6 +3434,9 @@ export class Router extends Sideboard {
       url;
 
     url = this.geoReverseSearchApi + '?format=json&lat=' + value[1] + '&lon=' + value[0];
+    if (this.mapData && this.mapData.geosearch && this.mapData.geosearch.reverseKey && this.mapData.geosearch.url) {
+      url = this.mapData.geosearch.url + "reverse.php?key=" + this.mapData.geosearch.reverseKey + '&format=json&lat=' + value[1] + '&lon=' + value[0];
+    }
     this.spinner.show();
 
     jQuery.ajax({
@@ -3496,6 +3521,9 @@ export class Router extends Sideboard {
     viewbox = '&viewbox=' + bounds[0] + ',' + bounds[1] + ',' + bounds[2] + ',' + bounds[3];
 
     url = self.geoSearchApi + '?format=json&limit=1&q=' + encodeURI($input.val()) + viewbox;
+    if (this.mapData && this.mapData.geosearch && this.mapData.geosearch.searchKey && this.mapData.geosearch.url) {
+      url = this.mapData.geosearch.url + "search.php?key=" + this.mapData.geosearch.searchKey + '&format=json&limit=1&q=' + encodeURI($input.val()) + viewbox;
+    }
 
     jQuery.ajax({
       'url': url
