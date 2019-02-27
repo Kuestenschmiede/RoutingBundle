@@ -11,8 +11,8 @@
  */
 
 /** Routing und Umkreissuche  */
-$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'] = ['Routing aktivieren','Bitte aktivieren Sie auch die Suchfunktion, um das Routing zu nutzen.'];
-$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerConfig'] = ['Router-Konfiguration',  'Bitte wählen Sie die Routing-Konfiguration aus. Diese können Sie im Backend-Bereich "Routing" anlegen.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['router'] = ['Routing aktivieren','Fügt einen Button in der Karte hinzu, mit dem der Router geöffnet werden kann.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routerConfig'] = ['Routing-Konfiguration',  'Bitte wählen Sie die entsprechende Routing-Konfiguration aus. Diese können Sie im Backend-Bereich "Routing" anlegen.'];
 
 
 /** legend */

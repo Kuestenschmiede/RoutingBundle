@@ -9,3 +9,14 @@
 $GLOBALS['BE_MOD']['con4gis']['c4g_routing'] = [
   'tables' => "tl_c4g_routing_configuration"
 ];
+
+/**
+ * Backend Modules
+ */
+$GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], array
+(
+    'c4g_routing' => array
+    (
+        'tables' => "tl_c4g_routing_configuration"
+    )
+));

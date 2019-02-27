@@ -30,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getRouterConfigs'],
-        'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true],
+        'eval'                    => ['tl_class'=>'clr','chosen' => true, 'includeBlankOption'=>true],
         'sql'                     => "int(10) NOT NULL default '0'"
     ]
 
