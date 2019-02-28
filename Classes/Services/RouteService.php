@@ -222,17 +222,17 @@ class RouteService extends \Frontend
                 case 12:
                     $costing = "motor_scooter";
                     break;
-                default:
-                    $costing = "auto";
-                    break;
                 case 13:
                     $costing = "motorcycle";
                     $costing_options = [
                         "motorcycle"    => [
                             "use_highways"  => 0.4,
-                            "use_trails"    => 1
+                            "use_trails"    => 0.8
                         ]
                     ];
+                    break;
+                default:
+                    $costing = "auto";
                     break;
             }
 

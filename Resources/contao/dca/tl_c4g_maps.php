@@ -11,7 +11,7 @@
   * @link       https://www.con4gis.org
   */
 foreach ($GLOBALS['TL_DCA']['tl_c4g_maps']['palettes'] as $id => $pallete) {
-    $newPallete = str_replace('popup_info,', 'popup_extend,routing_to,', $pallete);
+    $newPallete = str_replace('popup_info,', 'popup_info,routing_to,', $pallete);
     $GLOBALS['TL_DCA']['tl_c4g_maps']['palettes'][$id] = $newPallete;
 }
 $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['routing_to'] = [
