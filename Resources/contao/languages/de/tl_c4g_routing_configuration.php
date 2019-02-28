@@ -10,6 +10,7 @@
   * @copyright 	Küstenschmiede GmbH Software & Design
   * @link       https://www.con4gis.org
   */
+
 $strName = 'tl_c4g_routing_configuration';
 $GLOBALS['TL_LANG'][$strName]['router_api_selection'] = ['Routing-Servertechnik','Auswahl der Servertechnik.'];
 $GLOBALS['TL_LANG'][$strName]['name'] = ['Bezeichnung','Bezeichnung der Routing-Konfiguration.'];

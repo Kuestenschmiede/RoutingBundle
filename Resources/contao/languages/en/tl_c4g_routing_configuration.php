@@ -82,4 +82,16 @@ $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['11']= 'Small Truck'
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['12']= 'Scooter';
 
 /** legend */
-$GLOBALS['TL_LANG'][$strName]['routing_legend'] = 'Routing and Area Search';
+$GLOBALS['TL_LANG'][$strName]['routing_legend']     = 'Routing and area search';
+$GLOBALS['TL_LANG'][$strName]['general_legend']     = 'General settings';
+$GLOBALS['TL_LANG'][$strName]['extended_legend']    = 'Advanced settings';
+$GLOBALS['TL_LANG'][$strName]['search_legend']      = 'Routing and area search';
+
+/**
+ * Buttons
+ */
+$GLOBALS['TL_LANG'][$strName]['new']        = ['New configuration', 'Eine neue Routing-Konfiguration erstellen'];
+$GLOBALS['TL_LANG'][$strName]['edit']       = ['Routing-Konfiguration bearbeiten', 'Routing-Konfiguration ID %s bearbeiten'];
+$GLOBALS['TL_LANG'][$strName]['copy']       = ['Routing-Konfiguration duplizieren', 'Routing-Konfiguration ID %s duplizieren'];
+$GLOBALS['TL_LANG'][$strName]['delete']     = ['Routing-Konfiguration löschen', 'Routing-Konfiguration ID %s löschen'];
+$GLOBALS['TL_LANG'][$strName]['show']       = ['Details', 'Die Details des Routing-Konfiguration ID %s anzeigen'];
