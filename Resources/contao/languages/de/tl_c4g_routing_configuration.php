@@ -86,6 +86,7 @@ $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['9'] = 'WandererIn';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['10']= 'Rollstuhl';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['11']= 'Transporter';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['12']= 'Roller';
+$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['13']= 'Motorrad';
 
 /** legend */
 $GLOBALS['TL_LANG'][$strName]['routing_legend'] = 'Routing und Umkreissuche';

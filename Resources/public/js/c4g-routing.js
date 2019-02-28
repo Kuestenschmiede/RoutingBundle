@@ -2445,17 +2445,50 @@ export class Router extends Sideboard {
           self.recalculateRoute();
         });
       }
-      if (this.options.mapController.data.router_profiles['12']) { //add button for profile scooter
-        routeProfile.scooter = document.createElement('button');
-        $(routeProfile.scooter).addClass(routingConstants.ROUTER_PROFILE_SCOOTER);
-        $(routeProfile.scooter).prop('title',langRouteConstants.SCOOT);
-        this.$routeProfileScooter = $(routeProfile.scooter);
-        this.routeProfile.appendChild(routeProfile.scooter);
-        this.$routeProfileScooter.click(function (event) {
-          self.clearSiblings(this);
-          self.routeProfile.active = '12';
-          self.recalculateRoute();
-        });
+      if (this.options.mapController.data.router_profiles['12']
+          || this.options.mapController.data.router_profiles['13']) { //add button for profile motorcycle and scooter
+          let spanMotor = document.createElement('span');
+          routeProfile.motorcycle = document.createElement('button');
+          routeProfile.motorcycle.list = document.createElement('ul');
+          this.$routeProfileMotorcycle = $(routeProfile.motorcycle);
+          for (let i = 12; i < 14; i++) { //iterate over possible profiles
+            if (this.options.mapController.data.router_profiles[i]) {
+              let child = document.createElement('li');
+              child.innerHTML = this.options.mapController.data.router_profiles[i];
+              $(child).data('profile', [i]);
+              $(child).click(function (event) {
+                self.childClick($(this));
+              });
+              if (!this.$routeProfileMotorcycle.data('profile')) { //add existing default profile to button
+                this.$routeProfileMotorcycle.data('profile', i);
+                $(child).addClass(cssConstants.ACTIVE);
+              }
+              routeProfile.motorcycle.list.appendChild(child);
+            }
+          }
+
+          $(routeProfile.motorcycle).addClass(routingConstants.ROUTER_PROFILE_SCOOTER);
+          $(routeProfile.motorcycle).prop('title',langRouteConstants.SCOOTER);
+
+
+          if (routeProfile.motorcycle.list.children.length == 1) { //ignore dropdown list, if only one motorcycle profile is enabled
+            this.routeProfile.appendChild(routeProfile.motorcycle);
+            this.$routeProfileMotorcycle.click(function (event) {
+              self.clearSiblings(this);
+              self.routeProfile.active = $(this).data('profile');
+              self.recalculateRoute();
+            });
+          }
+          else { //append with dropdown, if multiple motorcycle profiles are enabled
+            spanMotor.appendChild(routeProfile.motorcycle);
+            spanMotor.appendChild(routeProfile.motorcycle.list);
+            this.routeProfile.appendChild(spanMotor);
+            this.$routeProfileMotorcycle.click(function (event) {
+              self.clearSiblings($(this).parent());
+              self.routeProfile.active = $(this).data('profile');
+              self.recalculateRoute();
+            });
+          }
       }
       this.childClick = function ($element) { //handle the click inside the profile dropdown
         self.routeProfile.active = $element.data('profile'); //activate selected profile

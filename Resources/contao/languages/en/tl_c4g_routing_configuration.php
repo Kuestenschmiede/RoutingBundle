@@ -51,7 +51,7 @@ $GLOBALS['TL_LANG'][$strName]['areaCenterLocstyle'] = ['Location Style Center (A
 $GLOBALS['TL_LANG'][$strName]['priorityFeatures'] = ['Prioritized Features', 'The number of features with the lowest value to be displayed differently on the map.'];
 $GLOBALS['TL_LANG'][$strName]['priorityLocstyle'] = ['Location Style prioritized features', 'Location Style for prioritized features.'];
 $GLOBALS['TL_LANG'][$strName]['usePermalink'] = ['Generate router permalink', 'Check this to save the current search parameters in the URL.'];
-$GLOBALS['TL_LANG'][$strName]['pirate'] = ['Are you a pirate?', 'Set language to pirate.'];
+$GLOBALS['TL_LANG'][$strName]['pirate'] = ['Arrrrr you a pirate?', 'Set language to pirate.'];
 
 
 /**
@@ -80,6 +80,7 @@ $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['9'] = 'Hiker';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['10']= 'Wheelchair';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['11']= 'Small Truck';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['12']= 'Scooter';
+$GLOBALS['TL_LANG'][$strName]['references_router_profiles']['13']= 'Motorcycle';
 
 /** legend */
 $GLOBALS['TL_LANG'][$strName]['routing_legend']     = 'Routing and area search';

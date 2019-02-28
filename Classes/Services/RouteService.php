@@ -202,14 +202,18 @@ class RouteService extends \Frontend
                     break;
                 case 3:
                     $costing = "bicycle";
-                    $costing_option = [
-                        "bicycle_type" => "Road"
+                    $costing_options = [
+                        "bicycle" => [
+                            "bicycle_type" => "Road"
+                        ]
                     ];
                     break;
                 case 5:
                     $costing = "bicycle";
-                    $costing_option = [
-                        "bicycle_type" => "Mountain"
+                    $costing_options = [
+                        "bicycle" => [
+                            "bicycle_type" => "Mountain"
+                        ]
                     ];
                     break;
                 case 8:
@@ -220,6 +224,15 @@ class RouteService extends \Frontend
                     break;
                 default:
                     $costing = "auto";
+                    break;
+                case 13:
+                    $costing = "motorcycle";
+                    $costing_options = [
+                        "motorcycle"    => [
+                            "use_highways"  => 0.4,
+                            "use_trails"    => 1
+                        ]
+                    ];
                     break;
             }
 
@@ -252,6 +265,14 @@ class RouteService extends \Frontend
                 "costing"           => $costing,
                 "directions_options" => $directionOptions
             ];
+            if ($costing_options) {
+                $routeData = [
+                    "locations"         => $locations,
+                    "costing"           => $costing,
+                    "directions_options" => $directionOptions,
+                    "costing_options"   => $costing_options
+                ];
+            }
             $encodedData = \GuzzleHttp\json_encode($routeData);
 
             $REQUEST->send($strRoutingUrl, $encodedData);
