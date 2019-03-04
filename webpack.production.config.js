@@ -21,6 +21,11 @@ var config = {
         ],
       }
     ]
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
   }
 };
 
