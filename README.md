@@ -18,15 +18,16 @@ Furthermore it is possible to display features from the OpenStreetMap or from th
 - [OSRM](http://project-osrm.org/) (***4/5***)   
 - [OpenRouteService](https://openrouteservice.org/) (Directions)
 - [Graphhopper](https://graphhopper.com/) (Routing)
+- [Valhalla](https://wiki.openstreetmap.org/wiki/Valhalla) (Routing)
 
 ## Area (perimeter search)
 - [OpenRouteService](https://openrouteservice.org/) (Matrix)
 - [Graphhopper](https://graphhopper.com/) (Matrix)
-
+- [Valhalla](https://wiki.openstreetmap.org/wiki/Valhalla) (Matrix)
 
 ## configuration
 - Custom Router-headline
-- Choose your routing-API (ORS, OSRM or Graphhopper)
+- Choose your routing-API (ORS, OSRM, Graphhopper or Valhalla)
 - Custom routing-server
 - display alternative routes
 - route over several targets
