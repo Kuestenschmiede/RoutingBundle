@@ -10,4 +10,4 @@
   * @copyright 	Küstenschmiede GmbH Software & Design
   * @link       https://www.con4gis.org
   */
-$GLOBALS['TL_LANG']['MOD']['c4g_routing'] = array( 'Routing: Configuration', 'Configurate routings.');
+$GLOBALS['TL_LANG']['MOD']['c4g_routing'] = array( 'Routing configuration', 'Configurate routings.');
