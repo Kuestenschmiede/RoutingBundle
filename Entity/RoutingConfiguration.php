@@ -107,7 +107,7 @@ class RoutingConfiguration extends BaseEntity
 
 
     /**
-     * @var null
+     * @var array
      * @ORM\Column(type="array")
      */
     protected $customProfiles = [];

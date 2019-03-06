@@ -1,41 +1,30 @@
-con4gis-Routing
-==============
+# con4gis-RoutingBundle
+## Overview
 The routing brick of the Contao GIS-kit **con4gis**. Extends con4gis MapsBundle.
 
-**Git Repository:** RoutingBundle  
-**Composer Vendor/Package:** [con4gis/routing](https://packagist.org/packages/con4gis/routing)  
-**Website:** [con4gis.org](https://con4gis.org)
+Adds a control to the con4gis-map, which allows the user to calculate a route and display it on the map.
+Furthermore it is possible to display features from the [OpenStreetMap](https://www.openstreetmap.de/) or from the servers database along the route or in a perimeter around a center.
 
-**Requires:**
-- [Contao](https://github.com/contao/core) (>=4.4)   
+__Features include:__
+* Customize the appearance of the router
+* Use different routing engines ([Valhalla](https://wiki.openstreetmap.org/wiki/Valhalla), [Graphhopper](https://graphhopper.com/), [OSRM](http://project-osrm.org/) or [OpenRouteService](https://openrouteservice.org/))
+* Display alternative routes
+* Add additional targets between start and end
+* Shows hints for each route part
+* Add data from the [OpenStreetMap](https://www.openstreetmap.de/) or your own database, so they are displayed near the route
+* Perimeter search for data from the [OpenStreetMap](https://www.openstreetmap.de/) or your own database
+
+## Installation
+Via composer:
+```
+composer require con4gis/routing
+```
+Alternatively, you can use the Contao Manager to install the con4gis-RoutingBundle.
+
+## Requirements
+- [Contao](https://github.com/contao/core-bundle) (>=4.4)   
 - [CoreBundle](https://github.com/Kuestenschmiede/CoreBundle/releases) (*latest stable release*)
 - [MapsBundle](https://github.com/Kuestenschmiede/MapsBundle/releases) (*latest stable release*)
 
-Adds a control to the con4gis-map, which allows the user to calculate a route and display it on the map.
-Furthermore it is possible to display features from the OpenStreetMap or from the servers database along the route or in a perimeter around a center.
-
-## Router
-- [OSRM](http://project-osrm.org/) (***4/5***)   
-- [OpenRouteService](https://openrouteservice.org/) (Directions)
-- [Graphhopper](https://graphhopper.com/) (Routing)
-- [Valhalla](https://wiki.openstreetmap.org/wiki/Valhalla) (Routing)
-
-## Area (perimeter search)
-- [OpenRouteService](https://openrouteservice.org/) (Matrix)
-- [Graphhopper](https://graphhopper.com/) (Matrix)
-- [Valhalla](https://wiki.openstreetmap.org/wiki/Valhalla) (Matrix)
-
-## configuration
-- Custom Router-headline
-- Choose your routing-API (ORS, OSRM, Graphhopper or Valhalla)
-- Custom routing-server
-- display alternative routes
-- route over several targets
-- show a list describing the route
-- custom locationstyles for start, end and interim goals
-- choose layers to load OpenStreetMap-data over OverpassQL along route or in perimeter
-- choose layers to load georeferenced data from your own database along route or in perimeter
-- specify a minimal and maximal detour for features along a route
-- specify a minimal and maximal distance for features in a perimeter (calculated over the OpenRouteService or Graphhopper Matrix-Service)
-- show a list with all features along a route and in a perimeter
-
+## Documentation
+Visit [docs.con4gis.org](https://docs.con4gis.org) for a user documentation. You can also contact us via the support forum there.
