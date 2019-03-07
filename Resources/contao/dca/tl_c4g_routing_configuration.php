@@ -229,6 +229,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         ],
         'customProfiles' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['customProfiles'],
+            'default'                 => 'a:0:{}',
             'exclude'                 => true,
             'inputType'               => 'multiColumnWizard',
             'eval'                    => [
