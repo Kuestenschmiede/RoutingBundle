@@ -11,14 +11,10 @@
  * @link       https://www.con4gis.org
  */
 
-$GLOBALS['BE_MOD']['con4gis']['c4g_routing'] = [
-  'tables' => "tl_c4g_routing_configuration"
-];
-
 /**
  * Backend Modules
  */
-$GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], array
+$GLOBALS['BE_MOD']['con4gis_maps'] = array_merge($GLOBALS['BE_MOD']['con4gis_maps'], array
 (
     'c4g_routing' => array
     (
@@ -26,5 +22,5 @@ $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], array
     )
 ));
 
-$GLOBALS['BE_MOD']['con4gis'] =
-    \con4gis\CoreBundle\Resources\contao\classes\C4GUtils::sortBackendModules($GLOBALS['BE_MOD']['con4gis']);
+//$GLOBALS['BE_MOD']['con4gis'] =
+//    \con4gis\CoreBundle\Resources\contao\classes\C4GUtils::sortBackendModules($GLOBALS['BE_MOD']['con4gis']);
