@@ -60,12 +60,13 @@ $GLOBALS['TL_LANG'][$strName]['pirate'] = ['Arrrrr you a pirate?', 'Set language
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['area'] = "Area Search";
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['route'] = "Route Search";
 
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRroutingMachine (API 5.x)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io Routing';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x) (<a href="http://project-osrm.org" target="_blank">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x) (<a href="http://project-osrm.org" target="_blank">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService (<a href="https://openrouteservice.org" target="_blank">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper (<a href="https://www.graphhopper.com" target="_blank">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla (<a href="http://valhalla.github.io/demos/routing" target="_blank">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io mapservices (<a href="https://con4gis.io" target="_blank">usage policy</a>)';
+
 
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['0'] = 'Car';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['1'] = 'Truck';

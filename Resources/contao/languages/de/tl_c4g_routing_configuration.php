@@ -66,12 +66,12 @@ $GLOBALS['TL_LANG'][$strName]['pirate'] = ['Bist du ein Pirat?', 'Sprache auf Pi
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['area'] = "Umkreissuche";
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['route'] = "Routensuche";
 
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io Routing';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x) (<a href="http://project-osrm.org" target="_blank">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x) (<a href="http://project-osrm.org" target="_blank">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService (<a href="https://openrouteservice.org" target="_blank">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper (<a href="https://www.graphhopper.com" target="_blank">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla (<a href="http://valhalla.github.io/demos/routing" target="_blank">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io Kartendienste (<a href="https://con4gis.io" target="_blank">Nutzungsbestimmungen</a>)';
 
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['0'] = 'Auto';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['1'] = 'Lastwagen';

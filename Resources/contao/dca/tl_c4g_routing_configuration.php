@@ -131,9 +131,9 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_api_selection' => [
             'label'                   => $GLOBALS['TL_LANG'][$strName]['router_api_selection'],
             'exclude'                 => true,
-            'inputType'               => 'select',
-            'default'                 => '2',
-            'options'                 => ['0','1','2','3','4','5'],
+            'inputType'               => 'radio',
+            'default'                 => '5',
+            'options'                 => ['5','3','2','0','1','4'],
             'reference'               => &$GLOBALS['TL_LANG'][$strName]['references_router_api_selection'],
             'eval'                    => ['tl_class'=>'clr long','submitOnChange' => true],
         ],
