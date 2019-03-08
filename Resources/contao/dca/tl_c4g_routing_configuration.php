@@ -239,7 +239,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'hideFeaturesWithoutLabel' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['hideFeaturesWithoutLabel'],
             'exclude'                 => true,
-            'default'                 => true,
+            'default'                 => false,
             'inputType'               => 'checkbox',
         ],
         'minDetourRoute' => [
