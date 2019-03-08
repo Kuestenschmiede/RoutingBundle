@@ -3073,6 +3073,7 @@ export class Router extends Sideboard {
       areaFromClear;
 
     self = this;
+    const mapData = this.mapData;
     areaContentElement = document.createElement('div');
     areaViewInputWrapper = document.createElement('div');
     areaViewContentWrapper = document.createElement('div');
@@ -3220,28 +3221,31 @@ export class Router extends Sideboard {
     let areaDeactivateFunction = function () {
       self.options.mapController.map.un('click', self.fnMapAreaInteraction);
     };
-    let areaStartButton = document.createElement("button");
-    areaStartButton.className = "c4g-area-search-start";
-    areaStartButton.innerText = "Suche starten";
-    let callCnt = 0;
-    $(areaStartButton).on("click", function (event) {
-      if (self.areaValue) {
-        self.performArea(self.areaValue);
-      } else {
-        self.spinner.show();
-        // wait for one second and check the values again
-        window.setTimeout(function() {
-          if (self.areaValue) {
-            self.performArea(self.areaValue);
-          } else {
-            console.warn("Address search cancelled after waiting for address too long...");
-          }
-          self.spinner.hide();
-        }, 1000);
-      }
-    });
     areaViewInputWrapper.appendChild(this.areaFromInputWrapper);
-    areaViewInputWrapper.appendChild(areaStartButton);
+    if (mapData.routeStartButton) {
+      let areaStartButton = document.createElement("button");
+      areaStartButton.className = "c4g-area-search-start";
+      areaStartButton.innerText = "Suche starten";
+      let callCnt = 0;
+      $(areaStartButton).on("click", function (event) {
+        if (self.areaValue) {
+          self.performArea(self.areaValue);
+        } else {
+          self.spinner.show();
+          // wait for one second and check the values again
+          window.setTimeout(function() {
+            if (self.areaValue) {
+              self.performArea(self.areaValue);
+            } else {
+              console.warn("Address search cancelled after waiting for address too long...");
+            }
+            self.spinner.hide();
+          }, 1000);
+        }
+      });
+      areaViewInputWrapper.appendChild(areaStartButton);
+    }
+
     areaView = this.addView({
       name: 'area-view',
       triggerConfig: {
