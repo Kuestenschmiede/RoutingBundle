@@ -17,6 +17,7 @@ namespace con4gis\RoutingBundle\Classes\Listener;
 use con4gis\MapsBundle\Classes\Events\LoadMapdataEvent;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\RoutingBundle\Entity\RoutingConfiguration;
+use Contao\System;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -41,6 +42,7 @@ class LoadMapDataListener
                                                EventDispatcherInterface $eventDispatcher)
     {
         $mapData = $event->getMapData();
+        System::loadLanguageFile('tl_c4g_routing_configuration');
         $profile = C4gMapProfilesModel::findById($mapData['profile']);
         if ($profile->router) {
             $routerConfig = $this->entityManager->getRepository(RoutingConfiguration::class)
@@ -64,7 +66,7 @@ class LoadMapDataListener
                 if($routerConfig->getRouterProfiles()){
                     $router_profiles = array_flip($routerConfig->getRouterProfiles());
                     foreach($router_profiles as $key => $router_profile){
-                        $router_profiles[$key] = $GLOBALS['TL_LANG']['c4g_maps']['router_profiles'][$key];
+                        $router_profiles[$key] = $GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['references_router_profiles'][$key];
                     }
                     $mapData['router_profiles'] = $router_profiles;
                 }
