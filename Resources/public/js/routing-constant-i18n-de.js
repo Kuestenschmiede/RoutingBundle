@@ -36,6 +36,9 @@ export  var routingConstantsGerman = {
   ROUTER_VIEW_ALERT_GOCODING: 'Zugriff auf Geocoder fehlgeschlagen.',
   ROUTER_ERROR_POLYLINE: 'Route konnte nicht berechnet werden.',
 
+  POPUP_ROUTE_FROM: 'Route von hier',
+  POPUP_ROUTE_TO: 'Route hierhin',
+
   ROUTER: 'Router',
   ROUTER_N: 'Norden',
   ROUTER_E: 'Ost',
