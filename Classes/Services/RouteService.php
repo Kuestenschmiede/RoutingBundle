@@ -298,7 +298,8 @@ class RouteService extends \Frontend
     {
         if($routerConfig instanceof RoutingConfiguration){
             $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
-            $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://graphhopper.com/api/1/route?";
+            $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://graphhopper.com/api/1/";
+            $strRoutingUrl .= "route?";
             $apiKey = "&key=".$routerConfig->getRouterApiKey();
             $points = "point=" . explode(",",$arrInput[0])[0].','.explode(",",$arrInput[0])[1];
             for($i = 1; $i < sizeof($arrInput); $i++){
@@ -388,7 +389,8 @@ class RouteService extends \Frontend
     {
         if($routerConfig instanceof RoutingConfiguration) {
             $valuesProfile = ["driving-car" , "driving-hgv" , "cycling-regular" , "cycling-road" , "cycling-safe" , "cycling-mountain" , "cycling-tour" , "cycling-electric" , "foot-walking" , "foot-hiking" , "wheelchair"];
-            $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://api.openrouteservice.org/directions?";
+            $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://api.openrouteservice.org/";
+            $strRoutingUrl .= "directions?";
             $apiKey = "api_key=".$routerConfig->getRouterApiKey();
             $coordinates = "&coordinates=";
             for($i = 0; $i < sizeof($arrInput); $i++){
