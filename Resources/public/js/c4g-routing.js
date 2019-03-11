@@ -96,7 +96,7 @@ export class Router extends Sideboard {
     }
     // check and load location styles via map-proxy
     this.options.mapController.proxy.locationStyleController.loadLocationStyles(styles);
-    mapData = mapData[this.options.mapController.data.mapId];
+    let mapData = this.options.mapController.data;
 
     // Add router layer(s)
     this.routingAltWaySource = new ol.source.Vector();
@@ -1378,6 +1378,7 @@ export class Router extends Sideboard {
         break;
       case 19:
         image = "slight-left.png";
+        break;
       case 20:
         image = "slight-right.png";
         break;
@@ -2264,6 +2265,43 @@ export class Router extends Sideboard {
       this.areaSource.addFeature(feature);
       this.updateLinkFragments("addressArea");
     }
+  }
+
+  setFromPoint(coordinates) {
+    if (this.fromValue) {
+      this.fromValue.setCoordinates(coordinates);
+    } else {
+      this.fromValue = new ol.geom.Point(coordinates);
+    }
+    this.fromValue.transform('EPSG:3857', 'EPSG:4326');
+    let point = $.extend(true, {}, this.fromValue);
+    let feature = new ol.Feature({geometry: point});
+    let locstyleId = this.options.mapController.data.router_from_locstyle;
+    feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+    this.mapSelectInteraction.getFeatures().clear();
+    this.routerFeaturesSource.addFeature(feature);
+    this.updateLinkFragments("addressFrom");
+    this.performReverseSearch(this.$fromInput, point.getCoordinates());
+    if (this.fromValue && this.toValue) {
+      this.performViaRoute(this.fromValue, this.toValue);
+    }
+  }
+
+  setToPoint(coordinates) {
+    if (this.toValue) {
+      this.toValue.setCoordinates(coordinates);
+    } else {
+      this.toValue = new ol.geom.Point(coordinates);
+    }
+    this.toValue.transform('EPSG:3857', 'EPSG:4326');
+    let point = $.extend(true, {}, this.toValue);
+    let feature = new ol.Feature({geometry: point});
+    let locstyleId = this.options.mapController.data.router_to_locstyle;
+    feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+    this.mapSelectInteraction.getFeatures().clear();
+    this.routerFeaturesSource.addFeature(feature);
+    this.updateLinkFragments("addressTo");
+    this.performReverseSearch(this.$toInput, point.getCoordinates());
   }
 
   /**
@@ -3714,3 +3752,51 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     mapController.controls.router = router;
   }
 });
+
+window.c4gMapsHooks.proxy_appendPopup = window.c4gMapsHooks.proxy_appendPopup || [];
+window.c4gMapsHooks.proxy_appendPopup.push(function(params) {
+  let objPopup = params.popup;
+  let feature = objPopup.feature;
+  let mapController = params.mapController;
+  if (mapController.controls.router && objPopup.popup.routing_link) {
+    let router = mapController.controls.router;
+
+    let routingHandler = function (event) {
+      if (mapController.activePortside !== router) {
+        router.open();
+      }
+
+      if ($(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
+        // from address
+        router.setFromPoint(feature.getGeometry().getCoordinates());
+      } else {
+        // to address
+        router.setToPoint(feature.getGeometry().getCoordinates());
+      }
+    }; // end of "routingHandler()"
+
+    let routeButtonWrapper = document.createElement('div');
+    routeButtonWrapper.className = cssConstants.POPUP_ROUTE_WRAPPER;
+
+    let routeFromButton = document.createElement('button');
+    routeFromButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_FROM;
+    jQuery(routeFromButton).click(routingHandler);
+    routeButtonWrapper.appendChild(routeFromButton);
+
+    let routeFromButtonSpan = document.createElement('span');
+    routeFromButtonSpan.innerHTML = langRouteConstants.POPUP_ROUTE_FROM;
+    routeFromButton.appendChild(routeFromButtonSpan);
+
+    let routeToButton = document.createElement('button');
+    routeToButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_TO;
+    jQuery(routeToButton).click(routingHandler);
+    routeButtonWrapper.appendChild(routeToButton);
+
+    let routeToButtonSpan = document.createElement('span');
+    routeToButtonSpan.innerHTML = langRouteConstants.POPUP_ROUTE_TO;
+    routeToButton.appendChild(routeToButtonSpan);
+
+    window.c4gMapsPopup.$content.append(routeButtonWrapper);
+  }
+});
+

@@ -26,6 +26,8 @@ export  var routingConstantsEnglish = {
   ROUTER_OVER:'Add interim goal',
   ROUTER_PRINT:'Print route description',
 
+  POPUP_ROUTE_FROM: 'Route from here',
+  POPUP_ROUTE_TO: 'Route to here',
 
   ROUTER_VIEW_LABEL_ROUTE: 'Route:',
   ROUTER_VIEW_LABEL_DISTANCE: 'Distance:',
