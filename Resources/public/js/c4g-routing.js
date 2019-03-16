@@ -32,7 +32,7 @@ export class Router extends Sideboard {
    */
   constructor(opt_options) {
     // extend options
-    let options = $.extend({
+    let options = jQuery.extend({
       name: 'router',
       create: true,
       mapController: undefined,
@@ -385,15 +385,15 @@ export class Router extends Sideboard {
 
         if (detour || detour > 1) {
           this.updateLinkFragments("detour", detour);
-          $(this.toggleDetourArea).val(detour);
-          $(this.toggleDetourArea).trigger('input');
+          jQuery(this.toggleDetourArea).val(detour);
+          jQuery(this.toggleDetourArea).trigger('input');
         }
         if (center) {
           this.updateLinkFragments("addressArea", center);
-          $(this.areaFromInput).val(center);
-          this.performSearch($(this.areaFromInput), "areaValue", function () {
+          jQuery(this.areaFromInput).val(center);
+          this.performSearch(jQuery(this.areaFromInput), "areaValue", function () {
             if (scope.areaValue) {
-              let point = $.extend(true, {}, scope.areaValue);
+              let point = jQuery.extend(true, {}, scope.areaValue);
               let feature = new ol.Feature({geometry: point.transform('EPSG:4326', 'EPSG:3857')});
               var styleId = scope.options.mapController.data.areaCenterLocstyle;
 
@@ -422,7 +422,7 @@ export class Router extends Sideboard {
           this.updateLinkFragments("forceStart", forceStart);
         }
         // activate area view
-        $(".c4g-portside-viewtriggerbar .c4g-area-search").click();
+        jQuery(".c4g-portside-viewtriggerbar .c4g-area-search").click();
 
       } else if (objParams.m === "route") {
         this.viewRouter.activate();
@@ -432,16 +432,16 @@ export class Router extends Sideboard {
         let searchtype = objParams.s;
         let forceStart = objParams.f;
         if (detour) {
-          $(this.toggleDetourRoute).val(detour);
-          $(this.toggleDetourRoute).trigger('input');
+          jQuery(this.toggleDetourRoute).val(detour);
+          jQuery(this.toggleDetourRoute).trigger('input');
           this.updateLinkFragments("detour", objParams.d);
         }
         if (fromAddress) {
-          $(this.fromInput).val(fromAddress);
+          jQuery(this.fromInput).val(fromAddress);
           this.updateLinkFragments("addressFrom", fromAddress);
         }
         if (toAddress) {
-          $(this.toInput).val(toAddress);
+          jQuery(this.toInput).val(toAddress);
           this.updateLinkFragments("addressTo", toAddress);
         }
         if (searchtype) {
@@ -451,9 +451,9 @@ export class Router extends Sideboard {
           this.updateLinkFragments("forceStart", objParams.f);
         }
         if (fromAddress && toAddress) {
-          this.performSearch($(this.fromInput), "fromValue", function () {
+          this.performSearch(jQuery(this.fromInput), "fromValue", function () {
             if (scope.fromValue) {
-              scope.performSearch($(scope.toInput), "toValue", function () {
+              scope.performSearch(jQuery(scope.toInput), "toValue", function () {
                 if (scope.fromValue && scope.toValue) {
                   let fromStyleId = scope.options.mapController.data.router_from_locstyle;
                   let toStyleId = scope.options.mapController.data.router_to_locstyle;
@@ -478,7 +478,7 @@ export class Router extends Sideboard {
           });
         }
         // activate router view
-        $(".c4g-portside-viewtriggerbar .c4g-route-search").click();
+        jQuery(".c4g-portside-viewtriggerbar .c4g-route-search").click();
       }
     }
   }
@@ -513,7 +513,7 @@ export class Router extends Sideboard {
     this.locationsSource.clear();
     this.routerFeaturesSource.clear();
 
-    $(this.routerInstructionsWrapper).empty();
+    jQuery(this.routerInstructionsWrapper).empty();
     this.clearInput(this.$fromInput);
     if (this.overValue) {
       for (var id in this.overValue) {
@@ -745,7 +745,7 @@ export class Router extends Sideboard {
 
     if (this.options.mapController.data.router_api_selection >= '1') {//OSRM-API:5.x or ORS- API
       let profileId = this.options.mapController.data.profile;
-      url = 'con4gis/routeService/' + profileId + '/' + $(self.routerLayersSelect).val() + '/' + $(self.toggleDetourRoute).val() + '/' + fromCoord;
+      url = 'con4gis/routeService/' + profileId + '/' + jQuery(self.routerLayersSelect).val() + '/' + jQuery(self.toggleDetourRoute).val() + '/' + fromCoord;
 
       if (overPoint) {
         for (var i = 0; i < overCoord.length; i++)
@@ -770,19 +770,19 @@ export class Router extends Sideboard {
           if (response) {
             if (response.error && response.error != "ROUTER_ERROR_POLYLINE") {
               let errorDiv = self.showRouterError(langRouteConstants[response.error]);
-              $(self.fromInput).parent()[0].appendChild(errorDiv);
+              jQuery(self.fromInput).parent()[0].appendChild(errorDiv);
             } else {
               self.showRouteLayer(response);
               if (response.features) {
-                $(".router-content-switcher").css('display', 'block');
+                jQuery(".router-content-switcher").css('display', 'block');
               }
               self.showRouteInstructions(response, 0);
               if (response.features && response.features.length > 0) {
                 let sortedFeatures = self.showFeatures(response.features, response.type, "router");
 
                 self.showFeaturesInPortside(sortedFeatures, response.type, "router");
-                $(self.areaFeatureWrapper).empty();
-                $(self.areaFromInput).val("");
+                jQuery(self.areaFeatureWrapper).empty();
+                jQuery(self.areaFromInput).val("");
               }
             }
           }
@@ -980,12 +980,12 @@ export class Router extends Sideboard {
       // calculate padding
       leftPadding = 0;
       if (this.options.mapController.activePortside && this.options.mapController.activePortside.container) {
-        leftPadding = $(this.options.mapController.activePortside.container).outerWidth();
+        leftPadding = jQuery(this.options.mapController.activePortside.container).outerWidth();
       }
 
       rightPadding = 0;
       if (this.options.mapController.activeStarboard && this.options.mapController.activeStarboard.container) {
-        rightPadding = $(this.options.mapController.activeStarboard.container).outerWidth();
+        rightPadding = jQuery(this.options.mapController.activeStarboard.container).outerWidth();
       }
 
       // center on route
@@ -1016,7 +1016,7 @@ export class Router extends Sideboard {
       return [];
     }
     const mapData = this.mapData;
-    const layerId = mode === "router" ? $(this.routerLayersSelect).val() : $(this.areaLayersSelect).val();
+    const layerId = mode === "router" ? jQuery(this.routerLayersSelect).val() : jQuery(this.areaLayersSelect).val();
     const layer = self.options.mapController.proxy.layerController.arrLayers[layerId];
     let activeLayer = mode === "router" ? self.activeLayerValue : self.activeLayerValueArea;
     const unstyledFeatures = [];
@@ -1138,7 +1138,7 @@ export class Router extends Sideboard {
     if (this.options.mapController.data.showFeatures) {
       if (scope[mode + "FeatureWrapper"] === undefined) {
         scope[mode + "FeatureWrapper"] = document.createElement('div');
-        $(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
+        jQuery(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
         scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
       }
     }
@@ -1631,7 +1631,7 @@ export class Router extends Sideboard {
       self.routerInstructionsWrapper.className = routingConstants.ROUTER_INSTRUCTIONS_WRAPPER;
       self.routerViewContentWrapper.appendChild(self.routerInstructionsWrapper);
     } else {
-      $(self.routerInstructionsWrapper).empty();
+      jQuery(self.routerInstructionsWrapper).empty();
     }
 
     routerInstructionsHeader = document.createElement('div');
@@ -1639,7 +1639,7 @@ export class Router extends Sideboard {
 
     if (routeResponse) {
       if (!(routeResponse.features && routeResponse.features.length > 0) || !this.options.mapController.data.showFeatures) {
-        $(".c4g-router-instructions-wrapper").css('display', 'block');
+        jQuery(".c4g-router-instructions-wrapper").css('display', 'block');
       }
       if (this.options.mapController.data.router_api_selection == '1' || routeResponse.routeType == '1') {//OSRM-API:5.x
         if (routeResponse.routes[routeNumber].legs[0].summary) {
@@ -1939,9 +1939,9 @@ export class Router extends Sideboard {
   clickFeatureEntryForFeature(feature) {
     const featureId = feature.get('tid');
     if (this.entryWrapper) {
-      $(this.entryWrapper).children().each(function (index, element) {
-        if ($(element).data('id') === featureId) {
-          $(element).click();
+      jQuery(this.entryWrapper).children().each(function (index, element) {
+        if (jQuery(element).data('id') === featureId) {
+          jQuery(element).click();
         }
       });
     }
@@ -1957,18 +1957,18 @@ export class Router extends Sideboard {
     const features = scope.features;
     const type = scope.type;
     if (scope[mode + "FeatureWrapper"]) {
-      $(scope[mode + "FeatureWrapper"]).empty();
+      jQuery(scope[mode + "FeatureWrapper"]).empty();
       const routerLayers = this.options.mapController.data.routerLayers;
-      const chosenLayerId = $(scope[mode + "LayersSelect"]).val();
+      const chosenLayerId = jQuery(scope[mode + "LayersSelect"]).val();
       const chosenOption = mode === "router" ? scope.activeLayerValue : scope.activeLayerValueArea;
       const values = routerLayers[chosenLayerId][chosenOption].keys;
       const labels = routerLayers[chosenLayerId][chosenOption].labels;
 
       let entryWrapper = document.createElement("ul");
-      $(entryWrapper).addClass("route-features-list-wrapper");
+      jQuery(entryWrapper).addClass("route-features-list-wrapper");
       for (let i = 0; i < features.length; i++) {
         let entry = document.createElement('li');
-        $(entry).addClass("route-features-list-element");
+        jQuery(entry).addClass("route-features-list-element");
         if (type === "table") {
           for (let j = 0; j < values.length; j++) {
             let valueDiv = document.createElement('div');
@@ -2016,16 +2016,16 @@ export class Router extends Sideboard {
           popupInfos.content = entry.innerHTML;
           currentFeature.set('popup', popupInfos);
         }
-        $(entry).addClass(cssConstants.INACTIVE);
-        $(entry).data('id', features[i].id);
-        $(entry).on('click', function (event) {
+        jQuery(entry).addClass(cssConstants.INACTIVE);
+        jQuery(entry).data('id', features[i].id);
+        jQuery(entry).on('click', function (event) {
           scope.routerFeaturesSource.forEachFeature(function (tmpFeature) {
             let layer = undefined;
             if (mode === "area") {
-              layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.areaLayersSelect).val()];
+              layer = scope.options.mapController.proxy.layerController.arrLayers[jQuery(scope.areaLayersSelect).val()];
             }
             else if (mode === "router") {
-              layer = scope.options.mapController.proxy.layerController.arrLayers[$(scope.routerLayersSelect).val()];
+              layer = scope.options.mapController.proxy.layerController.arrLayers[jQuery(scope.routerLayersSelect).val()];
             }
             if (tmpFeature.get('tid') === features[i].id) {
               let clickStyleId = scope.options.mapController.data.clickLocstyle;
@@ -2056,11 +2056,11 @@ export class Router extends Sideboard {
             }
           });
           // refresh css classes
-          $(this).parent().children('li').each(function (index, element) {
-            $(element).addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
+          jQuery(this).parent().children('li').each(function (index, element) {
+            jQuery(element).addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
           });
-          $(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
-          $("div.c4g-portside-content-container").animate({scrollTop: entry.offsetTop - 300});
+          jQuery(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
+          jQuery("div.c4g-portside-content-container").animate({scrollTop: entry.offsetTop - 300});
           scope.update();
         });
 
@@ -2085,7 +2085,7 @@ export class Router extends Sideboard {
     }
     let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
     let profileId = this.options.mapController.data.profile;
-    let url = 'con4gis/areaService/' + profileId + '/' + $(this.areaLayersSelect).val() + '/' + $(self.toggleDetourArea).val() + '/' + fromCoord;
+    let url = 'con4gis/areaService/' + profileId + '/' + jQuery(this.areaLayersSelect).val() + '/' + jQuery(self.toggleDetourArea).val() + '/' + fromCoord;
     if (this.routeProfile && this.routeProfile.active) {
       url += '?profile=' + this.routeProfile.active;
     }
@@ -2111,12 +2111,12 @@ export class Router extends Sideboard {
           let view = self.options.mapController.map.getView();
           let leftPadding = 0;
           if (self.options.mapController.activePortside && self.options.mapController.activePortside.container) {
-            leftPadding = $(self.options.mapController.activePortside.container).outerWidth();
+            leftPadding = jQuery(self.options.mapController.activePortside.container).outerWidth();
           }
 
           let rightPadding = 0;
           if (self.options.mapController.activeStarboard && self.options.mapController.activeStarboard.container) {
-            rightPadding = $(self.options.mapController.activeStarboard.container).outerWidth();
+            rightPadding = jQuery(self.options.mapController.activeStarboard.container).outerWidth();
           }
           let extent = self.routerFeaturesSource.getExtent();
           extent = ol.extent.extend(extent, self.areaLayer.getSource().getExtent());
@@ -2134,12 +2134,12 @@ export class Router extends Sideboard {
           self.routingAltWaySource.clear();
           self.routingHintSource.clear();
           self.locationsSource.clear();
-          $(self.routerFeatureWrapper).empty();
-          $(self.routerInstructionsWrapper).empty();
-          $(".router-content-switcher").css('display', 'none');
-          $(self.fromInput).val("");
+          jQuery(self.routerFeatureWrapper).empty();
+          jQuery(self.routerInstructionsWrapper).empty();
+          jQuery(".router-content-switcher").css('display', 'none');
+          jQuery(self.fromInput).val("");
           self.fromValue = null;
-          $(self.toInput).val("");
+          jQuery(self.toInput).val("");
           self.toValue = null;
         }
 
@@ -2167,7 +2167,7 @@ export class Router extends Sideboard {
     let coords = coordinates.coords;
     let profileId = this.options.mapController.data.profile;
     let url = "/con4gis/reverseNominatimService/" + profileId + '?format=json&lat=' + coords.latitude + '&lon=' + coords.longitude;
-    $.ajax({url: url}).done(function (data) {
+    jQuery.ajax({url: url}).done(function (data) {
       let address = "";
       if (data.address) {
         if (data.address.city) {
@@ -2198,7 +2198,7 @@ export class Router extends Sideboard {
         address += ", ";
       }
 
-      $(cssId).val(address);
+      jQuery(cssId).val(address);
       switch (property) {
         case "fromValue":
           scope.updateLinkFragments("addressFrom", address);
@@ -2234,8 +2234,8 @@ export class Router extends Sideboard {
     const scope = this;
     
     scope.fnMapAreaInteraction = function (evt) {
-      if ($(scope.areaFromInput).val() === "") {
-        scope.performReverseSearch($(scope.areaFromInput), ol.proj.toLonLat(evt.coordinate));
+      if (jQuery(scope.areaFromInput).val() === "") {
+        scope.performReverseSearch(jQuery(scope.areaFromInput), ol.proj.toLonLat(evt.coordinate));
         scope.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
         scope.setAreaPoint(evt.coordinate);
         scope.performArea(scope.areaValue);
@@ -2251,7 +2251,7 @@ export class Router extends Sideboard {
    */
   setAreaPoint(coordinates) {
     if (this.areaValue) {
-      let point = $.extend(true, {}, this.areaValue);
+      let point = jQuery.extend(true, {}, this.areaValue);
       point.transform('EPSG:4326', 'EPSG:3857');
       let feature = new ol.Feature({geometry: point});
       let locstyleId = this.options.mapController.data.areaCenterLocstyle;
@@ -2274,7 +2274,7 @@ export class Router extends Sideboard {
       this.fromValue = new ol.geom.Point(coordinates);
     }
     this.fromValue.transform('EPSG:3857', 'EPSG:4326');
-    let point = $.extend(true, {}, this.fromValue);
+    let point = jQuery.extend(true, {}, this.fromValue);
     let feature = new ol.Feature({geometry: point});
     let locstyleId = this.options.mapController.data.router_from_locstyle;
     feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
@@ -2294,7 +2294,7 @@ export class Router extends Sideboard {
       this.toValue = new ol.geom.Point(coordinates);
     }
     this.toValue.transform('EPSG:3857', 'EPSG:4326');
-    let point = $.extend(true, {}, this.toValue);
+    let point = jQuery.extend(true, {}, this.toValue);
     let feature = new ol.Feature({geometry: point});
     let locstyleId = this.options.mapController.data.router_to_locstyle;
     feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
@@ -2318,12 +2318,12 @@ export class Router extends Sideboard {
     }
     else if (this.options.mapController.data.router_profiles && Object.keys(this.options.mapController.data.router_profiles).length > 1) { //check for multiple profiles and add profile-changer
       this.routeProfile = document.createElement('div');
-      $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
+      jQuery(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
       if (this.options.mapController.data.router_profiles['0']) { //add button for profile driving-car
         routeProfile.car = document.createElement('button');
-        $(routeProfile.car).addClass(routingConstants.ROUTER_PROFILE_CAR);
-        $(routeProfile.car).prop('title',langRouteConstants.CAR);
-        this.$routeProfileCar = $(routeProfile.car);
+        jQuery(routeProfile.car).addClass(routingConstants.ROUTER_PROFILE_CAR);
+        jQuery(routeProfile.car).prop('title',langRouteConstants.CAR);
+        this.$routeProfileCar = jQuery(routeProfile.car);
         this.routeProfile.appendChild(routeProfile.car);
         this.$routeProfileCar.click(function (event) {
           self.clearSiblings(this);
@@ -2337,44 +2337,44 @@ export class Router extends Sideboard {
         let spanTruck = document.createElement('span');
         routeProfile.truck = document.createElement('button');
         routeProfile.truck.list = document.createElement('ul');
-        this.$routeProfileTruck = $(routeProfile.truck);
+        this.$routeProfileTruck = jQuery(routeProfile.truck);
         if (this.options.mapController.data.router_profiles['1']) {
           let child = document.createElement('li');
           child.innerHTML = this.options.mapController.data.router_profiles[1];
-          $(child).data('profile', [1]);
-          $(child).click(function (event) {
-            self.childClick($(this));
+          jQuery(child).data('profile', [1]);
+          jQuery(child).click(function (event) {
+            self.childClick(jQuery(this));
           });
           if (!this.$routeProfileTruck.data('profile')) { //add existing default profile to button
             this.$routeProfileTruck.data('profile', 1);
-            $(child).addClass(cssConstants.ACTIVE);
+            jQuery(child).addClass(cssConstants.ACTIVE);
           }
           routeProfile.truck.list.appendChild(child);
         }
         if (this.options.mapController.data.router_profiles['11']) {
           let child = document.createElement('li');
           child.innerHTML = this.options.mapController.data.router_profiles[11];
-          $(child).data('profile', [11]);
-          $(child).click(function (event) {
-            self.childClick($(this));
+          jQuery(child).data('profile', [11]);
+          jQuery(child).click(function (event) {
+            self.childClick(jQuery(this));
           });
           if (!this.$routeProfileTruck.data('profile')) { //add existing default profile to button
             this.$routeProfileTruck.data('profile', 11);
-            $(child).addClass(cssConstants.ACTIVE);
+            jQuery(child).addClass(cssConstants.ACTIVE);
           }
           routeProfile.truck.list.appendChild(child);
         }
 
 
-        $(routeProfile.truck).addClass(routingConstants.ROUTER_PROFILE_TRUCK);
-        $(routeProfile.truck).prop('title',langRouteConstants.TRUCK);
+        jQuery(routeProfile.truck).addClass(routingConstants.ROUTER_PROFILE_TRUCK);
+        jQuery(routeProfile.truck).prop('title',langRouteConstants.TRUCK);
 
 
         if (routeProfile.truck.list.children.length == 1) { //ignore dropdown list, if only one truck profile is enabled
           this.routeProfile.appendChild(routeProfile.truck);
           this.$routeProfileTruck.click(function (event) {
             self.clearSiblings(this);
-            self.routeProfile.active = $(this).data('profile');
+            self.routeProfile.active = jQuery(this).data('profile');
             self.recalculateRoute();
           });
         }
@@ -2383,8 +2383,8 @@ export class Router extends Sideboard {
           spanTruck.appendChild(routeProfile.truck.list);
           this.routeProfile.appendChild(spanTruck);
           this.$routeProfileTruck.click(function (event) {
-            self.clearSiblings($(this).parent());
-            self.routeProfile.active = $(this).data('profile');
+            self.clearSiblings(jQuery(this).parent());
+            self.routeProfile.active = jQuery(this).data('profile');
             self.recalculateRoute();
           });
         }
@@ -2398,31 +2398,31 @@ export class Router extends Sideboard {
         let spanBike = document.createElement('span');
         routeProfile.bike = document.createElement('button');
         routeProfile.bike.list = document.createElement('ul');
-        this.$routeProfileBike = $(routeProfile.bike);
+        this.$routeProfileBike = jQuery(routeProfile.bike);
         for (let i = 2; i < 8; i++) { //iterate over all possible cycling profiles
           if (this.options.mapController.data.router_profiles[i]) {
             let child = document.createElement('li');
             child.innerHTML = this.options.mapController.data.router_profiles[i];
-            $(child).data('profile', [i]);
-            $(child).click(function (event) {
-              self.childClick($(child));
+            jQuery(child).data('profile', [i]);
+            jQuery(child).click(function (event) {
+              self.childClick(jQuery(child));
             });
             if (!this.$routeProfileBike.data('profile')) { //add existing default profile to button
               this.$routeProfileBike.data('profile', i);
-              $(child).addClass(cssConstants.ACTIVE);
+              jQuery(child).addClass(cssConstants.ACTIVE);
             }
             routeProfile.bike.list.appendChild(child);
           }
         }
 
-        $(routeProfile.bike).addClass(routingConstants.ROUTER_PROFILE_BIKE);
-        $(routeProfile.bike).prop('title',langRouteConstants.BIKE);
+        jQuery(routeProfile.bike).addClass(routingConstants.ROUTER_PROFILE_BIKE);
+        jQuery(routeProfile.bike).prop('title',langRouteConstants.BIKE);
 
         if (routeProfile.bike.list.children.length == 1) { //ignore dropdown list, if only one cycling profile is enabled
           this.routeProfile.appendChild(routeProfile.bike);
           this.$routeProfileBike.click(function (event) {
             self.clearSiblings(this);
-            self.routeProfile.active = $(this).data('profile');
+            self.routeProfile.active = jQuery(this).data('profile');
             self.recalculateRoute();
           });
         }
@@ -2431,8 +2431,8 @@ export class Router extends Sideboard {
           spanBike.appendChild(routeProfile.bike.list);
           this.routeProfile.appendChild(spanBike);
           this.$routeProfileBike.click(function (event) {
-            self.clearSiblings($(this).parent());
-            self.routeProfile.active = $(this).data('profile');
+            self.clearSiblings(jQuery(this).parent());
+            self.routeProfile.active = jQuery(this).data('profile');
             self.recalculateRoute();
           });
         }
@@ -2442,32 +2442,32 @@ export class Router extends Sideboard {
         let spanFoot = document.createElement('span');
         routeProfile.foot = document.createElement('button');
         routeProfile.foot.list = document.createElement('ul');
-        this.$routeProfileFoot = $(routeProfile.foot);
+        this.$routeProfileFoot = jQuery(routeProfile.foot);
         for (let i = 8; i < 10; i++) { //iterate over possible profiles
           if (this.options.mapController.data.router_profiles[i]) {
             let child = document.createElement('li');
             child.innerHTML = this.options.mapController.data.router_profiles[i];
-            $(child).data('profile', [i]);
-            $(child).click(function (event) {
-              self.childClick($(this));
+            jQuery(child).data('profile', [i]);
+            jQuery(child).click(function (event) {
+              self.childClick(jQuery(this));
             });
             if (!this.$routeProfileFoot.data('profile')) { //add existing default profile to button
               this.$routeProfileFoot.data('profile', i);
-              $(child).addClass(cssConstants.ACTIVE);
+              jQuery(child).addClass(cssConstants.ACTIVE);
             }
             routeProfile.foot.list.appendChild(child);
           }
         }
 
-        $(routeProfile.foot).addClass(routingConstants.ROUTER_PROFILE_FOOT);
-        $(routeProfile.foot).prop('title',langRouteConstants.WALK);
+        jQuery(routeProfile.foot).addClass(routingConstants.ROUTER_PROFILE_FOOT);
+        jQuery(routeProfile.foot).prop('title',langRouteConstants.WALK);
 
 
         if (routeProfile.foot.list.children.length == 1) { //ignore dropdown list, if only one walking profile is enabled
           this.routeProfile.appendChild(routeProfile.foot);
           this.$routeProfileFoot.click(function (event) {
             self.clearSiblings(this);
-            self.routeProfile.active = $(this).data('profile');
+            self.routeProfile.active = jQuery(this).data('profile');
             self.recalculateRoute();
           });
         }
@@ -2476,17 +2476,17 @@ export class Router extends Sideboard {
           spanFoot.appendChild(routeProfile.foot.list);
           this.routeProfile.appendChild(spanFoot);
           this.$routeProfileFoot.click(function (event) {
-            self.clearSiblings($(this).parent());
-            self.routeProfile.active = $(this).data('profile');
+            self.clearSiblings(jQuery(this).parent());
+            self.routeProfile.active = jQuery(this).data('profile');
             self.recalculateRoute();
           });
         }
       }
       if (this.options.mapController.data.router_profiles['10']) { //add button for profile wheelchair
         routeProfile.wheelchair = document.createElement('button');
-        $(routeProfile.wheelchair).addClass(routingConstants.ROUTER_PROFILE_WHEELCHAIR);
-        $(routeProfile.wheelchair).prop('title',langRouteConstants.WHEEL);
-        this.$routeProfileWheelchair = $(routeProfile.wheelchair);
+        jQuery(routeProfile.wheelchair).addClass(routingConstants.ROUTER_PROFILE_WHEELCHAIR);
+        jQuery(routeProfile.wheelchair).prop('title',langRouteConstants.WHEEL);
+        this.$routeProfileWheelchair = jQuery(routeProfile.wheelchair);
         this.routeProfile.appendChild(routeProfile.wheelchair);
         this.$routeProfileWheelchair.click(function (event) {
           self.clearSiblings(this);
@@ -2499,32 +2499,32 @@ export class Router extends Sideboard {
           let spanMotor = document.createElement('span');
           routeProfile.motorcycle = document.createElement('button');
           routeProfile.motorcycle.list = document.createElement('ul');
-          this.$routeProfileMotorcycle = $(routeProfile.motorcycle);
+          this.$routeProfileMotorcycle = jQuery(routeProfile.motorcycle);
           for (let i = 12; i < 14; i++) { //iterate over possible profiles
             if (this.options.mapController.data.router_profiles[i]) {
               let child = document.createElement('li');
               child.innerHTML = this.options.mapController.data.router_profiles[i];
-              $(child).data('profile', [i]);
-              $(child).click(function (event) {
-                self.childClick($(this));
+              jQuery(child).data('profile', [i]);
+              jQuery(child).click(function (event) {
+                self.childClick(jQuery(this));
               });
               if (!this.$routeProfileMotorcycle.data('profile')) { //add existing default profile to button
                 this.$routeProfileMotorcycle.data('profile', i);
-                $(child).addClass(cssConstants.ACTIVE);
+                jQuery(child).addClass(cssConstants.ACTIVE);
               }
               routeProfile.motorcycle.list.appendChild(child);
             }
           }
 
-          $(routeProfile.motorcycle).addClass(routingConstants.ROUTER_PROFILE_SCOOTER);
-          $(routeProfile.motorcycle).prop('title',langRouteConstants.SCOOTER);
+          jQuery(routeProfile.motorcycle).addClass(routingConstants.ROUTER_PROFILE_SCOOTER);
+          jQuery(routeProfile.motorcycle).prop('title',langRouteConstants.SCOOTER);
 
 
           if (routeProfile.motorcycle.list.children.length == 1) { //ignore dropdown list, if only one motorcycle profile is enabled
             this.routeProfile.appendChild(routeProfile.motorcycle);
             this.$routeProfileMotorcycle.click(function (event) {
               self.clearSiblings(this);
-              self.routeProfile.active = $(this).data('profile');
+              self.routeProfile.active = jQuery(this).data('profile');
               self.recalculateRoute();
             });
           }
@@ -2533,8 +2533,8 @@ export class Router extends Sideboard {
             spanMotor.appendChild(routeProfile.motorcycle.list);
             this.routeProfile.appendChild(spanMotor);
             this.$routeProfileMotorcycle.click(function (event) {
-              self.clearSiblings($(this).parent());
-              self.routeProfile.active = $(this).data('profile');
+              self.clearSiblings(jQuery(this).parent());
+              self.routeProfile.active = jQuery(this).data('profile');
               self.recalculateRoute();
             });
           }
@@ -2545,11 +2545,11 @@ export class Router extends Sideboard {
         self.recalculateRoute(); //update the route
       };
       this.clearSiblings = function (element) { //function to adjust css-classes after changing profile
-        let siblings = $(element).parent().children();
+        let siblings = jQuery(element).parent().children();
         for (let i = 0; i < siblings.length; i++) {
-          $(siblings[i]).removeClass(cssConstants.ACTIVE);
+          jQuery(siblings[i]).removeClass(cssConstants.ACTIVE);
         }
-        $(element).addClass(cssConstants.ACTIVE);
+        jQuery(element).addClass(cssConstants.ACTIVE);
       };
       for (let profile in this.options.mapController.data.router_profiles) { //set default value for initial routing
         if (this.options.mapController.data.router_profiles.hasOwnProperty(profile)) {
@@ -2561,7 +2561,7 @@ export class Router extends Sideboard {
     else if (this.options.mapController.data.customProfiles && this.options.mapController.data.customProfiles.length > 1) {
       console.log(this.options.mapController.data.customProfiles);
       this.routeProfile = document.createElement('div');
-      $(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
+      jQuery(this.routeProfile).addClass(routingConstants.ROUTER_PROFILE_WRAPPER);
       this.customProfiles = [];
       self.routeProfile.active = this.options.mapController.data.customProfiles[0].profileKey;
       for (let customProfileId in this.options.mapController.data.customProfiles) {
@@ -2581,25 +2581,25 @@ export class Router extends Sideboard {
         }
 
         routeProfile[customProfile.profileKey] = document.createElement('button');
-        $(routeProfile[customProfile.profileKey]).prop('title', customProfile.showName);
-        $(routeProfile[customProfile.profileKey]).click(function (event) {
+        jQuery(routeProfile[customProfile.profileKey]).prop('title', customProfile.showName);
+        jQuery(routeProfile[customProfile.profileKey]).click(function (event) {
             self.clearSiblings(this);
             self.routeProfile.active = customProfile.profileKey;
             self.recalculateRoute();
         });
-        $(routeProfile[customProfile.profileKey]).addClass(selector);
+        jQuery(routeProfile[customProfile.profileKey]).addClass(selector);
         if (customProfileId == 0) {
-          $(routeProfile[customProfile.profileKey]).addClass(cssConstants.ACTIVE);
+          jQuery(routeProfile[customProfile.profileKey]).addClass(cssConstants.ACTIVE);
         }
         this.routeProfile.appendChild(routeProfile[customProfile.profileKey]);
-        this.customProfiles.push($(routeProfile[customProfile.profileKey]));
+        this.customProfiles.push(jQuery(routeProfile[customProfile.profileKey]));
       }
       this.clearSiblings = function (element) { //function to adjust css-classes after changing profile
-        let siblings = $(element).parent().children();
+        let siblings = jQuery(element).parent().children();
         for (let i = 0; i < siblings.length; i++) {
-          $(siblings[i]).removeClass(cssConstants.ACTIVE);
+          jQuery(siblings[i]).removeClass(cssConstants.ACTIVE);
         }
-        $(element).addClass(cssConstants.ACTIVE);
+        jQuery(element).addClass(cssConstants.ACTIVE);
       };
     }
     else if (this.options.mapController.data.customProfiles){ //fallback for only one custom profile
@@ -2628,7 +2628,7 @@ export class Router extends Sideboard {
     positionButton.className = routingConstants.ROUTE_POSITION;
     positionButton.title = langRouteConstants.ROUTE_POSITION;
     positionButton.innerHTML = "";
-    $(positionButton).on("click", function (event) {
+    jQuery(positionButton).on("click", function (event) {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(handleNewPosition);
       } else {
@@ -2666,8 +2666,8 @@ export class Router extends Sideboard {
     toggleDetourWrapper.appendChild(p);
     toggleDetourWrapper.appendChild(scope[key]);
     toggleDetourWrapper.appendChild(output);
-    $(scope[key]).on('input', function () {
-      let control = $(this);
+    jQuery(scope[key]).on('input', function () {
+      let control = jQuery(this);
       let range = control.attr('max') - control.attr('min');
       let pos = ((control.val() - control.attr('min')) / range) * 100;
       let posOffset = Math.round(50 * pos / 100) - (25);
@@ -2677,14 +2677,14 @@ export class Router extends Sideboard {
         .text(control.val() + " km");
       scope.updateLinkFragments("detour", control.val());
     });
-    $(scope[key]).on('change', function () {
+    jQuery(scope[key]).on('change', function () {
       if (mode === "route") {
         scope.recalculateRoute();
       } else {
         scope.performArea(scope.areaValue);
       }
     });
-    $(scope[key]).trigger('input');
+    jQuery(scope[key]).trigger('input');
     return toggleDetourWrapper;
   }
   addInterimField(){
@@ -2708,7 +2708,7 @@ export class Router extends Sideboard {
     routerOverClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
     routerOverClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
     routerOverClear.id = this.overValue && this.overValue.length ? this.overValue.length -1 : 0;
-    this.$routerOverClear = $(routerOverClear);
+    this.$routerOverClear = jQuery(routerOverClear);
 
     this.overInputWrapper.appendChild(routerOverLabel);
     this.overInputWrapper.appendChild(this.overInput);
@@ -2718,10 +2718,10 @@ export class Router extends Sideboard {
     this.$routerOverClear.click(function (event) {
       event.preventDefault();
       scope.clearOver(scope.$overInput, this.id);
-      $(this).parent().remove();
+      jQuery(this).parent().remove();
       //buttonOver.show();
     });
-    scope.$overInput = $(scope.overInput);
+    scope.$overInput = jQuery(scope.overInput);
     this.$overInput.on('change', function () {
       scope.performSearch(scope.$overInput, "overValue", function() {
         scope.performViaRoute();
@@ -2770,21 +2770,21 @@ export class Router extends Sideboard {
       if (this.options.mapController.data.showFeatures && this.options.mapController.data.showInstructions) {
         let buttonFeatures = document.createElement("button");
         buttonFeatures.innerHTML = this.options.mapController.data.featureLabel;
-        $(buttonFeatures).on('click', function () {
-          $(".c4g-router-instructions-wrapper").css('display', 'none');
-          $(".router-features-display").css('display', 'block');
+        jQuery(buttonFeatures).on('click', function () {
+          jQuery(".c4g-router-instructions-wrapper").css('display', 'none');
+          jQuery(".router-features-display").css('display', 'block');
         });
 
         let buttonInstructions = document.createElement('button');
         buttonInstructions.innerHTML = this.options.mapController.data.instructionLabel;
-        $(buttonInstructions).on('click', function () {
-          $(".c4g-router-instructions-wrapper").css('display', 'block');
-          $(".router-features-display").css('display', 'none');
+        jQuery(buttonInstructions).on('click', function () {
+          jQuery(".c4g-router-instructions-wrapper").css('display', 'block');
+          jQuery(".router-features-display").css('display', 'none');
         });
 
         self.contentSwitcher = document.createElement("div");
         self.contentSwitcher.className = "router-content-switcher";
-        $(self.contentSwitcher).hide();
+        jQuery(self.contentSwitcher).hide();
         self.contentSwitcher.appendChild(buttonFeatures);
         self.contentSwitcher.appendChild(buttonInstructions);
         routerViewContentWrapper.appendChild(self.contentSwitcher);
@@ -2808,7 +2808,7 @@ export class Router extends Sideboard {
       routerFromClear.className = routingConstants.ROUTER_INPUT_CLEAR;
       routerFromClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
       routerFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
-      this.$routerFromClear = $(routerFromClear);
+      this.$routerFromClear = jQuery(routerFromClear);
       this.$routerFromClear.click(function (event) {
         event.preventDefault();
         self.clearInput(self.$fromInput);
@@ -2824,7 +2824,7 @@ export class Router extends Sideboard {
         buttonOver = document.createElement('button');
         buttonOver.className = routingConstants.ROUTER_OVER;
         buttonOver.title = langRouteConstants.ROUTER_OVER;
-        this.$buttonOver = $(buttonOver);
+        this.$buttonOver = jQuery(buttonOver);
         this.routerButtonBar.appendChild(buttonOver);
 
         this.$buttonOver.on('click', function(){self.addInterimField()});
@@ -2834,7 +2834,7 @@ export class Router extends Sideboard {
         switchFromTo = document.createElement('button');
         switchFromTo.className = routingConstants.ROUTER_SWITCH;
         switchFromTo.title = langRouteConstants.ROUTER_SWITCH;
-        this.$switchFromTo = $(switchFromTo);
+        this.$switchFromTo = jQuery(switchFromTo);
         this.routerButtonBar.appendChild(switchFromTo);
       }
 
@@ -2864,7 +2864,7 @@ export class Router extends Sideboard {
         });
       }
 
-      this.$fromInput = $(this.fromInput);
+      this.$fromInput = jQuery(this.fromInput);
       this.$fromInput.on('change', function () {
         self.fromValue = null;
         self.performSearch(self.$fromInput, "fromValue");
@@ -2910,18 +2910,18 @@ export class Router extends Sideboard {
         }
         self.routerLayersValueSelect = document.createElement('div');
         self.routerLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
-        $(self.routerLayersSelect).on('change', function () {
-          $(self.routerLayersValueSelect).empty();
-          let selected = $(this).val();
+        jQuery(self.routerLayersSelect).on('change', function () {
+          jQuery(self.routerLayersValueSelect).empty();
+          let selected = jQuery(this).val();
           let clickFunction = function () {
             self.activeLayerValue = this.innerHTML;
-            $(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
-            $(this).siblings().addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
+            jQuery(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
+            jQuery(this).siblings().addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
             self.reloadFeatureValues("router");
             if (self.response && self.response.features) {
               self.showFeatures(self.response.features, self.response.type, "router")
             }
-            let layerId = $(self.routerLayersSelect).val();
+            let layerId = jQuery(self.routerLayersSelect).val();
             self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValue]['mapLabel']);
           };
           let buttonActivated = false;
@@ -2930,31 +2930,31 @@ export class Router extends Sideboard {
               let buttonElement = document.createElement('button');
               buttonElement.innerHTML = i;
               buttonElement.value = mapData.routerLayers[selected][i]['keys'];
-              $(buttonElement).on('click', clickFunction);
+              jQuery(buttonElement).on('click', clickFunction);
               self.routerLayersValueSelect.appendChild(buttonElement);
               if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
-                $(buttonElement).click();
+                jQuery(buttonElement).click();
                 buttonActivated = true;
               }
             }
           }
           if (!buttonActivated) {
-            $(self.routerLayersValueSelect.firstChild).trigger('click');
+            jQuery(self.routerLayersValueSelect.firstChild).trigger('click');
           }
           if (self.routerLayersValueSelect.childElementCount === 1) {
             // only one button for selection, the bar can be hidden
-            $(self.routerLayersValueSelect.firstChild).css("display", "none");
+            jQuery(self.routerLayersValueSelect.firstChild).css("display", "none");
           }
 
           self.recalculateRoute();
         });
-        $(self.routerLayersSelect).trigger('change');
+        jQuery(self.routerLayersSelect).trigger('change');
         if (Object.keys(mapData.routerLayers).length <= 1) {
-          $(self.routerLayersSelect).css('display', 'none');
+          jQuery(self.routerLayersSelect).css('display', 'none');
         }
-        $(self.routerLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
-        $(self.routerLayersInput).insertBefore($(routerViewInputWrapper));
-        $(self.routerLayersValueSelect).insertBefore($(routerViewInputWrapper));
+        jQuery(self.routerLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
+        jQuery(self.routerLayersInput).insertBefore(jQuery(routerViewInputWrapper));
+        jQuery(self.routerLayersValueSelect).insertBefore(jQuery(routerViewInputWrapper));
       };
       /**
        * End routerUiFunction
@@ -2997,7 +2997,7 @@ export class Router extends Sideboard {
       routerToClear.className = routingConstants.ROUTER_INPUT_CLEAR;
       routerToClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
       routerToClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
-      this.$routerToClear = $(routerToClear);
+      this.$routerToClear = jQuery(routerToClear);
 
       this.toInputWrapper.appendChild(routerToLabel);
       this.toInputWrapper.appendChild(routerToPosition);
@@ -3009,7 +3009,7 @@ export class Router extends Sideboard {
         self.clearInput(self.$toInput);
       });
 
-      this.$toInput = $(this.toInput);
+      this.$toInput = jQuery(this.toInput);
       this.$toInput.on('change', function () {
         // reset toValue for keydown listener
         self.toValue = null;
@@ -3038,7 +3038,7 @@ export class Router extends Sideboard {
         let routeStartButton = document.createElement("button");
         routeStartButton.className = routingConstants.ROUTE_START_BUTTON;
         routeStartButton.innerText = langRouteConstants.START_ROUTE;
-        $(routeStartButton).on("click", function (event) {
+        jQuery(routeStartButton).on("click", function (event) {
           if (self.fromValue && self.toValue) {
             self.performViaRoute(self.fromValue, self.toValue);
           } else {
@@ -3127,7 +3127,7 @@ export class Router extends Sideboard {
     this.areaFromInput.className = routingConstants.ROUTER_INPUT_FROM;
     this.areaFromInput.id = this.areaFromInput.name = "areaFrom";
 
-    this.$areaFromInput = $(this.areaFromInput);
+    this.$areaFromInput = jQuery(this.areaFromInput);
     this.$areaFromInput.on('change', function () {
       self.performSearch(self.$areaFromInput, "areaValue", function() {
         // check if areaValue is set
@@ -3150,7 +3150,7 @@ export class Router extends Sideboard {
     areaFromClear.className = routingConstants.ROUTER_INPUT_CLEAR;
     areaFromClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
     areaFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
-    this.$areaFromClear = $(areaFromClear);
+    this.$areaFromClear = jQuery(areaFromClear);
 
     this.areaFromInputWrapper.appendChild(areaFromLabel);
     this.areaFromInputWrapper.appendChild(areaPosition);
@@ -3159,7 +3159,7 @@ export class Router extends Sideboard {
 
     this.$areaFromClear.on("click", function (event) {
       event.preventDefault();
-      self.clearInput($(self.areaFromInput));
+      self.clearInput(jQuery(self.areaFromInput));
     });
     if (this.routeProfile && this.routeProfile.children) {
       areaViewInputWrapper.appendChild(this.routeProfile);
@@ -3185,18 +3185,18 @@ export class Router extends Sideboard {
       }
       self.areaLayersValueSelect = document.createElement('div');
       self.areaLayersValueSelect.className = routingConstants.ROUTE_LAYER_VALUES;
-      $(self.areaLayersSelect).on('change', function () {
-        $(self.areaLayersValueSelect).empty();
-        let selected = $(this).val();
+      jQuery(self.areaLayersSelect).on('change', function () {
+        jQuery(self.areaLayersValueSelect).empty();
+        let selected = jQuery(this).val();
         let clickFunction = function () {
           self.activeLayerValueArea = this.innerHTML;
-          $(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
-          $(this).siblings().addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
+          jQuery(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
+          jQuery(this).siblings().addClass(cssConstants.INACTIVE).removeClass(cssConstants.ACTIVE);
           self.reloadFeatureValues("area");
           if (self.response) {
             self.showFeatures(self.response[0], self.response[1], "area")
           }
-          let layerId = $(self.areaLayersSelect).val();
+          let layerId = jQuery(self.areaLayersSelect).val();
           self.updateLinkFragments("searchType", self.options.mapController.data.routerLayers[layerId][self.activeLayerValueArea]['mapLabel']);
         };
         let buttonActivated = false;
@@ -3205,32 +3205,32 @@ export class Router extends Sideboard {
             let buttonElement = document.createElement('button');
             buttonElement.innerHTML = i;
             buttonElement.value = mapData.routerLayers[selected][i]['keys'];
-            $(buttonElement).on('click', clickFunction);
+            jQuery(buttonElement).on('click', clickFunction);
             self.areaLayersValueSelect.appendChild(buttonElement);
             if (self.desiredButtonRouting && self.desiredButtonRouting === i) {
-              $(buttonElement).trigger("click");
+              jQuery(buttonElement).trigger("click");
               buttonActivated = true;
             }
           }
         }
         if (!buttonActivated) {
-          $(self.areaLayersValueSelect.firstChild).trigger('click');
+          jQuery(self.areaLayersValueSelect.firstChild).trigger('click');
         }
         if (self.areaLayersValueSelect.childElementCount === 1) {
           // only one button for selection, the bar can be hidden
-          $(self.areaLayersValueSelect.firstChild).css("display", "none");
+          jQuery(self.areaLayersValueSelect.firstChild).css("display", "none");
         }
         if (self.areaValue) {
           self.performArea(self.areaValue);
         }
       });
-      $(self.areaLayersSelect).trigger('change');
+      jQuery(self.areaLayersSelect).trigger('change');
       if (Object.keys(mapData.routerLayers).length <= 1) {
-        $(self.areaLayersSelect).css('display', 'none');
+        jQuery(self.areaLayersSelect).css('display', 'none');
       }
-      $(self.areaLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
-      $(self.areaLayersInput).insertBefore($(areaViewInputWrapper));
-      $(self.areaLayersValueSelect).insertBefore($(areaViewInputWrapper));
+      jQuery(self.areaLayersSelect).addClass(routingConstants.ROUTE_LAYERS_SELECT);
+      jQuery(self.areaLayersInput).insertBefore(jQuery(areaViewInputWrapper));
+      jQuery(self.areaLayersValueSelect).insertBefore(jQuery(areaViewInputWrapper));
     };
     /**
      * Area UI callback
@@ -3265,7 +3265,7 @@ export class Router extends Sideboard {
       areaStartButton.className = "c4g-area-search-start";
       areaStartButton.innerText = "Suche starten";
       let callCnt = 0;
-      $(areaStartButton).on("click", function (event) {
+      jQuery(areaStartButton).on("click", function (event) {
         if (self.areaValue) {
           self.performArea(self.areaValue);
         } else {
@@ -3425,9 +3425,9 @@ export class Router extends Sideboard {
     };
 
 
-    $('[data-start]', routerInstruction).each(function (index, element) {
+    jQuery('[data-start]', routerInstruction).each(function (index, element) {
 
-      var $element = $(element);
+      var $element = jQuery(element);
 
       $element.click(function () {
         fnItemClick($element);
@@ -3442,9 +3442,9 @@ export class Router extends Sideboard {
       });
 
     });
-    $('[data-pos]', routerInstruction).each(function (index, element) {
+    jQuery('[data-pos]', routerInstruction).each(function (index, element) {
 
-      var $element = $(element);
+      var $element = jQuery(element);
 
       $element.click(function () {
         fnItemClick($element);
@@ -3474,7 +3474,7 @@ export class Router extends Sideboard {
     this.routingHintSource.clear();
 
 
-    $(this.routerInstructionsWrapper).empty();
+    jQuery(this.routerInstructionsWrapper).empty();
     this.recalculateRoute();
     this.update();
   }
@@ -3489,7 +3489,7 @@ export class Router extends Sideboard {
       delete this.overValue[index];
     }
     this.$buttonOver.prop("disabled", false);
-    $(this.routerInstructionsWrapper).empty();
+    jQuery(this.routerInstructionsWrapper).empty();
     this.recalculateRoute();
     this.update();
   }
@@ -3656,17 +3656,17 @@ export class Router extends Sideboard {
    */
   showRouterError(errorText) {
     let errorDiv = document.createElement('div');
-    $(errorDiv).addClass(routingConstants.ROUTE_ERROR);
-    $(errorDiv).addClass('contentHeadline');
+    jQuery(errorDiv).addClass(routingConstants.ROUTE_ERROR);
+    jQuery(errorDiv).addClass('contentHeadline');
 
     let errorLabel = document.createElement('label');
     errorLabel.innerHTML = errorText;
     errorDiv.appendChild(errorLabel);
     let buttonClose = document.createElement('button');
-    $(buttonClose).addClass(cssConstants.POPUP_CLOSE);
-    $(buttonClose).addClass(cssConstants.ICON);
-    $(buttonClose).on('click', function () {
-        $(this).parent().remove();
+    jQuery(buttonClose).addClass(cssConstants.POPUP_CLOSE);
+    jQuery(buttonClose).addClass(cssConstants.ICON);
+    jQuery(buttonClose).on('click', function () {
+        jQuery(this).parent().remove();
       }
     )
     errorDiv.appendChild(buttonClose);
@@ -3766,7 +3766,7 @@ window.c4gMapsHooks.proxy_appendPopup.push(function(params) {
         router.open();
       }
 
-      if ($(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
+      if (jQuery(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
         // from address
         router.setFromPoint(feature.getGeometry().getCoordinates());
       } else {
