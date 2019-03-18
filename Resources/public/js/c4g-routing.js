@@ -2029,23 +2029,26 @@ export class Router extends Sideboard {
             }
             if (tmpFeature.get('tid') === features[i].id) {
               let clickStyleId = scope.options.mapController.data.clickLocstyle;
-              if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId]) {
-                scope.options.mapController.proxy.locationStyleController.loadLocationStyles([clickStyleId], {
-                  done: function () {
-                    let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
-                    // check if feature is still clicked
-                    scope.mapSelectInteraction.getFeatures().forEach(function (elem, index, array) {
-                      if (elem === tmpFeature) {
-                        // feature is still clicked, style it accordingly
-                        tmpFeature.setStyle(style);
-                      }
-                    });
-                  }
-                });
-              } else {
-                let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
-                tmpFeature.setStyle(style);
+              if (clickStyleId) {
+                if (!scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId]) {
+                  scope.options.mapController.proxy.locationStyleController.loadLocationStyles([clickStyleId], {
+                    done: function () {
+                      let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
+                      // check if feature is still clicked
+                      scope.mapSelectInteraction.getFeatures().forEach(function (elem, index, array) {
+                        if (elem === tmpFeature) {
+                          // feature is still clicked, style it accordingly
+                          tmpFeature.setStyle(style);
+                        }
+                      });
+                    }
+                  });
+                } else {
+                  let style = scope.options.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
+                  tmpFeature.setStyle(style);
+                }
               }
+
             } else {
               if (scope.bestFeatureIds.includes(tmpFeature.get('tid'))) {
                 let locstyle = scope.options.mapController.data.priorityLocstyle;
