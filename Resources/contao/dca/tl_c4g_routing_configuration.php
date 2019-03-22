@@ -107,6 +107,7 @@ $GLOBALS['TL_DCA'][$strName] = array
     (
         'name' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['name'],
+            'default'                 => '',
             'inputType'               => 'text',
             'eval'                    => ['decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'long'],
         ],
@@ -118,6 +119,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_viaroute_url' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_viaroute_url'],
             'exclude'                 => true,
+            'default'                 => '',
             'inputType'               => 'text',
             'eval'                    => ['rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'long'],
         ],
@@ -126,6 +128,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_attribution'],
             'filter'                  => false,
             'inputType'               => 'text',
+            'default'                 => '',
             'eval'                    => ['maxlength'=>255, 'tl_class'=>'long', 'allowHtml' => true],
         ],
         'router_api_selection' => [
@@ -147,6 +150,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_api_key' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_api_key'],
             'exclude'                 => true,
+            'default'                 => '',
             'inputType'               => 'text',
             'eval'                    => ['rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'long'],
         ],
@@ -154,6 +158,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_from_locstyle'],
             'exclude'                 => true,
             'inputType'               => 'select',
+            'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
 //            'wizard'                  => [[$strName, 'editLocationStyle']],
@@ -161,6 +166,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_to_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_to_locstyle'],
             'exclude'                 => true,
+            'default'                 => 0,
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
@@ -169,6 +175,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_point_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_point_locstyle'],
             'exclude'                 => true,
+            'default'                 => 0,
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
@@ -177,6 +184,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_interim_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_interim_locstyle'],
             'exclude'                 => true,
+            'default'                 => 0,
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true],
@@ -222,6 +230,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'routerLayers' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['routerLayers'],
             'exclude'                 => true,
+            'default'                 => 'a:0:{}',
             'inputType'               => 'multiColumnWizard',
             'eval'                    => [
                 'columnsCallback'     => [$callbackClass,'getRouterLayer']
@@ -268,6 +277,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'clickLocstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['clickLocstyle'],
             'exclude'                 => true,
+            'default'                 => 0,
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
@@ -282,6 +292,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['areaCenterLocstyle'],
             'exclude'                 => true,
             'inputType'               => 'select',
+            'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
         ],
@@ -315,6 +326,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['priorityLocstyle'],
             'exclude'                 => true,
             'inputType'               => 'select',
+            'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
         ],
