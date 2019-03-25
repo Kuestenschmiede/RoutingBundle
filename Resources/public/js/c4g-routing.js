@@ -190,15 +190,13 @@ export class Router extends Sideboard {
       self.modifyStartPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
     });
     this.modWayInteraction.on('modifyend', function (event) {
-      this.$overInput = self.addInterimField();
       let overPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
-      self.performReverseSearch(this.$overInput, overPoint.getCoordinates());
       let minDistance = Infinity;
       let insertId;
       if (!self.overValue) {
         self.overValue = [];
       }
-      else{
+      else if(self.overValue.length > 0) {
         for(let id in self.overValue){
           let distX = self.modifyStartPoint.getCoordinates()[0] - self.overValue[id].getCoordinates()[0];
           let distY = self.modifyStartPoint.getCoordinates()[1] - self.overValue[id].getCoordinates()[1];
@@ -230,7 +228,10 @@ export class Router extends Sideboard {
           insertId++;
         }
       }
+      this.$overInput = self.addInterimField(insertId, overPoint.ol_uid);
+      self.performReverseSearch(this.$overInput, overPoint.getCoordinates());
       self.overValue.splice(insertId,0,overPoint);
+      self.updateInterimIds(insertId);
       self.$buttonOver.prop("disabled", false);
       self.recalculateRoute();
     });
@@ -314,6 +315,9 @@ export class Router extends Sideboard {
       this.linkFragments[key] = value;
       this.updateUrl();
     }
+  }
+  updateInterimIds(insertId) {
+    let intGoals = $("." + routingConstants.ROUTER_INPUT_WRAPPER)
   }
 
   /**
@@ -2690,7 +2694,8 @@ export class Router extends Sideboard {
     jQuery(scope[key]).trigger('input');
     return toggleDetourWrapper;
   }
-  addInterimField(){
+
+  addInterimField(insertId = null, olUid = null){
     const scope = this;
     this.$buttonOver.prop("disabled", true);
 
@@ -2710,19 +2715,20 @@ export class Router extends Sideboard {
     routerOverClear.className = routingConstants.ROUTER_INPUT_CLEAR;
     routerOverClear.title = langRouteConstants.ROUTER_CLEAR_TITLE;
     routerOverClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
-    routerOverClear.id = this.overValue && this.overValue.length ? this.overValue.length -1 : 0;
+    routerOverClear.id = olUid ? olUid : 0;
     this.$routerOverClear = jQuery(routerOverClear);
 
     this.overInputWrapper.appendChild(routerOverLabel);
     this.overInputWrapper.appendChild(this.overInput);
     this.overInputWrapper.appendChild(routerOverClear);
-
-    this.routerViewInputWrapper.appendChild(this.overInputWrapper);
+    let listInputWrapper = $("." + routingConstants.ROUTER_INPUT_WRAPPER);
+    insertId = insertId ? parseInt(insertId) + 1 : 1;
+    let appendBefore = listInputWrapper[insertId];
+    this.routerViewInputWrapper.insertBefore(this.overInputWrapper, appendBefore);
     this.$routerOverClear.click(function (event) {
       event.preventDefault();
       scope.clearOver(scope.$overInput, this.id);
       jQuery(this).parent().remove();
-      //buttonOver.show();
     });
     scope.$overInput = jQuery(scope.overInput);
     this.$overInput.on('change', function () {
@@ -3489,7 +3495,14 @@ export class Router extends Sideboard {
    */
   clearOver($input, index) {
     if (this.overValue) {
-      delete this.overValue[index];
+      let intCount = 0;
+      for(let i = 0; i < this.overValue.length; i++) {
+        if (this.overValue[i]['ol_uid'] == index) {
+          intCount = i;
+        }
+      }
+      this.overValue.splice(intCount, 1)
+
     }
     this.$buttonOver.prop("disabled", false);
     jQuery(this.routerInstructionsWrapper).empty();
