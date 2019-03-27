@@ -79,6 +79,7 @@ class LoadAreaFeaturesListener
                         $locations[] = [$pTemp->getLng(), $pTemp->getLat()];
                     }
                 }
+                //ToDo check performMatrix result
                 $requestData = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
                 $finalResponseFeatures = [];
                 for($i = 1; $i < count($requestData['distances'][0]); $i++) {
@@ -116,54 +117,60 @@ class LoadAreaFeaturesListener
                     $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
                 }
                 $REQUEST->send($url,$query);
-                $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
-                $locations = [];
-                $locations[] = [$point->getLng(), $point->getLat()];
-                foreach($requestData['elements'] as $element){
-                    if($element['type'] == "node") {
-                        $locations[] = [floatval($element['lon']),floatval($element['lat'])];
+                //ToDo check response
+                if ($REQUEST->response) {
+                    $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
+                    $locations = [];
+                    $locations[] = [$point->getLng(), $point->getLat()];
+                    foreach($requestData['elements'] as $element){
+                        if($element['type'] == "node") {
+                            $locations[] = [floatval($element['lon']),floatval($element['lat'])];
+                        }
+                        else{
+                            break;
+                        }
                     }
-                    else{
-                        break;
+                    //ToDo check performMatrix result
+                    $matrixResponse = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
+                    $features = [];
+                    switch ($routerConfig->getRouterApiSelection()){
+                        case 1:
+                            for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
+                                if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
+                                    $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                                    $features[] = $requestData['elements'][$i-1];
+                                }
+                            }
+                            break;
+                        case 2:
+                            for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
+                                if ($matrixResponse['distances'][0][$i] < $distance) {
+                                    $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                                    $features[] = $requestData['elements'][$i-1];
+                                }
+                            }
+                            break;
+                        case 3:
+                            for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
+                                if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
+                                    $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                                    $features[] = $requestData['elements'][$i-1];
+                                }
+                            }
+                            break;
+                        case 4:
+                            for($i = 1; $i < count($matrixResponse['sources_to_targets'][0]); $i++) {
+                                if ($matrixResponse['sources_to_targets'][0][$i]['distance'] < $distance) {
+                                    $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                                    $features[] = $requestData['elements'][$i-1];
+                                }
+                            }
+                            break;
                     }
+                    $event->setReturnData(\GuzzleHttp\json_encode([$features,'overpass']));
+                } else {
+                    $event->setReturnData([]);
                 }
-                $matrixResponse = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
-                $features = [];
-                switch ($routerConfig->getRouterApiSelection()){
-                    case 1:
-                        for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
-                            if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
-                                $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
-                                $features[] = $requestData['elements'][$i-1];
-                            }
-                        }
-                        break;
-                    case 2:
-                        for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
-                            if ($matrixResponse['distances'][0][$i] < $distance) {
-                                $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
-                                $features[] = $requestData['elements'][$i-1];
-                            }
-                        }
-                        break;
-                    case 3:
-                        for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
-                            if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
-                                $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
-                                $features[] = $requestData['elements'][$i-1];
-                            }
-                        }
-                        break;
-                    case 4:
-                        for($i = 1; $i < count($matrixResponse['sources_to_targets'][0]); $i++) {
-                            if ($matrixResponse['sources_to_targets'][0][$i]['distance'] < $distance) {
-                                $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
-                                $features[] = $requestData['elements'][$i-1];
-                            }
-                        }
-                        break;
-                }
-                $event->setReturnData(\GuzzleHttp\json_encode([$features,'overpass']));
             }
         }
     }

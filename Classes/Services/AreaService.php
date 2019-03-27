@@ -119,9 +119,16 @@ class AreaService
                 $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
             }
             $REQUEST->method = "POST";
-            $encodedData = \GuzzleHttp\json_encode($matrixData);
-            $REQUEST->send($matrixUrl, $encodedData);
-            return $REQUEST->response;
+            
+            $result = [];
+            if ($matrixData) {
+                $encodedData = \GuzzleHttp\json_encode($matrixData);
+                $REQUEST->send($matrixUrl, $encodedData);
+                if ($REQUEST->response) {
+                    $result = $REQUEST->response;
+                }
+            }
+            return $result;
         }
 
     }
@@ -151,9 +158,15 @@ class AreaService
             }
             $REQUEST->setHeader('Content-Type', "application/json");
             $REQUEST->method = "POST";
-            $encodedData = \GuzzleHttp\json_encode($matrixData);
-            $REQUEST->send($matrixUrl, $encodedData);
-            return $REQUEST->response;
+            $result = [];
+            if ($matrixData) {
+                $encodedData = \GuzzleHttp\json_encode($matrixData);
+                $REQUEST->send($matrixUrl, $encodedData);
+                if ($REQUEST->response) {
+                    $result = $REQUEST->response;
+                }                
+            }
+            return $result;
         }
     }
     protected function performMatrixValhalla($routerConfig, $routingProfile, $locations, $opt_options = null) {
@@ -187,9 +200,15 @@ class AreaService
             }
             $REQUEST->setHeader('Content-Type', "application/json");
             $REQUEST->method = "POST";
-            $encodedData = \GuzzleHttp\json_encode($matrixData);
-            $REQUEST->send($matrixUrl, $encodedData);
-            return $REQUEST->response;
+            $result = [];
+            if ($matrixData) {
+                $encodedData = \GuzzleHttp\json_encode($matrixData);
+                $REQUEST->send($matrixUrl, $encodedData);
+                if ($REQUEST->response) {
+                    $result = $REQUEST->response;
+                }
+            }
+            return $result;
         }
     }
 }

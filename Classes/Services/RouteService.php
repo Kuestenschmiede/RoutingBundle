@@ -104,7 +104,11 @@ class RouteService extends \Frontend
                 $routeData['error'] = "ROUTER_ERROR_POLYLINE";
             }
         }
-        return \GuzzleHttp\json_encode($routeData);
+        $result = [];
+        if ($routeData) {
+            $result = $routeData;
+        }
+        return \GuzzleHttp\json_encode($result);
     }
 
     /**
@@ -425,9 +429,11 @@ class RouteService extends \Frontend
                 $url = str_replace("preference=recommended","preference=fastest", $url);
                 $request->send($url);
                 $response = $request->response;
-                $response = json_decode($response, true);
-                if ($response['error'] && $response['error']['code'] === 2004) {
-                    return $response;
+                if ($response) {
+                    $response = json_decode($response, true);
+                    if ($response['error'] && $response['error']['code'] === 2004) {
+                        return $response;
+                    }
                 }
             }
 
@@ -435,7 +441,9 @@ class RouteService extends \Frontend
                 $request = $this->createRequest();
                 $url = str_replace("preference=recommended","preference=shortest",$url);
                 $request->send($url);
-                $response['routes'][1] = \GuzzleHttp\json_decode($request->response, true)['routes'][0];
+                if ($request->response) {
+                    $response['routes'][1] = \GuzzleHttp\json_decode($request->response, true)['routes'][0];
+                }
             }
             return $response;
         }
