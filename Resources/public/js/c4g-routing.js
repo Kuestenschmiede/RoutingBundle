@@ -2173,78 +2173,103 @@ export class Router extends Sideboard {
     const scope = this;
     let coords = coordinates.coords;
     let profileId = this.options.mapController.data.profile;
-    let url = "/con4gis/reverseNominatimService/" + profileId + '?format=json&lat=' + coords.latitude + '&lon=' + coords.longitude;
-    jQuery.ajax({url: url}).done(function (data) {
-      let address = "";
-      if (data.address) {
-        if (data.address.city) {
-          address = data.address.city;
-          if (data.address.road) {
-            address = ', ' + value;
-          }
-        }
-        if (data.address.postcode) {
-          address += data.address.postcode + " ";
-        }
-
-        if (data.address.town) {
-          address = data.address.town;
-          if (data.address.road) {
-            address = ', ' + value;
-          }
-        }
-        if (data.address.road) {
-          if (data.address.house_number) {
-            address = ' ' + data.address.house_number + value;
-          }
-          address = data.address.road + value;
-        }
+    if (property === "fromValue") {
+      scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+      scope.performReverseSearch(jQuery(scope.$fromInput), [coords.longitude, coords.latitude]);
+    }
+    else if (property === "overValue") {
+      if (!scope[property]) {
+        scope[property] = [];
       }
-
-      if (address.length > 0) {
-        address += ", ";
+      scope[property].push(new ol.geom.Point([coords.longitude, coords.latitude]));
+      scope.performReverseSearch(jQuery(scope.$overInput), [coords.longitude, coords.latitude]);
+    }
+    else if (property === "toValue") {
+      scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+      scope.performReverseSearch(jQuery(scope.$toInput), [coords.longitude, coords.latitude]);
+    }
+    if (mode === "area") {
+      scope.setAreaPoint([coords.longitude, coords.latitude]);
+      if (scope[property]) {
+        scope.performArea(scope[property]);
       }
-
-      jQuery(cssId).val(address);
-      switch (property) {
-        case "fromValue":
-          scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
-          scope.updateLinkFragments("addressFrom", scope[property]);
-          break;
-        case "toValue":
-          scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
-          scope.updateLinkFragments("addressFrom", scope[property]);
-          break;
-        case "areaValue":
-          scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
-          scope.updateLinkFragments("addressFrom", scope[property]);
-          break;
-        case "overValue":
-          if (!scope.overValue) {
-            scope.overValue = [];
-          }
-          scope.$buttonOver.prop("disabled", false);
-          scope[property].push(new ol.geom.Point([coords.longitude, coords.latitude]));
-          break;
-      }
-
-
-      if (mode === "area") {
-        scope.setAreaPoint([coords.longitude, coords.latitude]);
-        if (scope[property]) {
-          scope.performArea(scope[property]);
-        }
-      } else {
-        if (scope.fromValue && scope.toValue) {
-          if (scope.overValue) {
-            scope.performViaRoute(scope.fromValue, scope.toValue, scope.overValue);
-          }
-          else {
-            scope.performViaRoute(scope.fromValue, scope.toValue);
-          }
-        }
-      }
-    });
+    }
+    scope.recalculateRoute();
+    // let url = "/con4gis/reverseNominatimService/" + profileId + '?format=json&lat=' + coords.latitude + '&lon=' + coords.longitude;
+    // jQuery.ajax({url: url}).done(function (data) {
+    //   let address = "";
+    //   if (data.address) {
+    //     if (data.address.city) {
+    //       address = data.address.city;
+    //       if (data.address.road) {
+    //         address = ', ' + value;
+    //       }
+    //     }
+    //     if (data.address.postcode) {
+    //       address += data.address.postcode + " ";
+    //     }
+    //
+    //     if (data.address.town) {
+    //       address = data.address.town;
+    //       if (data.address.road) {
+    //         address = ', ' + data.address.road;
+    //       }
+    //       else if (data.address.pedestrian) {
+    //         address = ', ' + data.address.pedestrian;
+    //       }
+    //     }
+    //     if (data.address.road || data.address.pedestrian) {
+    //       if (data.address.house_number) {
+    //         address = ' ' + data.address.house_number + value;
+    //       }
+    //       address = data.address.road + value;
+    //     }
+    //   }
+    //
+    //   if (address.length > 0) {
+    //     address += ", ";
+    //   }
+    //
+    //   jQuery(cssId).val(address);
+    //   switch (property) {
+    //     case "fromValue":
+    //       scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+    //       scope.updateLinkFragments("addressFrom", scope[property]);
+    //       break;
+    //     case "toValue":
+    //       scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+    //       scope.updateLinkFragments("addressFrom", scope[property]);
+    //       break;
+    //     case "areaValue":
+    //       scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+    //       scope.updateLinkFragments("addressFrom", scope[property]);
+    //       break;
+    //     case "overValue":
+    //       if (!scope.overValue) {
+    //         scope.overValue = [];
+    //       }
+    //       scope.$buttonOver.prop("disabled", false);
+    //       scope[property].push(new ol.geom.Point([coords.longitude, coords.latitude]));
+    //       break;
+    //   }
+    //
+    //
+    //   if (mode === "area") {
+    //     scope.setAreaPoint([coords.longitude, coords.latitude]);
+    //     if (scope[property]) {
+    //       scope.performArea(scope[property]);
+    //     }
+    //   } else {
+    //     if (scope.fromValue && scope.toValue) {
+    //       if (scope.overValue) {
+    //         scope.performViaRoute(scope.fromValue, scope.toValue, scope.overValue);
+    //       }
+    //       else {
+    //         scope.performViaRoute(scope.fromValue, scope.toValue);
+    //       }
+    //     }
+    //   }
+    // });
   }
 
   /**
@@ -2296,16 +2321,14 @@ export class Router extends Sideboard {
     }
     this.fromValue.transform('EPSG:3857', 'EPSG:4326');
     let point = jQuery.extend(true, {}, this.fromValue);
-    let feature = new ol.Feature({geometry: point});
+    let feature = new ol.Feature({geometry: this.fromValue});
     let locstyleId = this.options.mapController.data.router_from_locstyle;
     feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
     this.mapSelectInteraction.getFeatures().clear();
     this.routerFeaturesSource.addFeature(feature);
     this.updateLinkFragments("addressFrom", this.fromValue);
     this.performReverseSearch(this.$fromInput, point.getCoordinates());
-    if (this.fromValue && this.toValue) {
-      this.performViaRoute(this.fromValue, this.toValue);
-    }
+    this.recalculateRoute();
   }
 
   setToPoint(coordinates) {
@@ -2316,13 +2339,14 @@ export class Router extends Sideboard {
     }
     this.toValue.transform('EPSG:3857', 'EPSG:4326');
     let point = jQuery.extend(true, {}, this.toValue);
-    let feature = new ol.Feature({geometry: point});
+    let feature = new ol.Feature({geometry: this.toValue});
     let locstyleId = this.options.mapController.data.router_to_locstyle;
     feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
     this.mapSelectInteraction.getFeatures().clear();
     this.routerFeaturesSource.addFeature(feature);
     this.updateLinkFragments("addressTo", this.toValue);
     this.performReverseSearch(this.$toInput, point.getCoordinates());
+    this.recalculateRoute();
   }
 
   /**
@@ -2754,7 +2778,7 @@ export class Router extends Sideboard {
     scope.$overInput = jQuery(scope.overInput);
     this.$overInput.on('change', function () {
       scope.performSearch(scope.$overInput, "overValue", function() {
-        scope.performViaRoute();
+        scope.recalculateRoute();
       });
     });
     return this.$overInput;
@@ -3678,6 +3702,7 @@ export class Router extends Sideboard {
       if (opt_callback && typeof opt_callback === "function") {
         opt_callback();
       }
+      self.recalculateRoute();
     }).fail(function () {
         let inputDiv = $input.parent()[0];
         inputDiv.appendChild(self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS));
