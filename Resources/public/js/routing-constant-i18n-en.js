@@ -20,7 +20,7 @@ export  var routingConstantsEnglish = {
   ROUTER_TO_LABEL: 'End',
   ROUTER_CLEAR_TITLE: 'Delete',
   ROUTER_CLEAR_HTML: '',
-  ROUTER_Label_Interim: 'Interim Goals',
+  ROUTER_Label_Interim: 'Interim Goal',
 
   ROUTER_SWITCH:'Switch between Start and End',
   ROUTER_OVER:'Add interim goal',

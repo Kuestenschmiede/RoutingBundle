@@ -464,3 +464,6 @@ button.c4g-popup-route-to:before {
 .route-features-list-element > div {
     padding: 10px 0px 15px;
 }
+.c4g-router-input-wrapper > label {
+    width: 30%;
+}
