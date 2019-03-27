@@ -20,6 +20,7 @@ export  var routingConstants = {
   ROUTER_PROFILE_WRAPPER: 'c4g-router-profile-wrapper',
   ROUTER_INPUT_FROM: 'c4g-router-input-from',
   ROUTER_INPUT_TO: 'c4g-router-input-to',
+  ROUTER_INPUT_OVER: 'c4g-router-input-over',
   ROUTER_INPUT_CLEAR: 'c4g-router-input-clear',
   ROUTER_BUTTONBAR: 'c4g-router-buttonbar',
   ROUTER_ATTRIBUTION_WRAPPER: 'c4g-router-attribution-wrapper',

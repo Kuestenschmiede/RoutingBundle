@@ -2208,16 +2208,25 @@ export class Router extends Sideboard {
       jQuery(cssId).val(address);
       switch (property) {
         case "fromValue":
-          scope.updateLinkFragments("addressFrom", address);
+          scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+          scope.updateLinkFragments("addressFrom", scope[property]);
           break;
         case "toValue":
-          scope.updateLinkFragments("addressTo", address);
+          scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+          scope.updateLinkFragments("addressFrom", scope[property]);
           break;
         case "areaValue":
-          scope.updateLinkFragments("addressArea", address);
+          scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+          scope.updateLinkFragments("addressFrom", scope[property]);
+          break;
+        case "overValue":
+          if (!scope.overValue) {
+            scope.overValue = [];
+          }
+          scope.$buttonOver.prop("disabled", false);
+          scope[property].push(new ol.geom.Point([coords.longitude, coords.latitude]));
           break;
       }
-      scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
 
 
       if (mode === "area") {
@@ -2227,7 +2236,12 @@ export class Router extends Sideboard {
         }
       } else {
         if (scope.fromValue && scope.toValue) {
-          scope.performViaRoute(scope.fromValue, scope.toValue);
+          if (scope.overValue) {
+            scope.performViaRoute(scope.fromValue, scope.toValue, scope.overValue);
+          }
+          else {
+            scope.performViaRoute(scope.fromValue, scope.toValue);
+          }
         }
       }
     });
@@ -2287,7 +2301,7 @@ export class Router extends Sideboard {
     feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
     this.mapSelectInteraction.getFeatures().clear();
     this.routerFeaturesSource.addFeature(feature);
-    this.updateLinkFragments("addressFrom");
+    this.updateLinkFragments("addressFrom", this.fromValue);
     this.performReverseSearch(this.$fromInput, point.getCoordinates());
     if (this.fromValue && this.toValue) {
       this.performViaRoute(this.fromValue, this.toValue);
@@ -2307,7 +2321,7 @@ export class Router extends Sideboard {
     feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
     this.mapSelectInteraction.getFeatures().clear();
     this.routerFeaturesSource.addFeature(feature);
-    this.updateLinkFragments("addressTo");
+    this.updateLinkFragments("addressTo", this.toValue);
     this.performReverseSearch(this.$toInput, point.getCoordinates());
   }
 
@@ -2701,13 +2715,13 @@ export class Router extends Sideboard {
 
     this.overInputWrapper = document.createElement('div');
     this.overInputWrapper.className = routingConstants.ROUTER_INPUT_WRAPPER;
-
     this.overInput = document.createElement("input");
     this.overInput.type = "text";
-    this.overInput.className = routingConstants.ROUTER_INPUT_FROM;
+    this.overInput.className = routingConstants.ROUTER_INPUT_OVER;
     this.overInput.id = this.overInput.name = "routingOver";
 
     let routerOverLabel = document.createElement('label');
+    let positionButton = this.createPositionButton(".c4g-router-input-over", "overValue", "router");
     routerOverLabel.setAttribute('for', 'routingFrom');
     routerOverLabel.innerHTML = langRouteConstants.ROUTER_Label_Interim;
 
@@ -2720,10 +2734,17 @@ export class Router extends Sideboard {
 
     this.overInputWrapper.appendChild(routerOverLabel);
     this.overInputWrapper.appendChild(this.overInput);
+    this.overInputWrapper.appendChild(positionButton);
     this.overInputWrapper.appendChild(routerOverClear);
     let listInputWrapper = $("." + routingConstants.ROUTER_INPUT_WRAPPER);
-    insertId = insertId ? parseInt(insertId) + 1 : 1;
-    let appendBefore = listInputWrapper[insertId];
+    let appendBefore = null;
+    if (!insertId) {
+      appendBefore = listInputWrapper.last()[0];
+    }
+    else {
+      insertId = parseInt(insertId) + 1;
+      appendBefore = listInputWrapper[insertId];
+    }
     this.routerViewInputWrapper.insertBefore(this.overInputWrapper, appendBefore);
     this.$routerOverClear.click(function (event) {
       event.preventDefault();
@@ -2853,8 +2874,8 @@ export class Router extends Sideboard {
       }
 
       this.fromInputWrapper.appendChild(routerFromLabel);
-      this.fromInputWrapper.appendChild(routerFromPosition);
       this.fromInputWrapper.appendChild(this.fromInput);
+      this.fromInputWrapper.appendChild(routerFromPosition);
       this.fromInputWrapper.appendChild(routerFromClear);
       if (buttonOver && this.options.mapController.data.router_api_selection == '0') {
         this.$buttonOver.hide();
@@ -3009,8 +3030,8 @@ export class Router extends Sideboard {
       this.$routerToClear = jQuery(routerToClear);
 
       this.toInputWrapper.appendChild(routerToLabel);
-      this.toInputWrapper.appendChild(routerToPosition);
       this.toInputWrapper.appendChild(this.toInput);
+      this.toInputWrapper.appendChild(routerToPosition);
       this.toInputWrapper.appendChild(routerToClear);
 
       self.$routerToClear.click(function (event) {
@@ -3621,7 +3642,10 @@ export class Router extends Sideboard {
           if (!self.overValue) {
             self.overValue = [];
           }
-          self.overValue.push(new ol.geom.Point([parseFloat(response[0].lon), parseFloat(response[0].lat)]));
+          let overPoint = new ol.geom.Point([parseFloat(response[0].lon), parseFloat(response[0].lat)]);
+          let deleteButton =  $input.next()[0]
+          deleteButton.id = overPoint['ol_uid'];
+          self.overValue.push(overPoint);
           self.$buttonOver.prop("disabled", false);
         }
         else {
