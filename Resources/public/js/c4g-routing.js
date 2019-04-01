@@ -2762,7 +2762,7 @@ export class Router extends Sideboard {
     this.overInputWrapper.appendChild(routerOverClear);
     let listInputWrapper = $("." + routingConstants.ROUTER_INPUT_WRAPPER);
     let appendBefore = null;
-    if (!insertId) {
+    if (insertId != 0 && !insertId) {
       appendBefore = listInputWrapper.last()[0];
     }
     else {
