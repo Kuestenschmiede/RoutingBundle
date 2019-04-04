@@ -772,7 +772,7 @@ export class Router extends Sideboard {
         .done(function (response) {
           self.response = response;
           if (response) {
-            if (response.error && response.error != "ROUTER_ERROR_POLYLINE") {
+            if (response.error) {
               let errorDiv = self.showRouterError(langRouteConstants[response.error]);
               jQuery(self.fromInput).parent()[0].appendChild(errorDiv);
             } else {
@@ -877,31 +877,30 @@ export class Router extends Sideboard {
 
         // add route
 
-        if (routeResponse.routes && routeResponse.routes[1]) {//check for alternative route
-          if (routeNumber == 1) {
-            altRouteFeatures = wayPolyline.readFeatures(routeResponse.routes[0].geometry, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: mapView.getProjection()
-            });
-            altRouteFeatures[0].setId(0);
+        if (routeResponse.routes ) {//check for alternative route
+          if (routeResponse.routes[1]) {
+            if (routeNumber === 1) {
+              altRouteFeatures = wayPolyline.readFeatures(routeResponse.routes[0].geometry, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: mapView.getProjection()
+              });
+              altRouteFeatures[0].setId(0);
+            }
+            else {
+              altRouteFeatures = wayPolyline.readFeatures(routeResponse.routes[1].geometry, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: mapView.getProjection()
+              });
+              altRouteFeatures[0].setId(1);
+            }
           }
-          else {
-            altRouteFeatures = wayPolyline.readFeatures(routeResponse.routes[1].geometry, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: mapView.getProjection()
-            });
-            altRouteFeatures[0].setId(1);
-          }
+          routeFeatures = wayPolyline.readFeatures(routeResponse.routes[routeNumber].geometry, {
+            dataProjection: 'EPSG:4326',
+            featureProjection: mapView.getProjection()
+          });
+          routeFeatures[0].setId(routeNumber);
         }
-        routeFeatures = wayPolyline.readFeatures(routeResponse.routes[routeNumber].geometry, {
-          dataProjection: 'EPSG:4326',
-          featureProjection: mapView.getProjection()
-        });
-        routeFeatures[0].setId(routeNumber);
-
-
-      }
-      else if(this.options.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0'){//OSRM-API:<5
+      } else if(this.options.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0'){//OSRM-API:<5
         wayPolyline = new ol.format.Polyline({
           'factor': this.options.mapController.data.router_viaroute_precision || 1e6
         });
@@ -967,39 +966,41 @@ export class Router extends Sideboard {
           this.routingAltWaySource.addFeatures(altRouteFeatures);
         }
       }
-      this.routingWaySource.addFeatures(routeFeatures);
-      // render view
-      // so the route gets drawn before the animation starts
-      this.options.mapController.map.renderSync();
+      if (routeFeatures) {
+        this.routingWaySource.addFeatures(routeFeatures);
+        // render view
+        // so the route gets drawn before the animation starts
+        this.options.mapController.map.renderSync();
 
-      // animation
-      mapView.animate({
-        start: +new Date(),
-        duration: 2000,
-        resolution: mapView.getResolution(),
-        center: [0, 0]
-        //rotation: Math.PI
-      });
+        // animation
+        mapView.animate({
+          start: +new Date(),
+          duration: 2000,
+          resolution: mapView.getResolution(),
+          center: [0, 0]
+          //rotation: Math.PI
+        });
 
-      // calculate padding
-      leftPadding = 0;
-      if (this.options.mapController.activePortside && this.options.mapController.activePortside.container) {
-        leftPadding = jQuery(this.options.mapController.activePortside.container).outerWidth();
-      }
-
-      rightPadding = 0;
-      if (this.options.mapController.activeStarboard && this.options.mapController.activeStarboard.container) {
-        rightPadding = jQuery(this.options.mapController.activeStarboard.container).outerWidth();
-      }
-
-      // center on route
-      mapView.fit(
-        routeFeatures[0].getGeometry(),
-        {
-          size: this.options.mapController.map.getSize(),
-          padding: [0, rightPadding, 0, leftPadding]
+        // calculate padding
+        leftPadding = 0;
+        if (this.options.mapController.activePortside && this.options.mapController.activePortside.container) {
+          leftPadding = jQuery(this.options.mapController.activePortside.container).outerWidth();
         }
-      );
+
+        rightPadding = 0;
+        if (this.options.mapController.activeStarboard && this.options.mapController.activeStarboard.container) {
+          rightPadding = jQuery(this.options.mapController.activeStarboard.container).outerWidth();
+        }
+
+        // center on route
+        mapView.fit(
+          routeFeatures[0].getGeometry(),
+          {
+            size: this.options.mapController.map.getSize(),
+            padding: [0, rightPadding, 0, leftPadding]
+          }
+        );
+      }
     }
   }
 
