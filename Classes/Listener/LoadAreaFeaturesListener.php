@@ -118,7 +118,7 @@ class LoadAreaFeaturesListener
                 }
                 $REQUEST->send($url,$query);
                 //ToDo check response
-                if ($REQUEST->response && is_array($REQUEST->response)) {
+                if ($REQUEST->response) {
                     $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
                     $locations = [];
                     $locations[] = [$point->getLng(), $point->getLat()];
