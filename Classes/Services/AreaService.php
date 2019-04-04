@@ -58,21 +58,18 @@ class AreaService
         $routerConfigRepo = System::getContainer()->get('doctrine.orm.default_entity_manager')
             ->getRepository(RoutingConfiguration::class);
         $routerConfig = $routerConfigRepo->findOneBy(['id' => $mapsProfile->routerConfig]);
-        if($routerConfig instanceof  RoutingConfiguration){
+        
+        if ($routerConfig instanceof  RoutingConfiguration) {
             if ($routerConfig->getRouterApiSelection() == "1") {
                 return $this->performMatrixOSRM($routerConfig,$locations);
-            }
-            else if ($routerConfig->getRouterApiSelection() == "2") {
+            } else if ($routerConfig->getRouterApiSelection() == "2") {
                 return $this->performMatrixORS($routerConfig, $routingProfile, $locations, $opt_options);
-            }
-            else if ($routerConfig->getRouterApiSelection() == "3") {
+            } else if ($routerConfig->getRouterApiSelection() == "3") {
                 return $this->performMatrixGraphhopper($routerConfig, $routingProfile, $locations, $opt_options);
-            }
-            else if ($routerConfig->getRouterApiSelection() == "4") {
+            } else if ($routerConfig->getRouterApiSelection() == "4") {
                 return $this->performMatrixValhalla($routerConfig, $routingProfile, $locations, $opt_options);
             }
         }
-
     }
 
     protected function performMatrixOSRM($routerConfig, $locations, $routingProfile = "driving", $opt_options = null){
