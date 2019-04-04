@@ -4,7 +4,6 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "encore": "encore",
     "build-dev": "webpack --watch --config webpack.development.config.js",
     "build-prod": "webpack --watch --config webpack.production.config.js"
   },
