@@ -90,8 +90,12 @@ class LoadRouteFeaturesListener
                 }
                 $REQUEST->send($url, $query);
                 if ($REQUEST->response) {
-                    $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
-                    $features = $requestData['elements'];
+                    try {
+                        $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
+                        $features = $requestData['elements'];
+                    } catch (\Exception $exception) {
+                        $features = [];
+                    }
                 }
 
                 if ($jsonPolygon) {

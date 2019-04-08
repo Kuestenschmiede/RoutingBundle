@@ -123,10 +123,9 @@ class LoadAreaFeaturesListener
                     $locations = [];
                     $locations[] = [$point->getLng(), $point->getLat()];
                     foreach($requestData['elements'] as $element){
-                        if($element['type'] == "node") {
+                        if ($element['type'] == "node") {
                             $locations[] = [floatval($element['lon']),floatval($element['lat'])];
-                        }
-                        else{
+                        } else {
                             break;
                         }
                     }
@@ -169,7 +168,7 @@ class LoadAreaFeaturesListener
                     }
                     $event->setReturnData(\GuzzleHttp\json_encode([$features,'overpass']));
                 } else {
-                    $event->setReturnData([]);
+                    $event->setReturnData(\GuzzleHttp\json_encode([]));
                 }
             }
         }

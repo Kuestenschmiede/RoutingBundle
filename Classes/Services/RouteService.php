@@ -165,7 +165,7 @@ class RouteService extends \Frontend
             }
             $REQUEST->setHeader('Content-Type', "application/json");
             $REQUEST->method = "GET";
-            $sendUrl = $objSettings->con4gisIoUrl . "routing.php?input=" . $strInput . "&language=" . $language . "&profile=" . $profile . "&key=" . $objSettings->con4gisIoKey;
+            $sendUrl = rtrim($objSettings->con4gisIoUrl, "/") . "/" . "routing.php?input=" . $strInput . "&language=" . $language . "&profile=" . $profile . "&key=" . $objSettings->con4gisIoKey;
             $REQUEST->send($sendUrl);
             $response = $REQUEST->response;
             try {
