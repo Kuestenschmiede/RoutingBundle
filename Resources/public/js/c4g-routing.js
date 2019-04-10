@@ -17,6 +17,18 @@ import {routingConstants} from "./routing-constants";
 import {routingConstantsEnglish} from "./routing-constant-i18n-en";
 import {routingConstantsGerman} from "./routing-constant-i18n-de";
 import {CachedInputfield} from "./../../../../CoreBundle/Resources/public/js/c4g-cached-inputfield";
+import {Feature} from "ol";
+import {Point} from "ol/geom";
+import {Polyline} from "ol/format";
+import {extend} from "ol/extent";
+import {transform, toLonLat, fromLonLat, transformExtent} from "ol/proj";
+import {Style, Stroke} from "ol/style";
+import {Vector, Group} from "ol/layer";
+import {Vector as VectorSource} from "ol/source";
+import {Collection} from "ol";
+import {LineString} from "ol/geom";
+import {Modify, Select} from "ol/interaction";
+
 let langRouteConstants = {};
 
 'use strict';
@@ -99,38 +111,38 @@ export class Router extends Sideboard {
     let mapData = this.options.mapController.data;
 
     // Add router layer(s)
-    this.routingAltWaySource = new ol.source.Vector();
-    this.routingWaySource = new ol.source.Vector();
-    this.routerWayLayer = new ol.layer.Vector({
+    this.routingAltWaySource = new VectorSource();
+    this.routingWaySource = new VectorSource();
+    this.routerWayLayer = new Vector({
       source: this.routingWaySource,
       zIndex: 1,
       style: [
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
+        new Style({
+          stroke: new Stroke({
             color: 'rgba(255, 255, 255, 0.6)',
             width: 8
           })
         }),
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
+        new Style({
+          stroke: new Stroke({
             color: 'rgba(0, 51, 119, 0.9)',
             width: 4
           })
         })
       ]
     });
-    this.routerAltWayLayer = new ol.layer.Vector({
+    this.routerAltWayLayer = new Vector({
       source: this.routingAltWaySource,
       zIndex: 0,
       style: [
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
+        new Style({
+          stroke: new Stroke({
             color: 'rgba(255, 255, 255, 0.6)',
             width: 8
           })
         }),
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
+        new Style({
+          stroke: new Stroke({
             color: 'rgba(0, 51, 119, 0.4)',
             width: 4
           })
@@ -138,16 +150,16 @@ export class Router extends Sideboard {
       ]
     });
 
-    selectInteraction = new ol.interaction.Select({
+    selectInteraction = new Select({
       style: [
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
+        new Style({
+          stroke: new Stroke({
             color: 'rgba(255, 255, 255, 0.0)',
             width: 8
           })
         }),
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
+        new Style({
+          stroke: new Stroke({
             color: 'rgba(255, 51, 119, 0.0)',
             width: 4
           })
@@ -158,7 +170,7 @@ export class Router extends Sideboard {
       let feature = event.selected[0];
       if (feature) {
         var geometry = feature.getGeometry();
-        if (geometry && geometry instanceof ol.geom.LineString) {
+        if (geometry && geometry instanceof LineString) {
           self.showAltRoute(self.response, feature.getId());
         } else {
           if (feature) {
@@ -169,17 +181,17 @@ export class Router extends Sideboard {
       }
     });
     this.mapSelectInteraction = selectInteraction;
-    this.modWayInteraction = new ol.interaction.Modify({
+    this.modWayInteraction = new Modify({
       source: this.routingWaySource,
       style: [
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
+        new Style({
+          stroke: new Stroke({
             color: 'rgba(255, 255, 255, 0.0)',
             width: 8
           })
         }),
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({
+        new Style({
+          stroke: new Stroke({
             color: 'rgba(255, 51, 119, 0.0)',
             width: 4
           })
@@ -187,10 +199,10 @@ export class Router extends Sideboard {
       ]
     });
     this.modWayInteraction.on('modifystart', function (event) {
-      self.modifyStartPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
+      self.modifyStartPoint = new Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
     });
     this.modWayInteraction.on('modifyend', function (event) {
-      let overPoint = new ol.geom.Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
+      let overPoint = new Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
       let minDistance = Infinity;
       let insertId;
       if (!self.overValue) {
@@ -241,32 +253,32 @@ export class Router extends Sideboard {
       self.options.mapController.map.addInteraction(this.modWayInteraction);
     }
 
-    this.routingHintSource = new ol.source.Vector();
-    this.routerHintLayer = new ol.layer.Vector({
+    this.routingHintSource = new VectorSource();
+    this.routerHintLayer = new Vector({
       source: this.routingHintSource,
       style: function (feature, resolution) {
         return (!self.options.mapController.proxy) || self.options.mapController.proxy.locationStyleController.arrLocStyles[self.options.mapController.data.router_point_locstyle].style(feature, resolution);
       }
     });
 
-    this.locationsSource = new ol.source.Vector();
-    this.locationsLayer = new ol.layer.Vector({
+    this.locationsSource = new VectorSource();
+    this.locationsLayer = new Vector({
       source: this.locationsSource,
       zIndex: 2
     });
-    this.areaSource = new ol.source.Vector();
-    this.areaLayer = new ol.layer.Vector({
+    this.areaSource = new VectorSource();
+    this.areaLayer = new Vector({
       source: this.areaSource,
       zIndex: 2
     });
-    this.routerFeaturesSource = new ol.source.Vector();
-    this.routerFeaturesLayer = new ol.layer.Vector({
+    this.routerFeaturesSource = new VectorSource();
+    this.routerFeaturesLayer = new Vector({
       source: this.routerFeaturesSource,
       zIndex: 20,
       // declutter: true
     });
-    this.routerLayerGroup = new ol.layer.Group({
-      layers: new ol.Collection([
+    this.routerLayerGroup = new Group({
+      layers: new Collection([
         this.routerWayLayer,
         this.routerAltWayLayer,
         this.locationsLayer,
@@ -398,7 +410,7 @@ export class Router extends Sideboard {
           this.performSearch(jQuery(this.areaFromInput), "areaValue", function () {
             if (scope.areaValue) {
               let point = jQuery.extend(true, {}, scope.areaValue);
-              let feature = new ol.Feature({geometry: point.transform('EPSG:4326', 'EPSG:3857')});
+              let feature = new Feature({geometry: point.transform('EPSG:4326', 'EPSG:3857')});
               var styleId = scope.options.mapController.data.areaCenterLocstyle;
 
               var locStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles[styleId];
@@ -467,9 +479,9 @@ export class Router extends Sideboard {
                   fromPoint.transform('EPSG:4326', 'EPSG:3857');
                   let toPoint = scope.toValue.clone();
                   toPoint.transform('EPSG:4326', 'EPSG:3857');
-                  let fromFeature = new ol.Feature({geometry: fromPoint});
+                  let fromFeature = new Feature({geometry: fromPoint});
                   fromFeature.setStyle(fromStyle);
-                  let toFeature = new ol.Feature({geometry: toPoint});
+                  let toFeature = new Feature({geometry: toPoint});
                   toFeature.setStyle(toStyle);
                   scope.locationsSource.addFeature(fromFeature);
                   scope.locationsSource.addFeature(toFeature);
@@ -495,7 +507,7 @@ export class Router extends Sideboard {
     if (opt_options && opt_options.toLonLat) {
       this.performReverseSearch(this.$toInput, opt_options.toLonLat);
       this.recalculateRoute();
-      this.toValue = new ol.geom.Point([opt_options.toLonLat[1], opt_options.toLonLat[0]]);
+      this.toValue = new Point([opt_options.toLonLat[1], opt_options.toLonLat[0]]);
     }
   }
 
@@ -553,20 +565,20 @@ export class Router extends Sideboard {
 
     self.fnMapRouterInteraction = function (evt) {
 
-      coordinate = ol.proj.toLonLat(evt.coordinate);
+      coordinate = toLonLat(evt.coordinate);
       // clear old features
       self.areaSource.clear();
       if (self.$fromInput.val() === "") {
-        //self.$fromInput.val(ol.proj.toLonLat(evt.coordinate));
+        //self.$fromInput.val(toLonLat(evt.coordinate));
         self.performReverseSearch(self.$fromInput, coordinate);
-        self.fromValue = new ol.geom.Point(coordinate);
+        self.fromValue = new Point(coordinate);
         self.recalculateRoute();
 
         //self.$fromInput.trigger('change');
       } else if (self.$toInput.val() === "") {
-        //self.$toInput.val(ol.proj.toLonLat(evt.coordinate));
+        //self.$toInput.val(toLonLat(evt.coordinate));
         self.performReverseSearch(self.$toInput, coordinate);
-        self.toValue = new ol.geom.Point(coordinate);
+        self.toValue = new Point(coordinate);
         self.recalculateRoute();
       } else if (self.$overInput) {
         if (self.$overInput.val() === "") {
@@ -574,7 +586,7 @@ export class Router extends Sideboard {
           if (!self.overValue) {
             self.overValue = [];
           }
-          self.overValue.push(new ol.geom.Point(coordinate));
+          self.overValue.push(new Point(coordinate));
           self.recalculateRoute();
           self.$buttonOver.prop("disabled", false);
         }
@@ -661,7 +673,7 @@ export class Router extends Sideboard {
 
     this.locationsSource.clear();
     if (this.fromValue) {
-      tmpFeature = new ol.Feature({
+      tmpFeature = new Feature({
         geometry: this.fromValue.clone().transform('EPSG:4326', 'EPSG:3857')
       });
       if (this.options.mapController.data.router_from_locstyle && proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_from_locstyle]) {
@@ -670,7 +682,7 @@ export class Router extends Sideboard {
       this.locationsSource.addFeature(tmpFeature);
     }
     if (this.toValue) {
-      tmpFeature = new ol.Feature({
+      tmpFeature = new Feature({
         geometry: this.toValue.clone().transform('EPSG:4326', 'EPSG:3857')
       });
       if (this.options.mapController.data.router_to_locstyle && proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_to_locstyle]) {
@@ -680,7 +692,7 @@ export class Router extends Sideboard {
     }
     if (this.overValue) {
       for (var propt in this.overValue) {
-        tmpFeature = new ol.Feature({
+        tmpFeature = new Feature({
           geometry: this.overValue[propt].clone().transform('EPSG:4326', 'EPSG:3857')
         });
         if (this.options.mapController.data.router_interim_locstyle && proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_interim_locstyle]) {
@@ -873,7 +885,7 @@ export class Router extends Sideboard {
       mapView = this.options.mapController.map.getView();
 
       if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2' || routeResponse.routeType == '1' || routeResponse.routeType == '2') {//OSRM-API:5.x
-        wayPolyline = new ol.format.Polyline();
+        wayPolyline = new Polyline();
 
         // add route
 
@@ -901,7 +913,7 @@ export class Router extends Sideboard {
           routeFeatures[0].setId(routeNumber);
         }
       } else if(this.options.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0'){//OSRM-API:<5
-        wayPolyline = new ol.format.Polyline({
+        wayPolyline = new Polyline({
           'factor': this.options.mapController.data.router_viaroute_precision || 1e6
         });
 
@@ -912,7 +924,7 @@ export class Router extends Sideboard {
         });
       }
       else if (this.options.mapController.data.router_api_selection == '3'){
-        wayPolyline = new ol.format.Polyline();
+        wayPolyline = new Polyline();
         if (routeResponse.paths && routeResponse.paths[1]) {//check for alternative route
           if (routeNumber == 1) {
             altRouteFeatures = wayPolyline.readFeatures(routeResponse.paths[0].points, {
@@ -936,7 +948,7 @@ export class Router extends Sideboard {
         routeFeatures[0].setId(routeNumber);
       }
       else if (this.options.mapController.data.router_api_selection == "4" || routeResponse.routeType == '4') {
-        wayPolyline = new ol.format.Polyline({
+        wayPolyline = new Polyline({
           'factor': 1e6
         });
         if (routeResponse.trip && routeResponse.trip.legs && routeResponse.trip.legs[1]) {//check for alternative route
@@ -1014,7 +1026,7 @@ export class Router extends Sideboard {
    */
   showFeatures(features, type = "table", mode = "router") {
     const self = this;
-    self.routerFeaturesSource.clear();
+    // self.routerFeaturesSource.clear();
     // interim clear of feature selection
     if (!features) {
       // TODO the calling function expects a return value; should probably be fixed
@@ -1058,9 +1070,9 @@ export class Router extends Sideboard {
           }
         }
         else {
-          resultCoordinate = ol.proj.transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
-          let point = new ol.geom.Point(resultCoordinate);
-          contentFeature = new ol.Feature(point);
+          resultCoordinate = transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
+          let point = new Point(resultCoordinate);
+          contentFeature = new Feature(point);
           contentFeature.setId(feature.id);
           contentFeature.set('loc_linkurl', layer.loc_linkurl);
           contentFeature.set('hover_location', layer.hover_location);
@@ -2127,7 +2139,7 @@ export class Router extends Sideboard {
             rightPadding = jQuery(self.options.mapController.activeStarboard.container).outerWidth();
           }
           let extent = self.routerFeaturesSource.getExtent();
-          extent = ol.extent.extend(extent, self.areaLayer.getSource().getExtent());
+          extent = extend(extent, self.areaLayer.getSource().getExtent());
           view.fit(extent,
             {
               size: self.options.mapController.map.getSize(),
@@ -2175,18 +2187,18 @@ export class Router extends Sideboard {
     let coords = coordinates.coords;
     let profileId = this.options.mapController.data.profile;
     if (property === "fromValue") {
-      scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+      scope[property] = new Point([coords.longitude, coords.latitude]);
       scope.performReverseSearch(jQuery(scope.$fromInput), [coords.longitude, coords.latitude]);
     }
     else if (property === "overValue") {
       if (!scope[property]) {
         scope[property] = [];
       }
-      scope[property].push(new ol.geom.Point([coords.longitude, coords.latitude]));
+      scope[property].push(new Point([coords.longitude, coords.latitude]));
       scope.performReverseSearch(jQuery(scope.$overInput), [coords.longitude, coords.latitude]);
     }
     else if (property === "toValue") {
-      scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+      scope[property] = new Point([coords.longitude, coords.latitude]);
       scope.performReverseSearch(jQuery(scope.$toInput), [coords.longitude, coords.latitude]);
     }
     if (mode === "area") {
@@ -2234,15 +2246,15 @@ export class Router extends Sideboard {
     //   jQuery(cssId).val(address);
     //   switch (property) {
     //     case "fromValue":
-    //       scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+    //       scope[property] = new Point([coords.longitude, coords.latitude]);
     //       scope.updateLinkFragments("addressFrom", scope[property]);
     //       break;
     //     case "toValue":
-    //       scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+    //       scope[property] = new Point([coords.longitude, coords.latitude]);
     //       scope.updateLinkFragments("addressFrom", scope[property]);
     //       break;
     //     case "areaValue":
-    //       scope[property] = new ol.geom.Point([coords.longitude, coords.latitude]);
+    //       scope[property] = new Point([coords.longitude, coords.latitude]);
     //       scope.updateLinkFragments("addressFrom", scope[property]);
     //       break;
     //     case "overValue":
@@ -2250,7 +2262,7 @@ export class Router extends Sideboard {
     //         scope.overValue = [];
     //       }
     //       scope.$buttonOver.prop("disabled", false);
-    //       scope[property].push(new ol.geom.Point([coords.longitude, coords.latitude]));
+    //       scope[property].push(new Point([coords.longitude, coords.latitude]));
     //       break;
     //   }
     //
@@ -2282,8 +2294,8 @@ export class Router extends Sideboard {
     
     scope.fnMapAreaInteraction = function (evt) {
       if (jQuery(scope.areaFromInput).val() === "") {
-        scope.performReverseSearch(jQuery(scope.areaFromInput), ol.proj.toLonLat(evt.coordinate));
-        scope.areaValue = new ol.geom.Point(ol.proj.toLonLat(evt.coordinate));
+        scope.performReverseSearch(jQuery(scope.areaFromInput), toLonLat(evt.coordinate));
+        scope.areaValue = new Point(toLonLat(evt.coordinate));
         scope.setAreaPoint(evt.coordinate);
         scope.performArea(scope.areaValue);
       }
@@ -2300,7 +2312,7 @@ export class Router extends Sideboard {
     if (this.areaValue) {
       let point = jQuery.extend(true, {}, this.areaValue);
       point.transform('EPSG:4326', 'EPSG:3857');
-      let feature = new ol.Feature({geometry: point});
+      let feature = new Feature({geometry: point});
       let locstyleId = this.options.mapController.data.areaCenterLocstyle;
       feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
       this.areaSource.clear();
@@ -2318,11 +2330,11 @@ export class Router extends Sideboard {
     if (this.fromValue) {
       this.fromValue.setCoordinates(coordinates);
     } else {
-      this.fromValue = new ol.geom.Point(coordinates);
+      this.fromValue = new Point(coordinates);
     }
     this.fromValue.transform('EPSG:3857', 'EPSG:4326');
     let point = jQuery.extend(true, {}, this.fromValue);
-    let feature = new ol.Feature({geometry: this.fromValue});
+    let feature = new Feature({geometry: this.fromValue});
     let locstyleId = this.options.mapController.data.router_from_locstyle;
     feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
     this.mapSelectInteraction.getFeatures().clear();
@@ -2336,11 +2348,11 @@ export class Router extends Sideboard {
     if (this.toValue) {
       this.toValue.setCoordinates(coordinates);
     } else {
-      this.toValue = new ol.geom.Point(coordinates);
+      this.toValue = new Point(coordinates);
     }
     this.toValue.transform('EPSG:3857', 'EPSG:4326');
     let point = jQuery.extend(true, {}, this.toValue);
-    let feature = new ol.Feature({geometry: this.toValue});
+    let feature = new Feature({geometry: this.toValue});
     let locstyleId = this.options.mapController.data.router_to_locstyle;
     feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
     this.mapSelectInteraction.getFeatures().clear();
@@ -3373,8 +3385,8 @@ export class Router extends Sideboard {
         if (feature) {
           var currentCoordinates = feature.getGeometry().getCoordinates()[element.data('pos')];
           self.routingHintSource.clear();
-          var currentHintFeature = new ol.Feature({
-            geometry: new ol.geom.Point(currentCoordinates)
+          var currentHintFeature = new Feature({
+            geometry: new Point(currentCoordinates)
           });
           self.routingHintSource.addFeature(currentHintFeature);
           self.options.mapController.map.getView().setCenter(currentCoordinates);
@@ -3389,9 +3401,9 @@ export class Router extends Sideboard {
           var stringlonlat = coordLonLat.split(",");
           stringlonlat[0] = parseFloat(stringlonlat[0]);
           stringlonlat[1] = parseFloat(stringlonlat[1]);
-          var newCoord = ol.proj.fromLonLat(stringlonlat);
-          var currentHintFeature = new ol.Feature({
-            geometry: new ol.geom.Point(newCoord)
+          var newCoord = fromLonLat(stringlonlat);
+          var currentHintFeature = new Feature({
+            geometry: new Point(newCoord)
           })
           self.routingHintSource.addFeature(currentHintFeature);
           self.options.mapController.map.getView().setCenter(newCoord);
@@ -3400,13 +3412,13 @@ export class Router extends Sideboard {
           let start = element.data('start');
           let end = element.data('end');
           if (start, end) {
-            let geom = new ol.geom.LineString(coordinates.slice(start, end))
-            var currentHintFeature = new ol.Feature({
+            let geom = new LineString(coordinates.slice(start, end))
+            var currentHintFeature = new Feature({
               geometry: geom
             })
             currentHintFeature.setStyle(
-              new ol.style.Style({
-                stroke: new ol.style.Stroke({
+              new Style({
+                stroke: new Stroke({
                   color: 'rgba(255, 0, 0, 1)',
                   width: 20
                 })
@@ -3429,8 +3441,8 @@ export class Router extends Sideboard {
         var feature = self.routingWaySource.getFeatures()[0];
         if (feature) {
           self.routingHintSource.clear();
-          var currentHintFeature = new ol.Feature({
-            geometry: new ol.geom.Point(feature.getGeometry().getCoordinates()[element.data('pos')])
+          var currentHintFeature = new Feature({
+            geometry: new Point(feature.getGeometry().getCoordinates()[element.data('pos')])
           });
           self.routingHintSource.addFeature(currentHintFeature);
         }
@@ -3444,9 +3456,9 @@ export class Router extends Sideboard {
             var stringlonlat = coordLonLat.split(",");
             stringlonlat[0] = parseFloat(stringlonlat[0]);
             stringlonlat[1] = parseFloat(stringlonlat[1]);
-            var newCoord = ol.proj.fromLonLat(stringlonlat);
-            var currentHintFeature = new ol.Feature({
-              geometry: new ol.geom.Point(newCoord)
+            var newCoord = fromLonLat(stringlonlat);
+            var currentHintFeature = new Feature({
+              geometry: new Point(newCoord)
             });
             self.routingHintSource.addFeature(currentHintFeature);
           }
@@ -3456,12 +3468,12 @@ export class Router extends Sideboard {
             let start = element.data('start');
             let end = element.data('end');
             if (start, end) {
-              var currentHintFeature = new ol.Feature({
-                geometry: new ol.geom.LineString(coordinates.slice(start, end))
-              })
+              var currentHintFeature = new Feature({
+                geometry: new LineString(coordinates.slice(start, end))
+              });
               currentHintFeature.setStyle(
-                new ol.style.Style({
-                  stroke: new ol.style.Stroke({
+                new Style({
+                  stroke: new Stroke({
                     color: 'rgba(255, 0, 0, 1)',
                     width: 15
                   })
@@ -3650,7 +3662,7 @@ export class Router extends Sideboard {
 
     map = self.options.mapController.map;
     bounds = map.getView().calculateExtent(map.getSize());
-    bounds = ol.proj.transformExtent(bounds, map.getView().getProjection(), 'EPSG:4326');
+    bounds = transformExtent(bounds, map.getView().getProjection(), 'EPSG:4326');
     viewbox = '&viewbox=' + bounds[0] + ',' + bounds[1] + ',' + bounds[2] + ',' + bounds[3];
 
     url = self.geoSearchApi + '?format=json&limit=1&q=' + encodeURI($input.val()) + viewbox;
@@ -3667,14 +3679,14 @@ export class Router extends Sideboard {
           if (!self.overValue) {
             self.overValue = [];
           }
-          let overPoint = new ol.geom.Point([parseFloat(response[0].lon), parseFloat(response[0].lat)]);
+          let overPoint = new Point([parseFloat(response[0].lon), parseFloat(response[0].lat)]);
           let deleteButton =  $input.next()[0]
           deleteButton.id = overPoint['ol_uid'];
           self.overValue.push(overPoint);
           self.$buttonOver.prop("disabled", false);
         }
         else {
-          self[value] = new ol.geom.Point(
+          self[value] = new Point(
             [parseFloat(response[0].lon), parseFloat(response[0].lat)]
           );
           switch(value) {
