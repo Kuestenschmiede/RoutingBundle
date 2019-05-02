@@ -575,6 +575,14 @@ export class Router extends Sideboard {
             self.overValue = [];
           }
           self.overValue.push(new ol.geom.Point(coordinate));
+          let olUid = self.overValue[self.overValue.length - 1]['ol_uid'];
+          let deleteButton =  self.$overInput.next()[0];
+          // traverse the dom level until the delete button is found
+          while (!jQuery(deleteButton).hasClass('c4g-router-input-clear')) {
+            deleteButton = jQuery(deleteButton).next()[0];
+          }
+
+          deleteButton.id = olUid;
           self.recalculateRoute();
           self.$buttonOver.prop("disabled", false);
         }
@@ -3541,14 +3549,16 @@ export class Router extends Sideboard {
    */
   clearOver($input, index) {
     if (this.overValue) {
-      let intCount = 0;
+      let intCount = -1;
       for(let i = 0; i < this.overValue.length; i++) {
-        if (this.overValue[i]['ol_uid'] == index) {
+        if (this.overValue[i]['ol_uid'] === index) {
           intCount = i;
         }
       }
-      this.overValue.splice(intCount, 1)
-
+      // only remove if the overField is not empty (overField empty <=> intCount == 0)
+      if (intCount > -1) {
+        this.overValue.splice(intCount, 1);
+      }
     }
     this.$buttonOver.prop("disabled", false);
     jQuery(this.routerInstructionsWrapper).empty();
@@ -3668,7 +3678,11 @@ export class Router extends Sideboard {
             self.overValue = [];
           }
           let overPoint = new ol.geom.Point([parseFloat(response[0].lon), parseFloat(response[0].lat)]);
-          let deleteButton =  $input.next()[0]
+          let deleteButton =  $input.next()[0];
+          // traverse the dom level until the delete button is found
+          while (!jQuery(deleteButton).hasClass('c4g-router-input-clear')) {
+            deleteButton = jQuery(deleteButton).next()[0];
+          }
           deleteButton.id = overPoint['ol_uid'];
           self.overValue.push(overPoint);
           self.$buttonOver.prop("disabled", false);
