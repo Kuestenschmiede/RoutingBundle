@@ -28,6 +28,7 @@ import {Vector as VectorSource} from "ol/source";
 import {Collection} from "ol";
 import {LineString} from "ol/geom";
 import {Modify, Select} from "ol/interaction";
+import {RoutingPermalink} from "./c4g-routing-permalink";
 
 let langRouteConstants = {};
 
@@ -80,7 +81,10 @@ export class Router extends Sideboard {
       forceStart: 1
     };
     this.usePermalink = this.options.mapController.data.usePermalink;
-  };
+    if (this.usePermalink) {
+      this.permalinkHandler = new RoutingPermalink(this);
+    }
+  }
 
   /**
    * Initializes the router.
@@ -308,195 +312,28 @@ export class Router extends Sideboard {
     this.geoReverseSearchApi = this.options.mapController.data.api.geosearch_reverse + '/' + profileId;
     this.routingApi = this.options.mapController.data.api.routing + '/' + profileId;
 
+    if (this.usePermalink) {
+      this.permalinkHandler.handleInitialParams();
+    }
     this.spinner.hide();
-    this.handleInitialParams();
     return true;
 
   }
 
-  /**
-   * Sets one key of this.linkFragments to the given value.
-   * @param key
-   * @param value
-   */
   updateLinkFragments(key, value) {
-    if (this.usePermalink) {
-      if (!this.linkFragments) {
-        this.linkFragments = {};
-      }
-      this.linkFragments[key] = value;
-      this.updateUrl();
-    }
+    this.permalinkHandler.updateLinkFragments(key, value)
   }
+
   updateInterimIds(insertId) {
     let intGoals = $("." + routingConstants.ROUTER_INPUT_WRAPPER)
   }
 
-  /**
-   * Checks the current values in this.linkFragments and updates the browser URL, when an update is possible yet.
-   */
   updateUrl() {
-    let url = "?mapsParams=";
-    const fragments = this.linkFragments;
-    // only attend updating url when every value is set
-    if (fragments.mode && fragments.mode === "area") {
-        url += fragments.mode ? "m:" + fragments.mode + "/" : "";
-        url += fragments.addressArea ? "a:" + fragments.addressArea + "/" : "";
-        url += fragments.detour ? "d:" + fragments.detour + "/" : "";
-        url += fragments.searchType ? "s:" + fragments.searchType + "/" : "";
-        url += fragments.forceStart ? "f:" + fragments.forceStart : "";
-        let completeUrl = window.location.pathname + url;
-        history.pushState({}, null, completeUrl);
-    } else if (fragments.mode && fragments.mode === "route") {
-        url += fragments.mode ? "m:" + fragments.mode + "/" : "";
-        url += fragments.addressFrom ? "af:" + fragments.addressFrom + "/" : "";
-        url += fragments.addressTo ? "at:" + fragments.addressTo + "/" : "";
-        url += fragments.detour ? "d:" + fragments.detour + "/" : "";
-        url += fragments.searchType ? "s:" + fragments.searchType + "/" : "";
-        url += fragments.forceStart ? "f:" + fragments.forceStart : "";
-        let completeUrl = window.location.pathname + url;
-        history.pushState({}, null, completeUrl);
-    }
+    this.permalinkHandler.updateUrl();
   }
 
-  /**
-   * Checks if there are GET params loaded into the mapData and triggers the search accordingly.
-   * The first param is expected to be either "route" or "area" to indicate the type of search.
-   * After that, the next param (or the next two, in case of "route") should be an address string.
-   * The following parameters are detour/searchtype/forceStart.
-   */
   handleInitialParams() {
-    const params = this.options.mapController.data.initialParams;
-    const scope = this;
-    if (params) {
-      const arrParams = params.split("/").map(pair => pair.split(":"));
-      const objParams = {};
-      arrParams.forEach(([key,value]) => objParams[key] = value);
-      let routerLayers = this.options.mapController.data.routerLayers;
-      let desiredButton = "";
-      iterationLabel:
-        for (let key in routerLayers) {
-          if (routerLayers.hasOwnProperty(key)) {
-            let obj = routerLayers[key];
-            for (let innerKey in obj) {
-              if (obj.hasOwnProperty(innerKey)) {
-                let singleEntry = obj[innerKey];
-                let cmpValue = objParams.s
-                if (singleEntry.mapLabel === cmpValue) {
-                  desiredButton = innerKey;
-                  break iterationLabel;
-                }
-              }
-            }
-          }
-        }
-      // iterate buttons later on when the UI is built
-      this.desiredButtonRouting = desiredButton;
-      if (objParams.m === "area") {
-        this.viewArea.activate();
-        let center = objParams.a;
-        let detour = objParams.d;
-        let searchtype = objParams.s;
-        let forceStart = objParams.f;
-
-        if (detour || detour > 1) {
-          this.updateLinkFragments("detour", detour);
-          jQuery(this.toggleDetourArea).val(detour);
-          jQuery(this.toggleDetourArea).trigger('input');
-        }
-        if (center) {
-          this.updateLinkFragments("addressArea", center);
-          jQuery(this.areaFromInput).val(center);
-          this.performSearch(jQuery(this.areaFromInput), "areaValue", function () {
-            if (scope.areaValue) {
-              let point = jQuery.extend(true, {}, scope.areaValue);
-              let feature = new Feature({geometry: point.transform('EPSG:4326', 'EPSG:3857')});
-              var styleId = scope.options.mapController.data.areaCenterLocstyle;
-
-              var locStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles[styleId];
-              if (locStyle) {
-                feature.setStyle(locStyle.style);
-                scope.areaSource.addFeature(feature);
-                scope.performArea(scope.areaValue);
-              } else {
-                scope.options.mapController.proxy.locationStyleController.loadLocationStyles([styleId], {
-                  done: function () {
-                    let locStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles;
-                    feature.setStyle(locStyle.style);
-                    scope.areaSource.addFeature(feature);
-                    scope.performArea(scope.areaValue);
-                  }
-                });
-              }
-            }
-          });
-        }
-        if (searchtype) {
-          this.updateLinkFragments("searchType", searchtype);
-        }
-        if (forceStart) {
-          this.updateLinkFragments("forceStart", forceStart);
-        }
-        // activate area view
-        jQuery(".c4g-portside-viewtriggerbar .c4g-area-search").click();
-
-      } else if (objParams.m === "route") {
-        this.viewRouter.activate();
-        let fromAddress = objParams.af;
-        let toAddress = objParams.at;
-        let detour = objParams.d;
-        let searchtype = objParams.s;
-        let forceStart = objParams.f;
-        if (detour) {
-          jQuery(this.toggleDetourRoute).val(detour);
-          jQuery(this.toggleDetourRoute).trigger('input');
-          this.updateLinkFragments("detour", objParams.d);
-        }
-        if (fromAddress) {
-          jQuery(this.fromInput).val(fromAddress);
-          this.updateLinkFragments("addressFrom", fromAddress);
-        }
-        if (toAddress) {
-          jQuery(this.toInput).val(toAddress);
-          this.updateLinkFragments("addressTo", toAddress);
-        }
-        if (searchtype) {
-          this.updateLinkFragments("searchType", objParams.s);
-        }
-        if (forceStart) {
-          this.updateLinkFragments("forceStart", objParams.f);
-        }
-        if (fromAddress && toAddress) {
-          this.performSearch(jQuery(this.fromInput), "fromValue", function () {
-            if (scope.fromValue) {
-              scope.performSearch(jQuery(scope.toInput), "toValue", function () {
-                if (scope.fromValue && scope.toValue) {
-                  let fromStyleId = scope.options.mapController.data.router_from_locstyle;
-                  let toStyleId = scope.options.mapController.data.router_to_locstyle;
-                  let fromStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles[fromStyleId].style;
-                  let toStyle = scope.options.mapController.proxy.locationStyleController.arrLocStyles[toStyleId].style;
-                  let fromPoint = scope.fromValue.clone();
-                  fromPoint.transform('EPSG:4326', 'EPSG:3857');
-                  let toPoint = scope.toValue.clone();
-                  toPoint.transform('EPSG:4326', 'EPSG:3857');
-                  let fromFeature = new Feature({geometry: fromPoint});
-                  fromFeature.setStyle(fromStyle);
-                  let toFeature = new Feature({geometry: toPoint});
-                  toFeature.setStyle(toStyle);
-                  scope.locationsSource.addFeature(fromFeature);
-                  scope.locationsSource.addFeature(toFeature);
-                  if (forceStart) {
-                    scope.performViaRoute(scope.fromValue, scope.toValue);
-                  }
-                }
-              });
-            }
-          });
-        }
-        // activate router view
-        jQuery(".c4g-portside-viewtriggerbar .c4g-route-search").click();
-      }
-    }
+    this.permalinkHandler.handleInitialParams();
   }
 
   /**
@@ -568,19 +405,19 @@ export class Router extends Sideboard {
       coordinate = toLonLat(evt.coordinate);
       // clear old features
       self.areaSource.clear();
+
       if (self.$fromInput.val() === "") {
-        //self.$fromInput.val(toLonLat(evt.coordinate));
         self.performReverseSearch(self.$fromInput, coordinate);
         self.fromValue = new Point(coordinate);
+        self.updateLinkFragments("addressFrom", coordinate);
         self.recalculateRoute();
-
-        //self.$fromInput.trigger('change');
       } else if (self.$toInput.val() === "") {
-        //self.$toInput.val(toLonLat(evt.coordinate));
         self.performReverseSearch(self.$toInput, coordinate);
         self.toValue = new Point(coordinate);
+        self.updateLinkFragments("addressTo", coordinate);
         self.recalculateRoute();
       } else if (self.$overInput) {
+
         if (self.$overInput.val() === "") {
           self.performReverseSearch(self.$overInput, coordinate);
           if (!self.overValue) {
@@ -758,6 +595,7 @@ export class Router extends Sideboard {
     }
     fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
     toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
+    console.log(fromCoord, toCoord);
     if (overPoint) {
       overCoord = new Array();
       for (var propt in overPoint) {
@@ -2216,81 +2054,6 @@ export class Router extends Sideboard {
       }
     }
     scope.recalculateRoute();
-    // let url = "/con4gis/reverseNominatimService/" + profileId + '?format=json&lat=' + coords.latitude + '&lon=' + coords.longitude;
-    // jQuery.ajax({url: url}).done(function (data) {
-    //   let address = "";
-    //   if (data.address) {
-    //     if (data.address.city) {
-    //       address = data.address.city;
-    //       if (data.address.road) {
-    //         address = ', ' + value;
-    //       }
-    //     }
-    //     if (data.address.postcode) {
-    //       address += data.address.postcode + " ";
-    //     }
-    //
-    //     if (data.address.town) {
-    //       address = data.address.town;
-    //       if (data.address.road) {
-    //         address = ', ' + data.address.road;
-    //       }
-    //       else if (data.address.pedestrian) {
-    //         address = ', ' + data.address.pedestrian;
-    //       }
-    //     }
-    //     if (data.address.road || data.address.pedestrian) {
-    //       if (data.address.house_number) {
-    //         address = ' ' + data.address.house_number + value;
-    //       }
-    //       address = data.address.road + value;
-    //     }
-    //   }
-    //
-    //   if (address.length > 0) {
-    //     address += ", ";
-    //   }
-    //
-    //   jQuery(cssId).val(address);
-    //   switch (property) {
-    //     case "fromValue":
-    //       scope[property] = new Point([coords.longitude, coords.latitude]);
-    //       scope.updateLinkFragments("addressFrom", scope[property]);
-    //       break;
-    //     case "toValue":
-    //       scope[property] = new Point([coords.longitude, coords.latitude]);
-    //       scope.updateLinkFragments("addressFrom", scope[property]);
-    //       break;
-    //     case "areaValue":
-    //       scope[property] = new Point([coords.longitude, coords.latitude]);
-    //       scope.updateLinkFragments("addressFrom", scope[property]);
-    //       break;
-    //     case "overValue":
-    //       if (!scope.overValue) {
-    //         scope.overValue = [];
-    //       }
-    //       scope.$buttonOver.prop("disabled", false);
-    //       scope[property].push(new Point([coords.longitude, coords.latitude]));
-    //       break;
-    //   }
-    //
-    //
-    //   if (mode === "area") {
-    //     scope.setAreaPoint([coords.longitude, coords.latitude]);
-    //     if (scope[property]) {
-    //       scope.performArea(scope[property]);
-    //     }
-    //   } else {
-    //     if (scope.fromValue && scope.toValue) {
-    //       if (scope.overValue) {
-    //         scope.performViaRoute(scope.fromValue, scope.toValue, scope.overValue);
-    //       }
-    //       else {
-    //         scope.performViaRoute(scope.fromValue, scope.toValue);
-    //       }
-    //     }
-    //   }
-    // });
   }
 
   /**
@@ -2319,7 +2082,11 @@ export class Router extends Sideboard {
   setAreaPoint(coordinates) {
     if (this.areaValue) {
       let point = jQuery.extend(true, {}, this.areaValue);
-      point.transform('EPSG:4326', 'EPSG:3857');
+      // transform coordinates if needed
+      if (!(coordinates[0] >= -90.0 && coordinates[0] <= 90.0
+        && coordinates[1] >= -90.0 && coordinates[1] <= 90.0)) {
+        point.transform('EPSG:4326', 'EPSG:3857');
+      }
       let feature = new Feature({geometry: point});
       let locstyleId = this.options.mapController.data.areaCenterLocstyle;
       feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
@@ -2330,43 +2097,68 @@ export class Router extends Sideboard {
       this.locationsSource.clear();
       this.mapSelectInteraction.getFeatures().clear();
       this.areaSource.addFeature(feature);
-      this.updateLinkFragments("addressArea");
+      this.updateLinkFragments("addressArea", coordinates);
     }
   }
 
   setFromPoint(coordinates) {
+    const scope = this;
+    console.log(coordinates);
     if (this.fromValue) {
       this.fromValue.setCoordinates(coordinates);
     } else {
       this.fromValue = new Point(coordinates);
     }
-    this.fromValue.transform('EPSG:3857', 'EPSG:4326');
+    // transform coordinates if needed
+    if (!(coordinates[0] >= -90.0 && coordinates[0] <= 90.0
+      && coordinates[1] >= -90.0 && coordinates[1] <= 90.0)) {
+      this.fromValue.transform('EPSG:3857', 'EPSG:4326');
+    }
     let point = jQuery.extend(true, {}, this.fromValue);
     let feature = new Feature({geometry: this.fromValue});
     let locstyleId = this.options.mapController.data.router_from_locstyle;
-    feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+    if (this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId]) {
+      feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+    } else {
+      this.options.mapController.proxy.hook_locstyles_loaded.push(function() {
+        feature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+      });
+    }
+
     this.mapSelectInteraction.getFeatures().clear();
     this.routerFeaturesSource.addFeature(feature);
-    this.updateLinkFragments("addressFrom", this.fromValue);
-    this.performReverseSearch(this.$fromInput, point.getCoordinates());
+    this.updateLinkFragments("addressFrom", coordinates);
+    this.performReverseSearch(this.$fromInput, coordinates);
     this.recalculateRoute();
   }
 
   setToPoint(coordinates) {
+    const scope = this;
     if (this.toValue) {
       this.toValue.setCoordinates(coordinates);
     } else {
       this.toValue = new Point(coordinates);
     }
-    this.toValue.transform('EPSG:3857', 'EPSG:4326');
+    // transform coordinates if needed
+    if (!(coordinates[0] >= -90.0 && coordinates[0] <= 90.0
+      && coordinates[1] >= -90.0 && coordinates[1] <= 90.0)) {
+      this.toValue.transform('EPSG:3857', 'EPSG:4326');
+    }
     let point = jQuery.extend(true, {}, this.toValue);
     let feature = new Feature({geometry: this.toValue});
     let locstyleId = this.options.mapController.data.router_to_locstyle;
-    feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+
+    if (this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId]) {
+      feature.setStyle(this.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+    } else {
+      this.options.mapController.proxy.hook_locstyles_loaded.push(function() {
+        feature.setStyle(scope.options.mapController.proxy.locationStyleController.arrLocStyles[locstyleId].style);
+      })
+    }
     this.mapSelectInteraction.getFeatures().clear();
     this.routerFeaturesSource.addFeature(feature);
-    this.updateLinkFragments("addressTo", this.toValue);
-    this.performReverseSearch(this.$toInput, point.getCoordinates());
+    this.updateLinkFragments("addressTo", coordinates);
+    this.performReverseSearch(this.$toInput, coordinates);
     this.recalculateRoute();
   }
 
@@ -3629,13 +3421,13 @@ export class Router extends Sideboard {
           if ($input.attr('name') === "routingFrom") {
             self.$routerFromClear.show();
             // update address in link
-            self.updateLinkFragments("addressFrom", value);
+            // self.updateLinkFragments("addressFrom", value);
           } else if ($input.attr('name') === "routingTo") {
             self.$routerToClear.show();
             // update address in link
-            self.updateLinkFragments("addressTo", value);
+            // self.updateLinkFragments("addressTo", value);
           } else if ($input.attr('name') === "areaFrom") {
-            self.updateLinkFragments("addressArea", value);
+            // self.updateLinkFragments("addressArea", value);
           }
         }
 
@@ -3700,18 +3492,17 @@ export class Router extends Sideboard {
           self.$buttonOver.prop("disabled", false);
         }
         else {
-          self[value] = new Point(
-            [parseFloat(response[0].lon), parseFloat(response[0].lat)]
-          );
+          let coords = [parseFloat(response[0].lon), parseFloat(response[0].lat)];
+          self[value] = new Point(coords);
           switch(value) {
             case "fromValue":
-              self.updateLinkFragments("addressFrom", $input.val());
+              self.updateLinkFragments("addressFrom", coords);
               break;
             case "toValue":
-              self.updateLinkFragments("addressTo", $input.val());
+              self.updateLinkFragments("addressTo", coords);
               break;
             case "areaValue":
-              self.updateLinkFragments("addressArea", $input.val());
+              self.updateLinkFragments("addressArea", coords);
               break;
             default:
               break;
