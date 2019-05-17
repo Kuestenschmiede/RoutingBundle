@@ -136,23 +136,21 @@ export class RoutingPermalink {
 
   handleInitialRouteSearch(objParams) {
     this.router.viewRouter.activate();
-    let fromAddress = objParams.af.split(",").map(elem => parseFloat(elem));
-    let toAddress = objParams.at.split(",").map(elem => parseFloat(elem));
+
+    let fromAddress = objParams.af ? objParams.af.split(",").map(elem => parseFloat(elem)) : null;
+    let toAddress = objParams.at ? objParams.at.split(",").map(elem => parseFloat(elem)) : null;
     let detour = objParams.d;
     let searchtype = objParams.s;
     let forceStart = objParams.f;
-    console.log(fromAddress, toAddress);
     if (detour) {
       jQuery(this.router.toggleDetourRoute).val(detour);
       jQuery(this.router.toggleDetourRoute).trigger('input');
       this.updateLinkFragments("detour", objParams.d);
     }
     if (fromAddress) {
-      // jQuery(this.fromInput).val(fromAddress);
       this.updateLinkFragments("addressFrom", fromAddress);
     }
     if (toAddress) {
-      // jQuery(this.toInput).val(toAddress);
       this.updateLinkFragments("addressTo", toAddress);
     }
     if (searchtype) {

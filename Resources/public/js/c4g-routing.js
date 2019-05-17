@@ -595,9 +595,8 @@ export class Router extends Sideboard {
     }
     fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
     toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
-    console.log(fromCoord, toCoord);
     if (overPoint) {
-      overCoord = new Array();
+      overCoord = [];
       for (var propt in overPoint) {
         if (overPoint.hasOwnProperty(propt)) {
           overCoord.push([overPoint[propt].getCoordinates()[1], overPoint[propt].getCoordinates()[0]]);
@@ -2103,7 +2102,6 @@ export class Router extends Sideboard {
 
   setFromPoint(coordinates) {
     const scope = this;
-    console.log(coordinates);
     if (this.fromValue) {
       this.fromValue.setCoordinates(coordinates);
     } else {
