@@ -132,7 +132,8 @@ class LoadAreaFeaturesListener
                     //ToDo check performMatrix result
                     $matrixResponse = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
                     $features = [];
-                    switch ($routerConfig->getRouterApiSelection()){
+                    $type = $matrixResponse['responseType'] ? $matrixResponse['responseType'] : $routerConfig->getRouterApiSelection();
+                    switch ($type) {
                         case 1:
                             for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
                                 if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
@@ -165,6 +166,7 @@ class LoadAreaFeaturesListener
                                 }
                             }
                             break;
+                            
                     }
                     $event->setReturnData(\GuzzleHttp\json_encode([$features,'overpass']));
                 } else {

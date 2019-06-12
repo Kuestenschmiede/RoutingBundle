@@ -15,6 +15,7 @@ namespace con4gis\RoutingBundle\Classes\Services;
 
 
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
+use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use con4gis\RoutingBundle\Classes\Event\LoadAreaFeaturesEvent;
 use con4gis\RoutingBundle\Classes\LatLng;
@@ -68,6 +69,8 @@ class AreaService
                 return $this->performMatrixGraphhopper($routerConfig, $routingProfile, $locations, $opt_options);
             } else if ($routerConfig->getRouterApiSelection() == "4") {
                 return $this->performMatrixValhalla($routerConfig, $routingProfile, $locations, $opt_options);
+            } else if ($routerConfig->getRouterApiSelection() == "5") {
+                return $this->performMatrixCon4gisIO($routerConfig, $routingProfile, $locations, $opt_options);
             }
         }
     }
@@ -164,6 +167,35 @@ class AreaService
                 }                
             }
             return $result;
+        }
+    }
+    protected function performMatrixCon4gisIO ($routerConfig, $routingProfile, $locations, $opt_options = null) {
+        if($routerConfig instanceof RoutingConfiguration){
+            $objSettings = C4gMapSettingsModel::findOnly();
+            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 5);
+            if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE', $language)){
+                $language = $GLOBALS['TL_LANGUAGE'];
+                if(!substr_count('ca-ES, cs-CZ, de-DE, en-US,C, es-ES, fr-FR, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE',$language)){
+                    $language = "en-US";
+                }
+            }
+
+            $REQUEST = new \Request();
+            if ($_SERVER['HTTP_REFERER']) {
+                $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+            }
+            if ($_SERVER['HTTP_USER_AGENT']) {
+                $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+            }
+            $REQUEST->setHeader('Content-Type', "application/x-www-form-urlencoded");
+            $sendUrl = rtrim($objSettings->con4gisIoUrl, "/") . "/" . "matrix.php?&language=" . $language . "&profile=auto&key=" . $objSettings->con4gisIoKey;
+            $REQUEST->method = "POST";
+
+            $encLocs = "locations=" . json_encode($locations);
+            $REQUEST->send($sendUrl,$encLocs);
+            $response = $REQUEST->response;
+
+            return $response;
         }
     }
     protected function performMatrixValhalla($routerConfig, $routingProfile, $locations, $opt_options = null) {
