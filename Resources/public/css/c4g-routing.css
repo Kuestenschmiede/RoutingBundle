@@ -132,8 +132,8 @@
     display: inline-block;
     white-space: nowrap;
     padding: 20px 10px 20px;
-    z-index:100;
-    left:100%;
+    z-index: 40;
+    left: 100%;
     background-color: rgba(24, 61, 93,.8) !important;
     background-color: var(--main-color) !important;
     border-radius: 0%;

@@ -321,7 +321,9 @@ export class Router extends Sideboard {
   }
 
   updateLinkFragments(key, value) {
-    this.permalinkHandler.updateLinkFragments(key, value)
+    if (this.usePermalink) {
+      this.permalinkHandler.updateLinkFragments(key, value);
+    }
   }
 
   updateInterimIds(insertId) {
