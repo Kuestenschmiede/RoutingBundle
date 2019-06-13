@@ -174,7 +174,7 @@ export class Router extends Sideboard {
       let feature = event.selected[0];
       if (feature) {
         var geometry = feature.getGeometry();
-        if (geometry && (geometry.constructor.name === LineString)) {
+        if (geometry && (geometry.getType() === 'LineString')) {
           self.showAltRoute(self.response, feature.getId());
         } else {
           if (feature) {
