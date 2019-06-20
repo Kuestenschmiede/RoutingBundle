@@ -40,7 +40,7 @@ class RouteService extends \Frontend
      * @param  array $arrInput Fragments from request uri
      * @return mixed           JSON data
      */
-    public function generate($profileId, $locations, $routerConfig, $profile = null)
+    public function generate($profileId, $locations, $routerConfig, $language, $profile = null)
     {
         $strParams = "";
         foreach ($_GET as $key=>$value) {
@@ -55,7 +55,7 @@ class RouteService extends \Frontend
                 }
             }
         }
-        return $this->getRoutingResponse($locations, $strParams, $routerConfig, $profileId, $profile);
+        return $this->getRoutingResponse($locations, $strParams, $routerConfig, $profileId, $profile, $language);
     }
 
     /**
@@ -67,13 +67,13 @@ class RouteService extends \Frontend
      * @param $profile
      * @return string
      */
-    public function getResponse($profileId, $layer, $locations, $detour, $profile)
+    public function getResponse($profileId, $layer, $locations, $detour, $language, $profile)
     {
         $objMapsProfile = C4gMapProfilesModel::findBy('id', $profileId);
         $routerConfigRepo = System::getContainer()->get('doctrine.orm.default_entity_manager')
             ->getRepository(RoutingConfiguration::class);
         $routerConfig = $routerConfigRepo->findOneBy(['id' => $objMapsProfile->routerConfig]);
-        $routeData = $this->generate($profileId, $locations,$routerConfig, $profile);
+        $routeData = $this->generate($profileId, $locations,$routerConfig, $profile, $language);
         $polyline = new Polyline([]);
         $objLayer = C4gMapsModel::findById($layer);
         if($routerConfig->getRouterLayers()){ //prevent listener and decoding of polyline if not necessary
@@ -119,32 +119,31 @@ class RouteService extends \Frontend
      * @param $profile
      * @return string
      */
-    protected function getRoutingResponse($arrInput, $strParams, $routerConfig, $intProfileId, $profile)
+    protected function getRoutingResponse($arrInput, $strParams, $routerConfig, $intProfileId, $profile, $language)
     {
 
         if($routerConfig instanceof RoutingConfiguration) {
             if($routerConfig->getRouterApiSelection() == '1' || $routerConfig->getRouterApiSelection() == '0') {
-                $response = $this->getORSMResponse($arrInput, $strParams, $routerConfig, $profile);
+                $response = $this->getORSMResponse($arrInput, $strParams, $routerConfig, $language, $profile);
             }
             else if($routerConfig->getRouterApiSelection() == '2') {
-                $response = $this->getORSResponse($arrInput, $strParams, $profile, $routerConfig);
+                $response = $this->getORSResponse($arrInput, $strParams, $profile, $language, $routerConfig);
             }
             else if($routerConfig->getRouterApiSelection() == '3') {
-                $response = $this->getGraphhopperResponse($arrInput, $strParams, $profile, $routerConfig);
+                $response = $this->getGraphhopperResponse($arrInput, $strParams, $profile, $language, $routerConfig);
             }
             else if ($routerConfig->getRouterApiSelection() == '4') {
-                $response = $this->getValhallaResponse($arrInput, $strParams, $routerConfig, $profile);
+                $response = $this->getValhallaResponse($arrInput, $strParams, $routerConfig, $language, $profile);
             }
             else if ($routerConfig->getRouterApiSelection() == '5') {
-                $response = $this->getCon4gisIOResponse($arrInput, $strParams, $routerConfig, $profile);
+                $response = $this->getCon4gisIOResponse($arrInput, $strParams, $routerConfig, $language, $profile);
             }
             return $response;
         }
     }
-    private function getCon4gisIOResponse ($arrInput, $strParams, $routerConfig, $profile = null){
+    private function getCon4gisIOResponse ($arrInput, $strParams, $routerConfig, $language, $profile = null){
         if($routerConfig instanceof RoutingConfiguration){
             $objSettings = C4gMapSettingsModel::findOnly();
-            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 5);
             if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE', $language)){
                 $language = $GLOBALS['TL_LANGUAGE'];
                 if(!substr_count('ca-ES, cs-CZ, de-DE, en-US,C, es-ES, fr-FR, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE',$language)){
@@ -178,7 +177,7 @@ class RouteService extends \Frontend
             return $response;
         }
     }
-    private function getValhallaResponse($arrInput, $strParams, $routerConfig, $profile = null) {
+    private function getValhallaResponse($arrInput, $strParams, $routerConfig, $language, $profile = null) {
         if($routerConfig instanceof RoutingConfiguration){
             $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://api.mapbox.com/valhalla/v1/";
             $strRoutingUrl .= "route";
@@ -241,7 +240,6 @@ class RouteService extends \Frontend
             }
 
 
-            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 5);
             if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, en-US-x-pirate, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE', $language)){
                 $language = $GLOBALS['TL_LANGUAGE'];
                 if(!substr_count('ca-ES, cs-CZ, de-DE, en-US,C, es-ES, fr-FR, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE',$language)){
@@ -298,7 +296,7 @@ class RouteService extends \Frontend
      * @param $strParams
      * @return string
      */
-    private function getGraphhopperResponse($arrInput, $strParams, $profile, $routerConfig)
+    private function getGraphhopperResponse($arrInput, $strParams, $profile, $language, $routerConfig)
     {
         if($routerConfig instanceof RoutingConfiguration){
             $valuesProfile =[0 => "car", 1 => "truck", 2 => "bike", 3 => "racingbike", 5 => "mtb", 8 => "foot", 9 => "hike", 11 => "small_truck", 12 => "scooter"];
@@ -310,7 +308,6 @@ class RouteService extends \Frontend
                 $points .=  "&point=" . explode(",",$arrInput[$i])[0].','.explode(",",$arrInput[$i])[1];
             }
             $points = substr($points,0,strlen($points)-1);
-            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
             if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
                 $language = $GLOBALS['TL_LANGUAGE'];
                 if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
@@ -348,7 +345,7 @@ class RouteService extends \Frontend
      * @param $strParams
      * @return string
      */
-    private function getORSMResponse($arrInput, $strParams, $routerConfig, $profile = "driving")
+    private function getORSMResponse($arrInput, $strParams, $routerConfig, $language, $profile = "driving")
     {
         $strRoutingUrl = "http://router.project-osrm.org/";
         if ($routerConfig->getRouterViarouteUrl())
@@ -389,7 +386,7 @@ class RouteService extends \Frontend
      * @param $profile
      * @return array|mixed|string
      */
-    private function getORSResponse($arrInput, $strParams, $profile, $routerConfig)
+    private function getORSResponse($arrInput, $strParams, $profile, $language, $routerConfig)
     {
         if($routerConfig instanceof RoutingConfiguration) {
             $valuesProfile = ["driving-car" , "driving-hgv" , "cycling-regular" , "cycling-road" , "cycling-safe" , "cycling-mountain" , "cycling-tour" , "cycling-electric" , "foot-walking" , "foot-hiking" , "wheelchair"];
@@ -401,7 +398,6 @@ class RouteService extends \Frontend
                 $coordinates .=  explode(",",$arrInput[$i])[1].','.explode(",",$arrInput[$i])[0].'|';
             }
             $coordinates = substr($coordinates,0,strlen($coordinates)-1);
-            $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
             if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){
                 $language = $GLOBALS['TL_LANGUAGE'];
                 if(!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr',$language)){

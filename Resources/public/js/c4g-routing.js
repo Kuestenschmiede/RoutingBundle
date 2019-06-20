@@ -608,7 +608,9 @@ export class Router extends Sideboard {
 
     if (this.options.mapController.data.router_api_selection >= '1') {//OSRM-API:5.x or ORS- API
       let profileId = this.options.mapController.data.profile;
-      url = 'con4gis/routeService/' + profileId + '/' + jQuery(self.routerLayersSelect).val() + '/' + jQuery(self.toggleDetourRoute).val() + '/' + fromCoord;
+      url = 'con4gis/routeService/' + this.options.mapController.data.lang + '/'
+        + profileId + '/' + jQuery(self.routerLayersSelect).val() + '/'
+        + jQuery(self.toggleDetourRoute).val() + '/' + fromCoord;
 
       if (overPoint) {
         for (var i = 0; i < overCoord.length; i++)

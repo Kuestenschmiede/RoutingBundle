@@ -34,14 +34,14 @@ class RoutingController extends BaseController
         return $response;
 
     }
-    public function getRouteAction(Request $request, $profileId, $layerId, $detour, $locations){
+    public function getRouteAction(Request $request, $language, $profileId, $layerId, $detour, $locations){
         $response = new Response();
         if($request->query->get('profile') !== null){
             $profile = $request->query->get('profile');
         }
         $locations = explode(";",$locations);
         $routeService = $this->get("con4gis.route_service");
-        $response ->setContent($routeService->getResponse($profileId, $layerId, $locations, $detour, $profile));
+        $response ->setContent($routeService->getResponse($profileId, $layerId, $locations, $detour, $profile, $language));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
 

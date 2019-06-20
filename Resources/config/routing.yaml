@@ -4,8 +4,9 @@ routing_area:
         _scope: frontend
         _controller: "con4gisRoutingBundle:Routing:getArea"
     methods: [GET]
+
 routing_route:
-    path: /con4gis/routeService/{profileId}/{layerId}/{detour}/{locations}
+    path: /con4gis/routeService/{language}/{profileId}/{layerId}/{detour}/{locations}
     defaults:
         _scope: frontend
         _controller: "con4gisRoutingBundle:Routing:getRoute"
