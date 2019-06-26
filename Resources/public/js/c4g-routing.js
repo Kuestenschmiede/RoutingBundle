@@ -467,6 +467,12 @@ export class Router extends Sideboard {
       case "3":
         attributionRouter = 'Powered by <a href="https://www.graphhopper.com/">GraphHopper API</a>';
         break;
+      case "4":
+        attributionRouter = '<a target="_blank" href="https://www.mapzen.com/blog/valhalla-intro/">Valhalla</a>';
+        break;
+      case "5":
+        attributionRouter = self.options.mapController.data.routerAttribution;
+        break;
     }
     switch (self.options.mapController.data.geosearch.geosearch_engine) {
       case "1": //OSM
@@ -3414,7 +3420,6 @@ export class Router extends Sideboard {
               value = response.address.road + value;
             }
           }
-
           if (value === "") {
             value = response.display_name;
           }
