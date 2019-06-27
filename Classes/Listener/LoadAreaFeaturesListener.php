@@ -55,7 +55,7 @@ class LoadAreaFeaturesListener
             ->getRepository(RoutingConfiguration::class);
         $routerConfig = $routerConfigRepo->findOneBy(['id' => $objMapsProfile->routerConfig]);
         if($routerConfig instanceof RoutingConfiguration){
-            if($objLayer->location_type == "table"){
+            if ($objLayer->location_type == "table") {
                 $sourceTable = $objLayer->tab_source;
                 $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
                 $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';

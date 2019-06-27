@@ -141,7 +141,9 @@ class RouteService extends \Frontend
             return $response;
         }
     }
-    private function getCon4gisIOResponse ($arrInput, $strParams, $routerConfig, $language, $profile = null){
+    
+    private function getCon4gisIOResponse ($arrInput, $strParams, $routerConfig, $language, $profile = null)
+    {
         if($routerConfig instanceof RoutingConfiguration){
             $objSettings = C4gMapSettingsModel::findOnly();
             if(!substr_count('ca-ES, cs-CZ, de-DE, en-US, es-ES, fr-FR	, hi-IN, it-IT, pt-PT, ru-RU, sl-SI, sv-SE', $language)){
@@ -177,7 +179,9 @@ class RouteService extends \Frontend
             return $response;
         }
     }
-    private function getValhallaResponse($arrInput, $strParams, $routerConfig, $language, $profile = null) {
+    
+    private function getValhallaResponse($arrInput, $strParams, $routerConfig, $language, $profile = null)
+    {
         if($routerConfig instanceof RoutingConfiguration){
             $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : "https://api.mapbox.com/valhalla/v1/";
             $strRoutingUrl .= "route";
@@ -289,6 +293,7 @@ class RouteService extends \Frontend
             return $response;
         }
     }
+    
     /**
      * Calls the Graphhopper and returns the routing response.
      * @param $objMapsProfile
