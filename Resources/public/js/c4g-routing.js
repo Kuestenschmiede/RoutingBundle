@@ -447,69 +447,7 @@ export class Router extends Sideboard {
    * Creates a wrapper element for the router attribution.
    * @returns {HTMLElement}
    */
-  getAttribution() {
-    let self = this,
-      attributionSearch,
-      attributionRouter,
-      attributionRouterHost,
-      attributionWrapper,
-      attributionHtml;
-    switch (self.options.mapController.data.router_api_selection) {
-      case "0":
-        attributionRouter = '<a target="_blank" href="http://project-osrm.org/">Project OSRM</a>';
-        break;
-      case "1":
-        attributionRouter = '<a target="_blank" href="http://project-osrm.org/">Project OSRM</a>';
-        break;
-      case "2":
-        attributionRouter = '<a target="_blank" href="https://openrouteservice.org/">openrouteservice</a>';
-        break;
-      case "3":
-        attributionRouter = 'Powered by <a href="https://www.graphhopper.com/">GraphHopper API</a>';
-        break;
-    }
-    switch (self.options.mapController.data.geosearch.geosearch_engine) {
-      case "1": //OSM
-        attributionSearch = '- Geocoder by <a target="_blank" href="https://nominatim.openstreetmap.org/">OpenStreetMap</a> ';
-        break;
-      case "2": //Mapquest
-        attributionSearch = '- Geocoder by <a target="_blank" href="http://www.mapquest.com/">MapQuest</a> ';
-        break;
-      case "3": //custom
-        attributionSearch = '- Nominatim-Geocoder ';
-        break;
-      case "4": //con4gis
-        attributionSearch = '- Geocoder by <a target="_blank" href="https://www.con4gis.org/kartendienste.html">con4gis</a> ';
-        break;
-    }
-    switch (self.options.mapController.data.router_api_selection) {
-      case "0":
-        attributionRouterHost = '- OSRM hosting by <a target="_blank" href="http://algo2.iti.kit.edu/">KIT</a>';
-        break;
-      case "1":
-        attributionRouterHost = '- OSRM hosting by <a target="_blank" href="http://algo2.iti.kit.edu/">KIT</a>';
-        break;
-      case "2":
-        attributionRouterHost = '\'- ORS hosting by <a target="_blank" href="https://www.geog.uni-heidelberg.de/gis/heigit_en.html">HeiGIT</a>\'';
-        break;
-      case "3":
-        attributionRouterHost = '';
-    }
 
-    //ToDo check params
-    attributionHtml = attributionRouter + attributionSearch + attributionRouterHost;
-    attributionWrapper = document.createElement('div');
-    attributionWrapper.className = routingConstants.ROUTER_ATTRIBUTION_WRAPPER;
-
-    attributionWrapper.innerHTML = attributionHtml;
-
-    if (self.options.mapController.data.router_attribution) {
-      attributionWrapper.innerHTML = self.options.mapController.data.router_attribution;
-    }
-
-    return attributionWrapper;
-
-  }
 
   /**
    * Checks the routing properties and triggers a new route search, when the mandatory parameters are set.
@@ -2925,7 +2863,6 @@ export class Router extends Sideboard {
 
       self.fromInputLoaded = false;
       self.toInputLoaded = false;
-      self.statusBar.appendChild(this.getAttribution());
       let routerActivateFunction = function () {
         self.removeMapInputInteraction();
         self.addMapInputInteraction();
@@ -3414,7 +3351,6 @@ export class Router extends Sideboard {
               value = response.address.road + value;
             }
           }
-
           if (value === "") {
             value = response.display_name;
           }

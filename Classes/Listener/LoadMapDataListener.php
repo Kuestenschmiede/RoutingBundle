@@ -14,8 +14,10 @@
 namespace con4gis\RoutingBundle\Classes\Listener;
 
 
+use con4gis\CoreBundle\Resources\contao\classes\C4GUtils;
 use con4gis\MapsBundle\Classes\Events\LoadMapdataEvent;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
+use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use con4gis\RoutingBundle\Entity\RoutingConfiguration;
 use Contao\System;
 use Doctrine\ORM\EntityManager;
@@ -50,13 +52,7 @@ class LoadMapDataListener
             if ($routerConfig instanceof RoutingConfiguration) {
                 $mapData['router_enable'] = $profile->geosearch && $profile->router;
                 $mapData['router_viaroute_precision'] = $routerConfig->getRouterViarouteUrl() ? 1e5 : 1e6;
-                if ($routerConfig->getRouterAttribution())
-                {
-                    $mapData['router_attribution'] = \Contao\Controller::replaceInsertTags($routerConfig->getRouterAttribution());
-                    if ($profile->attribution) {
-                        $mapData['attribution']['router'] = \Contao\Controller::replaceInsertTags($routerConfig->getRouterAttribution());
-                    }
-                }
+                $mapData['attribution']['router'] = $this->getRouterAttribution($routerConfig);
                 $mapData['router_from_locstyle'] = $routerConfig->getRouterFromLocstyle();
                 $mapData['router_to_locstyle'] = $routerConfig->getRouterToLocstyle();
                 $mapData['router_point_locstyle'] = $routerConfig->getRouterPointLocstyle();
@@ -116,5 +112,31 @@ class LoadMapDataListener
         }
 
         $event->setMapData($mapData);
+    }
+    protected function getRouterAttribution($routerConfig) {
+        $apiSelection = $routerConfig->getRouterApiSelection();
+        switch($apiSelection) {
+            case "0":
+                return "<a target=\"_blank\" href=\"http://project-osrm.org/\">Project OSRM</a> - OSRM hosting by <a target=\"_blank\" href=\"http://algo2.iti.kit.edu/\">KIT</a>";
+                break;
+             case "1":
+                return "<a target=\"_blank\" href=\"http://project-osrm.org/\">Project OSRM</a> - OSRM hosting by <a target=\"_blank\" href=\"http://algo2.iti.kit.edu/\">KIT</a>";
+                break;
+             case "2":
+                return "<a target=\"_blank\" href=\"https://openrouteservice.org/\">openrouteservice</a> - ORS hosting by <a target=\"_blank\" href=\"https://www.geog.uni-heidelberg.de/gis/heigit_en.html\">HeiGIT</a>";
+                break;
+             case "3":
+                return "Powered by <a href=\"https://www.graphhopper.com/\">GraphHopper API</a>";
+                break;
+             case "4":
+                return "<a target=\"_blank\" href=\"https://www.mapzen.com/blog/valhalla-intro/\">Valhalla</a>";
+                break;
+            case "5":
+                $objSettings = C4gMapSettingsModel::findOnly();
+                $keyRouting = C4GUtils::getKey($objSettings, 1);
+                $attributionRouting = $keyRouting->attribution;
+                return $attributionRouting;
+                break;
+        }
     }
 }
