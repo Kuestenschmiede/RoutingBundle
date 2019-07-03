@@ -3589,10 +3589,10 @@ window.c4gMapsHooks.proxy_appendPopup.push(function(params) {
 
       if (jQuery(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
         // from address
-        router.setFromPoint(feature.getGeometry().getCoordinates());
+        router.setFromPoint(toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857"));
       } else {
         // to address
-        router.setToPoint(feature.getGeometry().getCoordinates());
+        router.setToPoint(toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857"));
       }
     }; // end of "routingHandler()"
 
