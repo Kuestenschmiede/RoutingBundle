@@ -133,7 +133,7 @@ class LoadMapDataListener
                 break;
             case "5":
                 $objSettings = C4gMapSettingsModel::findOnly();
-                $keyRouting = C4GUtils::getKey($objSettings, 1);
+                $keyRouting = C4GUtils::getKey($objSettings, 1, "", false);
                 $attributionRouting = $keyRouting->attribution;
                 return $attributionRouting;
                 break;
