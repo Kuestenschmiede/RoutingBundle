@@ -29,6 +29,7 @@ import {Collection} from "ol";
 import {LineString} from "ol/geom";
 import {Modify, Select} from "ol/interaction";
 import {RoutingPermalink} from "./c4g-routing-permalink";
+import {AlertHandler} from "./../../../../CoreBundle/Resources/public/js/AlertHandler";
 
 let langRouteConstants = {};
 
@@ -3448,11 +3449,13 @@ export class Router extends Sideboard {
         }
       } else {
         // show error hint
-        let errorDiv = self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
-        let inputDiv = $input.parent()[0];
-        inputDiv.appendChild(errorDiv);
-        self.clearInput($input);
-        delete self[value];
+        let alertHandler = new AlertHandler();
+        alertHandler.showInfoDialog(langRouteConstants.ROUTER_VIEW_ALERT_ERROR, langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
+        // let errorDiv = self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
+        // let inputDiv = $input.parent()[0];
+        // inputDiv.appendChild(errorDiv);
+        // self.clearInput($input);
+        // delete self[value];
       }
 
       if (opt_callback && typeof opt_callback === "function") {
@@ -3460,10 +3463,12 @@ export class Router extends Sideboard {
       }
       self.recalculateRoute();
     }).fail(function () {
-        let inputDiv = $input.parent()[0];
-        inputDiv.appendChild(self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS));
-        self.clearInput($input);
-        delete self[value];
+      let alertHandler = new AlertHandler();
+      alertHandler.showInfoDialog(langRouteConstants.ROUTER_VIEW_ALERT_ERROR, langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
+        // let inputDiv = $input.parent()[0];
+        // inputDiv.appendChild(self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS));
+        // self.clearInput($input);
+        // delete self[value];
       });
 
     return "";
