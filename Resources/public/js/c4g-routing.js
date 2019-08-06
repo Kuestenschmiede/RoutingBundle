@@ -2885,8 +2885,17 @@ export class Router extends Sideboard {
           "deleteFunction": deleteToListener,
           "changeListener": changeToListener
         };
+        const objSettings = {
+          "proxyUrl": mapData.proxyUrl,
+          "keyAutocomplete": mapData.autocomplete,
+          "center" : function () {
+            let center = self.options.mapController.map.getView().getCenter();
+            center = transform(center, "EPSG:3857","EPSG:4326")
+            return center;
+          }
+        };
 
-        const autocompleteHandlerTo = new AutocompleteHandler(this.$toInput, objToListeners, "route-to", {"proxyUrl": mapData.proxyUrl, "keyAutocomplete": mapData.autocomplete}, containerAddresses);
+        const autocompleteHandlerTo = new AutocompleteHandler(this.$toInput, objToListeners, "route-to", objSettings, containerAddresses);
         autocompleteHandlerTo.handleInput();
         this.$toInput.autocomplete({
           source: containerAddresses.arrToNames
