@@ -29,16 +29,8 @@ import {Collection} from "ol";
 import {LineString} from "ol/geom";
 import {Modify, Select} from "ol/interaction";
 import {RoutingPermalink} from "./c4g-routing-permalink";
-import {AlertHandler} from "./../../../../CoreBundle/Resources/public/js/AlertHandler";
-import {AutocompleteHandler} from "./../../../../CoreBundle/Resources/public/js/AutocompleteHandler";
 
 let langRouteConstants = {};
-const containerAddresses = {
-  arrFromPositions: [],
-  arrFromNames: [],
-  arrToPositions: [],
-  arrToNames: []
-};
 
 'use strict';
 export class Router extends Sideboard {
@@ -2612,78 +2604,8 @@ export class Router extends Sideboard {
       this.fromInput.className = routingConstants.ROUTER_INPUT_FROM;
       this.fromInput.id = this.fromInput.name = "routingFrom";
 
-      if (mapData.autocomplete) {
-        const deleteFromListener = function(event) {
-          self.fromValue = null;
-          containerAddresses.arrFromPositions = [];
-          containerAddresses.arrFromPositions = [];
-          self.recalculateRoute();
-        };
-        const submitFromFunction = function(event) {
-          // trigger new search
-          self.$fromInput.trigger('change');
-          const performSearchCallback = function() {
-            self.performViaRoute();
-          };
-          self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
 
-        }
 
-        const selectFromListener = function(event, ui){
-          let value = ui.item.value;
-          let coord = containerAddresses.arrFromPositions[containerAddresses.arrFromNames.findIndex(
-              danger => danger === value
-          )];
-          self.fromValue = new Point([coord[1], coord[0]]);
-          self.recalculateRoute();
-        };
-
-        const changeFromListener = function () {
-          // self.fromValue = null;
-        }
-        const objFromListeners = {
-          "selectListener": selectFromListener,
-          "submitFunction": submitFromFunction,
-          "deleteFunction": deleteFromListener,
-          "changeListener": changeFromListener
-        };
-        this.$fromInput = jQuery(this.fromInput);
-        const objSettings = {
-          "proxyUrl": mapData.proxyUrl,
-          "keyAutocomplete": mapData.autocomplete,
-          "center" : function () {
-            let center = self.options.mapController.map.getView().getCenter();
-            center = transform(center, "EPSG:3857","EPSG:4326")
-            return center;
-          }
-        };
-        const autocompleteHandlerFrom = new AutocompleteHandler(this.$fromInput, objFromListeners, "route-to", objSettings , containerAddresses);
-        autocompleteHandlerFrom.handleInput();
-        this.$fromInput.autocomplete({
-          source: containerAddresses.arrFromNames
-        });
-      }
-      else {
-        this.$fromInput = jQuery(this.fromInput);
-        this.$fromInput.on('change', function(event){
-          self.fromValue = null;
-          self.performSearch(self.$fromInput, "fromValue");
-        });
-        this.$fromInput.on('keydown', function(event) {
-          if (event.keyCode === 13) {
-            self.$fromInput.trigger('change');
-            const performSearchCallback = function() {
-              self.performViaRoute();
-            }
-            if (!self.fromValue) {
-              self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
-            }
-            else {
-              performSearchCallback();
-            }
-          }
-        });
-      }
       routerFromLabel = document.createElement('label');
       routerFromLabel.setAttribute('for', 'routingFrom');
       routerFromLabel.innerHTML = langRouteConstants.ROUTER_FROM_LABEL;
@@ -2694,7 +2616,6 @@ export class Router extends Sideboard {
       routerFromClear.innerHTML = langRouteConstants.ROUTER_CLEAR_HTML;
       this.$routerFromClear = jQuery(routerFromClear);
       this.$routerFromClear.click(function (event) {
-        self.fromValue = null;
         event.preventDefault();
         self.clearInput(self.$fromInput);
       });
@@ -2749,8 +2670,26 @@ export class Router extends Sideboard {
         });
       }
 
-
+      this.$fromInput = jQuery(this.fromInput);
+      this.$fromInput.on('change', function () {
+        self.fromValue = null;
+        self.performSearch(self.$fromInput, "fromValue");
+      });
       // add enter listener
+      this.$fromInput.on('keydown', function(event) {
+        if (event.keyCode === 13) {
+          // trigger new search
+          self.$fromInput.trigger('change');
+          const performSearchCallback = function() {
+            self.performViaRoute();
+          };
+          if (!self.fromValue) {
+            self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
+          } else {
+            performSearchCallback();
+          }
+        }
+      });
 
       routerViewInputWrapper.appendChild(this.routerButtonBar);
       if (this.routeProfile && this.routeProfile.children) {
@@ -2852,76 +2791,7 @@ export class Router extends Sideboard {
       this.toInput.className = routingConstants.ROUTER_INPUT_TO;
       this.toInput.id = this.toInput.name = "routingTo";
 
-      if (mapData.autocomplete) {
-        const selectToListener = function(event, ui) {
-          let value = ui.item.value;
-          let coord = containerAddresses.arrToPositions[containerAddresses.arrToNames.findIndex(
-              danger => danger === value
-          )];
-          self.toValue = new Point([coord[1], coord[0]]);
-          self.recalculateRoute();
-        };
-        const changeToListener = function() {
-          // self.toValue = null;
-        };
-        const deleteToListener = function(event) {
-          self.toValue = null;
-          containerAddresses.arrFromPositions = [];
-          containerAddresses.arrFromPositions = [];
-          self.recalculateRoute();
-        };
-        const submitToFunction = function () {
-          // trigger new search
-          self.$toInput.trigger('change');
-          const performSearchCallback = function() {
-            self.performViaRoute();
-          };
-          self.performSearch(self.$toInput, "toValue", performSearchCallback);
-        }
-        this.$toInput = jQuery(this.toInput);
-        const objToListeners = {
-          "selectListener": selectToListener,
-          "submitFunction": submitToFunction,
-          "deleteFunction": deleteToListener,
-          "changeListener": changeToListener
-        };
-        const objSettings = {
-          "proxyUrl": mapData.proxyUrl,
-          "keyAutocomplete": mapData.autocomplete,
-          "center" : function () {
-            let center = self.options.mapController.map.getView().getCenter();
-            center = transform(center, "EPSG:3857","EPSG:4326")
-            return center;
-          }
-        };
 
-        const autocompleteHandlerTo = new AutocompleteHandler(this.$toInput, objToListeners, "route-to", objSettings, containerAddresses);
-        autocompleteHandlerTo.handleInput();
-        this.$toInput.autocomplete({
-          source: containerAddresses.arrToNames
-        });
-      }
-      else {
-        this.$toInput = jQuery(this.toInput);
-        this.$fromInput.on('change', function(event){
-          self.fromValue = null;
-          self.performSearch(self.$fromInput, "fromValue");
-        });
-        this.$fromInput.on('keydown', function(event) {
-          if (event.keyCode === 13) {
-            self.$fromInput.trigger('change');
-            const performSearchCallback = function() {
-              self.performViaRoute();
-            }
-            if (!self.fromValue) {
-              self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
-            }
-            else {
-              performSearchCallback();
-            }
-          }
-        });
-      }
 
       let routerToPosition = this.createPositionButton(".c4g-router-input-to", "toValue", "router")
 
@@ -2942,8 +2812,29 @@ export class Router extends Sideboard {
 
       self.$routerToClear.click(function (event) {
         event.preventDefault();
-        self.toValue = null;
         self.clearInput(self.$toInput);
+      });
+
+      this.$toInput = jQuery(this.toInput);
+      this.$toInput.on('change', function () {
+        // reset toValue for keydown listener
+        self.toValue = null;
+        self.performSearch(self.$toInput, "toValue");
+      });
+      // add enter listener
+      this.$toInput.on('keydown', function(event) {
+        if (event.keyCode === 13) {
+          // trigger new search
+          self.$toInput.trigger('change');
+          const performSearchCallback = function() {
+            self.performViaRoute();
+          };
+          if (!self.toValue) {
+            self.performSearch(self.$toInput, "toValue", performSearchCallback);
+          } else {
+            performSearchCallback();
+          }
+        }
       });
 
       routerViewInputWrapper.appendChild(this.toInputWrapper);
@@ -2976,11 +2867,11 @@ export class Router extends Sideboard {
         self.removeMapInputInteraction();
         self.addMapInputInteraction();
         self.updateLinkFragments("mode", "route");
-        if (self.fromInputLoaded) {
+        if (!self.fromInputLoaded) {
           let fromInputCacheable = new CachedInputfield("#routingFrom", true, "c4g-router-address", "pink");
           self.fromInputLoaded = true;
         }
-        if (self.toInputLoaded) {
+        if (!self.toInputLoaded) {
           let toInputCacheable = new CachedInputfield("#routingTo", true, "c4g-router-address", "pink");
           self.toInputLoaded = true;
         }
@@ -3557,13 +3448,11 @@ export class Router extends Sideboard {
         }
       } else {
         // show error hint
-        let alertHandler = new AlertHandler();
-        alertHandler.showInfoDialog(langRouteConstants.ROUTER_VIEW_ALERT_ERROR, langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
-        // let errorDiv = self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
-        // let inputDiv = $input.parent()[0];
-        // inputDiv.appendChild(errorDiv);
-        // self.clearInput($input);
-        // delete self[value];
+        let errorDiv = self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
+        let inputDiv = $input.parent()[0];
+        inputDiv.appendChild(errorDiv);
+        self.clearInput($input);
+        delete self[value];
       }
 
       if (opt_callback && typeof opt_callback === "function") {
@@ -3571,12 +3460,10 @@ export class Router extends Sideboard {
       }
       self.recalculateRoute();
     }).fail(function () {
-      let alertHandler = new AlertHandler();
-      alertHandler.showInfoDialog(langRouteConstants.ROUTER_VIEW_ALERT_ERROR, langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
-        // let inputDiv = $input.parent()[0];
-        // inputDiv.appendChild(self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS));
-        // self.clearInput($input);
-        // delete self[value];
+        let inputDiv = $input.parent()[0];
+        inputDiv.appendChild(self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS));
+        self.clearInput($input);
+        delete self[value];
       });
 
     return "";

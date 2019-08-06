@@ -34,7 +34,6 @@ export  var routingConstantsEnglish = {
   ROUTER_VIEW_LABEL_TIME: 'Time:',
   ROUTER_VIEW_LABEL_PROFILE:'Profile',
 
-  ROUTER_VIEW_ALERT_Error: 'Error',
   ROUTER_VIEW_ALERT_ADDRESS: 'Address not found.',
   ROUTER_VIEW_ALERT_GOCODING: 'No access to geocoding.',
   ROUTER_ERROR_POLYLINE: 'Could not calculate route.',

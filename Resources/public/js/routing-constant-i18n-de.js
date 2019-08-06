@@ -32,7 +32,6 @@ export  var routingConstantsGerman = {
   ROUTER_VIEW_LABEL_TIME: 'Zeit:',
   ROUTER_VIEW_LABEL_PROFILE: 'Profil:',
 
-  ROUTER_VIEW_ALERT_ERROR: 'Fehler',
   ROUTER_VIEW_ALERT_ADDRESS: 'Adresse nicht gefunden.',
   ROUTER_VIEW_ALERT_GOCODING: 'Zugriff auf Geocoder fehlgeschlagen.',
   ROUTER_ERROR_POLYLINE: 'Route konnte nicht berechnet werden.',

@@ -108,13 +108,6 @@ class LoadMapDataListener
                 $mapData['routeStartButton'] = $routerConfig->getRouteStartButton();
                 $mapData['usePermalink'] = $routerConfig->getUsePermalink();
                 $mapData['hideFeaturesWithoutLabel'] = $routerConfig->getHideFeaturesWithoutLabel();
-                $objSettings = C4gMapSettingsModel::findOnly();
-                if ($objSettings->con4gisIoUrl && $objSettings->con4gisIoKey) {
-                    if ($key = C4GUtils::getKey($objSettings,7)) {
-                        $mapData['proxyUrl'] = $objSettings->con4gisIoUrl;
-                        $mapData['autocomplete'] = $key;
-                    }
-                }
             }
         }
 
