@@ -12,6 +12,7 @@
  */
 
 import React, { Component } from "react";
+import {AutocompleteInput} from "./c4g-autocomplete-input";
 
 export class RouterAddressField extends Component {
 
@@ -22,17 +23,25 @@ export class RouterAddressField extends Component {
       name
       label
       class
+      withPosition
+      alle für autocompleteHandler
      */
     // TODO Die click action und handler für button und input field bauen
   }
 
 
   render() {
+    let positionButton = null;
+    if (this.props.withPosition) {
+      positionButton = <button className="c4g-router-position"></button>;
+    }
     return (
       <div>
         <label htmlFor={this.props.name}>{this.props.label}</label>
-        <input type="search" className={this.props.class} name={this.props.name} id={this.props.name} autoComplete="off"/>
-        <button className="c4g-router-position"></button>
+        <AutocompleteInput type="search" className={this.props.class} name={this.props.name}
+                           cssId={this.props.cssId} objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
+                           containerAddresses={this.props.containerAddresses} autoComplete="off"/>
+        {positionButton}
       </div>
     );
   }

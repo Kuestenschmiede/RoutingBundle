@@ -11,3 +11,21 @@
  *
  */
 
+import React, { Component } from "react";
+import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel";
+import {RouterAddressInput} from "./c4g-router-address-input"
+
+export class RouterControls extends HorizontalPanel {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <RouterAddressInput router={this.props.router} withPosition={false} switchTargets={false}
+                          objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} containerAddresses={this.props.containerAddresses}/>
+    );
+  }
+
+}
