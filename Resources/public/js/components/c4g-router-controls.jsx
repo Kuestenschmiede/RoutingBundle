@@ -12,8 +12,8 @@
  */
 
 import React, { Component } from "react";
-import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel";
-import {RouterAddressInput} from "./c4g-router-address-input"
+import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel.jsx";
+import {RouterAddressInput} from "./c4g-router-address-input.jsx"
 
 export class RouterControls extends HorizontalPanel {
 

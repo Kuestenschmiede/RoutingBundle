@@ -31,6 +31,9 @@ import {Modify, Select} from "ol/interaction";
 import {RoutingPermalink} from "./c4g-routing-permalink";
 import {AlertHandler} from "./../../../../CoreBundle/Resources/public/js/AlertHandler";
 import {AutocompleteHandler} from "./../../../../CoreBundle/Resources/public/js/AutocompleteHandler";
+import ReactDOM from "react-dom";
+import React from "react";
+import {RouterControls} from "./components/c4g-router-controls.jsx";
 
 let langRouteConstants = {};
 const containerAddresses = {
@@ -3684,6 +3687,19 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     }
     mapController.map.addControl(router);
     mapController.controls.router = router;
+
+    let routerProps = {
+      target: document.querySelector('#' + mapController.data.mapDiv + ' .' + cssConstants.OL_OVERLAYCONTAINER_SE),
+      mapController: mapController,
+      direction: "top",
+      router: null,
+      withPosition: false,
+      objFunctions: {},
+      objSettings: {},
+      containerAddresses: {}
+    };
+    ReactDOM.render(React.createElement(RouterControls, routerProps), mapController.reactContainer);
+    mapController.$overlaycontainer_stopevent.append(mapController.reactContainer);
   }
 });
 

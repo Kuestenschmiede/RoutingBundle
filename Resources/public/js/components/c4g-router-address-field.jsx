@@ -12,7 +12,7 @@
  */
 
 import React, { Component } from "react";
-import {AutocompleteInput} from "./c4g-autocomplete-input";
+import {AutocompleteInput} from "./c4g-autocomplete-input.jsx";
 
 export class RouterAddressField extends Component {
 
@@ -41,7 +41,6 @@ export class RouterAddressField extends Component {
         <AutocompleteInput type="search" className={this.props.class} name={this.props.name}
                            cssId={this.props.cssId} objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
                            containerAddresses={this.props.containerAddresses} autoComplete="off"/>
-        {positionButton}
       </div>
     );
   }

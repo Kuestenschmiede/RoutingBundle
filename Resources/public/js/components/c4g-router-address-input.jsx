@@ -12,8 +12,8 @@
  */
 
 import React, { Component } from "react";
-import { RouterAddressField } from "./c4g-router-address-field";
-import {AutocompleteInput} from "./c4g-autocomplete-input";
+import { RouterAddressField } from "./c4g-router-address-field.jsx";
+import { RouterProfileSelection } from "./c4g-router-profile-selection.jsx";
 
 export class RouterAddressInput extends Component {
 

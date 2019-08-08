@@ -30,7 +30,7 @@ export class AutocompleteInput extends Component {
       this.props.containerAddresses
     );
     handler.handleInput();
-    jQuery(input).autocomplete({source: this.props.containerAddresses.arrNames});
+    // jQuery(input).autocomplete({source: this.props.containerAddresses.arrNames});
     return input;
   }
 }

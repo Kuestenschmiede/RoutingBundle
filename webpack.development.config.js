@@ -10,15 +10,14 @@ var config = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: [{
-          loader: "echo-loader",
-        }, {
           loader: "babel-loader",
         }],
         include: [
           path.resolve('.'),
+          path.resolve('./Resources/public/js/components'),
           path.resolve('./../MapsBundle')
         ],
       }
