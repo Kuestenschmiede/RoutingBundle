@@ -41,6 +41,7 @@ export class RouterAddressField extends Component {
         <AutocompleteInput type="search" className={this.props.class} name={this.props.name}
                            cssId={this.props.cssId} objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
                            containerAddresses={this.props.containerAddresses} autoComplete="off"/>
+        {positionButton}
       </div>
     );
   }

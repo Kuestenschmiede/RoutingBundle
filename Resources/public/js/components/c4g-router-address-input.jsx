@@ -44,16 +44,15 @@ export class RouterAddressInput extends Component {
 
   render() {
     return (
-      <div>
+      <div className={this.props.className}>
         <div className="buttonbar">
           <button className="c4g-router-over"></button>
           <button className="c4g-router-switch"></button>
         </div>
-        <RouterProfileSelection className="c4g-router-profile-wrapper"/>
-        <RouterAddressField className="c4g-router-input-from" name="routingFrom"
+        <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
                             cssId="routingFrom" objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition}/>
-        <RouterAddressField className="c4g-router-input-to" name="routingTo"
+        <RouterAddressField className="c4g-router-input-to" name="routingTo" label="Ziel"
                             cssId="routingTo" objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition}/>
       </div>

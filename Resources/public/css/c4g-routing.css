@@ -467,3 +467,59 @@ button.c4g-popup-route-to:before {
 .c4g-router-input-wrapper > label {
     width: 30%;
 }
+/**
+Router panel
+ */
+.c4g-router-panel-button-top {
+    bottom: 710px;
+    left: 50%;
+    width: 70px;
+    height: 25px;
+}
+.c4g-router-panel-button-top.panel-slided-out {
+    bottom: 660px;
+    left: 50%;
+    width: 70px;
+    height: 25px;
+}
+.c4g-router-panel-button-top.panel-slided-in {
+    bottom: 760px;
+    left: 50%;
+    width: 70px;
+    height: 25px;
+}
+
+.c4g-router-panel-button-bottom {
+    top: 768px;
+    left: 50%;
+    width: 70px;
+    height: 25px;
+}
+.c4g-router-panel-button-bottom.panel-slided-out {
+    top: 668px;
+    left: 50%;
+    width: 70px;
+    height: 25px;
+}
+.c4g-router-panel-button-bottom.panel-slided-in {
+    top: 768px;
+    left: 50%;
+    width: 70px;
+    height: 25px;
+}
+
+.c4g-router-panel.c4g-open {
+    width: 100%;
+    background-color: var(--main-color);
+    color: var(--shadow-color);
+    position: absolute;
+    top: 0;
+    height: 100px;
+    transition: all 0.3s;
+}
+
+.c4g-router-mode-switch > button {
+    color: var(--main-color);
+    border-color: var(--shadow-color);
+    background-color: var(--font-color);
+}

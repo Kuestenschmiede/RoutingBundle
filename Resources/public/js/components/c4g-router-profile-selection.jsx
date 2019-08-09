@@ -14,9 +14,23 @@
 import React, { Component } from "react";
 
 export class RouterProfileSelection extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      profiles: this.props.profiles || []
+    };
+  }
+
   render() {
     return (
-      <div></div>
+      <div className="c4g-router-profile-wrapper">
+        {this.state.profiles.map(item => (
+          <button key={item.id}>{item.text}</button>
+        ))}
+
+      </div>
     );
   }
 }

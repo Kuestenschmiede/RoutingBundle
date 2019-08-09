@@ -3692,11 +3692,12 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       target: document.querySelector('#' + mapController.data.mapDiv + ' .' + cssConstants.OL_OVERLAYCONTAINER_SE),
       mapController: mapController,
       direction: "top",
-      router: null,
+      router: router,
       withPosition: false,
       objFunctions: {},
       objSettings: {},
-      containerAddresses: {}
+      containerAddresses: {},
+      className: "c4g-router-panel"
     };
     ReactDOM.render(React.createElement(RouterControls, routerProps), mapController.reactContainer);
     mapController.$overlaycontainer_stopevent.append(mapController.reactContainer);
