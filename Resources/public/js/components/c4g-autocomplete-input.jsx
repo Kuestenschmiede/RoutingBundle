@@ -34,15 +34,14 @@ export class AutocompleteInput extends Component {
   setCenter (center) {
     this.objSettings.center = center;
   }
+
   handleInput () {
     const scope = this;
     let enterListener = function(event, opt_this) {
+      console.log("enter");
       //const scope = this;
       if (event.keyCode === 13) {
         opt_this.objFunctions.submitFunction(opt_this, event.currentTarget.classList[0]);
-      } else if (event.keyCode === 8 || (event.keyCode >= 37 && event.keyCode <= 40) || event.keyCode === 9) {
-        // event.stopPropagation();
-        // event.preventDefault();
       } else {
         if ($(event.currentTarget).val().length == 0 && !event.keyCode) { //deleted
           this.objFunctions.deleteFunction(event.currentTarget, event.currentTarget.classList[0]);
@@ -59,7 +58,7 @@ export class AutocompleteInput extends Component {
             opt_this.containerAddresses.arrToPositions = [];
           }
           else{
-            console.log("This is weird");
+            console.log("This is weird ¯\\_(ツ)_/¯");
           }
         }
         else {
@@ -73,10 +72,11 @@ export class AutocompleteInput extends Component {
         }
       }
     };
-    jQuery('#' + this.props.cssId).on('keydown', (event) => enterListener(event, scope));
-    jQuery('#' + this.props.cssId).on('search', enterListener);
-    jQuery('#' + this.props.cssId).on('autocompleteselect', this.props.objFunctions.selectListener);
-    jQuery('#' + this.props.cssId).on('change', this.props.objFunctions.changeListener);
+    let $field = jQuery('#' + this.props.cssId);
+    $field.on('keydown', (event) => enterListener(event, scope));
+    $field.on('search', enterListener);
+    $field.on('autocompleteselect', this.props.objFunctions.selectListener);
+    $field.on('change', this.props.objFunctions.changeListener);
   }
 
   autocompleteAddress(input, cssClass) {

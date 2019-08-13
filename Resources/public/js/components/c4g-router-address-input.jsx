@@ -23,7 +23,7 @@ export class RouterAddressInput extends Component {
     if (!props.router) {
       console.warn("The routing component needs a router, it won't work correctly since none was passed...");
     }
-
+    // TODO mode property um zwischen route und umkreissuche umzuschalten
     /*
       props:
       router
@@ -38,6 +38,7 @@ export class RouterAddressInput extends Component {
       router: props.router,
       fromAddress: "",
       toAddress: "",
+      mode: props.mode || "route"
     };
 
   }
@@ -45,10 +46,7 @@ export class RouterAddressInput extends Component {
   render() {
     return (
       <div className={this.props.className}>
-        <div className="buttonbar">
-          <button className="c4g-router-over"></button>
-          <button className="c4g-router-switch"></button>
-        </div>
+
         <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
                             cssId="routingFrom" objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition}/>

@@ -26,14 +26,19 @@ export class RouterAddressField extends Component {
       withPosition
       alle für autocompleteHandler
      */
+
+    this.getPosition = this.getPosition.bind(this);
     // TODO Die click action und handler für button und input field bauen
   }
 
+  getPosition(event) {
+    // TODO position holen, übersetzen lassen und adresse in feld schreiben (pos. natürlich an router geben)
+  }
 
   render() {
     let positionButton = null;
     if (this.props.withPosition) {
-      positionButton = <button className="c4g-router-position"></button>;
+      positionButton = <button className="c4g-router-position" onClick={this.getPosition}></button>;
     }
     return (
       <div>
