@@ -399,6 +399,7 @@ export class Router extends Sideboard {
 
     var self = this;
     this.options.mapController.map.un('click', self.fnMapRouterInteraction);
+    self.options.mapController.map.removeInteraction(this.mapSelectInteraction);
   }
 
   /**
