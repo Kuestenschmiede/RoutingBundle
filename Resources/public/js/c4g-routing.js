@@ -3699,8 +3699,9 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       containerAddresses: {},
       className: "c4g-router-panel"
     };
-    ReactDOM.render(React.createElement(RouterControls, routerProps), mapController.reactContainer);
-    mapController.$overlaycontainer_stopevent.append(mapController.reactContainer);
+    mapController.routerContainer = document.createElement('div');
+    ReactDOM.render(React.createElement(RouterControls, routerProps), mapController.routerContainer);
+    mapController.$overlaycontainer_stopevent.append(mapController.routerContainer);
   }
 });
 

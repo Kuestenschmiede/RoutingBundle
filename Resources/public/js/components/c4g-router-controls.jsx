@@ -27,36 +27,23 @@ export class RouterControls extends HorizontalPanel {
 
     this.setRouteMode = this.setRouteMode.bind(this);
     this.setAreaMode = this.setAreaMode.bind(this);
-    this.addOverPoint = this.addOverPoint.bind(this);
-    this.swapTargets = this.swapTargets.bind(this);
   }
 
   setRouteMode() {
+    console.log("set route");
     this.setState({mode: "route"});
   }
 
   setAreaMode() {
+    console.log("set area");
     this.setState({mode: "area"});
-  }
-
-  /**
-   * Adds an over point to the route.
-   */
-  addOverPoint() {
-    // TODO
-  }
-
-  /**
-   * Swaps the start and the destination.
-   */
-  swapTargets() {
-    // TODO
   }
 
   render() {
     let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
     let arrProfiles = [];
-
+    // propagate open state down to child components
+    let open = this.state.open;
     for (let key in this.state.router.options.mapController.data.router_profiles) {
       if (this.state.router.options.mapController.data.router_profiles.hasOwnProperty(key)) {
         arrProfiles.push({
@@ -69,19 +56,12 @@ export class RouterControls extends HorizontalPanel {
     let details = null;
 
     if (this.state.open) {
-      // TODO den routerOver button vllt in component auslagern, die dann auch das managen der zwischenziele übernimmt?
-      // TODO macht definitv Sinn, da ich dann einfach einen counter im state haben kann für die zwischenziele
-      // TODO und das in render() entsprechend abfragen und rendern kann
-
       details = <div>
-        <div className="buttonbar">
-          <button className="c4g-router-over" onClick={this.addOverPoint}></button>
-          <button className="c4g-router-switch" onClick={this.swapTargets}></button>
-        </div>
         <RouterProfileSelection profiles={arrProfiles}/>
-      </div>
-        ;
+      </div>;
     }
+
+    console.log(arrProfiles);
 
     return (
       <div className={className}>
@@ -90,7 +70,8 @@ export class RouterControls extends HorizontalPanel {
           <button id="c4g-router-button-area" onClick={this.setAreaMode}>Area</button>
         </div>
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={false}
-                            objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} containerAddresses={this.props.containerAddresses} mode={this.state.mode}/>
+                            objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
+                            containerAddresses={this.props.containerAddresses} mode={this.state.mode} open={open}/>
         {details}
       </div>
     );

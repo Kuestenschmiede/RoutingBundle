@@ -28,7 +28,6 @@ export class RouterAddressField extends Component {
      */
 
     this.getPosition = this.getPosition.bind(this);
-    // TODO Die click action und handler für button und input field bauen
   }
 
   getPosition(event) {

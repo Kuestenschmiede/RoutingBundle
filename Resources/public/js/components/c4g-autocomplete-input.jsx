@@ -22,7 +22,7 @@ export class AutocompleteInput extends Component {
 
   render() {
     return (
-      <input id={this.props.cssId} type="search"/>
+      <input id={this.props.cssId} type="search" value={this.props.value}/>
     );
   }
 
