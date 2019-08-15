@@ -2619,7 +2619,6 @@ export class Router extends Sideboard {
         const deleteFromListener = function(event) {
           self.fromValue = null;
           containerAddresses.arrFromPositions = [];
-          containerAddresses.arrFromPositions = [];
           self.recalculateRoute();
         };
         const submitFromFunction = function(event) {
@@ -3701,7 +3700,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     };
     mapController.routerContainer = document.createElement('div');
     ReactDOM.render(React.createElement(RouterControls, routerProps), mapController.routerContainer);
-    mapController.$overlaycontainer_stopevent.append(mapController.routerContainer);
+    jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
   }
 });
 

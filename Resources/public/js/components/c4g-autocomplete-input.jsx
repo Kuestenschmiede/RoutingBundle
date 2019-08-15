@@ -38,7 +38,6 @@ export class AutocompleteInput extends Component {
   handleInput () {
     const scope = this;
     let enterListener = function(event, opt_this) {
-      console.log("enter");
       //const scope = this;
       if (event.keyCode === 13) {
         opt_this.objFunctions.submitFunction(opt_this, event.currentTarget.classList[0]);

@@ -37,7 +37,7 @@ export class RouterAddressField extends Component {
   render() {
     let positionButton = null;
     if (this.props.withPosition) {
-      positionButton = <button className="c4g-router-position" onClick={this.getPosition}></button>;
+      positionButton = <button className="c4g-router-position" onMouseUp={this.getPosition}></button>;
     }
     return (
       <div>

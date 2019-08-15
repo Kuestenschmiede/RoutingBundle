@@ -29,13 +29,13 @@ export class RouterControls extends HorizontalPanel {
     this.setAreaMode = this.setAreaMode.bind(this);
   }
 
-  setRouteMode() {
-    console.log("set route");
+  setRouteMode(event) {
+    event.stopPropagation();
     this.setState({mode: "route"});
   }
 
-  setAreaMode() {
-    console.log("set area");
+  setAreaMode(event) {
+    event.stopPropagation();
     this.setState({mode: "area"});
   }
 
@@ -61,13 +61,11 @@ export class RouterControls extends HorizontalPanel {
       </div>;
     }
 
-    console.log(arrProfiles);
-
     return (
       <div className={className}>
         <div className="c4g-router-mode-switch">
-          <button id="c4g-router-button-route" onClick={this.setRouteMode}>Route</button>
-          <button id="c4g-router-button-area" onClick={this.setAreaMode}>Area</button>
+          <button id="c4g-router-button-route" onMouseUp={this.setRouteMode}>Route</button>
+          <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
         </div>
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={false}
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
@@ -92,5 +90,9 @@ export class RouterControls extends HorizontalPanel {
     // override parent method
     this.slideInCollidingElements();
   }
+
+
+
+
 
 }

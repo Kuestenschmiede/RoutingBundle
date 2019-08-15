@@ -14,6 +14,8 @@
 import React, { Component } from "react";
 import { RouterAddressField } from "./c4g-router-address-field.jsx";
 import { RouterProfileSelection } from "./c4g-router-profile-selection.jsx";
+import {Point} from "ol/geom";
+import {transform} from "ol/proj";
 
 export class RouterAddressInput extends Component {
 
@@ -45,7 +47,6 @@ export class RouterAddressInput extends Component {
    * Adds an over point to the route.
    */
   addOverPoint() {
-    console.log("alter");
     this.setState({overPtCtr: this.state.overPtCtr + 1});
   }
 
@@ -53,7 +54,6 @@ export class RouterAddressInput extends Component {
    * Swaps the start and the destination.
    */
   swapTargets() {
-    console.log("alter");
     let newFromAddress = this.state.toAddress;
     let newToAddress = this.state.fromAddress;
     this.setState({
@@ -67,13 +67,13 @@ export class RouterAddressInput extends Component {
   render() {
     let input = null;
     let details = null;
-    if (this.props.open) {
+    if (this.props.open && this.props.mode === "route") {
       details = <div className="buttonbar">
-        <button className="c4g-router-over" onClick={this.addOverPoint}></button>
-        <button className="c4g-router-switch" onClick={this.swapTargets}></button>
+        <button className="c4g-router-over" onMouseUp={this.addOverPoint}></button>
+        <button className="c4g-router-switch" onMouseUp={this.swapTargets}></button>
       </div>;
     }
-    if (this.state.mode === "route") {
+    if (this.props.mode === "route") {
       input = <React.Fragment>
         <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
                             cssId="routingFrom" objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
@@ -95,5 +95,66 @@ export class RouterAddressInput extends Component {
         {details}
       </div>
     );
+  }
+
+  /**
+   * Creates objSettings object and objFunctions for the autocomplete handler.
+   * @param type  The type of field, "from" or "to"
+   */
+  createAutocompleteFunctions(type) {
+    const scope = this;
+    const uppercasedType = type.charAt(0).toUpperCase() + type.slice(1);
+    const objFunctions = {};
+    const objSettings = {
+      "proxyUrl": mapData.proxyUrl,
+      "keyAutocomplete": mapData.autocomplete,
+      "center" : function () {
+        let center = self.options.mapController.map.getView().getCenter();
+        center = transform(center, "EPSG:3857","EPSG:4326")
+        return center;
+      }
+    };
+    objFunctions["delete" + uppercasedType + "Listener"] = function(event) {
+      let newState = {};
+      newState[type + "Address"] = "";
+      newState[type + "Point"] = [];
+      scope.setState(newState);
+      scope.state.router.recalculateRoute();
+    };
+    // const deleteFromListener = function(event) {
+    //   self.fromValue = null;
+    //   containerAddresses.arrFromPositions = [];
+    //   self.recalculateRoute();
+    // };
+    const submitFromFunction = function(event) {
+      // trigger new search
+      self.$fromInput.trigger('change');
+      const performSearchCallback = function() {
+        self.performViaRoute();
+      };
+      self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
+
+    }
+
+    const selectFromListener = function(event, ui){
+      let value = ui.item.value;
+      let coord = containerAddresses.arrFromPositions[containerAddresses.arrFromNames.findIndex(
+        danger => danger === value
+      )];
+      self.fromValue = new Point([coord[1], coord[0]]);
+      self.recalculateRoute();
+    };
+
+    const changeFromListener = function () {
+      // self.fromValue = null;
+    }
+    const objFromListeners = {
+      "selectListener": selectFromListener,
+      "submitFunction": submitFromFunction,
+      "deleteFunction": deleteFromListener,
+      "changeListener": changeFromListener
+    };
+    this.$fromInput = jQuery(this.fromInput);
+
   }
 }

@@ -26,16 +26,14 @@ export class RouterProfileSelection extends Component {
   }
 
   setProfile(profile) {
-    console.log(profile);
     this.setState({currentProfile: parseInt(profile.id, 10)});
   }
 
   render() {
-    const scope = this;
     return (
       <div className="c4g-router-profile-wrapper">
         {this.state.profiles.map((item) => {
-          return <button onClick={() => {console.log("foo");this.setProfile(item);}}
+          return <button onMouseUp={() => this.setProfile(item)}
                          className={parseInt(item.id, 10) === this.state.currentProfile ? "c4g-active" : "c4g-inactive"}
                   key={item.id}>{item.text}</button>
         })}
