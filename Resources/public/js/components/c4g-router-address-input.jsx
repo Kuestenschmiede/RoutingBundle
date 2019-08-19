@@ -26,6 +26,7 @@ export class RouterAddressInput extends Component {
       console.warn("The routing component needs a router, it won't work correctly since none was passed...");
     }
 
+    // TODO hier müssen noch properties rein, die die autocomplete-vorschläge halten können
     this.state = {
       router: props.router,
       fromAddress: "",
@@ -73,6 +74,7 @@ export class RouterAddressInput extends Component {
         <button className="c4g-router-switch" onMouseUp={this.swapTargets}></button>
       </div>;
     }
+
     if (this.props.mode === "route") {
       input = <React.Fragment>
         <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
@@ -121,40 +123,32 @@ export class RouterAddressInput extends Component {
       scope.setState(newState);
       scope.state.router.recalculateRoute();
     };
-    // const deleteFromListener = function(event) {
-    //   self.fromValue = null;
-    //   containerAddresses.arrFromPositions = [];
-    //   self.recalculateRoute();
-    // };
-    const submitFromFunction = function(event) {
-      // trigger new search
-      self.$fromInput.trigger('change');
-      const performSearchCallback = function() {
-        self.performViaRoute();
-      };
-      self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
 
-    }
+    objFunctions["submit" + uppercasedType + "Listener"] = function(event) {
+      // TODO
+      // self.$fromInput.trigger('change');
+      // const performSearchCallback = function() {
+      //   self.performViaRoute();
+      // };
+      // self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
+    };
 
-    const selectFromListener = function(event, ui){
+    objFunctions["select" + uppercasedType + "Listener"] = function(event, ui) {
       let value = ui.item.value;
-      let coord = containerAddresses.arrFromPositions[containerAddresses.arrFromNames.findIndex(
+      let coord = scope.state.arrFromPositions[containerAddresses.arrFromNames.findIndex(
         danger => danger === value
       )];
       self.fromValue = new Point([coord[1], coord[0]]);
       self.recalculateRoute();
     };
 
-    const changeFromListener = function () {
-      // self.fromValue = null;
-    }
-    const objFromListeners = {
-      "selectListener": selectFromListener,
-      "submitFunction": submitFromFunction,
-      "deleteFunction": deleteFromListener,
-      "changeListener": changeFromListener
-    };
-    this.$fromInput = jQuery(this.fromInput);
+    objFunctions["change" + uppercasedType + "Listener"] = function (event) {
 
+    };
+
+    return {
+      callbacks: objFunctions,
+      settings: objSettings
+    };
   }
 }
