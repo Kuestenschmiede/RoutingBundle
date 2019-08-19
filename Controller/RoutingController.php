@@ -17,26 +17,38 @@ namespace con4gis\RoutingBundle\Controller;
 use con4gis\CoreBundle\Controller\BaseController;
 use con4gis\RoutingBundle\Classes\Services\AreaService;
 use con4gis\RoutingBundle\Classes\Services\RouteService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoutingController extends BaseController
 {
-    public function getAreaAction(Request $request, $profileId, $layerId, $distance, $center){
+    /**
+     * MapsController constructor.
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+    }
+    
+    public function getAreaAction(Request $request, $profileId, $layerId, $distance, $center)
+    {
         $response = new Response();
-        if($request->query->get('profile') !== null){
+        if ($request->query->get('profile') !== null) {
             $profile = $request->query->get('profile');
         }
         $areaService = $this->get('con4gis.area_service');
         $response ->setContent($areaService->getResponse($profileId, $layerId, $distance, $center, $profile));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
-
+        
     }
-    public function getRouteAction(Request $request, $language, $profileId, $layerId, $detour, $locations){
+    
+    public function getRouteAction(Request $request, $language, $profileId, $layerId, $detour, $locations)
+    {
         $response = new Response();
-        if($request->query->get('profile') !== null){
+        if ($request->query->get('profile') !== null) {
             $profile = $request->query->get('profile');
         }
         $locations = explode(";",$locations);
@@ -44,6 +56,5 @@ class RoutingController extends BaseController
         $response ->setContent($routeService->getResponse($profileId, $layerId, $locations, $detour, $profile, $language));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
-
     }
 }

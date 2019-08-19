@@ -10,3 +10,9 @@ services:
     public: true
     arguments:
     - "@event_dispatcher"
+
+  con4gis\RoutingBundle\Controller\RoutingController:
+    class: con4gis\RoutingBundle\Controller\RoutingController
+    public: true
+    arguments:
+      - "@service_container"
