@@ -33,7 +33,7 @@ import {AlertHandler} from "./../../../../CoreBundle/Resources/public/js/AlertHa
 import {AutocompleteHandler} from "./../../../../CoreBundle/Resources/public/js/AutocompleteHandler";
 import ReactDOM from "react-dom";
 import React from "react";
-import {RouterControls} from "./components/c4g-router-controls.jsx";
+import {RouterView} from "./components/c4g-router-view.jsx";
 
 let langRouteConstants = {};
 const containerAddresses = {
@@ -3688,7 +3688,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     mapController.map.addControl(router);
     mapController.controls.router = router;
 
-    let routerProps = {
+    let routerControlProps = {
       target: document.querySelector('#' + mapController.data.mapDiv + ' .' + cssConstants.OL_OVERLAYCONTAINER_SE),
       mapController: mapController,
       direction: "top",
@@ -3700,7 +3700,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       className: "c4g-router-panel"
     };
     mapController.routerContainer = document.createElement('div');
-    ReactDOM.render(React.createElement(RouterControls, routerProps), mapController.routerContainer);
+    ReactDOM.render(React.createElement(RouterView, routerControlProps), mapController.routerContainer);
     jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
   }
 });
