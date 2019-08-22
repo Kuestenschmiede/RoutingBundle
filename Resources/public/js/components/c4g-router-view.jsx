@@ -34,9 +34,9 @@ export class RouterView extends Component {
       <React.Fragment>
         <RouterControls router={this.props.router} open={this.props.open} className={this.props.className}
           objSettings={this.props.objSettings} objFunctions={this.props.objFunctions}
-          containerAddresses={this.props.containerAddresses}
+          containerAddresses={this.props.containerAddresses} mapController={this.props.mapController}
         />
-        <RouterResultContainer />
+        <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}/>
       </React.Fragment>
     );
   }

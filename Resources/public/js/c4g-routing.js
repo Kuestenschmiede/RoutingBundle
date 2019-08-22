@@ -3688,15 +3688,95 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     mapController.map.addControl(router);
     mapController.controls.router = router;
 
+    let objFunctions = {};
+    // set listener for the autocomplete from field
+    const deleteFromListener = function(event) {
+      router.fromValue = null;
+      containerAddresses.arrFromPositions = [];
+      router.recalculateRoute();
+    };
+
+    // const submitFromFunction = function(event) {
+    //   // trigger new search
+    //   router.$fromInput.trigger('change');
+    //   const performSearchCallback = function() {
+    //     router.performViaRoute();
+    //   };
+    //   router.performSearch(router.$fromInput, "fromValue", performSearchCallback);
+    //
+    // };
+
+    const selectFromListener = function(event, ui){
+      let value = ui.item.value;
+      let coord = containerAddresses.arrFromPositions[containerAddresses.arrFromNames.findIndex(
+        danger => danger === value
+      )];
+      router.fromValue = new Point([coord[1], coord[0]]);
+      router.recalculateRoute();
+    };
+
+    const changeFromListener = function () {
+      // self.fromValue = null;
+    };
+
+    objFunctions.fromFunctions = {
+      "selectListener": selectFromListener,
+      "deleteFunction": deleteFromListener,
+      "changeListener": changeFromListener
+    };
+
+    // set listener for the autocomplete to field
+    const deleteToListener = function(event) {
+      router.toValue = null;
+      containerAddresses.arrToPositions = [];
+      router.recalculateRoute();
+    };
+
+    // const submitToFunction = function(event) {
+    //   // trigger new search
+    //   router.$fromInput.trigger('change');
+    //   const performSearchCallback = function() {
+    //     router.performViaRoute();
+    //   };
+    //   router.performSearch(router.$fromInput, "fromValue", performSearchCallback);
+    // };
+
+    const selectToListener = function(event, ui){
+      let value = ui.item.value;
+      let coord = containerAddresses.arrFromPositions[containerAddresses.arrFromNames.findIndex(
+        danger => danger === value
+      )];
+      router.fromValue = new Point([coord[1], coord[0]]);
+      router.recalculateRoute();
+    };
+
+    const changeToListener = function () {
+      // self.fromValue = null;
+    };
+
+    objFunctions.toFunctions = {
+      "selectListener": selectToListener,
+      "deleteFunction": deleteToListener,
+      "changeListener": changeToListener
+    };
+
     let routerControlProps = {
       target: document.querySelector('#' + mapController.data.mapDiv + ' .' + cssConstants.OL_OVERLAYCONTAINER_SE),
       mapController: mapController,
       direction: "top",
       router: router,
       withPosition: false,
-      objFunctions: {},
-      objSettings: {},
-      containerAddresses: {},
+      objFunctions: objFunctions,
+      objSettings: {
+        "proxyUrl": mapController.data.proxyUrl,
+        "keyAutocomplete": mapController.data.autocomplete,
+        "center" : function () {
+          let center = mapController.map.getView().getCenter();
+          center = transform(center, "EPSG:3857","EPSG:4326");
+          return center;
+        }
+      },
+      containerAddresses: containerAddresses,
       className: "c4g-router-panel"
     };
     mapController.routerContainer = document.createElement('div');
