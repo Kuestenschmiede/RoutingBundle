@@ -312,13 +312,14 @@ export class Router extends Sideboard {
         this.viewArea.activate();
       }
     }
-    this.viewRouter = this.addRouterInterface();
+    // this.viewRouter = this.addRouterInterface();
     if (this.options.mapController.data.initialMode === "route" || !this.viewArea) {
-      this.viewRouter.activate();
+      // this.viewRouter.activate();
     }
 
     // store some vars for ajax-requests
     profileId = this.options.mapController.data.profile;
+
     this.geoSearchApi = this.options.mapController.data.api.geosearch + '/' + profileId;
     this.geoReverseSearchApi = this.options.mapController.data.api.geosearch_reverse + '/' + profileId;
     this.routingApi = this.options.mapController.data.api.routing + '/' + profileId;
@@ -3687,6 +3688,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     }
     mapController.map.addControl(router);
     mapController.controls.router = router;
+    router.init();
 
     let objFunctions = {};
     // set listener for the autocomplete from field

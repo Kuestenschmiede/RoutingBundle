@@ -28,7 +28,8 @@ export class AutocompleteInput extends Component {
       const performSearchCallback = function() {
         scope.props.router.performViaRoute();
       };
-      scope.props.router.performSearch(field, "fromValue", performSearchCallback);
+      let value = (scope.props.cssId.indexOf('From') !== -1) ? "fromValue" : "toValue";
+      scope.props.router.performSearch(field, value, performSearchCallback);
     };
 
     let enterListener = function(event, opt_this) {
@@ -40,11 +41,11 @@ export class AutocompleteInput extends Component {
           scope.props.objFunctions.deleteFunction(event.currentTarget, event.currentTarget.classList[0]);
 
           let cssClass = event.currentTarget.classList[0];
-          if (cssClass.indexOf('from') !== -1) {
+          if (cssClass.indexOf('From') !== -1) {
             travelData.routeFrom = {};
             scope.props.containerAddresses.arrFromPositions = [];
             scope.props.containerAddresses.arrFromPositions = [];
-          } else if (cssClass.indexOf('to') !== -1) {
+          } else if (cssClass.indexOf('To') !== -1) {
             travelData.routeTo = {};
             scope.props.containerAddresses.arrToNames = [];
             scope.props.containerAddresses.arrToPositions = [];
@@ -72,21 +73,10 @@ export class AutocompleteInput extends Component {
 
   componentDidMount() {
     jQuery('#' + this.props.cssId).autocomplete({source: this.props.containerAddresses.arrNames});
-    // this.handleInput();
   }
 
   setCenter (center) {
     this.objSettings.center = center;
-  }
-
-  handleInput () {
-    const scope = this;
-
-    let $field = jQuery('#' + this.props.cssId);
-    $field.on('keydown', (event) => enterListener(event, scope));
-    $field.on('search', enterListener);
-    $field.on('autocompleteselect', this.props.objFunctions.selectListener);
-    $field.on('change', this.props.objFunctions.changeListener);
   }
 
   autocompleteAddress(input, cssClass) {
@@ -144,14 +134,14 @@ export class AutocompleteInput extends Component {
 
           for (let i in arrAddresses) {
             if (arrAddresses.hasOwnProperty(i)) {
-              if (cssClass.indexOf('from') != -1) {
+              if (cssClass.indexOf('from') !== -1) {
                 // do not add twice
                 if (!scope.props.containerAddresses.arrFromNames.includes(arrAddresses[i].name)) {
                   scope.props.containerAddresses.arrFromNames.push(arrAddresses[i].name);
                   scope.props.containerAddresses.arrFromPositions.push(arrAddresses[i].pos);
                 }
               }
-              else if (cssClass.indexOf('to') != -1){
+              else if (cssClass.indexOf('to') !== -1){
                 if (!scope.props.containerAddresses.arrToNames.includes(arrAddresses[i].name)) {
                   scope.props.containerAddresses.arrToNames.push(arrAddresses[i].name);
                   scope.props.containerAddresses.arrToPositions.push(arrAddresses[i].pos);
