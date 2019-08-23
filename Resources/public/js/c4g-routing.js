@@ -1465,7 +1465,6 @@ export class Router extends Sideboard {
           if (routeResponse.routes[routeNumber].legs[1]) {
             route_name_1 = routeResponse.routes[routeNumber].legs[1].summary.split(",")[1];
           }
-
         }
         total_distance = this.toHumanDistance(routeResponse.routes[routeNumber].distance);
         total_time = this.toHumanTime(routeResponse.routes[routeNumber].duration);

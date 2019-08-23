@@ -72,7 +72,15 @@ export class AutocompleteInput extends Component {
   }
 
   componentDidMount() {
-    jQuery('#' + this.props.cssId).autocomplete({source: this.props.containerAddresses.arrNames});
+    let arrNames;
+    if (this.props.cssId.indexOf("From") !== -1) {
+      arrNames = this.props.containerAddresses.arrFromNames
+    } else {
+      arrNames = this.props.containerAddresses.arrToNames;
+    }
+    jQuery('#' + this.props.cssId).autocomplete({
+      source: arrNames
+    });
   }
 
   setCenter (center) {
