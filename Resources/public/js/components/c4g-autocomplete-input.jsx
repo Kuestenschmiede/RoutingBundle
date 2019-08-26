@@ -35,7 +35,7 @@ export class AutocompleteInput extends Component {
     let enterListener = function(event, opt_this) {
       //const scope = this;
       if (event.keyCode === 13) {
-        submitFunction(scope, event.currentTarget.classList[0]);
+        submitFunction();
       } else {
         if ($(event.currentTarget).val().length === 0 && !event.keyCode) { //deleted
           scope.props.objFunctions.deleteFunction(event.currentTarget, event.currentTarget.classList[0]);
@@ -67,7 +67,7 @@ export class AutocompleteInput extends Component {
     };
 
     return (
-      <input id={this.props.cssId} type="search" value={this.props.value} onKeyDown={enterListener} />
+      <input id={this.props.cssId} type="search" value={this.props.value} onKeyDown={enterListener} autoComplete="off"/>
     );
   }
 

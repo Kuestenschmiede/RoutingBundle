@@ -317,6 +317,9 @@ export class Router extends Sideboard {
       // this.viewRouter.activate();
     }
 
+    // id => array of instructions, for each route one entry
+    this.routeInstructions = {};
+
     // store some vars for ajax-requests
     profileId = this.options.mapController.data.profile;
 
@@ -1443,13 +1446,9 @@ export class Router extends Sideboard {
       return;
     }
 
-    if (self.routerInstructionsWrapper === undefined) {
-      self.routerInstructionsWrapper = document.createElement('div');
-      self.routerInstructionsWrapper.className = routingConstants.ROUTER_INSTRUCTIONS_WRAPPER;
-      self.routerViewContentWrapper.appendChild(self.routerInstructionsWrapper);
-    } else {
-      jQuery(self.routerInstructionsWrapper).empty();
-    }
+    console.log(routeResponse);
+    console.log(routeNumber);
+    // TODO instructions für die anderen engines übergeben
 
     routerInstructionsHeader = document.createElement('div');
     routerInstructionsHeader.className = routingConstants.ROUTER_INSTRUCTIONS_HEADER;
@@ -1494,6 +1493,11 @@ export class Router extends Sideboard {
       else if (this.options.mapController.data.router_api_selection == '4' || routeResponse.routeType == '4') { //Valhalla
         total_distance = this.toHumanDistance(routeResponse.trip.summary.length *1000);
         total_time = this.toHumanTime(routeResponse.trip.summary.time) ;
+        this.routeInstructions[routeNumber] = {
+          time: total_time,
+          distance: total_distance,
+          instructions: routeResponse.trip.legs[routeNumber].maneuvers
+        };
       }
 
       if (route_name_0 && route_name_1) {
@@ -1504,236 +1508,20 @@ export class Router extends Sideboard {
       }
 
 
-      self.routerInstructionsWrapper.appendChild(routerInstructionsHeader);
 
       routerInstruction = document.createElement('div');
 
       routerInstructionsHtml = '<table class="' + routingConstants.ROUTER_INSTRUCTIONS_TABLE + '" cellpadding="0" cellspacing="0">';
       if (this.options.mapController.data.router_api_selection === '1' || routeResponse.routeType == '1') {//OSRM-API:5.x
-        for (j = 0; j < routeResponse.routes[routeNumber].legs.length; j += 1) {
-          for (i = 0; i < routeResponse.routes[routeNumber].legs[j].steps.length; i += 1) {
-            instr = routeResponse.routes[routeNumber].legs[j].steps[i];
-
-            strType = instr.maneuver.type;
-            if (instr.maneuver.modifier) {
-              strMod = instr.maneuver.modifier;
-            }
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-            if (i % 2 === 0) {
-              rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-            }
-
-            rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-            routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-            routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIcon(strMod, strType) + '" alt=""/>';
-            routerInstructionsHtml += '</td>';
-
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
-
-
-            // build route description
-            var instructiontext = this.getTypeText(instr.maneuver.type).replace(/%s/, instr.name).replace(/%m/, this.getModifierText(instr.maneuver.modifier)).replace(/%z/, instr.maneuver.exit);
-            if (instr.name.length < 1) {
-              instructiontext = instructiontext.replace(/\[.*?\]/g, '');
-            } else {
-              instructiontext = instructiontext.replace(/\[(.*)\]/, "$1");
-            }
-            routerInstructionsHtml += instructiontext;
-
-
-            routerInstructionsHtml += '</div>';
-            routerInstructionsHtml += "</td>";
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-            if (i !== routeResponse.routes[routeNumber].legs[0].steps.length - 1) {
-              routerInstructionsHtml += this.toHumanDistance(instr.distance);
-            }
-            routerInstructionsHtml += "</td>";
-
-            routerInstructionsHtml += "</tr>";
-          }
-        }
 
       } else if (this.options.mapController.data.router_api_selection === '0' || routeResponse.routeType == '0') {//OSRM-API:<5
-        for (i = 0; i < routeResponse.route_instructions.length; i += 1) {
-          instr = routeResponse.route_instructions[i];
-          rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
 
-          if (i % 2 === 0) {
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-          }
+      } else if (this.options.mapController.data.router_api_selection === '2' || routeResponse.routeType == '2') {//OpenRouteService
 
-          rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
+      } else if (this.options.mapController.data.router_api_selection === '3' || routeResponse.routeType == '3') { // Graphhopper
 
-          routerInstructionsHtml += '<tr class="' + rowstyle + '">';
+      } else if (this.options.mapController.data.router_api_selection === '4' || routeResponse.routeType == '4') { // Valhalla
 
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-          routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getDrivingInstructionIcon(instr[0]) + '" alt=""/>';
-          routerInstructionsHtml += '</td>';
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr[3] + '">';
-
-          // build route description
-          if (instr[1] !== "") {
-            routerInstructionsHtml += this.getDrivingInstruction(instr[0]).replace(/\[(.*)\]/, "$1").replace(/%s/, instr[1]).replace(/%d/, this.getText(instr[6]));
-          } else {
-            routerInstructionsHtml += this.getDrivingInstruction(instr[0]).replace(/\[(.*)\]/, "").replace(/%d/, this.getText(instr[6]));
-          }
-
-
-          routerInstructionsHtml += '</div>';
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-          if (i !== routeResponse.route_instructions.length - 1) {
-            routerInstructionsHtml += this.toHumanDistance(instr[5]);
-          }
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += "</tr>";
-        }
-      }
-      else if (this.options.mapController.data.router_api_selection === '2' || routeResponse.routeType == '2') {//OpenRouteService
-        for (j = 0; j < routeResponse.routes[routeNumber].segments.length; j += 1) {
-          for (i = 0; i < routeResponse.routes[routeNumber].segments[j].steps.length; i += 1) {
-            instr = routeResponse.routes[routeNumber].segments[j].steps[i];
-
-            strType = instr.type;
-
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-            if (i % 2 === 0) {
-              rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-            }
-
-            rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-            routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-            routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconORS(strType) + '" alt=""/>';
-            routerInstructionsHtml += '</td>';
-
-            if (instr.maneuver) {
-              routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
-            }
-            else {
-              routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + 0 + '">';
-            }
-
-
-            // build route description
-
-            routerInstructionsHtml += instr.instruction;
-
-
-            routerInstructionsHtml += '</div>';
-            routerInstructionsHtml += "</td>";
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-            if (i !== routeResponse.routes[routeNumber].segments[0].steps.length - 1) {
-              routerInstructionsHtml += this.toHumanDistance(instr.distance);
-            }
-            routerInstructionsHtml += "</td>";
-
-            routerInstructionsHtml += "</tr>";
-          }
-        }
-      }
-      else if (this.options.mapController.data.router_api_selection === '3' || routeResponse.routeType == '3') { // Graphhopper
-        for (j = 0; j < routeResponse.paths[routeNumber].instructions.length; j += 1) {
-          instr = routeResponse.paths[routeNumber].instructions[j];
-
-          strType = (j == 0) ? 99 : instr.sign;
-
-          rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-          if (i % 2 === 0) {
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-          }
-
-          rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-          routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-          routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconGraphhopper(strType) + '" alt=""/>';
-          routerInstructionsHtml += '</td>';
-
-          if (instr.maneuver) {
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
-          }
-          else {
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + 0 + '">';
-          }
-
-
-          // build route description
-
-          routerInstructionsHtml += instr.text;
-
-
-          routerInstructionsHtml += '</div>';
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-          if (j !== routeResponse.paths[routeNumber].instructions.length - 1 && j != 0) {
-            routerInstructionsHtml += this.toHumanDistance(instr.distance);
-          }
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += "</tr>";
-        }
-      }
-      else if (this.options.mapController.data.router_api_selection === '4' || routeResponse.routeType == '4') {
-        for (j = 0; j < routeResponse.trip.legs[routeNumber].maneuvers.length; j += 1) {
-          instr = routeResponse.trip.legs[routeNumber].maneuvers[j];
-
-          strType = instr.type;
-
-          rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-          if (i % 2 === 0) {
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-          }
-
-          rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-          routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-          routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconValhalla(strType) + '" alt=""/>';
-          routerInstructionsHtml += '</td>';
-
-          if ((instr.begin_shape_index || instr.begin_shape_index > -1) && instr.end_shape_index) {
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-start="' + instr.begin_shape_index + '"  data-end="' + instr.end_shape_index + '">';
-          }
-          else{
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-start="0"  data-end="0">';
-          }
-
-
-          // build route description
-
-          routerInstructionsHtml += instr.instruction;
-
-
-          routerInstructionsHtml += '</div>';
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-          if (j !== routeResponse.trip.legs[routeNumber].maneuvers.length - 1 && j != 0) {
-            routerInstructionsHtml += this.toHumanDistance(instr.length * 1000);
-          }
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += "</tr>";
-        }
       }
 
 
@@ -1741,7 +1529,6 @@ export class Router extends Sideboard {
 
       routerInstruction.innerHTML = routerInstructionsHtml;
 
-      self.routerInstructionsWrapper.appendChild(routerInstruction);
 
       this.adjustInstructionMapInteraction();
 
@@ -3778,7 +3565,8 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
         }
       },
       containerAddresses: containerAddresses,
-      className: "c4g-router-panel"
+      className: "c4g-router-panel",
+      routerInstructions: router.routeInstructions
     };
     mapController.routerContainer = document.createElement('div');
     ReactDOM.render(React.createElement(RouterView, routerControlProps), mapController.routerContainer);

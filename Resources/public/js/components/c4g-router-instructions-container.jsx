@@ -22,19 +22,21 @@ export class RouterInstructionsContainer extends Component {
   }
 
   render() {
-    let instructions = "";
-    for (let key in this.props.routerInstructions) {
-      if (this.props.routerInstructions.hasOwnProperty(key)) {
-
-      }
+    console.log(this.props.routerInstructions);
+    let chosenRoute = 0;
+    let instructions = [];
+    if (this.props.routerInstructions && this.props.routerInstructions[chosenRoute]) {
+      instructions = this.props.routerInstructions[chosenRoute];
     }
+    console.log("instruction container render");
+
     // TODO hier muss noch eine ID zu, die dann für die hover-Action interessant wird, weil dann immer
     // TODO die jeweilige instruction auf der route markiert werden muss
 
     return (
       <div className={this.props.className}>
 
-        {this.props.routerInstructions.map((item) => {
+        {instructions.map((item) => {
           return <RouterInstruction imgPath={item.imgPath} instrText={item.instrText} instrDist={item.instrDist}/>
         })}
       </div>
