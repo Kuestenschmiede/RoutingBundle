@@ -14,7 +14,7 @@
 /**
  *  constants
  */
-export  var routingConstantsGerman = {
+export var routingConstantsGerman = {
   ROUTER_VIEW_ADDRESS_INPUT: 'Route finden',
   ROUTER_FROM_LABEL: 'Start',
   ROUTER_OVER_LABEL: 'Zwischenziel',

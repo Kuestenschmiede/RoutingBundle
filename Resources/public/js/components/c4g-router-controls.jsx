@@ -44,11 +44,12 @@ export class RouterControls extends HorizontalPanel {
     let arrProfiles = [];
     // propagate open state down to child components
     let open = this.state.open;
-    for (let key in this.state.router.options.mapController.data.router_profiles) {
-      if (this.state.router.options.mapController.data.router_profiles.hasOwnProperty(key)) {
+    console.log(this.props.mapController);
+    for (let key in this.props.mapController.data.router_profiles) {
+      if (this.props.mapController.data.router_profiles.hasOwnProperty(key)) {
         arrProfiles.push({
           id: key,
-          text: this.state.router.options.mapController.data.router_profiles[key]
+          text: this.props.mapController.data.router_profiles[key]
         });
       }
     }
@@ -56,9 +57,7 @@ export class RouterControls extends HorizontalPanel {
     let details = null;
 
     if (this.state.open) {
-      details = <div>
-        <RouterProfileSelection profiles={arrProfiles}/>
-      </div>;
+      details = <RouterProfileSelection profiles={arrProfiles}/>;
     }
 
     return (

@@ -100,7 +100,7 @@ export class AutocompleteInput extends Component {
         center = settings.center[0] + "," + settings.center[1];
       }
     }
-    else if(settings.bBox){
+    else if (settings.bBox) {
       center = (parseFloat(settings.bBox[0]) + parseFloat(settings.bBox[2])) / 2 + "," + (parseFloat(settings.bBox[1]) + parseFloat(settings.bBox[3])) / 2;
     }
     let url;
