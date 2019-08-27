@@ -21,25 +21,49 @@ export class RouterInstructionsContainer extends Component {
 
   }
 
+  // TODO Wenn keine instructions vorhanden, gar nicht anzeigen
+  // TODO wenn instructions da, aber nicht geöffnet: Routenname und gesamtlänge oder sowas
+  // TODO wenn aufgeklappt, zeige zusätzlich alle instructions
+
   render() {
     console.log(this.props.routerInstructions);
-    let chosenRoute = 0;
     let instructions = [];
-    if (this.props.routerInstructions && this.props.routerInstructions[chosenRoute]) {
-      instructions = this.props.routerInstructions[chosenRoute];
+    let time = "";
+    let distance = "";
+    if (this.props.routerInstructions && this.props.routerInstructions.instructions) {
+      instructions = this.props.routerInstructions.instructions;
+      time = this.props.routerInstructions.time;
+      distance = this.props.routerInstructions.distance;
     }
-    console.log("instruction container render");
 
-    // TODO hier muss noch eine ID zu, die dann für die hover-Action interessant wird, weil dann immer
-    // TODO die jeweilige instruction auf der route markiert werden muss
-
-    return (
-      <div className={this.props.className}>
-
-        {instructions.map((item) => {
-          return <RouterInstruction imgPath={item.imgPath} instrText={item.instrText} instrDist={item.instrDist}/>
-        })}
-      </div>
+    let routerHeader = (
+      <React.Fragment>
+        <span className="c4g-router-route-time">Dauer: {time}</span>
+        <span className="c4g-router-route-distance">Distanz: {distance}</span>
+      </React.Fragment>
     );
+
+    if (instructions.length === 0) {
+      return ("");
+    } else if (!this.props.open) {
+      // instructions present, container closed
+      return (
+        <div className={this.props.className}>
+          {routerHeader}
+        </div>
+      );
+    } else {
+      // instructions present, container open
+      // TODO hier muss noch eine ID zu, die dann für die hover-Action interessant wird, weil dann immer
+      // TODO die jeweilige instruction auf der route markiert werden muss
+      return (
+        <div className={this.props.className}>
+          {routerHeader}
+          {instructions.map((item) => {
+            return <RouterInstruction imgPath={item.imgPath} instrText={item.instruction} instrDist={item.length}/>
+          })}
+        </div>
+      );
+    }
   }
 }

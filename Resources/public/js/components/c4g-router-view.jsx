@@ -278,7 +278,7 @@ export class RouterView extends Component {
           containerAddresses={this.props.containerAddresses} mapController={this.props.mapController}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          routerInstructions={this.props.routerInstructions}/>
+          routerInstructions={this.state.routerInstructions}/>
       </React.Fragment>
     );
   }
@@ -363,6 +363,7 @@ export class RouterView extends Component {
           distance: total_distance,
           instructions: routeResponse.trip.legs[routeNumber].maneuvers
         };
+        this.setState({routerInstructions: this.routeInstructions[routeNumber]});
       }
 
       if (route_name_0 && route_name_1) {

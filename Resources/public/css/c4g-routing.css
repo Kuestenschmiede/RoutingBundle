@@ -519,3 +519,9 @@ Router panel
     transition: all 0.3s;
     left: 16.5%;
 }
+
+.c4g-route-instructions-wrapper {
+    color: var(--font-color);
+    max-height: 590px;
+    overflow-y: scroll;
+}
