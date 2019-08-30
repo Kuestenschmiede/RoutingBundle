@@ -21,26 +21,34 @@ export class RouterInstructionsContainer extends Component {
 
   }
 
-  // TODO Wenn keine instructions vorhanden, gar nicht anzeigen
-  // TODO wenn instructions da, aber nicht geöffnet: Routenname und gesamtlänge oder sowas
-  // TODO wenn aufgeklappt, zeige zusätzlich alle instructions
-
   render() {
     console.log(this.props.routerInstructions);
     let instructions = [];
     let time = "";
     let distance = "";
+    let profile = "";
     if (this.props.routerInstructions && this.props.routerInstructions.instructions) {
       instructions = this.props.routerInstructions.instructions;
       time = this.props.routerInstructions.time;
       distance = this.props.routerInstructions.distance;
+      profile = this.props.routerInstructions.instructions[0].travel_type;
     }
 
     let routerHeader = (
-      <React.Fragment>
-        <span className="c4g-router-route-time">Dauer: {time}</span>
-        <span className="c4g-router-route-distance">Distanz: {distance}</span>
-      </React.Fragment>
+      <div className="c4g-router-instructions-header">
+        <div className="c4g-router-route-profile">
+          <label>Profil:</label>
+          <em>{profile}</em>
+        </div>
+        <div className="c4g-router-route-time">
+          <label>Dauer:</label>
+          <em>{time}</em>
+        </div>
+        <div className="c4g-router-route-distance">
+          <label>Distanz:</label>
+          <em>{distance}</em>
+        </div>
+      </div>
     );
 
     if (instructions.length === 0) {
@@ -59,8 +67,8 @@ export class RouterInstructionsContainer extends Component {
       return (
         <div className={this.props.className}>
           {routerHeader}
-          {instructions.map((item) => {
-            return <RouterInstruction imgPath={item.imgPath} instrText={item.instruction} instrDist={item.length}/>
+          {instructions.map((item, index) => {
+            return <RouterInstruction imgPath={item.type} instrText={item.instruction} instrDist={item.length} id={index}/>
           })}
         </div>
       );

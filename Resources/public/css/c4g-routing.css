@@ -525,3 +525,15 @@ Router panel
     max-height: 590px;
     overflow-y: scroll;
 }
+
+.c4g-router-instruction > div {
+    padding: 5px;
+    min-width: 20px;
+    vertical-align: top;
+    display: inline-block;
+    text-align: start;
+}
+
+.c4g-router-instructions-header > div > em {
+    float: right;
+}
