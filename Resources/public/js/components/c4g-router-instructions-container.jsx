@@ -13,6 +13,7 @@
 
 import React, { Component } from "react";
 import {RouterInstruction} from "./c4g-router-instruction.jsx";
+import {toHumanDistance, toHumanTime} from "./../c4g-router-time-conversions";
 
 export class RouterInstructionsContainer extends Component {
 
@@ -29,8 +30,8 @@ export class RouterInstructionsContainer extends Component {
     let profile = "";
     if (this.props.routerInstructions && this.props.routerInstructions.instructions) {
       instructions = this.props.routerInstructions.instructions;
-      time = this.props.routerInstructions.time;
-      distance = this.props.routerInstructions.distance;
+      time = toHumanTime(this.props.routerInstructions.time);
+      distance = toHumanDistance(this.props.routerInstructions.distance);
       profile = this.props.routerInstructions.instructions[0].travel_type;
     }
 

@@ -21,16 +21,29 @@ export class RouterResultContainer extends HorizontalPanel {
   constructor(props) {
     super(props);
 
-
   }
 
   render() {
     return (
-      <div className={this.props.className}>
+      <div className={this.props.className + (this.state.open ? " c4g-open" : " c4g-close")}>
         <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} routerInstructions={this.props.routerInstructions} open={this.state.open}/>
         <RouterFeatureList className={"c4g-route-feature-wrapper"}/>
       </div>
     );
   }
 
+
+  slideInCollidingElements() {
+    this.slideOutCollidingElements();
+  }
+
+  slideOutCollidingElements() {
+    let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
+    let bottomValue = 0;
+    let container = document.getElementsByClassName(className)[0];
+    if (container) {
+      bottomValue = container.offsetHeight;
+    }
+    jQuery(this.state.control.element).css("bottom", bottomValue + "px");
+  }
 }

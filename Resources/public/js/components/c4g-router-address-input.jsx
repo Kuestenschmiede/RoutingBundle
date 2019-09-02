@@ -29,16 +29,7 @@ export class RouterAddressInput extends Component {
     // TODO hier müssen noch properties rein, die die autocomplete-vorschläge halten können
     this.state = {
       router: props.router,
-      fromAddress: "",
-      toAddress: "",
-      areaFrom: "",
-      mode: props.mode || "route",
-      overPtCtr: 0,
-      overAddresses: [],
-      areaPoint: [],
-      fromPoint: [],  // array of two coords
-      toPoint: [],  // array of two coords
-      overPoints: [],  // array of arrays of two coords
+
     };
     this.addOverPoint = this.addOverPoint.bind(this);
     this.swapTargets = this.swapTargets.bind(this)

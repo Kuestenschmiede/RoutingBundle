@@ -2490,76 +2490,6 @@ export class Router extends Sideboard {
   }
 
   /**
-   * Converts a given coordinate into the corresponding location.
-   * @param $input    The input field in which the result location should be stored.
-   * @param value     The property that contains the coordinates.
-   */
-  performReverseSearch($input, value) {
-
-    var self = this,
-      url;
-
-    url = this.geoReverseSearchApi + '?format=json&lat=' + value[1] + '&lon=' + value[0];
-    if (this.mapData && this.mapData.geosearch && this.mapData.geosearch.reverseKey && this.mapData.geosearch.url) {
-      url = this.mapData.geosearch.url + "reverse.php?key=" + this.mapData.geosearch.reverseKey + '&format=json&lat=' + value[1] + '&lon=' + value[0];
-    }
-    this.spinner.show();
-
-    jQuery.ajax({
-      'url': url
-    })
-      .done(function (response) {
-
-        if (response) {
-          var value = "";
-          if (response.address) {
-            if (response.address.city) {
-              value = response.address.city;
-              if (response.address.road) {
-                value = ', ' + value;
-              }
-            }
-            if (response.address.town) {
-              value = response.address.town;
-              if (response.address.road) {
-                value = ', ' + value;
-              }
-            }
-            if (response.address.road) {
-              if (response.address.house_number) {
-                value = ' ' + response.address.house_number + value;
-              }
-              value = response.address.road + value;
-            }
-          }
-          if (value === "") {
-            value = response.display_name;
-          }
-          $input.val(value);
-
-          if ($input.attr('name') === "routingFrom") {
-            self.$routerFromClear.show();
-            // update address in link
-            // self.updateLinkFragments("addressFrom", value);
-          } else if ($input.attr('name') === "routingTo") {
-            self.$routerToClear.show();
-            // update address in link
-            // self.updateLinkFragments("addressTo", value);
-          } else if ($input.attr('name') === "areaFrom") {
-            // self.updateLinkFragments("addressArea", value);
-          }
-        }
-
-      })
-      .always(function () {
-        self.spinner.hide();
-      });
-
-  }
-
-
-
-  /**
    * Creates a div element that containts the given error text.
    * @param $field
    * @param errorText
@@ -2698,15 +2628,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       router: router,
       withPosition: false,
       objFunctions: objFunctions,
-      objSettings: {
-        "proxyUrl": mapController.data.proxyUrl,
-        "keyAutocomplete": mapController.data.autocomplete,
-        "center" : function () {
-          let center = mapController.map.getView().getCenter();
-          center = transform(center, "EPSG:3857","EPSG:4326");
-          return center;
-        }
-      },
+
       containerAddresses: containerAddresses,
       className: "c4g-router-panel",
       routerInstructions: router.routeInstructions,

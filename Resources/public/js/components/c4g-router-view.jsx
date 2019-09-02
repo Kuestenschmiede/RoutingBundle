@@ -44,12 +44,63 @@ export class RouterView extends Component {
   constructor(props) {
     super(props);
 
+    const mapController = this.props.mapController;
+
     this.state = {
-      router: props.router
+      router: props.router,
+      objSettings: {
+        "proxyUrl": mapController.data.proxyUrl,
+        "keyAutocomplete": mapController.data.autocomplete,
+        "center" : function () {
+          let center = mapController.map.getView().getCenter();
+          center = transform(center, "EPSG:3857","EPSG:4326");
+          return center;
+        }
+      },
+      containerAddresses: this.props.containerAddresses,
+      fromAddress: "",
+      toAddress: "",
+      areaAddress: "",
+      mode: props.mode || "route",
+      overPtCtr: 0,
+      overAddresses: [],
+      areaPoint: [],
+      fromPoint: [],  // array of two coords
+      toPoint: [],  // array of two coords
+      overPoints: [],  // array of arrays of two coords
     };
     this.init();
   }
 
+  render() {
+    return (
+      <React.Fragment>
+        <RouterControls router={this} open={this.props.open} className={this.props.className}
+          objSettings={this.state.objSettings} objFunctions={this.props.objFunctions}
+          containerAddresses={this.state.containerAddresses} mapController={this.props.mapController}
+        />
+        <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
+          routerInstructions={this.state.routerInstructions}/>
+      </React.Fragment>
+    );
+  }
+
+  setAreaPoint(longitude, latitude) {
+
+  }
+
+  setRouteFrom(longitude, latitude) {
+
+  }
+
+  setRouteTo(longitude, latitude) {
+
+  }
+
+  // =========================================================================================
+  // Begin old functions migrated from routing.js
+  // =========================================================================================
+  
   init() {
     const self = this;
 
@@ -270,19 +321,6 @@ export class RouterView extends Component {
     }
   }
 
-  render() {
-    return (
-      <React.Fragment>
-        <RouterControls router={this} open={this.props.open} className={this.props.className}
-          objSettings={this.props.objSettings} objFunctions={this.props.objFunctions}
-          containerAddresses={this.props.containerAddresses} mapController={this.props.mapController}
-        />
-        <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          routerInstructions={this.state.routerInstructions}/>
-      </React.Fragment>
-    );
-  }
-
   /**
    * Displays the route instructions in the portside router.
    * @param routeResponse
@@ -330,8 +368,8 @@ export class RouterView extends Component {
             route_name_1 = routeResponse.routes[routeNumber].legs[1].summary.split(",")[1];
           }
         }
-        total_distance = this.toHumanDistance(routeResponse.routes[routeNumber].distance);
-        total_time = this.toHumanTime(routeResponse.routes[routeNumber].duration);
+        total_distance = (routeResponse.routes[routeNumber].distance);
+        total_time = (routeResponse.routes[routeNumber].duration);
       }
 
       else if (this.props.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0') {//OSRM-API:<5
@@ -341,23 +379,23 @@ export class RouterView extends Component {
         }
 
         if (routeResponse.route_summary) {
-          total_distance = this.toHumanDistance(routeResponse.route_summary.total_distance);
-          total_time = this.toHumanTime(routeResponse.route_summary.total_time);
+          total_distance = (routeResponse.route_summary.total_distance);
+          total_time = (routeResponse.route_summary.total_time);
         }
 
 
       }
       else if (this.props.mapController.data.router_api_selection == '2' || routeResponse.routeType == '2') {//OSR-API
-        total_time = this.toHumanTime(routeResponse.routes[routeNumber].summary.duration);
-        total_distance = this.toHumanDistance(routeResponse.routes[routeNumber].summary.distance);
+        total_time = (routeResponse.routes[routeNumber].summary.duration);
+        total_distance = (routeResponse.routes[routeNumber].summary.distance);
       }
       else if (this.props.mapController.data.router_api_selection == '3' || routeResponse.routeType == '3') { //Graphhopper
-        total_distance = this.toHumanDistance(routeResponse.paths[0].distance);
-        total_time = this.toHumanTime(routeResponse.paths[0].time / 1000) ;
+        total_distance = routeResponse.paths[0].distance;
+        total_time = routeResponse.paths[0].time / 1000 ;
       }
       else if (this.props.mapController.data.router_api_selection == '4' || routeResponse.routeType == '4') { //Valhalla
-        total_distance = this.toHumanDistance(routeResponse.trip.summary.length *1000);
-        total_time = this.toHumanTime(routeResponse.trip.summary.time) ;
+        total_distance = routeResponse.trip.summary.length *1000;
+        total_time = routeResponse.trip.summary.time ;
         this.routeInstructions[routeNumber] = {
           time: total_time,
           distance: total_distance,
@@ -486,6 +524,74 @@ export class RouterView extends Component {
     });
 
     return "";
+
+  }
+
+  /**
+   * Converts a given coordinate into the corresponding location.
+   * @param $input    The input field in which the result location should be stored.
+   * @param value     The property that contains the coordinates.
+   */
+  performReverseSearch($input, value) {
+
+    var self = this,
+      url;
+
+    url = this.geoReverseSearchApi + '?format=json&lat=' + value[1] + '&lon=' + value[0];
+    if (this.mapData && this.mapData.geosearch && this.mapData.geosearch.reverseKey && this.mapData.geosearch.url) {
+      url = this.mapData.geosearch.url + "reverse.php?key=" + this.mapData.geosearch.reverseKey + '&format=json&lat=' + value[1] + '&lon=' + value[0];
+    }
+    this.spinner.show();
+
+    jQuery.ajax({
+      'url': url
+    })
+      .done(function (response) {
+
+        if (response) {
+          var value = "";
+          if (response.address) {
+            if (response.address.city) {
+              value = response.address.city;
+              if (response.address.road) {
+                value = ', ' + value;
+              }
+            }
+            if (response.address.town) {
+              value = response.address.town;
+              if (response.address.road) {
+                value = ', ' + value;
+              }
+            }
+            if (response.address.road) {
+              if (response.address.house_number) {
+                value = ' ' + response.address.house_number + value;
+              }
+              value = response.address.road + value;
+            }
+          }
+          if (value === "") {
+            value = response.display_name;
+          }
+          $input.val(value);
+
+          if ($input.attr('name') === "routingFrom") {
+            self.$routerFromClear.show();
+            // update address in link
+            // self.updateLinkFragments("addressFrom", value);
+          } else if ($input.attr('name') === "routingTo") {
+            self.$routerToClear.show();
+            // update address in link
+            // self.updateLinkFragments("addressTo", value);
+          } else if ($input.attr('name') === "areaFrom") {
+            // self.updateLinkFragments("addressArea", value);
+          }
+        }
+
+      })
+      .always(function () {
+        self.spinner.hide();
+      });
 
   }
 
@@ -833,62 +939,6 @@ export class RouterView extends Component {
         );
       }
     }
-  }
-
-  /**
-   * Converts a distance in meters to a more readable format.
-   * @param distanceInMeters  The distance to convert.
-   * @returns {string}
-   */
-  toHumanDistance(distanceInMeters) {
-
-    var distance,
-      humanDistance;
-
-    distance = parseInt(distanceInMeters, 10);
-    distance = distance / 1000;
-
-    if (distance >= 100) {
-      humanDistance = distance.toFixed(0) + '&nbsp;' + 'km';
-    } else if (distance >= 10) {
-      humanDistance = distance.toFixed(1) + '&nbsp;' + 'km';
-    } else if (distance >= 0.1) {
-      humanDistance = distance.toFixed(2) + '&nbsp;' + 'km';
-    } else {
-      humanDistance = (distance * 1000).toFixed(0) + '&nbsp;' + 'm';
-    }
-
-    return humanDistance;
-  }
-
-  /**
-   * Converts a time in seconds to a more readable format.
-   * @param timeInSeconds     The time to convert.
-   * @returns {string}
-   */
-  toHumanTime(timeInSeconds) {
-
-    var seconds,
-      minutes,
-      hours,
-      humanTime;
-
-    seconds = parseInt(timeInSeconds, 10);
-    minutes = parseInt(seconds / 60, 10);
-    seconds = seconds % 60;
-
-    hours = parseInt(minutes / 60, 10);
-    minutes = minutes % 60;
-
-    if (hours === 0 && minutes === 0) {
-      humanTime = seconds + '&nbsp;' + 's';
-    } else if (hours === 0) {
-      humanTime = minutes + '&nbsp;' + 'min';
-    } else {
-      humanTime = hours + '&nbsp;' + 'h' + '&nbsp;' + minutes + '&nbsp;' + 'min';
-    }
-
-    return humanTime;
   }
 
   /**

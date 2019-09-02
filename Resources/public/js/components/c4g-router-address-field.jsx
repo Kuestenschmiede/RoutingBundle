@@ -13,6 +13,7 @@
 
 import React, { Component } from "react";
 import {AutocompleteInput} from "./c4g-autocomplete-input.jsx";
+import {Point} from "ol/geom";
 
 export class RouterAddressField extends Component {
 
@@ -30,10 +31,6 @@ export class RouterAddressField extends Component {
     this.getPosition = this.getPosition.bind(this);
   }
 
-  getPosition(event) {
-    // TODO position holen, übersetzen lassen und adresse in feld schreiben (pos. natürlich an router geben)
-  }
-
   render() {
     let positionButton = null;
     if (this.props.withPosition) {
@@ -48,5 +45,53 @@ export class RouterAddressField extends Component {
         {positionButton}
       </div>
     );
+  }
+
+  getPosition() {
+    const scope = this;
+    let handleNewPosition = function (pos) {
+      scope.handlePosition(pos);
+    };
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(handleNewPosition);
+    } else {
+      console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
+    }
+
+  }
+
+  /**
+   * Takes the input coordinates and executes the reverse search. On success, the result location is inserted in the
+   * given input field and the given property of this.
+   * @param coordinates
+   * @param cssId
+   * @param property
+   * @param mode
+   */
+  handlePosition(coordinates) {
+    const scope = this;
+    let coords = coordinates.coords;
+    if (this.props.name === "fromValue") {
+      scope[property] = new Point([coords.longitude, coords.latitude]);
+      scope.performReverseSearch(jQuery(scope.$fromInput), [coords.longitude, coords.latitude]);
+    }
+    else if (this.props.name === "overValue") {
+      if (!scope[property]) {
+        scope[property] = [];
+      }
+      scope[property].push(new Point([coords.longitude, coords.latitude]));
+      scope.performReverseSearch(jQuery(scope.$overInput), [coords.longitude, coords.latitude]);
+    }
+    else if (this.props.name === "toValue") {
+      scope[property] = new Point([coords.longitude, coords.latitude]);
+      scope.performReverseSearch(jQuery(scope.$toInput), [coords.longitude, coords.latitude]);
+    }
+    if (this.props.name === "areaFrom") {
+      scope.setAreaPoint([coords.longitude, coords.latitude]);
+      if (scope[property]) {
+        scope.performArea(scope[property]);
+      }
+    }
+    scope.recalculateRoute();
   }
 }

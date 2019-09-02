@@ -12,6 +12,7 @@
  */
 
 import React, { Component } from "react";
+import {toHumanDistance} from "./../c4g-router-time-conversions";
 
 export class RouterInstruction extends Component {
 
@@ -25,7 +26,7 @@ export class RouterInstruction extends Component {
       <div className={"c4g-router-instruction"} key={this.props.id}>
         <div><img src={this.getInstructionIconValhalla(this.props.imgPath)} alt=""/></div>
         <div>{this.props.instrText}</div>
-        <div>{this.props.instrDist}</div>
+        <div className="c4g-router-instruction-distance">{toHumanDistance(this.props.instrDist * 1000)}</div>
       </div>
     );
   }
