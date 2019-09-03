@@ -409,55 +409,7 @@ export class Router extends Sideboard {
     self.options.mapController.map.removeInteraction(this.mapSelectInteraction);
   }
 
-  /**
-   * Adds a click interaction for the router. Upon map click, the clicked points are converted to locations and the
-   * route search is started, as long as all mandatory properties are set.
-   */
-  addMapInputInteraction() {
 
-    var self = this,
-      coordinate;
-
-    self.fnMapRouterInteraction = function (evt) {
-
-      coordinate = toLonLat(evt.coordinate);
-      // clear old features
-      self.areaSource.clear();
-
-      if (self.$fromInput.val() === "") {
-        self.performReverseSearch(self.$fromInput, coordinate);
-        self.fromValue = new Point(coordinate);
-        self.updateLinkFragments("addressFrom", coordinate);
-        self.recalculateRoute();
-      } else if (self.$toInput.val() === "") {
-        self.performReverseSearch(self.$toInput, coordinate);
-        self.toValue = new Point(coordinate);
-        self.updateLinkFragments("addressTo", coordinate);
-        self.recalculateRoute();
-      } else if (self.$overInput) {
-
-        if (self.$overInput.val() === "") {
-          self.performReverseSearch(self.$overInput, coordinate);
-          if (!self.overValue) {
-            self.overValue = [];
-          }
-          self.overValue.push(new Point(coordinate));
-          let olUid = self.overValue[self.overValue.length - 1]['ol_uid'];
-          let deleteButton =  self.$overInput.next()[0];
-          // traverse the dom level until the delete button is found
-          while (!jQuery(deleteButton).hasClass('c4g-router-input-clear')) {
-            deleteButton = jQuery(deleteButton).next()[0];
-          }
-
-          deleteButton.id = olUid;
-          self.recalculateRoute();
-          self.$buttonOver.prop("disabled", false);
-        }
-      }
-    };
-
-    this.options.mapController.map.on('click', self.fnMapRouterInteraction);
-  }
 
   /**
    * Creates a wrapper element for the router attribution.
@@ -2538,77 +2490,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     mapController.controls.router = router;
     router.init();
 
-    let objFunctions = {};
-    // set listener for the autocomplete from field
-    const deleteFromListener = function(event) {
-      router.fromValue = null;
-      containerAddresses.arrFromPositions = [];
-      router.recalculateRoute();
-    };
 
-    // const submitFromFunction = function(event) {
-    //   // trigger new search
-    //   router.$fromInput.trigger('change');
-    //   const performSearchCallback = function() {
-    //     router.performViaRoute();
-    //   };
-    //   router.performSearch(router.$fromInput, "fromValue", performSearchCallback);
-    //
-    // };
-
-    const selectFromListener = function(event, ui){
-      let value = ui.item.value;
-      let coord = containerAddresses.arrFromPositions[containerAddresses.arrFromNames.findIndex(
-        danger => danger === value
-      )];
-      router.fromValue = new Point([coord[1], coord[0]]);
-      router.recalculateRoute();
-    };
-
-    const changeFromListener = function () {
-      // self.fromValue = null;
-    };
-
-    objFunctions.fromFunctions = {
-      "selectListener": selectFromListener,
-      "deleteFunction": deleteFromListener,
-      "changeListener": changeFromListener
-    };
-
-    // set listener for the autocomplete to field
-    const deleteToListener = function(event) {
-      router.toValue = null;
-      containerAddresses.arrToPositions = [];
-      router.recalculateRoute();
-    };
-
-    // const submitToFunction = function(event) {
-    //   // trigger new search
-    //   router.$fromInput.trigger('change');
-    //   const performSearchCallback = function() {
-    //     router.performViaRoute();
-    //   };
-    //   router.performSearch(router.$fromInput, "fromValue", performSearchCallback);
-    // };
-
-    const selectToListener = function(event, ui){
-      let value = ui.item.value;
-      let coord = containerAddresses.arrFromPositions[containerAddresses.arrFromNames.findIndex(
-        danger => danger === value
-      )];
-      router.fromValue = new Point([coord[1], coord[0]]);
-      router.recalculateRoute();
-    };
-
-    const changeToListener = function () {
-      // self.fromValue = null;
-    };
-
-    objFunctions.toFunctions = {
-      "selectListener": selectToListener,
-      "deleteFunction": deleteToListener,
-      "changeListener": changeToListener
-    };
 
     if (typeof mapController.data !== 'undefined') {
       if (mapController.data.lang === "de") {
@@ -2627,7 +2509,6 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       direction: "top",
       router: router,
       withPosition: false,
-      objFunctions: objFunctions,
 
       containerAddresses: containerAddresses,
       className: "c4g-router-panel",

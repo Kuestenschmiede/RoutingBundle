@@ -50,7 +50,7 @@ export class AutocompleteInput extends Component {
             scope.props.containerAddresses.arrToNames = [];
             scope.props.containerAddresses.arrToPositions = [];
           }
-          else{
+          else {
             console.log("This is weird ¯\\_(ツ)_/¯");
           }
         }
@@ -67,7 +67,7 @@ export class AutocompleteInput extends Component {
     };
 
     return (
-      <input id={this.props.cssId} type="search" value={this.props.value} onKeyDown={enterListener} autoComplete="off"/>
+      <input id={this.props.cssId} type="search" defaultValue={this.props.value} onKeyDown={enterListener} autoComplete="off"/>
     );
   }
 

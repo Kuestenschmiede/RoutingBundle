@@ -70,16 +70,16 @@ export class RouterAddressInput extends Component {
       input = <React.Fragment>
         <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
                             cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings}
-                            containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.state.fromAddress} router={this.props.router}/>
+                            containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.fromAddress} router={this.props.router}/>
         <RouterAddressField className="c4g-router-input-to" name="routingTo" label="Ziel"
                             cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.objSettings}
-                            containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.state.toAddress} router={this.props.router}/>
+                            containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.toAddress} router={this.props.router}/>
       </React.Fragment>;
     } else {
       input = <React.Fragment>
         <RouterAddressField className="c4g-router-input-from" name="areaFrom" label="Zentrum"
                             cssId="areaFrom" objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
-                            containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.state.areaFrom} router={this.props.router}/>
+                            containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.areaAddress} router={this.props.router}/>
       </React.Fragment>;
     }
     return (

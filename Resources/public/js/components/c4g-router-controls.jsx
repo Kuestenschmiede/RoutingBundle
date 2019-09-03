@@ -67,7 +67,8 @@ export class RouterControls extends HorizontalPanel {
         </div>
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={false}
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
-                            containerAddresses={this.props.containerAddresses} mode={this.state.mode} open={open}/>
+                            containerAddresses={this.props.containerAddresses} mode={this.state.mode} open={open}
+                            fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress}/>
         {details}
       </div>
     );

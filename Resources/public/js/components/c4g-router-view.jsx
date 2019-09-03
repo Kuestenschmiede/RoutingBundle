@@ -64,9 +64,9 @@ export class RouterView extends Component {
       mode: props.mode || "route",
       overPtCtr: 0,
       overAddresses: [],
-      areaPoint: [],
-      fromPoint: [],  // array of two coords
-      toPoint: [],  // array of two coords
+      areaPoint: null,
+      fromPoint: null,  // array of two coords
+      toPoint: null,  // array of two coords
       overPoints: [],  // array of arrays of two coords
     };
     this.init();
@@ -76,8 +76,9 @@ export class RouterView extends Component {
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.props.open} className={this.props.className}
-          objSettings={this.state.objSettings} objFunctions={this.props.objFunctions}
+          objSettings={this.state.objSettings} objFunctions={this.objFunctions}
           containerAddresses={this.state.containerAddresses} mapController={this.props.mapController}
+          fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
           routerInstructions={this.state.routerInstructions}/>
@@ -86,15 +87,138 @@ export class RouterView extends Component {
   }
 
   setAreaPoint(longitude, latitude) {
-
+    this.performReverseSearch("areaAddress", [longitude, latitude]);
+    let point = new Point([longitude, latitude]);
+    this.setState({areaPoint: point}, this.updateRouteLayersAndPoints);
   }
 
   setRouteFrom(longitude, latitude) {
-
+    this.performReverseSearch("fromAddress", [longitude, latitude]);
+    let point = new Point([longitude, latitude]);
+    this.setState({fromPoint: point}, this.updateRouteLayersAndPoints);
   }
 
   setRouteTo(longitude, latitude) {
+    this.performReverseSearch("toAddress", [longitude, latitude]);
+    let point = new Point([longitude, latitude]);
+    this.setState({toPoint: point}, this.updateRouteLayersAndPoints);
+  }
 
+  addOverPoint(longitude, latitude) {
+
+  }
+
+  updateRouteLayersAndPoints() {
+    this.locationsSource.clear();
+    if (this.state.fromPoint.length === 2) {
+      let tmpFeature = new Feature({
+        geometry: this.state.fromPoint.clone().transform('EPSG:4326', 'EPSG:3857')
+      });
+      if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
+        tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+      }
+      this.locationsSource.addFeature(tmpFeature);
+    }
+    if (this.state.toPoint.length === 2) {
+      let tmpFeature = new Feature({
+        geometry: this.state.toPoint.clone().transform('EPSG:4326', 'EPSG:3857')
+      });
+      if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
+        tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+      }
+      this.locationsSource.addFeature(tmpFeature);
+    }
+    // TODO iterate overPoints and add them
+  }
+
+  createAutocompleteFunctions() {
+    let objFunctions = {};
+    const scope = this;
+    // set listener for the autocomplete from field
+    const deleteFromListener = function(event) {
+      let containerAddresses = scope.state.containerAddresses;
+      containerAddresses.arrFromPositions = [];
+      scope.setState({
+        fromPoint: null,
+        containerAddresses: containerAddresses
+      }, scope.updateRouteLayersAndPoints);
+      scope.recalculateRoute();
+    };
+
+    // const submitFromFunction = function(event) {
+    //   // trigger new search
+    //   router.$fromInput.trigger('change');
+    //   const performSearchCallback = function() {
+    //     router.performViaRoute();
+    //   };
+    //   router.performSearch(router.$fromInput, "fromValue", performSearchCallback);
+    //
+    // };
+
+    const selectFromListener = function(event, ui) {
+      let value = ui.item.value;
+      let coord = scope.state.containerAddresses.arrFromPositions[scope.state.containerAddresses.arrFromNames.findIndex(
+        danger => danger === value
+      )];
+      let fromValue = new Point([coord[1], coord[0]]);
+      scope.setState({
+        fromPoint: fromValue
+      });
+      scope.recalculateRoute();
+    };
+
+    const changeFromListener = function () {
+      // self.fromValue = null;
+    };
+
+    objFunctions.fromFunctions = {
+      "selectListener": selectFromListener,
+      "deleteFunction": deleteFromListener,
+      "changeListener": changeFromListener
+    };
+
+    // set listener for the autocomplete to field
+    const deleteToListener = function(event) {
+      let containerAddresses = scope.state.containerAddresses;
+      containerAddresses.arrToPositions = [];
+      scope.setState({
+        toPoint: null,
+        containerAddresses: containerAddresses
+      }, scope.updateRouteLayersAndPoints);
+      scope.recalculateRoute();
+    };
+
+    // const submitToFunction = function(event) {
+    //   // trigger new search
+    //   router.$fromInput.trigger('change');
+    //   const performSearchCallback = function() {
+    //     router.performViaRoute();
+    //   };
+    //   router.performSearch(router.$fromInput, "fromValue", performSearchCallback);
+    // };
+
+    const selectToListener = function(event, ui){
+      let value = ui.item.value;
+      let coord = scope.state.containerAddresses.arrToPositions[scope.state.containerAddresses.arrToNames.findIndex(
+        danger => danger === value
+      )];
+      let fromValue = new Point([coord[1], coord[0]]);
+      scope.setState({
+        fromPoint: fromValue
+      });
+      scope.recalculateRoute();
+    };
+
+    const changeToListener = function () {
+      // self.fromValue = null;
+    };
+
+    objFunctions.toFunctions = {
+      "selectListener": selectToListener,
+      "deleteFunction": deleteToListener,
+      "changeListener": changeToListener
+    };
+    return objFunctions;
   }
 
   // =========================================================================================
@@ -319,6 +443,10 @@ export class RouterView extends Component {
     if (this.usePermalink) {
       this.permalinkHandler.handleInitialParams();
     }
+
+    this.objFunctions = this.createAutocompleteFunctions();
+
+    this.addMapInputInteraction();
   }
 
   /**
@@ -456,7 +584,6 @@ export class RouterView extends Component {
     scope = this;
 
     if ($input.val() === "") {
-      //scope.clearInput($input);
       delete scope[value];
       return "";
     }
@@ -492,7 +619,12 @@ export class RouterView extends Component {
         }
         else {
           let coords = [parseFloat(response[0].lon), parseFloat(response[0].lat)];
-          scope[value] = new Point(coords);
+          let point = new Point(coords);
+          if (value === "fromPoint") {
+            scope.setState({fromValue: point});
+          } else if (value === "toPoint") {
+            scope.setState({toValue: point});
+          }
           // TODO wieder einbauen
           // switch(value) {
           //   case "fromValue":
@@ -529,10 +661,10 @@ export class RouterView extends Component {
 
   /**
    * Converts a given coordinate into the corresponding location.
-   * @param $input    The input field in which the result location should be stored.
-   * @param value     The property that contains the coordinates.
+   * @param stateProp     The state property of this where the address should be stored.
+   * @param value         The property that contains the coordinates.
    */
-  performReverseSearch($input, value) {
+  performReverseSearch(stateProp, value) {
 
     var self = this,
       url;
@@ -541,7 +673,6 @@ export class RouterView extends Component {
     if (this.mapData && this.mapData.geosearch && this.mapData.geosearch.reverseKey && this.mapData.geosearch.url) {
       url = this.mapData.geosearch.url + "reverse.php?key=" + this.mapData.geosearch.reverseKey + '&format=json&lat=' + value[1] + '&lon=' + value[0];
     }
-    this.spinner.show();
 
     jQuery.ajax({
       'url': url
@@ -573,26 +704,29 @@ export class RouterView extends Component {
           if (value === "") {
             value = response.display_name;
           }
-          $input.val(value);
-
-          if ($input.attr('name') === "routingFrom") {
-            self.$routerFromClear.show();
-            // update address in link
-            // self.updateLinkFragments("addressFrom", value);
-          } else if ($input.attr('name') === "routingTo") {
-            self.$routerToClear.show();
-            // update address in link
-            // self.updateLinkFragments("addressTo", value);
-          } else if ($input.attr('name') === "areaFrom") {
-            // self.updateLinkFragments("addressArea", value);
+          // TODO update router permalink
+          switch (stateProp) {
+            case "areaAddress":
+              self.setState({areaAddress: value});
+              // self.updateLinkFragments("addressArea", value);
+              break;
+            case "fromAddress":
+              self.setState({fromAddress: value});
+              // update address in link
+              // self.updateLinkFragments("addressFrom", value);
+              break;
+            case "toAddress":
+              self.setState({toAddress: value});
+              // update address in link
+              // self.updateLinkFragments("addressTo", value);
+              break;
+            case "overAddress":
+              // TODO sonderfall
+              self.setState({fromAddress: value});
+              break;
           }
         }
-
-      })
-      .always(function () {
-        self.spinner.hide();
       });
-
   }
 
   /**
@@ -615,7 +749,7 @@ export class RouterView extends Component {
     // this.areaSource.clear();
     this.mapSelectInteraction.getFeatures().clear();
     if (!fromPoint) {
-      fromPoint = this.fromValue;
+      fromPoint = this.fromPoint;
       if (!fromPoint) {
         return;
       }
@@ -624,11 +758,11 @@ export class RouterView extends Component {
       if (!toPoint) {
         return;
       }
-      toPoint = this.toValue;
+      toPoint = this.toPoint;
     }
     if (!overPoint) {
-      if (this.overValue) {
-        overPoint = this.overValue;
+      if (this.overPoints) {
+        overPoint = this.overPoints;
       }
     }
     fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
@@ -708,8 +842,6 @@ export class RouterView extends Component {
               scope.showRoute(response);
             }
 
-          })
-          .always(function () {
           });
 
         return '';
@@ -728,42 +860,42 @@ export class RouterView extends Component {
     var tmpFeature,
       proxy = this.props.mapController.proxy;
 
-    this.locationsSource.clear();
-    if (this.fromValue) {
-      tmpFeature = new Feature({
-        geometry: this.fromValue.clone().transform('EPSG:4326', 'EPSG:3857')
-      });
-      if (this.props.mapController.data.router_from_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
-        tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
-      }
-      this.locationsSource.addFeature(tmpFeature);
-    }
-    if (this.toValue) {
-      tmpFeature = new Feature({
-        geometry: this.toValue.clone().transform('EPSG:4326', 'EPSG:3857')
-      });
-      if (this.props.mapController.data.router_to_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_to_locstyle]) {
-        tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_to_locstyle].style);
-      }
-      this.locationsSource.addFeature(tmpFeature);
-    }
-    if (this.overValue) {
-      for (var propt in this.overValue) {
-        tmpFeature = new Feature({
-          geometry: this.overValue[propt].clone().transform('EPSG:4326', 'EPSG:3857')
-        });
-        if (this.props.mapController.data.router_interim_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_interim_locstyle]) {
-          tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_interim_locstyle].style);
-        }
-        this.locationsSource.addFeature(tmpFeature);
-      }
-    }
-    if (this.fromValue && this.toValue) {
-      if (this.overValue) {
-        this.performViaRoute(this.fromValue, this.toValue, this.overValue);
+    // this.locationsSource.clear();
+    // if (this.fromValue) {
+    //   tmpFeature = new Feature({
+    //     geometry: this.fromValue.clone().transform('EPSG:4326', 'EPSG:3857')
+    //   });
+    //   if (this.props.mapController.data.router_from_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
+    //     tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+    //   }
+    //   this.locationsSource.addFeature(tmpFeature);
+    // }
+    // if (this.toValue) {
+    //   tmpFeature = new Feature({
+    //     geometry: this.toValue.clone().transform('EPSG:4326', 'EPSG:3857')
+    //   });
+    //   if (this.props.mapController.data.router_to_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_to_locstyle]) {
+    //     tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_to_locstyle].style);
+    //   }
+    //   this.locationsSource.addFeature(tmpFeature);
+    // }
+    // if (this.overValue) {
+    //   for (var propt in this.overValue) {
+    //     tmpFeature = new Feature({
+    //       geometry: this.overValue[propt].clone().transform('EPSG:4326', 'EPSG:3857')
+    //     });
+    //     if (this.props.mapController.data.router_interim_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_interim_locstyle]) {
+    //       tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_interim_locstyle].style);
+    //     }
+    //     this.locationsSource.addFeature(tmpFeature);
+    //   }
+    // }
+    if (this.state.fromPoint && this.state.toPoint) {
+      if (this.state.overPoints.length > 0) {
+        this.performViaRoute(this.state.fromPoint, this.state.toPoint, this.state.overPoints);
       }
       else {
-        this.performViaRoute(this.fromValue, this.toValue);
+        this.performViaRoute(this.state.fromPoint, this.state.toPoint);
       }
     }
 
@@ -1099,5 +1231,56 @@ export class RouterView extends Component {
       });
 
     });
+  }
+
+  /**
+   * Adds a click interaction for the router. Upon map click, the clicked points are converted to locations and the
+   * route search is started, as long as all mandatory properties are set.
+   */
+  addMapInputInteraction() {
+
+    var self = this,
+      coordinate;
+
+    self.fnMapRouterInteraction = function (evt) {
+
+      coordinate = toLonLat(evt.coordinate);
+      // clear old features
+      self.areaSource.clear();
+
+      // TODO router permalink wieder aktualisieren
+      if (self.state.fromAddress === "") {
+        self.performReverseSearch("fromAddress", coordinate);
+        self.setState({fromPoint: new Point(coordinate)});
+        // self.updateLinkFragments("addressFrom", coordinate);
+        self.recalculateRoute();
+      } else if (self.state.toAddress === "") {
+        self.performReverseSearch("toAddress", coordinate);
+        self.setState({toPoint: new Point(coordinate)});
+        // self.updateLinkFragments("addressTo", coordinate);
+        self.recalculateRoute();
+      } else if (self.$overInput) {
+        // TODO implement over points
+        // if (self.$overInput.val() === "") {
+        //   self.performReverseSearch(self.$overInput, coordinate);
+        //   if (!self.overValue) {
+        //     self.overValue = [];
+        //   }
+        //   self.overValue.push(new Point(coordinate));
+        //   let olUid = self.overValue[self.overValue.length - 1]['ol_uid'];
+        //   let deleteButton =  self.$overInput.next()[0];
+        //   // traverse the dom level until the delete button is found
+        //   while (!jQuery(deleteButton).hasClass('c4g-router-input-clear')) {
+        //     deleteButton = jQuery(deleteButton).next()[0];
+        //   }
+        //
+        //   deleteButton.id = olUid;
+        //   self.recalculateRoute();
+        //   self.$buttonOver.prop("disabled", false);
+        // }
+      }
+    };
+
+    this.props.mapController.map.on('click', self.fnMapRouterInteraction);
   }
 }
