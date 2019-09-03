@@ -87,21 +87,25 @@ export class RouterView extends Component {
   }
 
   setAreaPoint(longitude, latitude) {
+    const scope = this;
     this.performReverseSearch("areaAddress", [longitude, latitude]);
     let point = new Point([longitude, latitude]);
-    this.setState({areaPoint: point}, this.updateRouteLayersAndPoints);
+    this.setState({areaPoint: point}, () => scope.updateRouteLayersAndPoints());
   }
 
   setRouteFrom(longitude, latitude) {
+    const scope = this;
+    console.log("setRouteFrom");
     this.performReverseSearch("fromAddress", [longitude, latitude]);
     let point = new Point([longitude, latitude]);
-    this.setState({fromPoint: point}, this.updateRouteLayersAndPoints);
+    this.setState({fromPoint: point}, () => {console.log("setRouteFromCallback");scope.updateRouteLayersAndPoints();});
   }
 
   setRouteTo(longitude, latitude) {
+    const scope = this;
     this.performReverseSearch("toAddress", [longitude, latitude]);
     let point = new Point([longitude, latitude]);
-    this.setState({toPoint: point}, this.updateRouteLayersAndPoints);
+    this.setState({toPoint: point}, () => scope.updateRouteLayersAndPoints());
   }
 
   addOverPoint(longitude, latitude) {
@@ -110,16 +114,18 @@ export class RouterView extends Component {
 
   updateRouteLayersAndPoints() {
     this.locationsSource.clear();
-    if (this.state.fromPoint.length === 2) {
+    console.log(this.state.fromPoint);
+    if (this.state.fromPoint) {
       let tmpFeature = new Feature({
         geometry: this.state.fromPoint.clone().transform('EPSG:4326', 'EPSG:3857')
       });
       if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
         tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
       }
+      console.log(tmpFeature);
       this.locationsSource.addFeature(tmpFeature);
     }
-    if (this.state.toPoint.length === 2) {
+    if (this.state.toPoint) {
       let tmpFeature = new Feature({
         geometry: this.state.toPoint.clone().transform('EPSG:4326', 'EPSG:3857')
       });
@@ -301,6 +307,7 @@ export class RouterView extends Component {
     selectInteraction.on('select', function (event) {
       let feature = event.selected[0];
       if (feature) {
+        console.log(feature);
         var geometry = feature.getGeometry();
         if (geometry && (geometry.getType() === 'LineString')) {
           self.showAltRoute(self.response, feature.getId());
@@ -384,6 +391,8 @@ export class RouterView extends Component {
     if (this.props.mapController.data.enableOverPoints) {
       self.props.mapController.map.addInteraction(this.modWayInteraction);
     }
+
+    selectInteraction.setActive(false);
 
     this.routingHintSource = new VectorSource();
     this.routerHintLayer = new Vector({
@@ -477,8 +486,6 @@ export class RouterView extends Component {
       return;
     }
 
-    console.log(routeResponse);
-    console.log(routeNumber);
     // TODO instructions für die anderen engines übergeben
 
     routerInstructionsHeader = document.createElement('div');
@@ -1250,13 +1257,11 @@ export class RouterView extends Component {
 
       // TODO router permalink wieder aktualisieren
       if (self.state.fromAddress === "") {
-        self.performReverseSearch("fromAddress", coordinate);
-        self.setState({fromPoint: new Point(coordinate)});
+        self.setRouteFrom(coordinate[0], coordinate[1]);
         // self.updateLinkFragments("addressFrom", coordinate);
         self.recalculateRoute();
       } else if (self.state.toAddress === "") {
-        self.performReverseSearch("toAddress", coordinate);
-        self.setState({toPoint: new Point(coordinate)});
+        self.setRouteTo(coordinate[0], coordinate[1]);
         // self.updateLinkFragments("addressTo", coordinate);
         self.recalculateRoute();
       } else if (self.$overInput) {
