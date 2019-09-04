@@ -424,6 +424,26 @@ export class Router extends Sideboard {
 
 
   /**
+   * Renders the feature list in the portside router, if configured.
+   * @param features
+   * @param type
+   * @param mode
+   */
+  showFeaturesInPortside(features, type, mode) {
+    const scope = this;
+    if (this.options.mapController.data.showFeatures) {
+      if (scope[mode + "FeatureWrapper"] === undefined) {
+        scope[mode + "FeatureWrapper"] = document.createElement('div');
+        jQuery(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
+        scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
+      }
+    }
+    scope.features = features;
+    scope.type = type;
+    scope.reloadFeatureValues(mode);
+  }
+
+  /**
    * Clears the current features from the map and displays the given new features. The features are sorted by the configured
    * property. The function takes the backend configuration according to prioritized features into account.
    * @param features
@@ -462,76 +482,76 @@ export class Router extends Sideboard {
       }
     }
     featureLoop:
-      for (let i = 0; features && (i < features.length); i++) {
-        let label = "";
-        let feature = features[i];
-        let resultCoordinate;
-        let contentFeature;
-        if (type == "overpass") {
-          if (feature.type === "node" && !feature.tags) {
-            continue;
+        for (let i = 0; features && (i < features.length); i++) {
+          let label = "";
+          let feature = features[i];
+          let resultCoordinate;
+          let contentFeature;
+          if (type == "overpass") {
+            if (feature.type === "node" && !feature.tags) {
+              continue;
+            }
+            contentFeature = self.layerController.featureFromOverpass(feature, features, layer, true);
+            if(!contentFeature){
+              continue;
+            }
           }
-          contentFeature = self.layerController.featureFromOverpass(feature, features, layer, true);
-          if(!contentFeature){
-            continue;
+          else {
+            resultCoordinate = transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
+            let point = new Point(resultCoordinate);
+            contentFeature = new Feature(point);
+            contentFeature.setId(feature.id);
+            contentFeature.set('loc_linkurl', layer.loc_linkurl);
+            contentFeature.set('hover_location', layer.hover_location);
+            contentFeature.set('hover_style', layer.hover_style);
+            contentFeature.set('zoom_onclick', layer.zoom_onclick);
+            contentFeature.set('tid', feature.id);
           }
-        }
-        else {
-          resultCoordinate = transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
-          let point = new Point(resultCoordinate);
-          contentFeature = new Feature(point);
-          contentFeature.setId(feature.id);
-          contentFeature.set('loc_linkurl', layer.loc_linkurl);
-          contentFeature.set('hover_location', layer.hover_location);
-          contentFeature.set('hover_style', layer.hover_style);
-          contentFeature.set('zoom_onclick', layer.zoom_onclick);
-          contentFeature.set('tid', feature.id);
-        }
 
 
-        if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
-          label = feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
-        }
-        else if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature.tags && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
-          label = feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
-        }
-
-        let locstyle = feature['locstyle'] || layer.locstyle;
-        if (mapData.priorityFeatures && mapData.priorityLocstyle) {
-          if (bestFeatures.includes(feature)) {
-            locstyle = mapData.priorityLocstyle;
+          if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
+            label = feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
           }
-        }
+          else if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature.tags && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
+            label = feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
+          }
 
-        contentFeature.set('locationStyle', locstyle);
-        contentFeature.set('zIndex', i);
-        contentFeature.set('label', label);
-        if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
-          contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
-          if (self.options.mapController.data.hideFeaturesWithoutLabel) {
-            if (label && label !== "") {
+          let locstyle = feature['locstyle'] || layer.locstyle;
+          if (mapData.priorityFeatures && mapData.priorityLocstyle) {
+            if (bestFeatures.includes(feature)) {
+              locstyle = mapData.priorityLocstyle;
+            }
+          }
+
+          contentFeature.set('locationStyle', locstyle);
+          contentFeature.set('zIndex', i);
+          contentFeature.set('label', label);
+          if (locstyle && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
+            contentFeature.setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
+            if (self.options.mapController.data.hideFeaturesWithoutLabel) {
+              if (label && label !== "") {
+                contentFeatures.push(contentFeature);
+              }
+            } else {
               contentFeatures.push(contentFeature);
             }
-          } else {
-            contentFeatures.push(contentFeature);
           }
-        }
-        else {
-          contentFeature.set('styleId', locstyle);
-          if (self.options.mapController.data.hideFeaturesWithoutLabel) {
-            if (label && label !== "") {
+          else {
+            contentFeature.set('styleId', locstyle);
+            if (self.options.mapController.data.hideFeaturesWithoutLabel) {
+              if (label && label !== "") {
+                unstyledFeatures.push(contentFeature);
+                missingStyles[locstyle] = locstyle;
+              }
+            } else {
               unstyledFeatures.push(contentFeature);
               missingStyles[locstyle] = locstyle;
             }
-          } else {
-            unstyledFeatures.push(contentFeature);
-            missingStyles[locstyle] = locstyle;
+          }
+          for (let tags in feature.tags) {
+            contentFeature.set(tags, feature.tags[tags]);
           }
         }
-        for (let tags in feature.tags) {
-          contentFeature.set(tags, feature.tags[tags]);
-        }
-      }
     if (missingStyles && missingStyles.length > 0) {
       self.options.mapController.proxy.locationStyleController.loadLocationStyles(missingStyles, {
         done: function () {
@@ -549,26 +569,6 @@ export class Router extends Sideboard {
     }
     this.update();
     return priceSortedFeatures;
-  }
-
-  /**
-   * Renders the feature list in the portside router, if configured.
-   * @param features
-   * @param type
-   * @param mode
-   */
-  showFeaturesInPortside(features, type, mode) {
-    const scope = this;
-    if (this.options.mapController.data.showFeatures) {
-      if (scope[mode + "FeatureWrapper"] === undefined) {
-        scope[mode + "FeatureWrapper"] = document.createElement('div');
-        jQuery(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
-        scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
-      }
-    }
-    scope.features = features;
-    scope.type = type;
-    scope.reloadFeatureValues(mode);
   }
 
   /**
@@ -2492,6 +2492,8 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       mapController: mapController,
       direction: "top",
       withPosition: false,
+      detourRoute: mapController.data.detourRoute,
+      detourArea: mapController.data.detourArea,
       containerAddresses: containerAddresses,
       className: "c4g-router-panel",
       langConstants: langRouteConstants
