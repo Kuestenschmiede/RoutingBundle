@@ -43,7 +43,12 @@ export class RouterResultContainer extends HorizontalPanel {
     let container = document.getElementsByClassName(className)[0];
     if (container) {
       bottomValue = container.offsetHeight;
+      console.log(container.offsetHeight);
     }
-    jQuery(this.state.control.element).css("bottom", bottomValue + "px");
+    const scope = this;
+    window.setTimeout(function() {
+      jQuery(scope.state.control.element).css("bottom", bottomValue + "px");
+    }, 500);
+
   }
 }

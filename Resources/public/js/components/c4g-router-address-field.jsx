@@ -64,34 +64,26 @@ export class RouterAddressField extends Component {
    * Takes the input coordinates and executes the reverse search. On success, the result location is inserted in the
    * given input field and the given property of this.
    * @param coordinates
-   * @param cssId
-   * @param property
-   * @param mode
    */
   handlePosition(coordinates) {
-    const scope = this;
     let coords = coordinates.coords;
-    if (this.props.name === "fromValue") {
-      scope[property] = new Point([coords.longitude, coords.latitude]);
-      scope.performReverseSearch(jQuery(scope.$fromInput), [coords.longitude, coords.latitude]);
+    console.log(coordinates);
+    if (this.props.name === "routingFrom") {
+      this.props.router.setRouteFrom(coords.longitude, coords.latitude);
     }
     else if (this.props.name === "overValue") {
-      if (!scope[property]) {
-        scope[property] = [];
-      }
-      scope[property].push(new Point([coords.longitude, coords.latitude]));
-      scope.performReverseSearch(jQuery(scope.$overInput), [coords.longitude, coords.latitude]);
+      // if (!scope[property]) {
+      //   scope[property] = [];
+      // }
+      // scope[property].push(new Point([coords.longitude, coords.latitude]));
+      // scope.performReverseSearch(jQuery(scope.$overInput), [coords.longitude, coords.latitude]);
     }
-    else if (this.props.name === "toValue") {
-      scope[property] = new Point([coords.longitude, coords.latitude]);
-      scope.performReverseSearch(jQuery(scope.$toInput), [coords.longitude, coords.latitude]);
+    else if (this.props.name === "routingTo") {
+      this.props.router.setRouteTo(coords.longitude, coords.latitude);
     }
     if (this.props.name === "areaFrom") {
-      scope.setAreaPoint([coords.longitude, coords.latitude]);
-      if (scope[property]) {
-        scope.performArea(scope[property]);
-      }
+      this.props.router.setAreaPoint(coords.longitude, coords.latitude);
     }
-    scope.recalculateRoute();
+    this.props.router.recalculateRoute();
   }
 }

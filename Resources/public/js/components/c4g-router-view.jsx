@@ -142,24 +142,17 @@ export class RouterView extends Component {
     const scope = this;
     // set listener for the autocomplete from field
     const deleteFromListener = function(event) {
+      console.log("delete from listener triggered");
       let containerAddresses = scope.state.containerAddresses;
       containerAddresses.arrFromPositions = [];
+      containerAddresses.arrFromNames = [];
       scope.setState({
         fromPoint: null,
-        containerAddresses: containerAddresses
+        containerAddresses: containerAddresses,
+        fromAddress: ""
       }, scope.updateRouteLayersAndPoints);
       scope.recalculateRoute();
     };
-
-    // const submitFromFunction = function(event) {
-    //   // trigger new search
-    //   router.$fromInput.trigger('change');
-    //   const performSearchCallback = function() {
-    //     router.performViaRoute();
-    //   };
-    //   router.performSearch(router.$fromInput, "fromValue", performSearchCallback);
-    //
-    // };
 
     const selectFromListener = function(event, ui) {
       let value = ui.item.value;
@@ -187,21 +180,14 @@ export class RouterView extends Component {
     const deleteToListener = function(event) {
       let containerAddresses = scope.state.containerAddresses;
       containerAddresses.arrToPositions = [];
+      containerAddresses.arrToNames = [];
       scope.setState({
         toPoint: null,
-        containerAddresses: containerAddresses
+        containerAddresses: containerAddresses,
+        toAddress: ""
       }, scope.updateRouteLayersAndPoints);
       scope.recalculateRoute();
     };
-
-    // const submitToFunction = function(event) {
-    //   // trigger new search
-    //   router.$fromInput.trigger('change');
-    //   const performSearchCallback = function() {
-    //     router.performViaRoute();
-    //   };
-    //   router.performSearch(router.$fromInput, "fromValue", performSearchCallback);
-    // };
 
     const selectToListener = function(event, ui){
       let value = ui.item.value;

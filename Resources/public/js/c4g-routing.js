@@ -2475,22 +2475,6 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
   let mapController = params.mapController;
   if(mapController.data.router_enable){
     mapController.map.removeControl(mapController.controls.router);
-    let router = new Router({
-      tipLabel: langRouteConstants.CTRL_ROUTER,
-      target: params.Container,
-      mapController: mapController,
-      defaultOpen: false,
-      direction: "left",
-      name: "router"
-    });
-    if (mapController.data.router_open || mapController.data.initialParams) {
-      router.open();
-    }
-    mapController.map.addControl(router);
-    mapController.controls.router = router;
-    router.init();
-
-
 
     if (typeof mapController.data !== 'undefined') {
       if (mapController.data.lang === "de") {
@@ -2507,14 +2491,12 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       target: document.querySelector('#' + mapController.data.mapDiv + ' .' + cssConstants.OL_OVERLAYCONTAINER_SE),
       mapController: mapController,
       direction: "top",
-      router: router,
       withPosition: false,
-
       containerAddresses: containerAddresses,
       className: "c4g-router-panel",
-      routerInstructions: router.routeInstructions,
       langConstants: langRouteConstants
     };
+
     mapController.routerContainer = document.createElement('div');
     ReactDOM.render(React.createElement(RouterView, routerControlProps), mapController.routerContainer);
     jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
