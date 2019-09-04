@@ -17,7 +17,6 @@ export class AutocompleteInput extends Component {
 
   constructor(props) {
     super(props);
-    console.log()
   }
 
   render() {
@@ -33,30 +32,13 @@ export class AutocompleteInput extends Component {
     };
 
     let enterListener = function(event, opt_this) {
-      //const scope = this;
       if (event.keyCode === 13) {
-        console.log("submitFunction");
         submitFunction();
       } else {
         if ($(event.currentTarget).val().length === 0 && !event.keyCode) { //deleted
-          console.log("deleteFunction");
           scope.props.objFunctions.deleteFunction(event.currentTarget, event.currentTarget.id);
-
-          // let cssClass = event.currentTarget.id;
-          // if (cssClass.indexOf('From') !== -1) {
-          //   travelData.routeFrom = {};
-          //   scope.props.containerAddresses.arrFromNames = [];
-          //   scope.props.containerAddresses.arrFromPositions = [];
-          // } else if (cssClass.indexOf('To') !== -1) {
-          //   travelData.routeTo = {};
-          //   scope.props.containerAddresses.arrToNames = [];
-          //   scope.props.containerAddresses.arrToPositions = [];
-          // } else {
-          //   console.log("This is weird ¯\\_(ツ)_/¯");
-          // }
         }
         else {
-          console.log("completeFunction");
           scope.counter = Math.floor(Date.now());
           setTimeout(function() {
             if (scope.counter && scope.counter + 400 < Math.floor(Date.now())) {
@@ -69,7 +51,7 @@ export class AutocompleteInput extends Component {
     };
 
     return (
-      <input id={this.props.cssId} type="search" value={this.props.value} onInput={enterListener} autoComplete="off" onChange={enterListener}/>
+      <input id={this.props.cssId} type="search" value={this.props.value} onInput={enterListener} autoComplete="off" onChange={(event) => {scope.setState({value: event.target.value})}}/>
     );
   }
 

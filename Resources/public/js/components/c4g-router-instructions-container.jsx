@@ -23,7 +23,6 @@ export class RouterInstructionsContainer extends Component {
   }
 
   render() {
-    console.log(this.props.routerInstructions);
     let instructions = [];
     let time = "";
     let distance = "";
