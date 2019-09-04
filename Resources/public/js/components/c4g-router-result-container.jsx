@@ -32,23 +32,34 @@ export class RouterResultContainer extends HorizontalPanel {
     );
   }
 
-
-  slideInCollidingElements() {
-    this.slideOutCollidingElements();
-  }
-
-  slideOutCollidingElements() {
+  componentDidUpdate() {
     let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
     let bottomValue = 0;
     let container = document.getElementsByClassName(className)[0];
     if (container) {
       bottomValue = container.offsetHeight;
-      console.log(container.offsetHeight);
     }
     const scope = this;
-    window.setTimeout(function() {
-      jQuery(scope.state.control.element).css("bottom", bottomValue + "px");
-    }, 500);
+    jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
+    // window.setTimeout(function() {
+    //   jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
+    // }, 100);
+  }
+
+  open() {
+    this.setState({open: true});
+  }
+
+  close() {
+    this.setState({open: false});
+  }
+
+  slideInCollidingElements() {
+    // this.slideOutCollidingElements();
+  }
+
+  slideOutCollidingElements() {
+
 
   }
 }

@@ -95,10 +95,9 @@ export class RouterView extends Component {
 
   setRouteFrom(longitude, latitude) {
     const scope = this;
-    console.log("setRouteFrom");
     this.performReverseSearch("fromAddress", [longitude, latitude]);
     let point = new Point([longitude, latitude]);
-    this.setState({fromPoint: point}, () => {console.log("setRouteFromCallback");scope.updateRouteLayersAndPoints();});
+    this.setState({fromPoint: point}, () => {scope.updateRouteLayersAndPoints();});
   }
 
   setRouteTo(longitude, latitude) {
@@ -114,7 +113,6 @@ export class RouterView extends Component {
 
   updateRouteLayersAndPoints() {
     this.locationsSource.clear();
-    console.log(this.state.fromPoint);
     if (this.state.fromPoint) {
       let tmpFeature = new Feature({
         geometry: this.state.fromPoint.clone().transform('EPSG:4326', 'EPSG:3857')
@@ -122,7 +120,6 @@ export class RouterView extends Component {
       if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
         tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
       }
-      console.log(tmpFeature);
       this.locationsSource.addFeature(tmpFeature);
     }
     if (this.state.toPoint) {
@@ -134,6 +131,9 @@ export class RouterView extends Component {
       }
       this.locationsSource.addFeature(tmpFeature);
     }
+    if (!(this.state.fromPoint && this.state.toPoint)) {
+      this.routingWaySource.clear();
+    }
     // TODO iterate overPoints and add them
   }
 
@@ -142,7 +142,6 @@ export class RouterView extends Component {
     const scope = this;
     // set listener for the autocomplete from field
     const deleteFromListener = function(event) {
-      console.log("delete from listener triggered");
       let containerAddresses = scope.state.containerAddresses;
       containerAddresses.arrFromPositions = [];
       containerAddresses.arrFromNames = [];
@@ -150,8 +149,11 @@ export class RouterView extends Component {
         fromPoint: null,
         containerAddresses: containerAddresses,
         fromAddress: ""
-      }, scope.updateRouteLayersAndPoints);
-      scope.recalculateRoute();
+      }, () => {
+        scope.updateRouteLayersAndPoints();
+        scope.recalculateRoute();
+      });
+
     };
 
     const selectFromListener = function(event, ui) {
@@ -162,8 +164,10 @@ export class RouterView extends Component {
       let fromValue = new Point([coord[1], coord[0]]);
       scope.setState({
         fromPoint: fromValue
+      }, () => {
+        scope.recalculateRoute();
       });
-      scope.recalculateRoute();
+
     };
 
     const changeFromListener = function () {
@@ -185,8 +189,11 @@ export class RouterView extends Component {
         toPoint: null,
         containerAddresses: containerAddresses,
         toAddress: ""
-      }, scope.updateRouteLayersAndPoints);
-      scope.recalculateRoute();
+      }, () => {
+        scope.updateRouteLayersAndPoints();
+        scope.recalculateRoute();
+      });
+
     };
 
     const selectToListener = function(event, ui){
@@ -197,8 +204,9 @@ export class RouterView extends Component {
       let fromValue = new Point([coord[1], coord[0]]);
       scope.setState({
         fromPoint: fromValue
+      }, () => {
+        scope.recalculateRoute();
       });
-      scope.recalculateRoute();
     };
 
     const changeToListener = function () {
@@ -293,7 +301,6 @@ export class RouterView extends Component {
     selectInteraction.on('select', function (event) {
       let feature = event.selected[0];
       if (feature) {
-        console.log(feature);
         var geometry = feature.getGeometry();
         if (geometry && (geometry.getType() === 'LineString')) {
           self.showAltRoute(self.response, feature.getId());
