@@ -213,6 +213,9 @@ button.c4g-router-position:before {
     display: flex;
     justify-content: flex-start;
 }
+.c4g-router-input-wrapper > div {
+    display: inline-block;
+}
 .c4g-router-input-wrapper > input {
     box-sizing: border-box;
     padding: 5px;
@@ -522,7 +525,12 @@ Router panel
 
 .c4g-route-instructions-wrapper {
     color: var(--font-color);
-    max-height: 590px;
+    max-height: 32rem;
+    overflow-y: scroll;
+}
+.c4g-route-feature-wrapper {
+    color: var(--font-color);
+    max-height: 32rem;
     overflow-y: scroll;
 }
 

@@ -61,9 +61,16 @@ export class RouterView extends Component {
       fromAddress: "",
       toAddress: "",
       areaAddress: "",
+      detourRoute: props.detourRoute.initial,
+      detourArea: props.detourArea.initial,
+      featureList: {
+        features: [],
+        type: ""
+      },
       mode: props.mode || "route",
       overPtCtr: 0,
       overAddresses: [],
+      featureSource: undefined,
       areaPoint: null,
       fromPoint: null,  // array of two coords
       toPoint: null,  // array of two coords
@@ -81,7 +88,7 @@ export class RouterView extends Component {
           fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          routerInstructions={this.state.routerInstructions}/>
+          routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} mapController={this.props.mapController} featureSource={this.state.featureSource}/>
       </React.Fragment>
     );
   }
@@ -479,7 +486,8 @@ export class RouterView extends Component {
       source: this.areaSource,
       zIndex: 2
     });
-    this.routerFeaturesSource = new VectorSource();
+    this.routerFeaturesSource = new VectorSource(),
+
     this.routerFeaturesLayer = new Vector({
       source: this.routerFeaturesSource,
       zIndex: 20,
@@ -852,7 +860,11 @@ export class RouterView extends Component {
       let profileId = this.props.mapController.data.profile;
       url = 'con4gis/routeService/' + this.props.mapController.data.lang + '/'
         + profileId + '/' + jQuery(scope.routerLayersSelect).val() + '/'
-        + jQuery(scope.toggleDetourRoute).val() + '/' + fromCoord;
+        + this.state.detourRoute + '/' + fromCoord;
+
+      url = 'con4gis/routeService/' + this.props.mapController.data.lang + '/'
+        + profileId + '/' + 4 + '/'
+        + this.state.detourRoute + '/' + fromCoord;
 
       if (overPoint) {
         for (var i = 0; i < overCoord.length; i++)
@@ -884,8 +896,13 @@ export class RouterView extends Component {
               scope.showRouteInstructions(response, 0);
               if (response.features && response.features.length > 0) {
                 let sortedFeatures = scope.showFeatures(response.features, response.type, "router");
-
-                scope.showFeaturesInPortside(sortedFeatures, response.type, "router");
+                scope.setState({
+                  "featureList": {
+                      "features":   sortedFeatures,
+                      "type": response.type
+                  },
+                  "featureSource": scope.routerFeaturesSource
+                });
                 jQuery(scope.areaFeatureWrapper).empty();
                 jQuery(scope.areaFromInput).val("");
               }
@@ -971,6 +988,134 @@ export class RouterView extends Component {
       }
     }
 
+  }
+
+  /**
+   * Clears the current features from the map and displays the given new features. The features are sorted by the configured
+   * property. The function takes the backend configuration according to prioritized features into account.
+   * @param features
+   * @param type
+   * @param mode
+   * @returns {*}
+   */
+  showFeatures(features, type = "table", mode = "router") {
+    const self = this;
+    // self.routerFeaturesSource.clear();
+    // interim clear of feature selection
+    if (!features) {
+      // TODO the calling function expects a return value; should probably be fixed
+      return [];
+    }
+    const mapData = this.mapData;
+    let layerId = mode === "router" ? jQuery(this.routerLayersSelect).val() : jQuery(this.areaLayersSelect).val();
+    layerId = 4;
+    const layer = self.props.mapController.proxy.layerController.arrLayers[layerId];
+    let activeLayer = mode === "router" ? 4: 4;//self.activeLayerValue : self.activeLayerValueArea; //richtig anpassen, wenn vorhanden aus GUI
+    const unstyledFeatures = [];
+    const contentFeatures = [];
+    let missingStyles = [];
+    const priceSortedFeatures = features.slice();
+    let bestFeatures = [];
+    this.bestFeatureIds = [];
+    if (mapData.priorityFeatures && mapData.priorityLocstyle && features.length > 0) {
+      // sort by selected value for the map label ascending
+      priceSortedFeatures.sort(function (a, b) {
+        return parseFloat(a[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) - parseFloat(b[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
+      });
+      let featureCount = parseInt(mapData.priorityFeatures, 10);
+      let upperBound = featureCount > priceSortedFeatures.length ? priceSortedFeatures.length : featureCount;
+      for (let i = 0; i < upperBound; i++) {
+        bestFeatures[i] = priceSortedFeatures[i];
+        this.bestFeatureIds.push(priceSortedFeatures[i]['id']);
+      }
+    }
+    featureLoop:
+        for (let i = 0; features && (i < features.length); i++) {
+          let label = "";
+          let feature = features[i];
+          let resultCoordinate;
+          let contentFeature;
+          if (type == "overpass") {
+            if (feature.type === "node" && !feature.tags) {
+              continue;
+            }
+            contentFeature = self.props.mapController.proxy.layerController.featureFromOverpass(feature, features, layer, true);
+            if(!contentFeature){
+              continue;
+            }
+          }
+          else {
+            resultCoordinate = transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
+            let point = new Point(resultCoordinate);
+            contentFeature = new Feature(point);
+            contentFeature.setId(feature.id);
+            contentFeature.set('loc_linkurl', layer.loc_linkurl);
+            contentFeature.set('hover_location', layer.hover_location);
+            contentFeature.set('hover_style', layer.hover_style);
+            contentFeature.set('zoom_onclick', layer.zoom_onclick);
+            contentFeature.set('tid', feature.id);
+          }
+
+
+          if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
+            label = feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
+          }
+          else if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature.tags && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
+            label = feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
+          }
+
+          let locstyle = feature['locstyle'] || layer.locstyle;
+          if (mapData.priorityFeatures && mapData.priorityLocstyle) {
+            if (bestFeatures.includes(feature)) {
+              locstyle = mapData.priorityLocstyle;
+            }
+          }
+
+          contentFeature.set('locationStyle', locstyle);
+          contentFeature.set('zIndex', i);
+          contentFeature.set('label', label);
+          if (locstyle && self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
+            contentFeature.setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
+            if (self.props.mapController.data.hideFeaturesWithoutLabel) {
+              if (label && label !== "") {
+                contentFeatures.push(contentFeature);
+              }
+            } else {
+              contentFeatures.push(contentFeature);
+            }
+          }
+          else {
+            contentFeature.set('styleId', locstyle);
+            if (self.props.mapController.data.hideFeaturesWithoutLabel) {
+              if (label && label !== "") {
+                unstyledFeatures.push(contentFeature);
+                missingStyles[locstyle] = locstyle;
+              }
+            } else {
+              unstyledFeatures.push(contentFeature);
+              missingStyles[locstyle] = locstyle;
+            }
+          }
+          for (let tags in feature.tags) {
+            contentFeature.set(tags, feature.tags[tags]);
+          }
+        }
+    if (missingStyles && missingStyles.length > 0) {
+      self.props.mapController.proxy.locationStyleController.loadLocationStyles(missingStyles, {
+        done: function () {
+          for (let i = 0; i < unstyledFeatures.length; i++) {
+            var styleId = unstyledFeatures[i].get('styleId');
+            unstyledFeatures[i].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[styleId].style);
+            self.routerFeaturesSource.addFeature(unstyledFeatures[i]);
+          }
+          missingStyles = undefined;
+        }
+      });
+    }
+    if (features && features.length > 0) {
+      this.routerFeaturesSource.addFeatures(contentFeatures);
+    }
+    return priceSortedFeatures;
   }
 
   /**
