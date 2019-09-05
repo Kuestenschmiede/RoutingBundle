@@ -71,6 +71,8 @@ export class RouterView extends Component {
       overPtCtr: 0,
       overAddresses: [],
       featureSource: undefined,
+      routerWaySource: undefined,
+      routerHintSource: undefined,
       areaPoint: null,
       fromPoint: null,  // array of two coords
       toPoint: null,  // array of two coords
@@ -88,7 +90,7 @@ export class RouterView extends Component {
           fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} mapController={this.props.mapController} featureSource={this.state.featureSource}/>
+          routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} mapController={this.props.mapController} routerWaySource={this.state.routerWaySource} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
       </React.Fragment>
     );
   }
@@ -139,7 +141,7 @@ export class RouterView extends Component {
       this.locationsSource.addFeature(tmpFeature);
     }
     if (!(this.state.fromPoint && this.state.toPoint)) {
-      this.routingWaySource.clear();
+      this.routerWaySource.clear();
     }
     // TODO iterate overPoints and add them
   }
@@ -251,9 +253,9 @@ export class RouterView extends Component {
 
     // Add router layer(s)
     this.routingAltWaySource = new VectorSource();
-    this.routingWaySource = new VectorSource();
+    this.routerWaySource = new VectorSource();
     this.routerWayLayer = new Vector({
-      source: this.routingWaySource,
+      source: this.routerWaySource,
       zIndex: 1,
       style: [
         new Style({
@@ -321,7 +323,7 @@ export class RouterView extends Component {
     });
     this.mapSelectInteraction = selectInteraction;
     this.modWayInteraction = new Modify({
-      source: this.routingWaySource,
+      source: this.routerWaySource,
       style: [
         new Style({
           stroke: new Stroke({
@@ -394,9 +396,9 @@ export class RouterView extends Component {
 
     selectInteraction.setActive(false);
 
-    this.routingHintSource = new VectorSource();
+    this.routerHintSource = new VectorSource();
     this.routerHintLayer = new Vector({
-      source: this.routingHintSource,
+      source: this.routerHintSource,
       style: function (feature, resolution) {
         return (!self.props.mapController.proxy) || self.props.mapController.proxy.locationStyleController.arrLocStyles[self.props.mapController.data.router_point_locstyle].style(feature, resolution);
       }
@@ -464,7 +466,7 @@ export class RouterView extends Component {
    * @param routeResponse
    * @param routeNumber
    */
-  showRouteInstructions(routeResponse, routeNumber) {
+  showRouteInstructions(routeResponse, routeNumber, routerWaySource, routerHintSource) {
 
     var scope,
       routerInstruction,
@@ -537,7 +539,10 @@ export class RouterView extends Component {
           distance: total_distance,
           instructions: routeResponse.trip.legs[routeNumber].maneuvers
         };
-        this.setState({routerInstructions: this.routeInstructions[routeNumber]});
+        this.setState({
+          routerInstructions: this.routeInstructions[routeNumber],
+          "routerWaySource": routerWaySource,
+          "routerHintSource": routerHintSource});
       }
 
       if (route_name_0 && route_name_1) {
@@ -818,10 +823,7 @@ export class RouterView extends Component {
               jQuery(scope.fromInput).parent()[0].appendChild(errorDiv);
             } else {
               scope.showRouteLayer(response);
-              if (response.features) {
-                jQuery(".router-content-switcher").css('display', 'block');
-              }
-              scope.showRouteInstructions(response, 0);
+              scope.showRouteInstructions(response, 0, scope.routerWaySource, scope.routerHintSource);
               if (response.features && response.features.length > 0) {
                 let sortedFeatures = scope.showFeatures(response.features, response.type, "router");
                 scope.setState({
@@ -831,8 +833,6 @@ export class RouterView extends Component {
                   },
                   "featureSource": scope.routerFeaturesSource
                 });
-                jQuery(scope.areaFeatureWrapper).empty();
-                jQuery(scope.areaFromInput).val("");
               }
             }
           }
@@ -1082,7 +1082,7 @@ export class RouterView extends Component {
       routeNumber = routeNumber || 0;
 
     if (routeResponse) {
-      this.routingWaySource.clear();
+      this.routerWaySource.clear();
       this.routingAltWaySource.clear();
       mapView = this.props.mapController.map.getView();
 
@@ -1181,7 +1181,7 @@ export class RouterView extends Component {
         }
       }
       if (routeFeatures) {
-        this.routingWaySource.addFeatures(routeFeatures);
+        this.routerWaySource.addFeatures(routeFeatures);
         // render view
         // so the route gets drawn before the animation starts
         this.props.mapController.map.renderSync();
@@ -1230,21 +1230,21 @@ export class RouterView extends Component {
       fnItemOut;
 
     fnItemClick = function (element) {
-      if (self.routingWaySource && self.routingWaySource.getFeatures() && self.options.mapController.data.router_api_selection == '0') {
-        var feature = self.routingWaySource.getFeatures()[0];
+      if (self.routerWaySource && self.routerWaySource.getFeatures() && self.options.mapController.data.router_api_selection == '0') {
+        var feature = self.routerWaySource.getFeatures()[0];
         if (feature) {
           var currentCoordinates = feature.getGeometry().getCoordinates()[element.data('pos')];
-          self.routingHintSource.clear();
+          self.routerHintSource.clear();
           var currentHintFeature = new Feature({
             geometry: new Point(currentCoordinates)
           });
-          self.routingHintSource.addFeature(currentHintFeature);
+          self.routerHintSource.addFeature(currentHintFeature);
           self.options.mapController.map.getView().setCenter(currentCoordinates);
         }
       }
-      if (self.routingWaySource && self.options.mapController.data.router_api_selection >= '1') {
-        self.routingHintSource.clear();
-        feature = self.routingWaySource.getFeatures()[0];
+      if (self.routerWaySource && self.options.mapController.data.router_api_selection >= '1') {
+        self.routerHintSource.clear();
+        feature = self.routerWaySource.getFeatures()[0];
         let coordinates = feature.getGeometry().getCoordinates();
         var coordLonLat = element.data('pos');
         if (coordLonLat) {
@@ -1255,7 +1255,7 @@ export class RouterView extends Component {
           var currentHintFeature = new Feature({
             geometry: new Point(newCoord)
           })
-          self.routingHintSource.addFeature(currentHintFeature);
+          self.routerHintSource.addFeature(currentHintFeature);
           self.options.mapController.map.getView().setCenter(newCoord);
         }
         if (coordinates) {
@@ -1275,7 +1275,7 @@ export class RouterView extends Component {
               }),
             );
             let currentZoom = self.options.mapController.map.getView().getZoom();
-            self.routingHintSource.addFeature(currentHintFeature);
+            self.routerHintSource.addFeature(currentHintFeature);
             self.options.mapController.map.getView().fit(geom);
             let afterZoom = self.options.mapController.map.getView().getZoom();
             let endZoom = Math.round((currentZoom + afterZoom)/2)
@@ -1287,20 +1287,20 @@ export class RouterView extends Component {
     };
 
     fnItemOver = function (element) {
-      if (self.routingWaySource && self.routingWaySource.getFeatures() && self.options.mapController.data.router_api_selection == '0') {
-        var feature = self.routingWaySource.getFeatures()[0];
+      if (self.routerWaySource && self.routerWaySource.getFeatures() && self.options.mapController.data.router_api_selection == '0') {
+        var feature = self.routerWaySource.getFeatures()[0];
         if (feature) {
-          self.routingHintSource.clear();
+          self.routerHintSource.clear();
           var currentHintFeature = new Feature({
             geometry: new Point(feature.getGeometry().getCoordinates()[element.data('pos')])
           });
-          self.routingHintSource.addFeature(currentHintFeature);
+          self.routerHintSource.addFeature(currentHintFeature);
         }
       }
-      if (self.routingWaySource && self.routingWaySource.getFeatures() && self.options.mapController.data.router_api_selection >= '1') {
-        var feature = self.routingWaySource.getFeatures()[0];
+      if (self.routerWaySource && self.routerWaySource.getFeatures() && self.options.mapController.data.router_api_selection >= '1') {
+        var feature = self.routerWaySource.getFeatures()[0];
         if (feature) {
-          self.routingHintSource.clear();
+          self.routerHintSource.clear();
           var coordLonLat = element.data('pos');
           if (coordLonLat) {
             var stringlonlat = coordLonLat.split(",");
@@ -1310,9 +1310,9 @@ export class RouterView extends Component {
             var currentHintFeature = new Feature({
               geometry: new Point(newCoord)
             });
-            self.routingHintSource.addFeature(currentHintFeature);
+            self.routerHintSource.addFeature(currentHintFeature);
           }
-          feature = self.routingWaySource.getFeatures()[0];
+          feature = self.routerWaySource.getFeatures()[0];
           let coordinates = feature.getGeometry().getCoordinates();
           if (coordinates) {
             let start = element.data('start');
@@ -1329,7 +1329,7 @@ export class RouterView extends Component {
                   })
                 }),
               );
-              self.routingHintSource.addFeature(currentHintFeature);
+              self.routerHintSource.addFeature(currentHintFeature);
             }
           }
         }
@@ -1338,7 +1338,7 @@ export class RouterView extends Component {
     };
 
     fnItemOut = function () {
-      self.routingHintSource.clear();
+      self.routerHintSource.clear();
     };
 
 

@@ -13,24 +13,67 @@
 
 import React, { Component } from "react";
 import {toHumanDistance} from "./../c4g-router-time-conversions";
+import {Feature} from "ol";
+import {LineString, Point} from "ol/geom";
+import {fromLonLat} from "ol/proj";
+import {Stroke, Style} from "ol/style";
 
 export class RouterInstruction extends Component {
 
   constructor(props) {
     super(props);
-
+    this.fnItemOver = this.fnItemOver.bind(this);
+    this.fnItemOut = this.fnItemOut.bind(this);
   }
 
   render() {
     return(
-      <div className={"c4g-router-instruction"} key={this.props.id}>
+      <div className={"c4g-router-instruction"} onMouseEnter={this.fnItemOver} key={this.props.id}>
         <div><img src={this.getInstructionIconValhalla(this.props.imgPath)} alt=""/></div>
         <div>{this.props.instrText}</div>
         <div className="c4g-router-instruction-distance">{toHumanDistance(this.props.instrDist * 1000)}</div>
       </div>
     );
   }
-
+  fnItemOver = function () {
+    if (this.props.routerWaySource && this.props.routerWaySource.getFeatures()) {
+      let feature = this.props.routerWaySource.getFeatures()[0];
+      if (feature) {
+        this.props.routerHintSource.clear();
+        let coordLonLat = this.props.dataPos;
+        if (coordLonLat) {
+          let stringlonlat = coordLonLat.split(",");
+          stringlonlat[0] = parseFloat(stringlonlat[0]);
+          stringlonlat[1] = parseFloat(stringlonlat[1]);
+          let newCoord = fromLonLat(stringlonlat);
+          let currentHintFeature = new Feature({
+            geometry: new Point(newCoord)
+          });
+          this.props.routerHintSource.addFeature(currentHintFeature);
+        }
+        else if (this.props.dataStart && this.props.dataEnd) {
+          let coordinates = feature.getGeometry().getCoordinates();
+          if (coordinates) {
+            let currentHintFeature = new Feature({
+              geometry: new LineString(coordinates.slice(this.props.dataStart, this.props.dataEnd))
+            });
+            currentHintFeature.setStyle(
+                new Style({
+                  stroke: new Stroke({
+                    color: 'rgba(255, 0, 0, 1)',
+                    width: 15
+                  })
+                }),
+            );
+            this.props.routerHintSource.addFeature(currentHintFeature);
+          }
+        }
+      }
+    }
+  };
+  fnItemOut = function () {
+    this.routerHintSource.clear();
+  };
   /**
    * Translates an integer number into the correct instruction icon (Graphhopper icons).
    * @param intType
