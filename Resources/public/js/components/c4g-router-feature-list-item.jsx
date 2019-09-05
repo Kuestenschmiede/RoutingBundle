@@ -39,9 +39,7 @@ export class RouterFeatureListItem extends Component {
         }
         let element = {__html: featureEntryContent}
         return (
-            <li>
-                <div dangerouslySetInnerHTML={element}/>
-            </li>
+            <li dangerouslySetInnerHTML={element}/>
         );
     }
 }

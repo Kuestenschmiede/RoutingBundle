@@ -525,7 +525,12 @@ Router panel
 
 .c4g-route-instructions-wrapper {
     color: var(--font-color);
-    max-height: 590px;
+    max-height: 32rem;
+    overflow-y: scroll;
+}
+.c4g-route-feature-wrapper {
+    color: var(--font-color);
+    max-height: 32rem;
     overflow-y: scroll;
 }
 
