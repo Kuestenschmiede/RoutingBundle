@@ -40,7 +40,9 @@ const containerAddresses = {
   arrFromPositions: [],
   arrFromNames: [],
   arrToPositions: [],
-  arrToNames: []
+  arrToNames: [],
+  arrOverPositions: {},
+  arrOverNames: {},
 };
 
 'use strict';

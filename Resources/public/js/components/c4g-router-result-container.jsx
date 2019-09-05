@@ -34,16 +34,9 @@ export class RouterResultContainer extends HorizontalPanel {
 
   componentDidUpdate() {
     let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
-    let bottomValue = 0;
     let container = document.getElementsByClassName(className)[0];
-    if (container) {
-      bottomValue = container.offsetHeight;
-    }
     const scope = this;
     jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
-    // window.setTimeout(function() {
-    //   jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
-    // }, 100);
   }
 
   open() {
@@ -55,11 +48,10 @@ export class RouterResultContainer extends HorizontalPanel {
   }
 
   slideInCollidingElements() {
-    // this.slideOutCollidingElements();
+    // override parent method
   }
 
   slideOutCollidingElements() {
-
-
+    // override parent method
   }
 }

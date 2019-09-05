@@ -76,7 +76,7 @@ export class RouterView extends Component {
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.props.open} className={this.props.className}
-          objSettings={this.state.objSettings} objFunctions={this.objFunctions}
+          objSettings={this.state.objSettings} objFunctions={this.objFunctions} popupSettings={this.createPopupSettings()}
           containerAddresses={this.state.containerAddresses} mapController={this.props.mapController}
           fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
@@ -107,8 +107,80 @@ export class RouterView extends Component {
     this.setState({toPoint: point}, () => scope.updateRouteLayersAndPoints());
   }
 
-  addOverPoint(longitude, latitude) {
+  addOverPoint(longitude, latitude, index) {
 
+  }
+
+  createPopupSettings() {
+    const scope = this;
+    let objSettings = {};
+    objSettings.overAddresses = this.state.overAddresses;
+    objSettings.overPoints = this.state.overPoints;
+    objSettings.overPtCtr = this.state.overPtCtr;
+    // increments the overPtCtr so the popup can render additional overFields
+    objSettings.overFunction = function() {
+      scope.setState({
+        overPtCtr: scope.state.overPtCtr + 1
+      });
+    };
+    objSettings.objFunctions = {};
+    for (let i = 0; i < this.state.overPtCtr; i++) {
+      objSettings.objFunctions[i] = this.createAutocompleteFunctionsForOverField(i);
+      objSettings.overAddresses[i] = "";
+      objSettings.overPoints[i] = null;
+    }
+    objSettings.objSettings = this.state.objSettings;
+    objSettings.router = this;
+    return objSettings;
+  }
+
+  createAutocompleteFunctionsForOverField(fieldId) {
+    const scope = this;
+    // set listener for the autocomplete from field
+    const deleteOverListener = function(event) {
+      let containerAddresses = scope.state.containerAddresses;
+      containerAddresses.arrOverPositions[fieldId] = [];
+      containerAddresses.arrOverNames[fieldId] = [];
+      let overPoints = scope.state.overPoints;
+      overPoints[fieldId] = null;
+      let overAddresses = scope.state.overAddresses;
+      overAddresses[fieldId] = "";
+      scope.setState({
+        overPoints: overPoints,
+        containerAddresses: containerAddresses,
+        overAddresses: overAddresses
+      }, () => {
+        scope.updateRouteLayersAndPoints();
+        scope.recalculateRoute();
+      });
+
+    };
+
+    const selectOverListener = function(event, ui) {
+      let value = ui.item.value;
+      let coord = scope.state.containerAddresses.arrOverPositions[fieldId][scope.state.containerAddresses.arrOverNames[fieldId].findIndex(
+        danger => danger === value
+      )];
+      let overValue = new Point([coord[1], coord[0]]);
+      let overPoints = scope.state.overPoints;
+      overPoints[fieldId] = overValue;
+      scope.setState({
+        overPoints: overValue
+      }, () => {
+        scope.recalculateRoute();
+      });
+
+    };
+
+    const changeOverListener = function () {
+      // self.fromValue = null;
+    };
+
+    return {
+      "selectListener": selectOverListener,
+      "deleteFunction": deleteOverListener,
+      "changeListener": changeOverListener
+    };
   }
 
   updateRouteLayersAndPoints() {

@@ -68,7 +68,7 @@ export class RouterInstructionsContainer extends Component {
         <div className={this.props.className}>
           {routerHeader}
           {instructions.map((item, index) => {
-            return <RouterInstruction imgPath={item.type} instrText={item.instruction} instrDist={item.length} id={index}/>
+            return <RouterInstruction imgPath={item.type} instrText={item.instruction} instrDist={item.length} key={index}/>
           })}
         </div>
       );
