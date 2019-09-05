@@ -70,6 +70,7 @@ export class RouterView extends Component {
       mode: props.mode || "route",
       overPtCtr: 0,
       overAddresses: [],
+      featureSource: undefined,
       areaPoint: null,
       fromPoint: null,  // array of two coords
       toPoint: null,  // array of two coords
@@ -87,7 +88,7 @@ export class RouterView extends Component {
           fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          routerInstructions={this.state.routerInstructions} featureList={this.state.featureList}/>
+          routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} mapController={this.props.mapController} featureSource={this.state.featureSource}/>
       </React.Fragment>
     );
   }
@@ -413,7 +414,8 @@ export class RouterView extends Component {
       source: this.areaSource,
       zIndex: 2
     });
-    this.routerFeaturesSource = new VectorSource();
+    this.routerFeaturesSource = new VectorSource(),
+
     this.routerFeaturesLayer = new Vector({
       source: this.routerFeaturesSource,
       zIndex: 20,
@@ -822,10 +824,13 @@ export class RouterView extends Component {
               scope.showRouteInstructions(response, 0);
               if (response.features && response.features.length > 0) {
                 let sortedFeatures = scope.showFeatures(response.features, response.type, "router");
-                scope.setState({"featureList": {
-                      "features":sortedFeatures,
+                scope.setState({
+                  "featureList": {
+                      "features":   sortedFeatures,
                       "type": response.type
-                }});
+                  },
+                  "featureSource": scope.routerFeaturesSource
+                });
                 jQuery(scope.areaFeatureWrapper).empty();
                 jQuery(scope.areaFromInput).val("");
               }

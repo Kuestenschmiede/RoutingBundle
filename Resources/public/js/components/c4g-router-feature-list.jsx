@@ -26,7 +26,7 @@ export class RouterFeatureList extends Component {
       <div className={this.props.className}>
         <ul>
           {this.props.featureList.features.map((feature, index) => {
-            return <RouterFeatureListItem feature={feature} key={index}/>
+            return <RouterFeatureListItem feature={feature} mapController={this.props.mapController} featureSource={this.props.featureSource} key={index}/>
           })}
         </ul>
       </div>
