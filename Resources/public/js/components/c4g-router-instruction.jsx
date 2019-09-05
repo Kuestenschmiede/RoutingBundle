@@ -23,18 +23,60 @@ export class RouterInstruction extends Component {
   constructor(props) {
     super(props);
     this.fnItemOver = this.fnItemOver.bind(this);
+    this.fnItemClick = this.fnItemClick.bind(this);
     this.fnItemOut = this.fnItemOut.bind(this);
   }
 
   render() {
     return(
-      <div className={"c4g-router-instruction"} onMouseEnter={this.fnItemOver} key={this.props.id}>
+      <div className={"c4g-router-instruction"} onMouseUp={this.fnItemClick} onMouseLeave={this.fnItemOut} onMouseEnter={this.fnItemOver} key={this.props.id}>
         <div><img src={this.getInstructionIconValhalla(this.props.imgPath)} alt=""/></div>
         <div>{this.props.instrText}</div>
         <div className="c4g-router-instruction-distance">{toHumanDistance(this.props.instrDist * 1000)}</div>
       </div>
     );
-  }
+  };
+  fnItemClick = function () {
+    if (this.props.routerWaySource && this.props.routerWaySource.getFeatures()) {
+      this.props.routerHintSource.clear();
+      let feature = this.props.routerWaySource.getFeatures()[0];
+      let coordinates = feature.getGeometry().getCoordinates();
+      var coordLonLat = this.props.dataPos;
+      if (coordLonLat) {
+        let stringlonlat = coordLonLat.split(",");
+        stringlonlat[0] = parseFloat(stringlonlat[0]);
+        stringlonlat[1] = parseFloat(stringlonlat[1]);
+        let newCoord = fromLonLat(stringlonlat);
+        let currentHintFeature = new Feature({
+          geometry: new Point(newCoord)
+        })
+        this.props.routerHintSource.addFeature(currentHintFeature);
+        this.props.options.mapController.map.getView().setCenter(newCoord);
+      }
+      else if (coordinates && this.props.dataStart && this.props.dataEnd) {
+        let geom = new LineString(coordinates.slice(this.props.dataStart, this.props.dataEnd))
+        let currentHintFeature = new Feature({
+          geometry: geom
+        })
+        currentHintFeature.setStyle(
+            new Style({
+              stroke: new Stroke({
+                color: 'rgba(255, 0, 0, 1)',
+                width: 20
+              })
+            }),
+        );
+        let currentZoom = this.props.mapController.map.getView().getZoom();
+        this.props.routerHintSource.addFeature(currentHintFeature);
+        this.props.mapController.map.getView().fit(geom);
+        let afterZoom = this.props.mapController.map.getView().getZoom();
+        let endZoom = Math.round((currentZoom + afterZoom)/2)
+        endZoom = (endZoom > afterZoom) ? afterZoom : endZoom;
+        this.props.mapController.map.getView().setZoom(endZoom);
+
+      }
+    }
+  };
   fnItemOver = function () {
     if (this.props.routerWaySource && this.props.routerWaySource.getFeatures()) {
       let feature = this.props.routerWaySource.getFeatures()[0];
@@ -72,7 +114,7 @@ export class RouterInstruction extends Component {
     }
   };
   fnItemOut = function () {
-    this.routerHintSource.clear();
+    this.props.routerHintSource.clear();
   };
   /**
    * Translates an integer number into the correct instruction icon (Graphhopper icons).
