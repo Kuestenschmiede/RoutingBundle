@@ -116,7 +116,7 @@ export class RouterAddressInput extends Component {
     return (
       <div className={this.props.className}>
         {input}
-        <button onMouseUp={clickListener}>Klick mich hart du Sau!</button>
+        <button onMouseUp={clickListener}>Mehr Optionen</button>
       </div>
     );
   }
