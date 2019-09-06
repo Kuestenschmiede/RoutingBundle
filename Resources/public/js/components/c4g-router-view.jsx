@@ -239,6 +239,7 @@ export class RouterView extends Component {
 
     const selectFromListener = function(event, ui) {
       let value = ui.item.value;
+      console.log(scope.state.containerAddresses.arrFromPositions);
       let coord = scope.state.containerAddresses.arrFromPositions[scope.state.containerAddresses.arrFromNames.findIndex(
         danger => danger === value
       )];
@@ -282,9 +283,9 @@ export class RouterView extends Component {
       let coord = scope.state.containerAddresses.arrToPositions[scope.state.containerAddresses.arrToNames.findIndex(
         danger => danger === value
       )];
-      let fromValue = new Point([coord[1], coord[0]]);
+      let toValue = new Point([coord[1], coord[0]]);
       scope.setState({
-        fromPoint: fromValue
+        toPoint: toValue
       }, () => {
         scope.recalculateRoute();
       });
@@ -488,7 +489,7 @@ export class RouterView extends Component {
       source: this.areaSource,
       zIndex: 2
     });
-    this.routerFeaturesSource = new VectorSource(),
+    this.routerFeaturesSource = new VectorSource();
 
     this.routerFeaturesLayer = new Vector({
       source: this.routerFeaturesSource,
@@ -949,36 +950,6 @@ export class RouterView extends Component {
     var tmpFeature,
       proxy = this.props.mapController.proxy;
 
-    // this.locationsSource.clear();
-    // if (this.fromValue) {
-    //   tmpFeature = new Feature({
-    //     geometry: this.fromValue.clone().transform('EPSG:4326', 'EPSG:3857')
-    //   });
-    //   if (this.props.mapController.data.router_from_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
-    //     tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
-    //   }
-    //   this.locationsSource.addFeature(tmpFeature);
-    // }
-    // if (this.toValue) {
-    //   tmpFeature = new Feature({
-    //     geometry: this.toValue.clone().transform('EPSG:4326', 'EPSG:3857')
-    //   });
-    //   if (this.props.mapController.data.router_to_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_to_locstyle]) {
-    //     tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_to_locstyle].style);
-    //   }
-    //   this.locationsSource.addFeature(tmpFeature);
-    // }
-    // if (this.overValue) {
-    //   for (var propt in this.overValue) {
-    //     tmpFeature = new Feature({
-    //       geometry: this.overValue[propt].clone().transform('EPSG:4326', 'EPSG:3857')
-    //     });
-    //     if (this.props.mapController.data.router_interim_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_interim_locstyle]) {
-    //       tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_interim_locstyle].style);
-    //     }
-    //     this.locationsSource.addFeature(tmpFeature);
-    //   }
-    // }
     if (this.state.fromPoint && this.state.toPoint) {
       if (this.state.overPoints.length > 0) {
         this.performViaRoute(this.state.fromPoint, this.state.toPoint, this.state.overPoints);

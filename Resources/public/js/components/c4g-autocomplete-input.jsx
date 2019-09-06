@@ -17,6 +17,8 @@ export class AutocompleteInput extends Component {
 
   constructor(props) {
     super(props);
+
+    this.listenerRegistered = false;
   }
 
   render() {
@@ -56,15 +58,25 @@ export class AutocompleteInput extends Component {
   }
 
   componentDidUpdate() {
+    const scope = this;
     let arrNames;
     if (this.props.cssId.indexOf("From") !== -1) {
       arrNames = this.props.containerAddresses.arrFromNames
     } else {
       arrNames = this.props.containerAddresses.arrToNames;
     }
-    jQuery('#' + this.props.cssId).autocomplete({
+    let inputField = jQuery('#' + this.props.cssId);
+    inputField.autocomplete({
       source: arrNames
     });
+    // only register listener once
+    if (!this.listenerRegistered) {
+      inputField.on('autocompleteselect', function (event, ui) {
+        scope.props.objFunctions.selectListener(event, ui);
+      });
+      this.listenerRegistered = true;
+    }
+
   }
 
   setCenter (center) {
