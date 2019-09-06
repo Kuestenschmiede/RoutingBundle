@@ -36,10 +36,11 @@ export class RouterFeatureListItem extends Component {
         let featureEntryContent = "";
         if (currentFeature) {
             featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
+            let element = {__html: featureEntryContent + "<br>"}
+            return (
+                <li dangerouslySetInnerHTML={element}/>
+            );
         }
-        let element = {__html: featureEntryContent}
-        return (
-            <li dangerouslySetInnerHTML={element}/>
-        );
+        return null;
     }
 }

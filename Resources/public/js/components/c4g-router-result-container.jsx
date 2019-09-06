@@ -37,7 +37,7 @@ export class RouterResultContainer extends HorizontalPanel {
   render() {
     let result = "";
     if (this.state.mode === "instr" && this.state.open) {
-        result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} routerInstructions={this.props.routerInstructions} open={this.state.open}/>
+        result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.state.open}/>
     }
     else if (this.state.mode === "feat" && this.state.open) {
         result = <RouterFeatureList className={"c4g-route-feature-wrapper"} featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}/>
