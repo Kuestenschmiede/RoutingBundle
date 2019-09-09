@@ -257,14 +257,17 @@ export class RouterView extends Component {
 
     const selectFromListener = function(event, ui) {
       let value = ui.item.value;
-      console.log(scope.state.containerAddresses.arrFromPositions);
-      let coord = scope.state.containerAddresses.arrFromPositions[scope.state.containerAddresses.arrFromNames.findIndex(
+      let index = scope.state.containerAddresses.arrFromNames.findIndex(
         danger => danger === value
-      )];
+      );
+      let coord = scope.state.containerAddresses.arrFromPositions[index];
       let fromValue = new Point([coord[1], coord[0]]);
+
       scope.setState({
-        fromPoint: fromValue
+        fromPoint: fromValue,
+        fromAddress: scope.state.containerAddresses.arrFromNames[index]
       }, () => {
+        scope.updateRouteLayersAndPoints();
         scope.recalculateRoute();
       });
 
@@ -298,13 +301,17 @@ export class RouterView extends Component {
 
     const selectToListener = function(event, ui){
       let value = ui.item.value;
-      let coord = scope.state.containerAddresses.arrToPositions[scope.state.containerAddresses.arrToNames.findIndex(
+      let index = scope.state.containerAddresses.arrToNames.findIndex(
         danger => danger === value
-      )];
+      );
+      let coord = scope.state.containerAddresses.arrToPositions[index];
       let toValue = new Point([coord[1], coord[0]]);
+
       scope.setState({
-        toPoint: toValue
+        toPoint: toValue,
+        toAddress: scope.state.containerAddresses.arrToNames[index]
       }, () => {
+        scope.updateRouteLayersAndPoints();
         scope.recalculateRoute();
       });
     };
@@ -811,16 +818,28 @@ export class RouterView extends Component {
           // TODO update router permalink
           switch (stateProp) {
             case "areaAddress":
-              self.setState({areaAddress: value});
+              self.setState({areaAddress: value}, function() {
+                if (jQuery("#areaFrom").val() === "") {
+                  jQuery("#areaFrom").val(value);
+                }
+              });
               // self.updateLinkFragments("addressArea", value);
               break;
             case "fromAddress":
-              self.setState({fromAddress: value});
+              self.setState({fromAddress: value}, function() {
+                if (jQuery("#routingFrom").val() === "") {
+                  jQuery("#routingFrom").val(value);
+                }
+              });
               // update address in link
               // self.updateLinkFragments("addressFrom", value);
               break;
             case "toAddress":
-              self.setState({toAddress: value});
+              self.setState({toAddress: value}, function() {
+                if (jQuery("#routingTo").val() === "") {
+                  jQuery("#routingTo").val(value);
+                }
+              });
               // update address in link
               // self.updateLinkFragments("addressTo", value);
               break;

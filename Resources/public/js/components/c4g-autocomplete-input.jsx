@@ -53,7 +53,7 @@ export class AutocompleteInput extends Component {
 
     return (
       <input id={this.props.cssId} type="search" defaultValue={this.props.value} onInput={enterListener}
-             autoComplete="off" onChange={(event) => {scope.setState({value: scope.props.value})}}/>
+             autoComplete="off" />
     );
   }
 
