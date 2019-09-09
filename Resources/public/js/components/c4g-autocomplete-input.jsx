@@ -39,8 +39,7 @@ export class AutocompleteInput extends Component {
       } else {
         if ($(event.currentTarget).val().length === 0 && !event.keyCode) { //deleted
           scope.props.objFunctions.deleteFunction(event.currentTarget, event.currentTarget.id);
-        }
-        else {
+        } else {
           scope.counter = Math.floor(Date.now());
           setTimeout(function() {
             if (scope.counter && scope.counter + 400 < Math.floor(Date.now())) {
@@ -53,7 +52,8 @@ export class AutocompleteInput extends Component {
     };
 
     return (
-      <input id={this.props.cssId} type="search" defaultValue={this.props.value} onInput={enterListener} autoComplete="off" onChange={(event) => {scope.setState({value: event.target.value})}}/>
+      <input id={this.props.cssId} type="search" defaultValue={this.props.value} onInput={enterListener}
+             autoComplete="off" onChange={(event) => {scope.setState({value: scope.props.value})}}/>
     );
   }
 
@@ -62,21 +62,29 @@ export class AutocompleteInput extends Component {
     let arrNames;
     if (this.props.cssId.indexOf("From") !== -1) {
       arrNames = this.props.containerAddresses.arrFromNames
-    } else {
+    } else if (this.props.cssId.indexOf("To") !== -1) {
       arrNames = this.props.containerAddresses.arrToNames;
+    } else {
+      arrNames = this.props.containerAddresses.arrOverNames[this.props.index];
     }
+
     let inputField = jQuery('#' + this.props.cssId);
     inputField.autocomplete({
       source: arrNames
     });
+
     // only register listener once
     if (!this.listenerRegistered) {
       inputField.on('autocompleteselect', function (event, ui) {
-        scope.props.objFunctions.selectListener(event, ui);
+        if (scope.props.index) {
+          scope.props.objFunctions[scope.props.index].selectListener(event, ui);
+        } else {
+          scope.props.objFunctions.selectListener(event, ui);
+        }
+
       });
       this.listenerRegistered = true;
     }
-
   }
 
   setCenter (center) {
@@ -144,14 +152,17 @@ export class AutocompleteInput extends Component {
                   scope.props.containerAddresses.arrFromNames.push(arrAddresses[i].name);
                   scope.props.containerAddresses.arrFromPositions.push(arrAddresses[i].pos);
                 }
-              }
-              else if (cssClass.indexOf('to') !== -1){
+              } else if (cssClass.indexOf('to') !== -1){
                 if (!scope.props.containerAddresses.arrToNames.includes(arrAddresses[i].name)) {
                   scope.props.containerAddresses.arrToNames.push(arrAddresses[i].name);
                   scope.props.containerAddresses.arrToPositions.push(arrAddresses[i].pos);
                 }
-              }
-              else {
+              } else if (cssClass.indexOf('over') !== -1) {
+                if (!scope.props.containerAddresses.arrOverNames[scope.props.index].includes(arrAddresses[i].name)) {
+                  scope.props.containerAddresses.arrOverNames[scope.props.index].push(arrAddresses[i].name);
+                  scope.props.containerAddresses.arrOverPositions[scope.props.index].push(arrAddresses[i].pos);
+                }
+              } else {
                 console.log("This is weird ¯\\_(ツ)_/¯");
               }
 
@@ -161,22 +172,25 @@ export class AutocompleteInput extends Component {
           let event = jQuery.Event("keydown", {keyCode: 8});
           $(cssClass).trigger(event);
         }
-        for(let i in data) {
-          if(data.hasOwnProperty(i)) {
+        for (let i in data) {
+          if (data.hasOwnProperty(i)) {
             if (cssClass.indexOf('From') !== -1) {
               // do not add twice
               if (!scope.props.containerAddresses.arrFromNames.includes(data[i].display_name)) {
                 scope.props.containerAddresses.arrFromNames.push(data[i].display_name);
                 scope.props.containerAddresses.arrFromPositions.push([data[i].lat, data[i].lon]);
               }
-            }
-            else if (cssClass.indexOf('To') !== -1){
+            } else if (cssClass.indexOf('To') !== -1){
               if (!scope.props.containerAddresses.arrToNames.includes(data[i].display_name)) {
                 scope.props.containerAddresses.arrToNames.push(data[i].display_name);
                 scope.props.containerAddresses.arrToPositions.push([data[i].lat, data[i].lon]);
               }
-            }
-            else {
+            } else if (cssClass.indexOf('Over') !== -1) {
+              if (!scope.props.containerAddresses.arrOverNames[scope.props.index].includes(data[i].display_name)) {
+                scope.props.containerAddresses.arrOverNames[scope.props.index].push(data[i].display_name);
+                scope.props.containerAddresses.arrOverPositions[scope.props.index].push([data[i].lat, data[i].lon]);
+              }
+            } else {
               console.log("This is weird ¯\\_(ツ)_/¯");
             }
           }

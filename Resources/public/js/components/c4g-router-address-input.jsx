@@ -41,30 +41,9 @@ export class RouterAddressInput extends Component {
       document.getElementById('popupContainer')
     );
 
-    this.addOverPoint = this.addOverPoint.bind(this);
-    this.swapTargets = this.swapTargets.bind(this)
+    this.popupOpen = false;
   }
 
-  /**
-   * Adds an over point to the route.
-   */
-  addOverPoint() {
-    this.setState({overPtCtr: this.state.overPtCtr + 1});
-  }
-
-  /**
-   * Swaps the start and the destination.
-   */
-  swapTargets() {
-    let newFromAddress = this.state.toAddress;
-    let newToAddress = this.state.fromAddress;
-    this.setState({
-      fromAddress: newFromAddress,
-      toAddress: newToAddress,
-      fromPoint: this.state.toPoint,
-      toPoint: this.state.fromPoint
-    });
-  }
 
   render() {
     let input = null;
@@ -74,10 +53,9 @@ export class RouterAddressInput extends Component {
     Popup.registerPlugin('inputPopup', function (callback) {
       this.create({
         title: 'Routenoptionen',
-        content: <RouterInputPopup profiles={scope.props.profiles} open={scope.props.open}
-                                   mode={scope.props.mode} settings={scope.props.popupSettings}/>,
+        content: <RouterInputPopup profiles={scope.props.profiles} open={scope.props.open} containerAddresses={scope.props.containerAddresses}
+                                   mode={scope.props.mode} settings={scope.props.popupSettings} objFunctions={scope.props.objFunctions}/>,
         buttons: {
-          // left: ['cancel'],
           right: [{
             text: 'Bestätigen',
             className: 'success',
@@ -90,12 +68,22 @@ export class RouterAddressInput extends Component {
       });
     });
 
+    console.log("render called");
+
     const clickListener = function() {
       /** Call the plugin */
       Popup.plugins().inputPopup(function () {
         // TODO die parameter die man hier einstellen kann in die view hochreichen
+        scope.popupOpen = false;
       });
+      scope.popupOpen = true;
     };
+
+
+    if (this.popupOpen) {
+      Popup.close();
+      clickListener();
+    }
 
     if (this.props.mode === "route") {
       input = <React.Fragment>
@@ -113,64 +101,12 @@ export class RouterAddressInput extends Component {
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.areaAddress} router={this.props.router}/>
       </React.Fragment>;
     }
+
     return (
       <div className={this.props.className}>
         {input}
         <button onMouseUp={clickListener}>Mehr Optionen</button>
       </div>
     );
-  }
-
-  /**
-   * Creates objSettings object and objFunctions for the autocomplete handler.
-   * @param type  The type of field, "from" or "to"
-   */
-  createAutocompleteFunctions(type) {
-    const scope = this;
-    const uppercasedType = type.charAt(0).toUpperCase() + type.slice(1);
-    const objFunctions = {};
-    const objSettings = {
-      "proxyUrl": mapData.proxyUrl,
-      "keyAutocomplete": mapData.autocomplete,
-      "center" : function () {
-        let center = self.options.mapController.map.getView().getCenter();
-        center = transform(center, "EPSG:3857","EPSG:4326")
-        return center;
-      }
-    };
-    objFunctions["delete" + uppercasedType + "Listener"] = function(event) {
-      let newState = {};
-      newState[type + "Address"] = "";
-      newState[type + "Point"] = [];
-      scope.setState(newState);
-      scope.state.router.recalculateRoute();
-    };
-
-    objFunctions["submit" + uppercasedType + "Listener"] = function(event) {
-      // TODO
-      // self.$fromInput.trigger('change');
-      // const performSearchCallback = function() {
-      //   self.performViaRoute();
-      // };
-      // self.performSearch(self.$fromInput, "fromValue", performSearchCallback);
-    };
-
-    objFunctions["select" + uppercasedType + "Listener"] = function(event, ui) {
-      let value = ui.item.value;
-      let coord = scope.state.arrFromPositions[containerAddresses.arrFromNames.findIndex(
-        danger => danger === value
-      )];
-      self.fromValue = new Point([coord[1], coord[0]]);
-      self.recalculateRoute();
-    };
-
-    objFunctions["change" + uppercasedType + "Listener"] = function (event) {
-
-    };
-
-    return {
-      callbacks: objFunctions,
-      settings: objSettings
-    };
   }
 }
