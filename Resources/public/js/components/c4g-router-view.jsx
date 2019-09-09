@@ -61,6 +61,8 @@ export class RouterView extends Component {
       fromAddress: "",
       toAddress: "",
       areaAddress: "",
+      layerRoute: 4,
+      layerArea: 4,
       detourRoute: props.detourRoute.initial,
       detourArea: props.detourArea.initial,
       featureList: {
@@ -90,7 +92,7 @@ export class RouterView extends Component {
           fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} mapController={this.props.mapController} routerWaySource={this.state.routerWaySource} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
+          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} mapController={this.props.mapController} routerWaySource={this.state.routerWaySource} layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
       </React.Fragment>
     );
   }
@@ -796,7 +798,7 @@ export class RouterView extends Component {
         + this.state.detourRoute + '/' + fromCoord;
 
       url = 'con4gis/routeService/' + this.props.mapController.data.lang + '/'
-        + profileId + '/' + 4 + '/'
+        + profileId + '/' + this.state.layerRoute + '/'
         + this.state.detourRoute + '/' + fromCoord;
 
       if (overPoint) {
