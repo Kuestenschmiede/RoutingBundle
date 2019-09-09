@@ -17,6 +17,8 @@ export class AutocompleteInput extends Component {
 
   constructor(props) {
     super(props);
+
+    this.listenerRegistered = false;
   }
 
   render() {
@@ -51,20 +53,30 @@ export class AutocompleteInput extends Component {
     };
 
     return (
-      <input id={this.props.cssId} type="search" value={this.props.value} onInput={enterListener} autoComplete="off" onChange={(event) => {scope.setState({value: event.target.value})}}/>
+      <input id={this.props.cssId} type="search" defaultValue={this.props.value} onInput={enterListener} autoComplete="off" onChange={(event) => {scope.setState({value: event.target.value})}}/>
     );
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
+    const scope = this;
     let arrNames;
     if (this.props.cssId.indexOf("From") !== -1) {
       arrNames = this.props.containerAddresses.arrFromNames
     } else {
       arrNames = this.props.containerAddresses.arrToNames;
     }
-    jQuery('#' + this.props.cssId).autocomplete({
+    let inputField = jQuery('#' + this.props.cssId);
+    inputField.autocomplete({
       source: arrNames
     });
+    // only register listener once
+    if (!this.listenerRegistered) {
+      inputField.on('autocompleteselect', function (event, ui) {
+        scope.props.objFunctions.selectListener(event, ui);
+      });
+      this.listenerRegistered = true;
+    }
+
   }
 
   setCenter (center) {

@@ -12,10 +12,13 @@
  */
 
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import { RouterAddressField } from "./c4g-router-address-field.jsx";
 import { RouterProfileSelection } from "./c4g-router-profile-selection.jsx";
 import {Point} from "ol/geom";
 import {transform} from "ol/proj";
+import Popup from "react-popup";
+import {RouterInputPopup} from "./c4g-router-input-popup.jsx";
 
 export class RouterAddressInput extends Component {
 
@@ -26,11 +29,18 @@ export class RouterAddressInput extends Component {
       console.warn("The routing component needs a router, it won't work correctly since none was passed...");
     }
 
-    // TODO hier müssen noch properties rein, die die autocomplete-vorschläge halten können
     this.state = {
       router: props.router,
-
     };
+    let popupContainer = document.createElement('div');
+    popupContainer.id = "popupContainer";
+    let mapId = this.props.router.props.mapController.data.mapId;
+    document.getElementById("c4g_map_" + mapId).appendChild(popupContainer);
+    ReactDOM.render(
+      <Popup />,
+      document.getElementById('popupContainer')
+    );
+
     this.addOverPoint = this.addOverPoint.bind(this);
     this.swapTargets = this.swapTargets.bind(this)
   }
@@ -58,13 +68,34 @@ export class RouterAddressInput extends Component {
 
   render() {
     let input = null;
-    let details = null;
-    if (this.props.open && this.props.mode === "route") {
-      details = <div className="buttonbar">
-        <button className="c4g-router-over" onMouseUp={this.addOverPoint}></button>
-        <button className="c4g-router-switch" onMouseUp={this.swapTargets}></button>
-      </div>;
-    }
+    const scope = this;
+
+    /** Prompt plugin */
+    Popup.registerPlugin('inputPopup', function (callback) {
+      this.create({
+        title: 'Routenoptionen',
+        content: <RouterInputPopup profiles={scope.props.profiles} open={scope.props.open}
+                                   mode={scope.props.mode} settings={scope.props.popupSettings}/>,
+        buttons: {
+          // left: ['cancel'],
+          right: [{
+            text: 'Bestätigen',
+            className: 'success',
+            action: function () {
+              callback();
+              Popup.close();
+            }
+          }]
+        }
+      });
+    });
+
+    const clickListener = function() {
+      /** Call the plugin */
+      Popup.plugins().inputPopup(function () {
+        // TODO die parameter die man hier einstellen kann in die view hochreichen
+      });
+    };
 
     if (this.props.mode === "route") {
       input = <React.Fragment>
@@ -85,7 +116,7 @@ export class RouterAddressInput extends Component {
     return (
       <div className={this.props.className}>
         {input}
-        {details}
+        <button onMouseUp={clickListener}>Mehr Optionen</button>
       </div>
     );
   }

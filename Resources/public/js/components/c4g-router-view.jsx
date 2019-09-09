@@ -87,7 +87,7 @@ export class RouterView extends Component {
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.props.open} className={this.props.className}
-          objSettings={this.state.objSettings} objFunctions={this.objFunctions}
+          objSettings={this.state.objSettings} objFunctions={this.objFunctions} popupSettings={this.createPopupSettings()}
           containerAddresses={this.state.containerAddresses} mapController={this.props.mapController}
           fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
@@ -118,8 +118,80 @@ export class RouterView extends Component {
     this.setState({toPoint: point}, () => scope.updateRouteLayersAndPoints());
   }
 
-  addOverPoint(longitude, latitude) {
+  addOverPoint(longitude, latitude, index) {
 
+  }
+
+  createPopupSettings() {
+    const scope = this;
+    let objSettings = {};
+    objSettings.overAddresses = this.state.overAddresses;
+    objSettings.overPoints = this.state.overPoints;
+    objSettings.overPtCtr = this.state.overPtCtr;
+    // increments the overPtCtr so the popup can render additional overFields
+    objSettings.overFunction = function() {
+      scope.setState({
+        overPtCtr: scope.state.overPtCtr + 1
+      });
+    };
+    objSettings.objFunctions = {};
+    for (let i = 0; i < this.state.overPtCtr; i++) {
+      objSettings.objFunctions[i] = this.createAutocompleteFunctionsForOverField(i);
+      objSettings.overAddresses[i] = "";
+      objSettings.overPoints[i] = null;
+    }
+    objSettings.objSettings = this.state.objSettings;
+    objSettings.router = this;
+    return objSettings;
+  }
+
+  createAutocompleteFunctionsForOverField(fieldId) {
+    const scope = this;
+    // set listener for the autocomplete from field
+    const deleteOverListener = function(event) {
+      let containerAddresses = scope.state.containerAddresses;
+      containerAddresses.arrOverPositions[fieldId] = [];
+      containerAddresses.arrOverNames[fieldId] = [];
+      let overPoints = scope.state.overPoints;
+      overPoints[fieldId] = null;
+      let overAddresses = scope.state.overAddresses;
+      overAddresses[fieldId] = "";
+      scope.setState({
+        overPoints: overPoints,
+        containerAddresses: containerAddresses,
+        overAddresses: overAddresses
+      }, () => {
+        scope.updateRouteLayersAndPoints();
+        scope.recalculateRoute();
+      });
+
+    };
+
+    const selectOverListener = function(event, ui) {
+      let value = ui.item.value;
+      let coord = scope.state.containerAddresses.arrOverPositions[fieldId][scope.state.containerAddresses.arrOverNames[fieldId].findIndex(
+        danger => danger === value
+      )];
+      let overValue = new Point([coord[1], coord[0]]);
+      let overPoints = scope.state.overPoints;
+      overPoints[fieldId] = overValue;
+      scope.setState({
+        overPoints: overValue
+      }, () => {
+        scope.recalculateRoute();
+      });
+
+    };
+
+    const changeOverListener = function () {
+      // self.fromValue = null;
+    };
+
+    return {
+      "selectListener": selectOverListener,
+      "deleteFunction": deleteOverListener,
+      "changeListener": changeOverListener
+    };
   }
 
   updateRouteLayersAndPoints() {
@@ -169,6 +241,7 @@ export class RouterView extends Component {
 
     const selectFromListener = function(event, ui) {
       let value = ui.item.value;
+      console.log(scope.state.containerAddresses.arrFromPositions);
       let coord = scope.state.containerAddresses.arrFromPositions[scope.state.containerAddresses.arrFromNames.findIndex(
         danger => danger === value
       )];
@@ -212,9 +285,9 @@ export class RouterView extends Component {
       let coord = scope.state.containerAddresses.arrToPositions[scope.state.containerAddresses.arrToNames.findIndex(
         danger => danger === value
       )];
-      let fromValue = new Point([coord[1], coord[0]]);
+      let toValue = new Point([coord[1], coord[0]]);
       scope.setState({
-        fromPoint: fromValue
+        toPoint: toValue
       }, () => {
         scope.recalculateRoute();
       });
@@ -418,7 +491,7 @@ export class RouterView extends Component {
       source: this.areaSource,
       zIndex: 2
     });
-    this.routerFeaturesSource = new VectorSource(),
+    this.routerFeaturesSource = new VectorSource();
 
     this.routerFeaturesLayer = new Vector({
       source: this.routerFeaturesSource,
@@ -879,36 +952,6 @@ export class RouterView extends Component {
     var tmpFeature,
       proxy = this.props.mapController.proxy;
 
-    // this.locationsSource.clear();
-    // if (this.fromValue) {
-    //   tmpFeature = new Feature({
-    //     geometry: this.fromValue.clone().transform('EPSG:4326', 'EPSG:3857')
-    //   });
-    //   if (this.props.mapController.data.router_from_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
-    //     tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
-    //   }
-    //   this.locationsSource.addFeature(tmpFeature);
-    // }
-    // if (this.toValue) {
-    //   tmpFeature = new Feature({
-    //     geometry: this.toValue.clone().transform('EPSG:4326', 'EPSG:3857')
-    //   });
-    //   if (this.props.mapController.data.router_to_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_to_locstyle]) {
-    //     tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_to_locstyle].style);
-    //   }
-    //   this.locationsSource.addFeature(tmpFeature);
-    // }
-    // if (this.overValue) {
-    //   for (var propt in this.overValue) {
-    //     tmpFeature = new Feature({
-    //       geometry: this.overValue[propt].clone().transform('EPSG:4326', 'EPSG:3857')
-    //     });
-    //     if (this.props.mapController.data.router_interim_locstyle && proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_interim_locstyle]) {
-    //       tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_interim_locstyle].style);
-    //     }
-    //     this.locationsSource.addFeature(tmpFeature);
-    //   }
-    // }
     if (this.state.fromPoint && this.state.toPoint) {
       if (this.state.overPoints.length > 0) {
         this.performViaRoute(this.state.fromPoint, this.state.toPoint, this.state.overPoints);

@@ -55,9 +55,9 @@ export class RouterControls extends HorizontalPanel {
 
     let details = null;
 
-    if (this.state.open) {
-      details = <RouterProfileSelection profiles={arrProfiles}/>;
-    }
+    // if (this.state.open) {
+    //   details = <RouterProfileSelection profiles={arrProfiles}/>;
+    // }
 
     return (
       <div className={className}>
@@ -68,13 +68,17 @@ export class RouterControls extends HorizontalPanel {
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={false}
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
                             containerAddresses={this.props.containerAddresses} mode={this.state.mode} open={open}
-                            fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress}/>
-        {details}
+                            fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress}
+                            profiles={arrProfiles} popupSettings={this.props.popupSettings}/>
       </div>
     );
   }
 
   slideInCollidingElements() {
+    jQuery(this.state.control.element).css("top", 0 + "px");
+  }
+
+  slideOutCollidingElements() {
     // override parent method
     let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
     let topValue = 0;
@@ -83,11 +87,6 @@ export class RouterControls extends HorizontalPanel {
       topValue = container.offsetHeight;
     }
     jQuery(this.state.control.element).css("top", topValue + "px");
-  }
-
-  slideOutCollidingElements() {
-    // override parent method
-    this.slideInCollidingElements();
   }
 
 
