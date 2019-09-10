@@ -21,33 +21,25 @@ export class RouterInputPopup extends Component {
   }
 
   render() {
-    let details = "";
-    if (this.props.open && this.props.mode === "route") {
-      details = <div className="buttonbar">
-        <button className="c4g-router-over" onMouseUp={this.props.settings.overFunction}></button>
-        <button className="c4g-router-switch" onMouseUp={this.props.settings.switchFunction}></button>
-      </div>;
-    }
 
-    // TODO autocomplete für Zwischenziele
 
     return (
       <div>
         <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
-                            cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings}
+                            cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.settings.objSettings} popup={true}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.fromAddress} router={this.props.router}/>
 
         {Object.keys(this.props.settings.overPoints).map((item) => {
-          return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label="Zwischenziel"
+          return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label="Zwischenziel" popup={true}
                                      cssId="routingOver" objFunctions={this.props.settings.objFunctions} objSettings={this.props.settings.objSettings}
                                      containerAddresses={this.props.containerAddresses} value={this.props.settings.overAddresses[item]}
                                      router={this.props.settings.router} key={item} index={item}/>
         })}
-        <RouterAddressField className="c4g-router-input-to" name="routingTo" label="Ziel"
-                            cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.objSettings}
+        <RouterAddressField className="c4g-router-input-to" name="routingTo" label="Ziel" popup={true}
+                            cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.settings.objSettings}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.toAddress} router={this.props.router}/>
         {details}
-        <RouterProfileSelection profiles={this.props.profiles} />
+
       </div>
     );
   }

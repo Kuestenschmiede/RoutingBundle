@@ -40,7 +40,7 @@ export class RouterAddressField extends Component {
       <div>
         <label htmlFor={this.props.name}>{this.props.label}</label>
         <AutocompleteInput type="search" className={this.props.class} name={this.props.name}
-                           cssId={this.props.cssId} objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
+                           cssId={this.props.cssId} objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} popup={this.props.popup}
                            containerAddresses={this.props.containerAddresses} autoComplete="off" router={this.props.router} value={this.props.value} index={this.props.index}/>
         {positionButton}
       </div>
@@ -67,16 +67,11 @@ export class RouterAddressField extends Component {
    */
   handlePosition(coordinates) {
     let coords = coordinates.coords;
-    console.log(coordinates);
     if (this.props.name === "routingFrom") {
       this.props.router.setRouteFrom(coords.longitude, coords.latitude);
     }
     else if (this.props.name === "overValue") {
-      // if (!scope[property]) {
-      //   scope[property] = [];
-      // }
-      // scope[property].push(new Point([coords.longitude, coords.latitude]));
-      // scope.performReverseSearch(jQuery(scope.$overInput), [coords.longitude, coords.latitude]);
+
     }
     else if (this.props.name === "routingTo") {
       this.props.router.setRouteTo(coords.longitude, coords.latitude);

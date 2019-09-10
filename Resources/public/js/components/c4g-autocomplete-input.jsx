@@ -81,7 +81,6 @@ export class AutocompleteInput extends Component {
         } else {
           scope.props.objFunctions.selectListener(event, ui);
         }
-
       });
       this.listenerRegistered = true;
     }
@@ -194,6 +193,30 @@ export class AutocompleteInput extends Component {
               console.log("This is weird ¯\\_(ツ)_/¯");
             }
           }
+        }
+        let inputField = jQuery('#' + scope.props.cssId);
+        switch (cssClass) {
+          case "#routingOver":
+            scope.props.router.setState({
+              containerAddresses: scope.props.containerAddresses
+            });
+            // inputField.autocomplete({
+            //   source: scope.props.containerAddresses.arrOverNames[scope.props.index]
+            // });
+
+            break;
+          case "#routingFrom":
+            inputField.autocomplete({
+              source: scope.props.containerAddresses.arrFromNames
+            });
+            break;
+          case "#routingTo":
+            inputField.autocomplete({
+              source: scope.props.containerAddresses.arrToNames
+            });
+            break;
+          default:
+            console.log("This is weird ¯\\_(ツ)_/¯");
         }
         // trigger keydown event to show autocomplete options
         let event = jQuery.Event("keydown", {keyCode: 8});

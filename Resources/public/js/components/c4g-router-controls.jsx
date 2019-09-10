@@ -24,9 +24,11 @@ export class RouterControls extends HorizontalPanel {
     this.state.mode = "route"; // route or area
     this.state.router = this.props.router;
     this.state.open = this.props.open;
+    this.state.detailsEnabled = false;
 
     this.setRouteMode = this.setRouteMode.bind(this);
     this.setAreaMode = this.setAreaMode.bind(this);
+    this.toggleDetails = this.toggleDetails.bind(this);
   }
 
   setRouteMode(event) {
@@ -69,9 +71,18 @@ export class RouterControls extends HorizontalPanel {
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
                             containerAddresses={this.props.containerAddresses} mode={this.state.mode} open={open}
                             fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress}
-                            profiles={arrProfiles} popupSettings={this.props.popupSettings}/>
+                            profiles={arrProfiles} overSettings={this.props.overSettings} toggleDetails={this.toggleDetails} detailsEnabled={this.state.detailsEnabled}/>
       </div>
     );
+  }
+
+  toggleDetails() {
+    if (!this.state.detailsEnabled) {
+      this.setState({detailsEnabled: true});
+    } else {
+      this.setState({detailsEnabled: false});
+    }
+
   }
 
   slideInCollidingElements() {

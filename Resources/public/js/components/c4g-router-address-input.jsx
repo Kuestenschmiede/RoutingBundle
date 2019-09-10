@@ -32,16 +32,7 @@ export class RouterAddressInput extends Component {
     this.state = {
       router: props.router,
     };
-    let popupContainer = document.createElement('div');
-    popupContainer.id = "popupContainer";
-    let mapId = this.props.router.props.mapController.data.mapId;
-    document.getElementById("c4g_map_" + mapId).appendChild(popupContainer);
-    ReactDOM.render(
-      <Popup />,
-      document.getElementById('popupContainer')
-    );
 
-    this.popupOpen = false;
   }
 
 
@@ -49,40 +40,14 @@ export class RouterAddressInput extends Component {
     let input = null;
     const scope = this;
 
-    /** Prompt plugin */
-    Popup.registerPlugin('inputPopup', function (callback) {
-      this.create({
-        title: 'Routenoptionen',
-        content: <RouterInputPopup profiles={scope.props.profiles} open={scope.props.open} containerAddresses={scope.props.containerAddresses}
-                                   mode={scope.props.mode} settings={scope.props.popupSettings} objFunctions={scope.props.objFunctions}/>,
-        buttons: {
-          right: [{
-            text: 'Bestätigen',
-            className: 'success',
-            action: function () {
-              callback();
-              Popup.close();
-            }
-          }]
-        }
-      });
-    });
-
-    console.log("render called");
-
-    const clickListener = function() {
-      /** Call the plugin */
-      Popup.plugins().inputPopup(function () {
-        // TODO die parameter die man hier einstellen kann in die view hochreichen
-        scope.popupOpen = false;
-      });
-      scope.popupOpen = true;
-    };
-
-
-    if (this.popupOpen) {
-      Popup.close();
-      clickListener();
+    let overForm = "";
+    if (this.props.detailsEnabled) {
+      overForm = Object.keys(this.props.overSettings.overPoints).map((item) => {
+          return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label="Zwischenziel"
+                                     cssId="routingOver" objFunctions={this.props.overSettings.objFunctions} objSettings={this.props.objSettings}
+                                     containerAddresses={this.props.containerAddresses} value={this.props.overSettings.overAddresses[item]}
+                                     router={this.props.router} key={item} index={item}/>
+        });
     }
 
     if (this.props.mode === "route") {
@@ -90,6 +55,7 @@ export class RouterAddressInput extends Component {
         <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
                             cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.fromAddress} router={this.props.router}/>
+        {overForm}
         <RouterAddressField className="c4g-router-input-to" name="routingTo" label="Ziel"
                             cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.objSettings}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.toAddress} router={this.props.router}/>
@@ -102,10 +68,20 @@ export class RouterAddressInput extends Component {
       </React.Fragment>;
     }
 
+    let details = "";
+    if (this.props.detailsEnabled && this.props.mode === "route") {
+      details = <div className="buttonbar">
+        <button className="c4g-router-over" onMouseUp={this.props.overSettings.overFunction}></button>
+        <button className="c4g-router-switch" onMouseUp={this.props.overSettings.switchFunction}></button>
+        <RouterProfileSelection profiles={this.props.profiles} />
+      </div>;
+    }
+
     return (
       <div className={this.props.className}>
         {input}
-        <button onMouseUp={clickListener}>Mehr Optionen</button>
+        <button onMouseUp={this.props.toggleDetails}>Mehr Optionen</button>
+        {details}
       </div>
     );
   }

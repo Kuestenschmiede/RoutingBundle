@@ -94,12 +94,12 @@ export class RouterView extends Component {
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.props.open} className={this.props.className}
-          objSettings={this.state.objSettings} objFunctions={this.objFunctions} popupSettings={this.createPopupSettings()}
+          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()}
           containerAddresses={this.state.containerAddresses} mapController={this.props.mapController}
           fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} mapController={this.props.mapController} routerWaySource={this.state.routerWaySource} layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
+          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
       </React.Fragment>
     );
   }
@@ -129,7 +129,7 @@ export class RouterView extends Component {
 
   }
 
-  createPopupSettings() {
+  createOverSettings() {
     const scope = this;
     let objSettings = {};
     objSettings.overAddresses = this.state.overAddresses;
@@ -137,7 +137,6 @@ export class RouterView extends Component {
     objSettings.overPtCtr = this.state.overPtCtr;
     // increments the overPtCtr so the popup can render additional overFields
     objSettings.overFunction = function() {
-
       let containerAddresses = scope.state.containerAddresses;
       containerAddresses.arrOverNames[scope.state.overPtCtr] = [];
       containerAddresses.arrOverPositions[scope.state.overPtCtr] = [];
@@ -149,11 +148,13 @@ export class RouterView extends Component {
     objSettings.objFunctions = {};
     for (let i = 0; i < this.state.overPtCtr; i++) {
       objSettings.objFunctions[i] = this.createAutocompleteFunctionsForOverField(i);
-      objSettings.overAddresses[i] = "";
-      objSettings.overPoints[i] = null;
+      if (!objSettings.overAddresses[i]) {
+        objSettings.overAddresses[i] = "";
+      }
+      if (!objSettings.overPoints[i]) {
+        objSettings.overPoints[i] = null;
+      }
     }
-    objSettings.objSettings = this.state.objSettings;
-    objSettings.router = this;
     return objSettings;
   }
 
@@ -176,27 +177,27 @@ export class RouterView extends Component {
         scope.updateRouteLayersAndPoints();
         scope.recalculateRoute();
       });
-
     };
 
     const selectOverListener = function(event, ui) {
+      console.log(fieldId);
+      let overAddresses, overPoints, overValue;
       let value = ui.item.value;
-      let chosenName = scope.state.containerAddresses.arrOverNames[fieldId].findIndex(
+      let index = scope.state.containerAddresses.arrOverNames[fieldId].findIndex(
         danger => danger === value
       );
-      let coord = scope.state.containerAddresses.arrOverPositions[fieldId][chosenName];
-      let overAddresses = scope.state.overAddresses;
-      overAddresses[fieldId] = scope.state.containerAddresses.arrOverNames[fieldId][chosenName];
-      let overValue = new Point([coord[1], coord[0]]);
-      let overPoints = scope.state.overPoints;
+      let coord = scope.state.containerAddresses.arrOverPositions[fieldId][index];
+      overAddresses = scope.state.overAddresses;
+      overAddresses[fieldId] = scope.state.containerAddresses.arrOverNames[fieldId][index];
+      overValue = new Point([coord[1], coord[0]]);
+      overPoints = scope.state.overPoints;
       overPoints[fieldId] = overValue;
       scope.setState({
         overPoints: overPoints,
         overAddresses: overAddresses
       }, () => {
-        scope.recalculateRoute();
+        // scope.recalculateRoute();
       });
-
     };
 
     const changeOverListener = function () {
