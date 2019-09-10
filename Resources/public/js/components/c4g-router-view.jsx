@@ -870,6 +870,9 @@ export class RouterView extends Component {
       overCoord;
 
     scope = this;
+    if (this.state.featureSource) {
+      this.state.featureSource.clear();
+    }
     // this.areaSource.clear();
     this.mapSelectInteraction.getFeatures().clear();
     if (!fromPoint) {
@@ -1015,10 +1018,9 @@ export class RouterView extends Component {
       return [];
     }
     const mapData = this.mapData;
-    let layerId = mode === "router" ? jQuery(this.routerLayersSelect).val() : jQuery(this.areaLayersSelect).val();
-    layerId = 4;
+    let layerId = this.state.mode === "route" ? this.state.layerRoute : this.state.layerArea;
     const layer = self.props.mapController.proxy.layerController.arrLayers[layerId];
-    let activeLayer = mode === "router" ? 4: 4;//self.activeLayerValue : self.activeLayerValueArea; //richtig anpassen, wenn vorhanden aus GUI
+    let activeLayer = this.state.mode === "route" ? "Tanken": "Tanken";//self.activeLayerValue : self.activeLayerValueArea; //richtig anpassen, wenn vorhanden aus GUI
     const unstyledFeatures = [];
     const contentFeatures = [];
     let missingStyles = [];
