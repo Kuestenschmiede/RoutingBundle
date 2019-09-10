@@ -180,7 +180,6 @@ export class RouterView extends Component {
     };
 
     const selectOverListener = function(event, ui) {
-      console.log(fieldId);
       let overAddresses, overPoints, overValue;
       let value = ui.item.value;
       let index = scope.state.containerAddresses.arrOverNames[fieldId].findIndex(
@@ -233,6 +232,17 @@ export class RouterView extends Component {
     }
     if (!(this.state.fromPoint && this.state.toPoint)) {
       this.routerWaySource.clear();
+    }
+    if (this.state.overPoints && Object.keys(this.state.overPoints).length > 0) {
+      for (let key in this.state.overPoints) {
+        let tmpFeature = new Feature({
+          geometry: this.state.overPoints[key].clone().transform('EPSG:4326', 'EPSG:3857')
+        });
+        if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
+          tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+        }
+        this.locationsSource.addFeature(tmpFeature);
+      }
     }
     // TODO iterate overPoints and add them
   }
@@ -992,7 +1002,7 @@ export class RouterView extends Component {
       proxy = this.props.mapController.proxy;
 
     if (this.state.fromPoint && this.state.toPoint) {
-      if (this.state.overPoints.length > 0) {
+      if (this.state.overPoints && Object.keys(this.state.overPoints).length > 0) {
         this.performViaRoute(this.state.fromPoint, this.state.toPoint, this.state.overPoints);
       } else {
         this.performViaRoute(this.state.fromPoint, this.state.toPoint);
