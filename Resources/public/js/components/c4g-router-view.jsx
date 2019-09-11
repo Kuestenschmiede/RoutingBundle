@@ -45,6 +45,16 @@ export class RouterView extends Component {
     super(props);
 
     const mapController = this.props.mapController;
+    let arrProfiles = [];
+
+    for (let key in mapController.data.router_profiles) {
+      if (mapController.data.router_profiles.hasOwnProperty(key)) {
+        arrProfiles.push({
+          id: key,
+          text: mapController.data.router_profiles[key]
+        });
+      }
+    }
 
     this.state = {
       router: props.router,
@@ -86,6 +96,8 @@ export class RouterView extends Component {
       fromPoint: null,  // array of two coords
       toPoint: null,  // array of two coords
       overPoints: {},  // array of arrays of two coords
+      profiles: arrProfiles,
+      currentProfile: 0
     };
     this.init();
   }
@@ -93,9 +105,9 @@ export class RouterView extends Component {
   render() {
     return (
       <React.Fragment>
-        <RouterControls router={this} open={this.props.open} className={this.props.className}
+        <RouterControls router={this} open={this.props.open} className={this.props.className} profiles={this.state.profiles}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()}
-          containerAddresses={this.state.containerAddresses} mapController={this.props.mapController}
+          containerAddresses={this.state.containerAddresses} mapController={this.props.mapController} currentProfile={this.state.currentProfile}
           fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
@@ -916,9 +928,6 @@ export class RouterView extends Component {
 
     if (this.props.mapController.data.router_api_selection >= '1') {//OSRM-API:5.x or ORS- API
       let profileId = this.props.mapController.data.profile;
-      url = 'con4gis/routeService/' + this.props.mapController.data.lang + '/'
-        + profileId + '/' + jQuery(scope.routerLayersSelect).val() + '/'
-        + this.state.detourRoute + '/' + fromCoord;
 
       url = 'con4gis/routeService/' + this.props.mapController.data.lang + '/'
         + profileId + '/' + this.state.layerRoute + '/'
@@ -929,9 +938,9 @@ export class RouterView extends Component {
           url += ';' + overCoord[i];
       }
       url += ';' + toCoord;
-      if (this.routeProfile && this.routeProfile.active) {
-        url += '?profile=' + this.routeProfile.active;
-      }
+      // if (this.state.currentProfile) {
+        url += '?profile=' + this.state.currentProfile;
+      // }
 
       if (scope.routeAjax) {
         scope.routeAjax.abort();

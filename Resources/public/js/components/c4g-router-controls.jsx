@@ -43,17 +43,8 @@ export class RouterControls extends HorizontalPanel {
 
   render() {
     let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
-    let arrProfiles = [];
     // propagate open state down to child components
     let open = this.state.open;
-    for (let key in this.props.mapController.data.router_profiles) {
-      if (this.props.mapController.data.router_profiles.hasOwnProperty(key)) {
-        arrProfiles.push({
-          id: key,
-          text: this.props.mapController.data.router_profiles[key]
-        });
-      }
-    }
 
     return (
       <div className={className}>
@@ -62,10 +53,10 @@ export class RouterControls extends HorizontalPanel {
           <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
         </div>
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={false}
-                            objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
+                            objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile}
                             containerAddresses={this.props.containerAddresses} mode={this.state.mode} open={open}
                             fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress}
-                            profiles={arrProfiles} overSettings={this.props.overSettings} toggleDetails={this.toggleDetails} detailsEnabled={this.state.detailsEnabled}/>
+                            profiles={this.props.profiles} overSettings={this.props.overSettings} toggleDetails={this.toggleDetails} detailsEnabled={this.state.detailsEnabled}/>
       </div>
     );
   }

@@ -35,7 +35,7 @@ export class RouterResultContainer extends HorizontalPanel {
     event.stopPropagation();
     this.setState({mode: "feat"});
   }
-  
+
   render() {
     let result = "";
     if (this.state.mode === "instr" && this.state.open) {

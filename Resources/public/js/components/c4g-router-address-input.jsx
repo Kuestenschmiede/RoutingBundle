@@ -68,7 +68,7 @@ export class RouterAddressInput extends Component {
       details = <div className="buttonbar">
         <button className="c4g-router-over" onMouseUp={this.props.overSettings.overFunction}></button>
         <button className="c4g-router-switch" onMouseUp={this.props.overSettings.switchFunction}></button>
-        <RouterProfileSelection profiles={this.props.profiles} />
+        <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
       </div>;
     }
 
