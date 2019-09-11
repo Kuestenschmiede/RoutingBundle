@@ -19,7 +19,6 @@ export class RouterInstructionsContainer extends Component {
 
   constructor(props) {
     super(props);
-
   }
 
   render() {
@@ -27,16 +26,15 @@ export class RouterInstructionsContainer extends Component {
     let time = "";
     let distance = "";
     let profile = "";
+
     if (this.props.routerInstructions && this.props.routerInstructions.instructions) {
       instructions = this.props.routerInstructions.instructions;
     }
+
     if (instructions.length === 0) {
       return ("");
-    }
-    else {
+    } else {
       // instructions present, container open
-      // TODO hier muss noch eine ID zu, die dann für die hover-Action interessant wird, weil dann immer
-      // TODO die jeweilige instruction auf der route markiert werden muss
       return (
         <div className={this.props.className}>
           {instructions.map((item, index) => {

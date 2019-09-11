@@ -36,6 +36,7 @@ export class RouterInstruction extends Component {
       </div>
     );
   };
+
   fnItemClick = function () {
     if (this.props.routerWaySource && this.props.routerWaySource.getFeatures()) {
       this.props.routerHintSource.clear();
@@ -49,15 +50,15 @@ export class RouterInstruction extends Component {
         let newCoord = fromLonLat(stringlonlat);
         let currentHintFeature = new Feature({
           geometry: new Point(newCoord)
-        })
+        });
         this.props.routerHintSource.addFeature(currentHintFeature);
         this.props.options.mapController.map.getView().setCenter(newCoord);
       }
       else if (coordinates && this.props.dataStart && this.props.dataEnd) {
-        let geom = new LineString(coordinates.slice(this.props.dataStart, this.props.dataEnd))
+        let geom = new LineString(coordinates.slice(this.props.dataStart, this.props.dataEnd));
         let currentHintFeature = new Feature({
           geometry: geom
-        })
+        });
         currentHintFeature.setStyle(
             new Style({
               stroke: new Stroke({
@@ -70,13 +71,14 @@ export class RouterInstruction extends Component {
         this.props.routerHintSource.addFeature(currentHintFeature);
         this.props.mapController.map.getView().fit(geom);
         let afterZoom = this.props.mapController.map.getView().getZoom();
-        let endZoom = Math.round((currentZoom + afterZoom)/2)
+        let endZoom = Math.round((currentZoom + afterZoom)/2);
         endZoom = (endZoom > afterZoom) ? afterZoom : endZoom;
         this.props.mapController.map.getView().setZoom(endZoom);
 
       }
     }
   };
+
   fnItemOver = function () {
     if (this.props.routerWaySource && this.props.routerWaySource.getFeatures()) {
       let feature = this.props.routerWaySource.getFeatures()[0];
@@ -92,8 +94,7 @@ export class RouterInstruction extends Component {
             geometry: new Point(newCoord)
           });
           this.props.routerHintSource.addFeature(currentHintFeature);
-        }
-        else if (this.props.dataStart && this.props.dataEnd) {
+        } else if (this.props.dataStart && this.props.dataEnd) {
           let coordinates = feature.getGeometry().getCoordinates();
           if (coordinates) {
             let currentHintFeature = new Feature({
@@ -113,9 +114,11 @@ export class RouterInstruction extends Component {
       }
     }
   };
+
   fnItemOut = function () {
     this.props.routerHintSource.clear();
   };
+
   /**
    * Translates an integer number into the correct instruction icon (Graphhopper icons).
    * @param intType

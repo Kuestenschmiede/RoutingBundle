@@ -235,16 +235,17 @@ export class RouterView extends Component {
     }
     if (this.state.overPoints && Object.keys(this.state.overPoints).length > 0) {
       for (let key in this.state.overPoints) {
-        let tmpFeature = new Feature({
-          geometry: this.state.overPoints[key].clone().transform('EPSG:4326', 'EPSG:3857')
-        });
-        if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
-          tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+        if (this.state.overPoints.hasOwnProperty(key) && this.state.overPoints[key] !== null) {
+          let tmpFeature = new Feature({
+            geometry: this.state.overPoints[key].clone().transform('EPSG:4326', 'EPSG:3857')
+          });
+          if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
+            tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+          }
+          this.locationsSource.addFeature(tmpFeature);
         }
-        this.locationsSource.addFeature(tmpFeature);
       }
     }
-    // TODO iterate overPoints and add them
   }
 
   createAutocompleteFunctions() {

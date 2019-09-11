@@ -12,13 +12,8 @@
  */
 
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import { RouterAddressField } from "./c4g-router-address-field.jsx";
 import { RouterProfileSelection } from "./c4g-router-profile-selection.jsx";
-import {Point} from "ol/geom";
-import {transform} from "ol/proj";
-import Popup from "react-popup";
-import {RouterInputPopup} from "./c4g-router-input-popup.jsx";
 
 export class RouterAddressInput extends Component {
 
@@ -44,7 +39,7 @@ export class RouterAddressInput extends Component {
     if (this.props.detailsEnabled) {
       overForm = Object.keys(this.props.overSettings.overPoints).map((item) => {
           return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label="Zwischenziel"
-                                     cssId="routingOver" objFunctions={this.props.overSettings.objFunctions} objSettings={this.props.objSettings}
+                                     cssId={"routingOver-" + item} objFunctions={this.props.overSettings.objFunctions} objSettings={this.props.objSettings}
                                      containerAddresses={this.props.containerAddresses} value={this.props.overSettings.overAddresses[item]}
                                      router={this.props.router} key={item} index={item}/>
         });

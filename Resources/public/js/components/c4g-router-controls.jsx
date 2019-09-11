@@ -55,12 +55,6 @@ export class RouterControls extends HorizontalPanel {
       }
     }
 
-    let details = null;
-
-    // if (this.state.open) {
-    //   details = <RouterProfileSelection profiles={arrProfiles}/>;
-    // }
-
     return (
       <div className={className}>
         <div className="c4g-router-mode-switch">

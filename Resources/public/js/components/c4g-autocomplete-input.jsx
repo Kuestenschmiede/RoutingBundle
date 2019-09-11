@@ -194,30 +194,10 @@ export class AutocompleteInput extends Component {
             }
           }
         }
-        let inputField = jQuery('#' + scope.props.cssId);
-        switch (cssClass) {
-          case "#routingOver":
-            scope.props.router.setState({
-              containerAddresses: scope.props.containerAddresses
-            });
-            // inputField.autocomplete({
-            //   source: scope.props.containerAddresses.arrOverNames[scope.props.index]
-            // });
+        scope.props.router.setState({
+          containerAddresses: scope.props.containerAddresses
+        });
 
-            break;
-          case "#routingFrom":
-            inputField.autocomplete({
-              source: scope.props.containerAddresses.arrFromNames
-            });
-            break;
-          case "#routingTo":
-            inputField.autocomplete({
-              source: scope.props.containerAddresses.arrToNames
-            });
-            break;
-          default:
-            console.log("This is weird ¯\\_(ツ)_/¯");
-        }
         // trigger keydown event to show autocomplete options
         let event = jQuery.Event("keydown", {keyCode: 8});
         $(cssClass).trigger(event);

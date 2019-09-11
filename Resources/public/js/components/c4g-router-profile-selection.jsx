@@ -37,7 +37,6 @@ export class RouterProfileSelection extends Component {
                          className={parseInt(item.id, 10) === this.state.currentProfile ? "c4g-active" : "c4g-inactive"}
                   key={item.id}>{item.text}</button>
         })}
-
       </div>
     );
   }
