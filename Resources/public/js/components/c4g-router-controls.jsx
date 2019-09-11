@@ -63,11 +63,10 @@ export class RouterControls extends HorizontalPanel {
 
   toggleDetails() {
     if (!this.state.detailsEnabled) {
-      this.setState({detailsEnabled: true});
+      this.setState({detailsEnabled: true}, this.slideOutCollidingElements);
     } else {
-      this.setState({detailsEnabled: false});
+      this.setState({detailsEnabled: false}, this.slideOutCollidingElements);
     }
-
   }
 
   slideInCollidingElements() {

@@ -99,6 +99,7 @@ export class RouterView extends Component {
       profiles: arrProfiles,
       currentProfile: 0
     };
+    this.swapPoints = this.swapPoints.bind(this);
     this.init();
   }
 
@@ -137,8 +138,25 @@ export class RouterView extends Component {
     this.setState({toPoint: point}, () => scope.updateRouteLayersAndPoints());
   }
 
-  addOverPoint(longitude, latitude, index) {
-
+  swapPoints() {
+    const newFromPoint = this.state.toPoint;
+    const newFromAddress = this.state.toAddress;
+    const newToPoint = this.state.fromPoint;
+    const newToAddress = this.state.fromAddress;
+    const containerAddresses = this.state.containerAddresses;
+    const tmpNames = containerAddresses.arrFromNames;
+    const tmpPos = containerAddresses.arrFromPositions;
+    containerAddresses.arrFromNames = containerAddresses.arrToNames;
+    containerAddresses.arrFromPositions = containerAddresses.arrToPositions;
+    containerAddresses.arrToNames = tmpNames;
+    containerAddresses.arrToPositions = tmpPos;
+    this.setState({
+      fromPoint: newFromPoint,
+      fromAddress: newFromAddress,
+      toPoint: newToPoint,
+      toAddress: newToAddress,
+      containerAddresses: containerAddresses
+    }, this.recalculateRoute);
   }
 
   createOverSettings() {
@@ -157,6 +175,7 @@ export class RouterView extends Component {
         containerAddresses: containerAddresses
       });
     };
+    objSettings.swapFunction = this.swapPoints;
     objSettings.objFunctions = {};
     for (let i = 0; i < this.state.overPtCtr; i++) {
       objSettings.objFunctions[i] = this.createAutocompleteFunctionsForOverField(i);
@@ -917,10 +936,10 @@ export class RouterView extends Component {
     }
     fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
     toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
-    if (overPoint) {
+    if (overPoint && Object.keys(overPoint).length > 0) {
       overCoord = [];
       for (var propt in overPoint) {
-        if (overPoint.hasOwnProperty(propt)) {
+        if (overPoint.hasOwnProperty(propt) && overPoint[propt]) {
           overCoord.push([overPoint[propt].getCoordinates()[1], overPoint[propt].getCoordinates()[0]]);
         }
       }
