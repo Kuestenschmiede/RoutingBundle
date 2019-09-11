@@ -138,6 +138,15 @@ export class RouterView extends Component {
     this.setState({toPoint: point}, () => scope.updateRouteLayersAndPoints());
   }
 
+  addOverPoint(longitude, latitude, index) {
+    const scope = this;
+    this.performReverseSearch("overAddress", [longitude, latitude], index);
+    let point = new Point([longitude, latitude]);
+    const overPoints = this.state.overPoints;
+    overPoints[index] = point;
+    this.setState({overPoints: overPoints}, () => scope.updateRouteLayersAndPoints());
+  }
+
   swapPoints() {
     const newFromPoint = this.state.toPoint;
     const newFromAddress = this.state.toAddress;
@@ -197,13 +206,14 @@ export class RouterView extends Component {
       containerAddresses.arrOverPositions[fieldId] = [];
       containerAddresses.arrOverNames[fieldId] = [];
       let overPoints = scope.state.overPoints;
-      overPoints[fieldId] = null;
+      delete overPoints[fieldId];
       let overAddresses = scope.state.overAddresses;
-      overAddresses[fieldId] = "";
+      delete overAddresses[fieldId];
       scope.setState({
         overPoints: overPoints,
         containerAddresses: containerAddresses,
-        overAddresses: overAddresses
+        overAddresses: overAddresses,
+        overPtCtr: scope.state.overPtCtr - 1
       }, () => {
         scope.updateRouteLayersAndPoints();
         scope.recalculateRoute();
@@ -226,7 +236,8 @@ export class RouterView extends Component {
         overPoints: overPoints,
         overAddresses: overAddresses
       }, () => {
-        // scope.recalculateRoute();
+        scope.updateRouteLayersAndPoints();
+        scope.recalculateRoute();
       });
     };
 
@@ -277,6 +288,7 @@ export class RouterView extends Component {
         }
       }
     }
+    this.recalculateRoute();
   }
 
   createAutocompleteFunctions() {
@@ -487,47 +499,37 @@ export class RouterView extends Component {
       let overPoint = new Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
       let minDistance = Infinity;
       let insertId;
-      if (!self.overValue) {
-        self.overValue = [];
-      }
-      else if(self.overValue.length > 0) {
-        for(let id in self.overValue){
-          let distX = self.modifyStartPoint.getCoordinates()[0] - self.overValue[id].getCoordinates()[0];
-          let distY = self.modifyStartPoint.getCoordinates()[1] - self.overValue[id].getCoordinates()[1];
-          let dist = Math.sqrt(distX * distX + distY * distY);
-          if(dist < minDistance){
-            minDistance = dist;
-            insertId = id;
+      const arrKeys = Object.keys(self.state.overPoints);
+      if (arrKeys.length > 0) {
+        for(let id in self.state.overPoints) {
+          if (self.state.overPoints.hasOwnProperty(id)) {
+            let dist = self.calcDistance(self.modifyStartPoint.getCoordinates(), self.state.overPoints[id].getCoordinates());
+            if(dist < minDistance){
+              minDistance = dist;
+              insertId = id;
+            }
           }
         }
-        let distStartX = self.fromValue.getCoordinates()[0] - self.modifyStartPoint.getCoordinates()[0];
-        let distStartY = self.fromValue.getCoordinates()[1] - self.modifyStartPoint.getCoordinates()[1];
-        let distStart = Math.sqrt(distStartX * distStartX + distStartY * distStartY);
 
-        let distEndX = self.toValue.getCoordinates()[0] - self.modifyStartPoint.getCoordinates()[0];
-        let distEndY = self.toValue.getCoordinates()[1] - self.modifyStartPoint.getCoordinates()[1];
-        let distEnd = Math.sqrt(distEndX * distEndX + distEndY * distEndY);
+        let distStart = self.calcDistance(self.state.fromPoint.getCoordinates(), self.modifyStartPoint.getCoordinates());
+        let distEnd = self.calcDistance(self.state.toPoint.getCoordinates(), self.modifyStartPoint.getCoordinates());
+        let distStartOld = self.calcDistance(self.state.fromPoint.getCoordinates(), self.state.overPoints[0].getCoordinates());
+        let overEndIndex = arrKeys[arrKeys.length - 1];
+        let distEndOld = self.calcDistance(
+          self.state.toPoint.getCoordinates(),
+          self.state.overPoints[overEndIndex].getCoordinates()
+        );
 
-        distStartX = self.fromValue.getCoordinates()[0] - self.overValue[0].getCoordinates()[0];
-        distStartY = self.fromValue.getCoordinates()[1] - self.overValue[0].getCoordinates()[1];
-        let distStartOld = Math.sqrt(distStartX * distStartX + distStartY * distStartY);
-
-        distEndX = self.toValue.getCoordinates()[0] - self.overValue[self.overValue.length - 1].getCoordinates()[0];
-        distEndY = self.toValue.getCoordinates()[1] - self.overValue[self.overValue.length - 1].getCoordinates()[1];
-        let distEndOld = Math.sqrt(distEndX * distEndX + distEndY * distEndY);
-        if(distStart < distStartOld){
+        if (distStart < distStartOld) {
           insertId = 0;
-        }
-        else if(distEnd < distEndOld){
+        } else if (distEnd < distEndOld) {
           insertId++;
         }
+      } else {
+        insertId = 0;
       }
-      this.$overInput = self.addInterimField(insertId, overPoint.ol_uid);
-      self.performReverseSearch(this.$overInput, overPoint.getCoordinates());
-      self.overValue.splice(insertId,0,overPoint);
-      self.updateInterimIds(insertId);
-      self.$buttonOver.prop("disabled", false);
-      self.recalculateRoute();
+      self.performReverseSearch("overAddress", overPoint.getCoordinates(), insertId);
+      self.addOverPoint(overPoint.getCoordinates()[0], overPoint.getCoordinates()[1], insertId);
     });
 
     self.props.mapController.map.addInteraction(selectInteraction);
@@ -600,6 +602,18 @@ export class RouterView extends Component {
     this.objFunctions = this.createAutocompleteFunctions();
 
     this.addMapInputInteraction();
+  }
+
+  /**
+   * Calculates the euclidean distance between two points.
+   * @param point1
+   * @param point2
+   */
+  calcDistance(point1, point2) {
+    let square1, square2;
+    square1 = Math.pow(point1[0] - point2[0], 2);
+    square2 = Math.pow(point1[1] - point2[1], 2);
+    return Math.sqrt(square1 + square2);
   }
 
   /**
@@ -817,8 +831,9 @@ export class RouterView extends Component {
    * Converts a given coordinate into the corresponding location.
    * @param stateProp     The state property of this where the address should be stored.
    * @param value         The property that contains the coordinates.
+   * @param opt_index     The index for the overAddress (over points only)
    */
-  performReverseSearch(stateProp, value) {
+  performReverseSearch(stateProp, value, opt_index) {
 
     var self = this,
       url;
@@ -887,8 +902,9 @@ export class RouterView extends Component {
               // self.updateLinkFragments("addressTo", value);
               break;
             case "overAddress":
-              // TODO sonderfall
-              self.setState({fromAddress: value});
+              const overAddresses = self.state.overAddresses;
+              overAddresses[opt_index] = value;
+              self.setState({overAddresses: overAddresses});
               break;
           }
         }
@@ -1523,25 +1539,14 @@ export class RouterView extends Component {
         self.setRouteTo(coordinate[0], coordinate[1]);
         // self.updateLinkFragments("addressTo", coordinate);
         self.recalculateRoute();
-      } else if (self.$overInput) {
+      } else if (self.state.overPtCtr > 0) {
         // TODO implement over points
-        // if (self.$overInput.val() === "") {
-        //   self.performReverseSearch(self.$overInput, coordinate);
-        //   if (!self.overValue) {
-        //     self.overValue = [];
-        //   }
-        //   self.overValue.push(new Point(coordinate));
-        //   let olUid = self.overValue[self.overValue.length - 1]['ol_uid'];
-        //   let deleteButton =  self.$overInput.next()[0];
-        //   // traverse the dom level until the delete button is found
-        //   while (!jQuery(deleteButton).hasClass('c4g-router-input-clear')) {
-        //     deleteButton = jQuery(deleteButton).next()[0];
-        //   }
-        //
-        //   deleteButton.id = olUid;
-        //   self.recalculateRoute();
-        //   self.$buttonOver.prop("disabled", false);
-        // }
+        for (let i = 0; i < self.state.overPtCtr; i++) {
+          if (!self.state.overPoints[i]) {
+            self.addOverPoint(coordinate[0], coordinate[1], i);
+            break;
+          }
+        }
       }
     };
 

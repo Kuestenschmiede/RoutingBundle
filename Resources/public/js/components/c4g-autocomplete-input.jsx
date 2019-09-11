@@ -38,7 +38,12 @@ export class AutocompleteInput extends Component {
         submitFunction();
       } else {
         if ($(event.currentTarget).val().length === 0 && !event.keyCode) { //deleted
-          scope.props.objFunctions.deleteFunction(event.currentTarget, event.currentTarget.id);
+          if (typeof scope.props.objFunctions.deleteFunction === "function") {
+            scope.props.objFunctions.deleteFunction(event.currentTarget, event.currentTarget.id);
+          } else {
+            // over points
+            scope.props.objFunctions[scope.props.index].deleteFunction(event.currentTarget, event.currentTarget.id);
+          }
         } else {
           scope.counter = Math.floor(Date.now());
           setTimeout(function() {
