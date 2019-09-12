@@ -17,7 +17,7 @@ export class RoutingPermalink {
 
   constructor(router) {
     this._router = router;
-    this.linkFragments = router.linkFragments;
+    this.linkFragments = {};
   }
 
   get router() {
@@ -50,16 +50,16 @@ export class RoutingPermalink {
     if (fragments.mode && fragments.mode === "area") {
       url += fragments.mode ? "m:" + fragments.mode + "/" : "";
       url += fragments.addressArea ? "a:" + fragments.addressArea[0] + "," + fragments.addressArea[1] + "/" : "";
-      url += fragments.detour ? "d:" + fragments.detour + "/" : "";
+      url += fragments.detourArea ? "d:" + fragments.detourArea + "/" : "";
       url += fragments.searchType ? "s:" + fragments.searchType + "/" : "";
       url += fragments.forceStart ? "f:" + fragments.forceStart : "";
       let completeUrl = window.location.pathname + url;
       history.pushState({}, null, completeUrl);
     } else if (fragments.mode && fragments.mode === "route") {
       url += fragments.mode ? "m:" + fragments.mode + "/" : "";
-      url += fragments.addressFrom ? "af:" + fragments.addressFrom[0] + "," + fragments.addressFrom[1] + "/" : "";
-      url += fragments.addressTo ? "at:" + fragments.addressTo[0] + "," + fragments.addressTo[1] + "/" : "";
-      url += fragments.detour ? "d:" + fragments.detour + "/" : "";
+      url += fragments.fromAddress ? "af:" + fragments.fromAddress[0] + "," + fragments.fromAddress[1] + "/" : "";
+      url += fragments.toAddress ? "at:" + fragments.toAddress[0] + "," + fragments.toAddress[1] + "/" : "";
+      url += fragments.detourRoute ? "d:" + fragments.detourRoute + "/" : "";
       url += fragments.searchType ? "s:" + fragments.searchType + "/" : "";
       url += fragments.forceStart ? "f:" + fragments.forceStart : "";
       let completeUrl = window.location.pathname + url;
@@ -148,10 +148,10 @@ export class RoutingPermalink {
       this.updateLinkFragments("detour", objParams.d);
     }
     if (fromAddress) {
-      this.updateLinkFragments("addressFrom", fromAddress);
+      this.updateLinkFragments("fromAddress", fromAddress);
     }
     if (toAddress) {
-      this.updateLinkFragments("addressTo", toAddress);
+      this.updateLinkFragments("toAddress", toAddress);
     }
     if (searchtype) {
       this.updateLinkFragments("searchType", objParams.s);

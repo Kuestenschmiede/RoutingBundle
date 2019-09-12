@@ -14,17 +14,10 @@
 import React, { Component } from "react";
 import {RouterControls} from "./c4g-router-controls.jsx";
 import {RouterResultContainer} from "./c4g-router-result-container.jsx";
-import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
-import {utils} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
-import * as popupFunctions from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-popup-info-de";
 import {routingConstants} from "./../routing-constants";
-import {routingConstantsEnglish} from "./../routing-constant-i18n-en";
-import {routingConstantsGerman} from "./../routing-constant-i18n-de";
-import {CachedInputfield} from "./../../../../../CoreBundle/Resources/public/js/c4g-cached-inputfield";
 import {Feature} from "ol";
 import {Point} from "ol/geom";
 import {Polyline} from "ol/format";
-import {extend} from "ol/extent";
 import {transform, toLonLat, fromLonLat, transformExtent} from "ol/proj";
 import {Style, Stroke} from "ol/style";
 import {Vector, Group} from "ol/layer";
@@ -32,8 +25,8 @@ import {Vector as VectorSource} from "ol/source";
 import {Collection} from "ol";
 import {LineString} from "ol/geom";
 import {Modify, Select} from "ol/interaction";
-import {RoutingPermalink} from "./../c4g-routing-permalink";
 import {AlertHandler} from "./../../../../../CoreBundle/Resources/public/js/AlertHandler";
+import {RoutingPermalink} from "./../c4g-routing-permalink";
 
 /**
  * Main router component. It consists of the RouterControls and RouterResultContainer components, and holds the
@@ -100,6 +93,9 @@ export class RouterView extends Component {
       currentProfile: 0
     };
     this.swapPoints = this.swapPoints.bind(this);
+    if (mapController.data.usePermalink) {
+      this.permalink = new RoutingPermalink(this);
+    }
     this.init();
   }
 
@@ -115,6 +111,26 @@ export class RouterView extends Component {
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
       </React.Fragment>
     );
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    let fragments = this.permalink.linkFragments;
+    if (this.state.fromPoint && fragments.fromAddress !== this.state.fromPoint.getCoordinates()) {
+      this.permalink.updateLinkFragments("fromAddress", this.state.fromPoint.getCoordinates());
+    }
+    if (this.state.toPoint && fragments.toAddress !== this.state.toPoint.getCoordinates()) {
+      this.permalink.updateLinkFragments("toAddress", this.state.toPoint.getCoordinates());
+    }
+    if (fragments.mode !== this.state.mode) {
+      this.permalink.updateLinkFragments("mode", this.state.mode);
+    }
+    if (fragments.detourArea !== this.state.detourArea) {
+      this.permalink.updateLinkFragments("detourArea", this.state.detourArea);
+    }
+    if (fragments.detourRoute !== this.state.detourRoute) {
+      this.permalink.updateLinkFragments("detourRoute", this.state.detourRoute);
+    }
+
   }
 
   setAreaPoint(longitude, latitude) {
