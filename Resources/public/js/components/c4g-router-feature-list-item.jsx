@@ -28,6 +28,7 @@ export class RouterFeatureListItem extends Component {
     }
     clickFeature (event) {
         const scope = this;
+        scope.props.setActiveId(scope.props.feature.id);
         scope.props.featureSource.forEachFeature(function (tmpFeature) {
             let layer = undefined;
             if (scope.props.routeMode === "area") {
@@ -55,7 +56,7 @@ export class RouterFeatureListItem extends Component {
                     } else {
                         let style = scope.props.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
                         tmpFeature.setStyle(style);
-                        scope.props.mapController.map.getView().setCenter(fromLonLat([scope.props.feature.lon, scope.props.feature.lat]));
+                        scope.props.mapController.map.getView().setCenter(tmpFeature.getGeometry().getCoordinates());
                     }
                 }
 
@@ -88,7 +89,7 @@ export class RouterFeatureListItem extends Component {
             featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
             let element = {__html: featureEntryContent + "<br>"}
             return (
-                <li dangerouslySetInnerHTML={element} onMouseUp={this.clickFeature}/>
+                <li dangerouslySetInnerHTML={element} className={this.props.active ? "route-features-list-element c4g-active": "route-features-list-element c4g-inactive"} onMouseUp={this.clickFeature}/>
             );
         }
         return null;
