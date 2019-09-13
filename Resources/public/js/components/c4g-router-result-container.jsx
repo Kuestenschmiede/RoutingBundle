@@ -96,7 +96,9 @@ export class RouterResultContainer extends HorizontalPanel {
     let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
     let container = document.getElementsByClassName(className)[0];
     const scope = this;
-    jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
+    if (container) {
+      jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
+    }
   }
 
   open() {

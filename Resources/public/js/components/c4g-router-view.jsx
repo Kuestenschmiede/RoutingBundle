@@ -113,6 +113,12 @@ export class RouterView extends Component {
     );
   }
 
+  componentDidMount() {
+    if (this.props.mapController.data.usePermalink) {
+      this.permalink.handleInitialParams();
+    }
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     let fragments = this.permalink.linkFragments;
     if (this.state.fromPoint && fragments.fromAddress !== this.state.fromPoint.getCoordinates()) {
@@ -130,7 +136,6 @@ export class RouterView extends Component {
     if (fragments.detourRoute !== this.state.detourRoute) {
       this.permalink.updateLinkFragments("detourRoute", this.state.detourRoute);
     }
-
   }
 
   setAreaPoint(longitude, latitude) {
@@ -748,6 +753,35 @@ export class RouterView extends Component {
       this.adjustInstructionMapInteraction();
 
     }
+  }
+
+  /**
+   * Asynchronous implementation of the forward geosearch.
+   */
+  async performGeoSearch(address) {
+    const scope = this;
+    let url = scope.geoSearchApi + '?format=json&limit=1&q=' + encodeURI(address);
+    if (this.mapData && this.mapData.geosearch && this.mapData.geosearch.searchKey && this.mapData.geosearch.url) {
+      url = this.mapData.geosearch.url + "search.php?key=" + this.mapData.geosearch.searchKey + '&format=json&limit=1&q=' + encodeURI(address);
+    }
+
+    return await fetch(url).then(function (response) {
+      if (response) {
+        return response.json().then(function(data) {
+          console.log(data);
+          return [parseFloat(data[0].lon), parseFloat(data[0].lat)];
+        });
+        // return [parseFloat(response[0].lon), parseFloat(response[0].lat)];
+      } else {
+        // show error hint
+        let alertHandler = new AlertHandler();
+        alertHandler.showInfoDialog(this.props.langConstants.ROUTER_VIEW_ALERT_ERROR, scope.props.langConstants.ROUTER_VIEW_ALERT_ADDRESS);
+      }
+
+    }).catch(function () {
+      let alertHandler = new AlertHandler();
+      alertHandler.showInfoDialog(scope.props.langConstants.ROUTER_VIEW_ALERT_ERROR, scope.props.langConstants.ROUTER_VIEW_ALERT_ADDRESS);
+    });
   }
 
   /**
