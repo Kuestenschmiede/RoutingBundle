@@ -66,7 +66,7 @@ export class RouterView extends Component {
         arrToPositions: [],
         arrToNames: [],
         arrOverPositions: {},
-        arrOverNames: {},
+        arrOverNames: {}
       },
       fromAddress: "",
       toAddress: "",
@@ -86,9 +86,9 @@ export class RouterView extends Component {
       routerWaySource: undefined,
       routerHintSource: undefined,
       areaPoint: null,
-      fromPoint: null,  // array of two coords
-      toPoint: null,  // array of two coords
-      overPoints: {},  // array of arrays of two coords
+      fromPoint: null,
+      toPoint: null,
+      overPoints: [],
       profiles: arrProfiles,
       currentProfile: 0
     };
@@ -159,7 +159,9 @@ export class RouterView extends Component {
     this.performReverseSearch("overAddress", [longitude, latitude], index);
     let point = new Point([longitude, latitude]);
     const overPoints = this.state.overPoints;
-    overPoints[index] = point;
+    overPoints.splice(index,0,point);
+
+    // overPoints[index] = point;
     this.setState({overPoints: overPoints}, () => scope.updateRouteLayersAndPoints());
   }
 
@@ -919,7 +921,7 @@ export class RouterView extends Component {
               break;
             case "overAddress":
               const overAddresses = self.state.overAddresses;
-              overAddresses[opt_index] = value;
+              overAddresses.splice(opt_index, 0, value);
               self.setState({overAddresses: overAddresses});
               break;
           }
