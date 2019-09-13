@@ -18,6 +18,7 @@ export class RoutingPermalink {
   constructor(router) {
     this._router = router;
     this.linkFragments = {};
+    this.rawFragments = {};
   }
 
   get router() {
@@ -73,14 +74,15 @@ export class RoutingPermalink {
    * After that, the next param (or the next two, in case of "route") should be an address string.
    * The following parameters are detour/searchtype/forceStart.
    */
-  handleInitialParams() {
-    const params = this.router.options.mapController.data.initialParams;
+  async handleInitialParams() {
+    this.rawFragments = this.router.props.mapController.data.initialParams;
     const scope = this;
-    if (params) {
-      const arrParams = params.split("/").map(pair => pair.split(":"));
+    if (this.rawFragments) {
+      await this.checkForOldParams();
+      const arrParams = this.rawFragments.split("/").map(pair => pair.split(":"));
       const objParams = {};
       arrParams.forEach(([key,value]) => objParams[key] = value);
-      let routerLayers = this.router.options.mapController.data.routerLayers;
+      let routerLayers = this.router.props.mapController.data.routerLayers;
       let desiredButton = "";
       iterationLabel:
         for (let key in routerLayers) {
@@ -100,7 +102,9 @@ export class RoutingPermalink {
         }
       // iterate buttons later on when the UI is built
       this.desiredButtonRouting = desiredButton;
+      console.log(objParams.m);
       if (objParams.m === "area") {
+        console.log("fsdkjifhsi");
         this.handleInitialAreaSearch(objParams);
       } else if (objParams.m === "route") {
         this.handleInitialRouteSearch(objParams);
@@ -108,8 +112,37 @@ export class RoutingPermalink {
     }
   }
 
+  /**
+   * Checks the URL for the deprecated URL structure and converts it to the current structure.
+   */
+  async checkForOldParams() {
+    let strParams = "";
+    let params = this.router.props.mapController.data.initialParams;
+    if (params.indexOf("m:") !== -1) {
+      return;
+    }
+    let arrFragments = params.split("/");
+    strParams += "m:" + arrFragments[0] + "/";
+    if (arrFragments[0] === "route") {
+      let fromCoords = await this.router.performGeoSearch(arrFragments[1]);
+      let toCoords = await this.router.performGeoSearch(arrFragments[2]);
+      strParams += "af:" + fromCoords.join() + "/";
+      strParams += "at:" + toCoords.join() + "/";
+      strParams += "d:" + arrFragments[3] + "/";
+      strParams += "s:" + arrFragments[4] + "/";
+      strParams += "f:" + arrFragments[5] + "/";
+    } else {
+      let coords = await this.router.performGeoSearch(arrFragments[1]);
+      strParams += "a:" + coords.join() + "/";
+      strParams += "d:" + arrFragments[2] + "/";
+      strParams += "s:" + arrFragments[3] + "/";
+      strParams += "f:" + arrFragments[4] + "/";
+    }
+    this.rawFragments = strParams;
+  }
+
   handleInitialAreaSearch(objParams) {
-    this.router.viewArea.activate();
+    this.router.setState({mode: "area"});
     let center = objParams.a;
     center = center.split(",");
     let detour = objParams.d;
@@ -117,12 +150,14 @@ export class RoutingPermalink {
     let forceStart = objParams.f;
     if (detour || detour > 1) {
       this.updateLinkFragments("detour", detour);
-      jQuery(this.toggleDetourArea).val(detour);
-      jQuery(this.toggleDetourArea).trigger('input');
+      // jQuery(this.toggleDetourArea).val(detour);
+      // jQuery(this.toggleDetourArea).trigger('input');
     }
+    console.log(center);
     if (center && center.length === 2) {
       this.updateLinkFragments("addressArea", center);
       this.router.setAreaPoint(center);
+      console.log(center);
     }
     if (searchtype) {
       this.updateLinkFragments("searchType", searchtype);
@@ -135,7 +170,7 @@ export class RoutingPermalink {
   }
 
   handleInitialRouteSearch(objParams) {
-    this.router.viewRouter.activate();
+    this.router.setState({mode: "route"});
 
     let fromAddress = objParams.af ? objParams.af.split(",").map(elem => parseFloat(elem)) : null;
     let toAddress = objParams.at ? objParams.at.split(",").map(elem => parseFloat(elem)) : null;
@@ -160,8 +195,8 @@ export class RoutingPermalink {
       this.updateLinkFragments("forceStart", objParams.f);
     }
     if (fromAddress && toAddress) {
-      this.router.setFromPoint(fromAddress);
-      this.router.setToPoint(toAddress);
+      this.router.setRouteFrom(fromAddress[0], fromAddress[1]);
+      this.router.setRouteTo(toAddress[0], toAddress[1]);
     }
     // activate router view
     jQuery(".c4g-portside-viewtriggerbar .c4g-route-search").click();

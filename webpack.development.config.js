@@ -1,6 +1,6 @@
 var path = require('path');
 var config = {
-  entry: './Resources/public/js/c4g-routing.js',
+  entry: ['babel-polyfill', './Resources/public/js/c4g-routing.js'],
   mode: "development",
   output: {
     filename: 'c4g-routing.js',
