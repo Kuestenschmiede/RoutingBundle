@@ -57,8 +57,8 @@ export class RouterAddressInput extends Component {
       </React.Fragment>;
     } else {
       input = <React.Fragment>
-        <RouterAddressField className="c4g-router-input-from" name="areaFrom" label="Zentrum"
-                            cssId="areaFrom" objFunctions={this.props.objFunctions} objSettings={this.props.objSettings}
+        <RouterAddressField className="c4g-router-input-area" name="areaFrom" label="Zentrum"
+                            cssId="areaInput" objFunctions={this.props.objFunctions.areaFunctions} objSettings={this.props.objSettings}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.areaAddress} router={this.props.router}/>
       </React.Fragment>;
     }

@@ -73,6 +73,8 @@ export class RouterView extends Component {
         arrFromNames: [],
         arrToPositions: [],
         arrToNames: [],
+        arrAreaPositions: [],
+        arrAreaNames: [],
         arrOverPositions: {},
         arrOverNames: {}
       },
@@ -113,7 +115,7 @@ export class RouterView extends Component {
         <RouterControls router={this} open={this.props.open} className={this.props.className} profiles={this.state.profiles}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()}
           containerAddresses={this.state.containerAddresses} mapController={this.props.mapController} currentProfile={this.state.currentProfile}
-          fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress}
+          fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
@@ -411,6 +413,47 @@ export class RouterView extends Component {
       "deleteFunction": deleteToListener,
       "changeListener": changeToListener
     };
+
+    // set listener for the autocomplete to field
+    const deleteAreaListener = function(event) {
+      let containerAddresses = scope.state.containerAddresses;
+      containerAddresses.arrAreaPositions = [];
+      containerAddresses.arrAreaNames = [];
+      scope.setState({
+        areaPoint: null,
+        containerAddresses: containerAddresses,
+        areaAddress: ""
+      }, () => {
+      });
+
+    };
+
+    const selectAreaListener = function(event, ui){
+      let value = ui.item.value;
+      let index = scope.state.containerAddresses.arrAreaNames.findIndex(
+        danger => danger === value
+      );
+      let coord = scope.state.containerAddresses.arrAreaPositions[index];
+      let areaValue = new Point([coord[1], coord[0]]);
+
+      scope.setState({
+        areaPoint: areaValue,
+        areaAddress: scope.state.containerAddresses.arrAreaNames[index]
+      }, () => {
+        scope.performArea();
+      });
+    };
+
+    const changeAreaListener = function () {
+      // self.fromValue = null;
+    };
+
+    objFunctions.areaFunctions = {
+      "selectListener": selectAreaListener,
+      "deleteFunction": deleteAreaListener,
+      "changeListener": changeAreaListener
+    };
+
     return objFunctions;
   }
 
@@ -972,6 +1015,58 @@ export class RouterView extends Component {
   }
 
   /**
+   * Executes an area search with the given point as center. If there are any, the features in the perimeter will be
+   * drawn onto the map and displayed in the feature container.
+   */
+  performArea() {
+    const self = this;
+
+    let fromPoint = this.state.areaPoint;
+
+    if (!fromPoint) {
+      return;
+    }
+    let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
+    let profileId = this.props.mapController.data.profile;
+    let url = 'con4gis/areaService/' + profileId + '/' + this.state.layerArea + '/' + this.state.detourArea + '/' + fromCoord;
+    url += '?profile=' + this.state.currentProfile;
+
+    if (self.areaAjax) {
+      self.areaAjax.abort();
+    }
+
+    // this.spinner.show();
+
+    self.areaAjax = jQuery.ajax({
+      'url': url
+    }).done(function (response) {
+        self.response = response;
+        if (response) {
+          // const routerLayers = self.options.mapController.data.routerLayers;
+          // const chosenOption = self.activeLayerValueArea;
+          // this should be changed soon, as it totally messes up the logic of the structure
+          let sortedFeatures = self.showFeatures(response[0], response[1], "area");
+          self.showFeaturesInPortside(sortedFeatures, response[1], "area");
+          let extent = self.routerFeaturesSource.getExtent();
+          extent = extend(extent, self.areaLayer.getSource().getExtent());
+          let view = self.props.mapController.map.getView();
+          view.fit(extent, {
+            size: self.props.mapController.map.getSize(),
+            padding: [0, 0, 0, 0]
+          });
+          // clear route & route features
+          self.routingWaySource.clear();
+          self.routingAltWaySource.clear();
+          self.routingHintSource.clear();
+          self.locationsSource.clear();
+          // jQuery(self.routerFeatureWrapper).empty();
+          // jQuery(self.routerInstructionsWrapper).empty();
+        }
+
+      });
+  }
+
+  /**
    * Executes a route search with the given from and to points. Displays features and feature entries on success. Uses
    * overpoints, if any are given.
    * @param fromPoint
@@ -1105,7 +1200,6 @@ export class RouterView extends Component {
   recalculateRoute() {
     var tmpFeature,
       proxy = this.props.mapController.proxy;
-
     if (this.state.fromPoint && this.state.toPoint) {
       if (this.state.overPoints && Object.keys(this.state.overPoints).length > 0) {
         this.performViaRoute(this.state.fromPoint, this.state.toPoint, this.state.overPoints);

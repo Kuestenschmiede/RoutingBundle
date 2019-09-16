@@ -21,7 +21,6 @@ export class RouterControls extends HorizontalPanel {
   constructor(props) {
     super(props);
 
-    this.state.mode = "route"; // route or area
     this.state.router = this.props.router;
     this.state.open = this.props.open;
     this.state.detailsEnabled = false;
@@ -33,12 +32,12 @@ export class RouterControls extends HorizontalPanel {
 
   setRouteMode(event) {
     event.stopPropagation();
-    this.setState({mode: "route"});
+    this.props.router.setState({mode: "route"});
   }
 
   setAreaMode(event) {
     event.stopPropagation();
-    this.setState({mode: "area"});
+    this.props.router.setState({mode: "area"});
   }
 
   render() {
@@ -54,7 +53,7 @@ export class RouterControls extends HorizontalPanel {
         </div>
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={false}
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile}
-                            containerAddresses={this.props.containerAddresses} mode={this.state.mode} open={open}
+                            containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open}
                             fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress}
                             profiles={this.props.profiles} overSettings={this.props.overSettings} toggleDetails={this.toggleDetails} detailsEnabled={this.state.detailsEnabled}/>
       </div>
