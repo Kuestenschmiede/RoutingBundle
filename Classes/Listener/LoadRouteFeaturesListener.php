@@ -63,6 +63,7 @@ class LoadRouteFeaturesListener
                     $features = array_merge($features,$featurePoint);
                 }
             }
+            $event->setFeatures($features);
         }
         else if ($objLayer->location_type == "overpass") {
             $url = "https://osm.kartenkueste.de/api/interpreter";

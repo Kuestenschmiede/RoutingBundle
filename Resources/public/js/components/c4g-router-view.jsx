@@ -1046,21 +1046,27 @@ export class RouterView extends Component {
           // const chosenOption = self.activeLayerValueArea;
           // this should be changed soon, as it totally messes up the logic of the structure
           let sortedFeatures = self.showFeatures(response[0], response[1], "area");
-          self.showFeaturesInPortside(sortedFeatures, response[1], "area");
-          let extent = self.routerFeaturesSource.getExtent();
-          extent = extend(extent, self.areaLayer.getSource().getExtent());
-          let view = self.props.mapController.map.getView();
-          view.fit(extent, {
-            size: self.props.mapController.map.getSize(),
-            padding: [0, 0, 0, 0]
+          self.setState({
+            "featureList": {
+              "features": sortedFeatures,
+              "type": null
+            },
+            "featureSource": self.routerFeaturesSource
           });
-          // clear route & route features
-          self.routingWaySource.clear();
-          self.routingAltWaySource.clear();
-          self.routingHintSource.clear();
-          self.locationsSource.clear();
-          // jQuery(self.routerFeatureWrapper).empty();
-          // jQuery(self.routerInstructionsWrapper).empty();
+          // let extent = self.routerFeaturesSource.getExtent();
+          // extent = extend(extent, self.areaLayer.getSource().getExtent());
+          // let view = self.props.mapController.map.getView();
+          // view.fit(extent, {
+          //   size: self.props.mapController.map.getSize(),
+          //   padding: [0, 0, 0, 0]
+          // });
+          // // clear route & route features
+          // self.routingWaySource.clear();
+          // self.routingAltWaySource.clear();
+          // self.routingHintSource.clear();
+          // self.locationsSource.clear();
+          // // jQuery(self.routerFeatureWrapper).empty();
+          // // jQuery(self.routerInstructionsWrapper).empty();
         }
 
       });
