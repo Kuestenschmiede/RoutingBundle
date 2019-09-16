@@ -1419,58 +1419,44 @@ export class RouterView extends Component {
       fnItemOut;
 
     fnItemClick = function (element) {
-      if (self.routerWaySource && self.routerWaySource.getFeatures() && self.options.mapController.data.router_api_selection == '0') {
-        var feature = self.routerWaySource.getFeatures()[0];
-        if (feature) {
-          var currentCoordinates = feature.getGeometry().getCoordinates()[element.data('pos')];
-          self.routerHintSource.clear();
-          var currentHintFeature = new Feature({
-            geometry: new Point(currentCoordinates)
-          });
-          self.routerHintSource.addFeature(currentHintFeature);
-          self.options.mapController.map.getView().setCenter(currentCoordinates);
-        }
+      self.routerHintSource.clear();
+      feature = self.routerWaySource.getFeatures()[0];
+      let coordinates = feature.getGeometry().getCoordinates();
+      var coordLonLat = element.data('pos');
+      if (coordLonLat) {
+        var stringlonlat = coordLonLat.split(",");
+        stringlonlat[0] = parseFloat(stringlonlat[0]);
+        stringlonlat[1] = parseFloat(stringlonlat[1]);
+        var newCoord = fromLonLat(stringlonlat);
+        var currentHintFeature = new Feature({
+          geometry: new Point(newCoord)
+        })
+        self.routerHintSource.addFeature(currentHintFeature);
+        self.options.mapController.map.getView().setCenter(newCoord);
       }
-      if (self.routerWaySource && self.options.mapController.data.router_api_selection >= '1') {
-        self.routerHintSource.clear();
-        feature = self.routerWaySource.getFeatures()[0];
-        let coordinates = feature.getGeometry().getCoordinates();
-        var coordLonLat = element.data('pos');
-        if (coordLonLat) {
-          var stringlonlat = coordLonLat.split(",");
-          stringlonlat[0] = parseFloat(stringlonlat[0]);
-          stringlonlat[1] = parseFloat(stringlonlat[1]);
-          var newCoord = fromLonLat(stringlonlat);
+      if (coordinates) {
+        let start = element.data('start');
+        let end = element.data('end');
+        if (start, end) {
+          let geom = new LineString(coordinates.slice(start, end))
           var currentHintFeature = new Feature({
-            geometry: new Point(newCoord)
+            geometry: geom
           })
+          currentHintFeature.setStyle(
+            new Style({
+              stroke: new Stroke({
+                color: 'rgba(255, 0, 0, 1)',
+                width: 20
+              })
+            }),
+          );
+          let currentZoom = self.options.mapController.map.getView().getZoom();
           self.routerHintSource.addFeature(currentHintFeature);
-          self.options.mapController.map.getView().setCenter(newCoord);
-        }
-        if (coordinates) {
-          let start = element.data('start');
-          let end = element.data('end');
-          if (start, end) {
-            let geom = new LineString(coordinates.slice(start, end))
-            var currentHintFeature = new Feature({
-              geometry: geom
-            })
-            currentHintFeature.setStyle(
-              new Style({
-                stroke: new Stroke({
-                  color: 'rgba(255, 0, 0, 1)',
-                  width: 20
-                })
-              }),
-            );
-            let currentZoom = self.options.mapController.map.getView().getZoom();
-            self.routerHintSource.addFeature(currentHintFeature);
-            self.options.mapController.map.getView().fit(geom);
-            let afterZoom = self.options.mapController.map.getView().getZoom();
-            let endZoom = Math.round((currentZoom + afterZoom)/2)
-            endZoom = (endZoom > afterZoom) ? afterZoom : endZoom;
-            self.options.mapController.map.getView().setZoom(endZoom);
-          }
+          self.options.mapController.map.getView().fit(geom);
+          let afterZoom = self.options.mapController.map.getView().getZoom();
+          let endZoom = Math.round((currentZoom + afterZoom)/2)
+          endZoom = (endZoom > afterZoom) ? afterZoom : endZoom;
+          self.options.mapController.map.getView().setZoom(endZoom);
         }
       }
     };
