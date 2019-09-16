@@ -26,9 +26,17 @@ export class AutocompleteInput extends Component {
     const submitFunction = function () {
       let field = $("#" + scope.props.cssId);
       field.trigger('change');
-      const performSearchCallback = function() {
-        scope.props.router.performViaRoute();
-      };
+      let performSearchCallback;
+      if (scope.props.cssId.indexOf("area") !== -1) {
+        performSearchCallback = function() {
+          scope.props.router.performArea();
+        };
+      } else {
+        performSearchCallback = function() {
+          scope.props.router.performViaRoute();
+        };
+      }
+
       let value = (scope.props.cssId.indexOf('From') !== -1) ? "fromValue" : "toValue";
       scope.props.router.performSearch(field, value, performSearchCallback);
     };
@@ -69,8 +77,10 @@ export class AutocompleteInput extends Component {
       arrNames = this.props.containerAddresses.arrFromNames
     } else if (this.props.cssId.indexOf("To") !== -1) {
       arrNames = this.props.containerAddresses.arrToNames;
-    } else {
+    } else if (this.props.cssId.indexOf("Over") !== -1) {
       arrNames = this.props.containerAddresses.arrOverNames[this.props.index];
+    } else if (this.props.cssId.indexOf("area") !== -1) {
+      arrNames = this.props.containerAddresses.arrAreaNames;
     }
 
     let inputField = jQuery('#' + this.props.cssId);
@@ -166,6 +176,11 @@ export class AutocompleteInput extends Component {
                   scope.props.containerAddresses.arrOverNames[scope.props.index].push(arrAddresses[i].name);
                   scope.props.containerAddresses.arrOverPositions[scope.props.index].push(arrAddresses[i].pos);
                 }
+              } else if (cssClass.indexOf('area') !== -1) {
+                if (!scope.props.containerAddresses.arrAreaNames.includes(arrAddresses[i].name)) {
+                  scope.props.containerAddresses.arrAreaNames.push(arrAddresses[i].name);
+                  scope.props.containerAddresses.arrAreaPositions.push(arrAddresses[i].pos);
+                }
               } else {
                 console.log("This is weird ¯\\_(ツ)_/¯");
               }
@@ -193,6 +208,11 @@ export class AutocompleteInput extends Component {
               if (!scope.props.containerAddresses.arrOverNames[scope.props.index].includes(data[i].display_name)) {
                 scope.props.containerAddresses.arrOverNames[scope.props.index].push(data[i].display_name);
                 scope.props.containerAddresses.arrOverPositions[scope.props.index].push([data[i].lat, data[i].lon]);
+              }
+            } else if (cssClass.indexOf('area') !== -1){
+              if (!scope.props.containerAddresses.arrAreaNames.includes(data[i].display_name)) {
+                scope.props.containerAddresses.arrAreaNames.push(data[i].display_name);
+                scope.props.containerAddresses.arrAreaPositions.push([data[i].lat, data[i].lon]);
               }
             } else {
               console.log("This is weird ¯\\_(ツ)_/¯");

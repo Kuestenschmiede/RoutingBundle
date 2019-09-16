@@ -102,9 +102,7 @@ export class RoutingPermalink {
         }
       // iterate buttons later on when the UI is built
       this.desiredButtonRouting = desiredButton;
-      console.log(objParams.m);
       if (objParams.m === "area") {
-        console.log("fsdkjifhsi");
         this.handleInitialAreaSearch(objParams);
       } else if (objParams.m === "route") {
         this.handleInitialRouteSearch(objParams);
