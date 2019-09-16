@@ -79,6 +79,11 @@ export class RouterAddressInput extends Component {
         <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
         <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
       </div>;
+    } else if (this.props.detailsEnabled && this.props.mode === "area") {
+      details = <div>
+        <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
+        <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
+      </div>;
     }
 
     return (

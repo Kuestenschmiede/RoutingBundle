@@ -57,7 +57,6 @@ export class RouterView extends Component {
       }
     }
 
-    console.log(mapController.data.routerLayers);
 
     this.state = {
       router: props.router,
@@ -288,6 +287,7 @@ export class RouterView extends Component {
   }
 
   updateRouteLayersAndPoints() {
+    const scope = this;
     this.locationsSource.clear();
     if (this.state.fromPoint) {
       let tmpFeature = new Feature({
@@ -323,7 +323,25 @@ export class RouterView extends Component {
         }
       }
     }
-    this.recalculateRoute();
+    if (this.state.areaPoint) {
+      let tmpFeature = new Feature({
+        geometry: this.state.areaPoint.clone().transform('EPSG:4326', 'EPSG:3857')
+      });
+      if (this.props.mapController.data.router_point_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_point_locstyle]) {
+        tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_point_locstyle].style);
+      } else {
+        this.props.mapController.proxy.locationStyleController.loadLocationStyles([this.props.mapController.data.router_point_locstyle], {done: function() {
+            tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[scope.props.mapController.data.router_point_locstyle].style);
+          }});
+      }
+      this.areaSource.addFeature(tmpFeature);
+    }
+    if (this.state.mode === "route") {
+      this.recalculateRoute();
+    } else {
+      this.performArea();
+    }
+
   }
 
   createAutocompleteFunctions() {
@@ -442,6 +460,7 @@ export class RouterView extends Component {
         areaPoint: areaValue,
         areaAddress: scope.state.containerAddresses.arrAreaNames[index]
       }, () => {
+        scope.updateRouteLayersAndPoints();
         scope.performArea();
       });
     };
@@ -823,7 +842,6 @@ export class RouterView extends Component {
     return await fetch(url).then(function (response) {
       if (response) {
         return response.json().then(function(data) {
-          console.log(data);
           return [parseFloat(data[0].lon), parseFloat(data[0].lat)];
         });
         // return [parseFloat(response[0].lon), parseFloat(response[0].lat)];
