@@ -48,6 +48,14 @@ export class RouterView extends Component {
         });
       }
     }
+    let layerRoute = null;
+    let layerArea = null;
+    for (let key in mapController.data.routerLayers) {
+      if (mapController.data.routerLayers.hasOwnProperty(key)) {
+        layerRoute = layerRoute || key;
+        layerArea = layerArea || key;
+      }
+    }
 
     this.state = {
       router: props.router,
@@ -71,8 +79,8 @@ export class RouterView extends Component {
       fromAddress: "",
       toAddress: "",
       areaAddress: "",
-      layerRoute: 4,
-      layerArea: 4,
+      layerRoute: layerRoute,
+      layerArea: layerArea,
       detourRoute: props.detourRoute.initial,
       detourArea: props.detourArea.initial,
       featureList: {

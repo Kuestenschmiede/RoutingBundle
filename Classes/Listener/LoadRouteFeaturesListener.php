@@ -49,6 +49,7 @@ class LoadRouteFeaturesListener
                     $sqlSelect = "SUBSTRING_INDEX(". $objConfig->geolocation . ", ',', -1) AS geox, SUBSTRING_INDEX(" . $objConfig->geolocation . ",',',1) AS geoy";
                 }
                 else {
+                    continue;
                     //@Todo handling for missing locations
                 }
                 $sqlSelect = $objConfig->locstyle ? $sqlSelect . ", " . $objConfig->tableSource . "." . $objConfig->locstyle . " AS locstyle" : $sqlSelect;
