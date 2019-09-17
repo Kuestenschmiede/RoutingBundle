@@ -16,6 +16,7 @@ import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-
 import {transform, toLonLat, fromLonLat, transformExtent} from "ol/proj";
 import * as popupFunctionsDE from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-popup-info-de";
 import * as popupFunctionsEN from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-popup-info-en";
+import {utils} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
 
 
 export class RouterFeatureListItem extends Component {
@@ -85,8 +86,26 @@ export class RouterFeatureListItem extends Component {
             }
         });
         let featureEntryContent = "";
+        let objHook = null;
         if (currentFeature) {
-            featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
+            if (this.props.type === "overpass") {
+                featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
+            }
+            else if (this.props.type === "notOverpass") {
+                
+            }
+            else {
+                objHook =  {
+                    entry: "",
+                    feature: this.props.feature,
+                    // values: values,
+                    labels: ['name'],
+                    // router: scope,
+                    activeLayerValue: "Super E5"
+                };
+                utils.callHookFunctions(window.c4gMapsHooks.routePluginEntry, objHook);
+                featureEntryContent = objHook.entry;
+            }
             let element = {__html: featureEntryContent + "<br>"}
             return (
                 <li dangerouslySetInnerHTML={element} className={this.props.active ? "route-features-list-element c4g-active": "route-features-list-element c4g-inactive"} onMouseUp={this.clickFeature}/>

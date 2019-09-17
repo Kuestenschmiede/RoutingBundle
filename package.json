@@ -27,7 +27,7 @@
     "babel-preset-env": "^1.7.0",
     "echo-loader": "0.0.1",
     "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.8"
+    "webpack-cli": "^3.3.9"
   },
   "dependencies": {
     "babel-plugin-transform-react-jsx": "^6.24.1",

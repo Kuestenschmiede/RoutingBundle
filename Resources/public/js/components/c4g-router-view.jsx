@@ -111,15 +111,22 @@ export class RouterView extends Component {
   }
 
   render() {
+    let sources = {
+      waySource: this.state.routerWaySource,
+      hintSource: this.state.routerHintSource,
+      featureSource: this.state.featureSource
+    }
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.props.open} className={this.props.className} profiles={this.state.profiles}
-          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()} layers={this.props.mapController.data.routerLayers}
-          containerAddresses={this.state.containerAddresses} mapController={this.props.mapController} currentProfile={this.state.currentProfile}
-          fromAddress={this.state.fromAddress} toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode}
+          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()}
+          sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses}
+          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress}
+          toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode}
         />
         <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
+          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource}
+          layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
       </React.Fragment>
     );
   }
@@ -1069,7 +1076,7 @@ export class RouterView extends Component {
           self.setState({
             "featureList": {
               "features": sortedFeatures,
-              "type": null
+              "type": response.type
             },
             "featureSource": self.routerFeaturesSource
           });
@@ -1695,25 +1702,30 @@ export class RouterView extends Component {
       coordinate = toLonLat(evt.coordinate);
       // clear old features
       self.areaSource.clear();
-
-      // TODO router permalink wieder aktualisieren
-      if (self.state.fromAddress === "") {
-        self.setRouteFrom(coordinate[0], coordinate[1]);
-        // self.updateLinkFragments("addressFrom", coordinate);
-        self.recalculateRoute();
-      } else if (self.state.toAddress === "") {
-        self.setRouteTo(coordinate[0], coordinate[1]);
-        // self.updateLinkFragments("addressTo", coordinate);
-        self.recalculateRoute();
-      } else if (self.state.overPtCtr > 0) {
-        // TODO implement over points
-        for (let i = 0; i < self.state.overPtCtr; i++) {
-          if (!self.state.overPoints[i]) {
-            self.addOverPoint(coordinate[0], coordinate[1], i);
-            break;
+      if (self.state.mode === "route") {
+        // TODO router permalink wieder aktualisieren
+        if (self.state.fromAddress === "") {
+          self.setRouteFrom(coordinate[0], coordinate[1]);
+          // self.updateLinkFragments("addressFrom", coordinate);
+          self.recalculateRoute();
+        } else if (self.state.toAddress === "") {
+          self.setRouteTo(coordinate[0], coordinate[1]);
+          // self.updateLinkFragments("addressTo", coordinate);
+          self.recalculateRoute();
+        } else if (self.state.overPtCtr > 0) {
+          // TODO implement over points
+          for (let i = 0; i < self.state.overPtCtr; i++) {
+            if (!self.state.overPoints[i]) {
+              self.addOverPoint(coordinate[0], coordinate[1], i);
+              break;
+            }
           }
         }
       }
+      else if (self.state.mode === "area" && self.state.areaAddress === "") {
+        self.setAreaPoint(coordinate[0], coordinate[1]);
+      }
+
     };
 
     this.props.mapController.map.on('click', self.fnMapRouterInteraction);

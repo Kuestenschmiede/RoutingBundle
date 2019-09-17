@@ -32,12 +32,24 @@ export class RouterControls extends HorizontalPanel {
 
   setRouteMode(event) {
     event.stopPropagation();
-    this.props.router.setState({mode: "route"});
+    this.props.router.setState({mode: "route"}, () => {
+      for (let key in this.props.sources) {
+        if (this.props.sources.hasOwnProperty(key) && this.props.sources[key]) {
+          this.props.sources[key].clear();
+        }
+      }
+    });
   }
 
   setAreaMode(event) {
     event.stopPropagation();
-    this.props.router.setState({mode: "area"});
+    this.props.router.setState({mode: "area"}, () => {
+      for (let key in this.props.sources) {
+        if (this.props.sources.hasOwnProperty(key) && this.props.sources[key]) {
+          this.props.sources[key].clear();
+        }
+      }
+    });
   }
 
   render() {
