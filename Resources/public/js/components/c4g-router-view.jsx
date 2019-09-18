@@ -36,7 +36,8 @@ export class RouterView extends Component {
 
   constructor(props) {
     super(props);
-
+    this.setActiveId = this.setActiveId.bind(this);
+    this.setOpen = this.setOpen.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
 
@@ -69,6 +70,8 @@ export class RouterView extends Component {
           return center;
         }
       },
+      activeId: null,
+      openResults: false,
       containerAddresses: {
         arrFromPositions: [],
         arrFromNames: [],
@@ -124,9 +127,11 @@ export class RouterView extends Component {
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress}
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode}
         />
-        <RouterResultContainer open={false} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
+        <RouterResultContainer open={this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource}
-          layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}/>
+          layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}
+          activeId={this.state.activeId} setActiveId={this.setActiveId}
+        />
       </React.Fragment>
     );
   }
@@ -155,6 +160,12 @@ export class RouterView extends Component {
       this.permalink.updateLinkFragments("detourRoute", this.state.detourRoute);
     }
   }
+  setActiveId(activeId) {
+    this.setState({"activeId": activeId});
+  };
+  setOpen(bool) {
+    this.setState({"openResults": bool});
+  };
 
   setAreaPoint(longitude, latitude) {
     const scope = this;
@@ -1698,33 +1709,47 @@ export class RouterView extends Component {
       coordinate;
 
     self.fnMapRouterInteraction = function (evt) {
-
-      coordinate = toLonLat(evt.coordinate);
-      // clear old features
-      self.areaSource.clear();
-      if (self.state.mode === "route") {
-        // TODO router permalink wieder aktualisieren
-        if (self.state.fromAddress === "") {
-          self.setRouteFrom(coordinate[0], coordinate[1]);
-          // self.updateLinkFragments("addressFrom", coordinate);
-          self.recalculateRoute();
-        } else if (self.state.toAddress === "") {
-          self.setRouteTo(coordinate[0], coordinate[1]);
-          // self.updateLinkFragments("addressTo", coordinate);
-          self.recalculateRoute();
-        } else if (self.state.overPtCtr > 0) {
-          // TODO implement over points
-          for (let i = 0; i < self.state.overPtCtr; i++) {
-            if (!self.state.overPoints[i]) {
-              self.addOverPoint(coordinate[0], coordinate[1], i);
-              break;
+      let feature = self.props.mapController.map.forEachFeatureAtPixel(evt.pixel,
+          function (feature, layer) {
+            return feature;
+          }
+      );
+      if (feature && feature.getId()) {
+        self.setState(
+            {
+              activeId: feature.getId(),
+              openResults: true
+            })
+      }
+      else {
+        coordinate = toLonLat(evt.coordinate);
+        // clear old features
+        self.areaSource.clear();
+        if (self.state.mode === "route") {
+          // TODO router permalink wieder aktualisieren
+          if (self.state.fromAddress === "") {
+            self.setRouteFrom(coordinate[0], coordinate[1]);
+            // self.updateLinkFragments("addressFrom", coordinate);
+            self.recalculateRoute();
+          } else if (self.state.toAddress === "") {
+            self.setRouteTo(coordinate[0], coordinate[1]);
+            // self.updateLinkFragments("addressTo", coordinate);
+            self.recalculateRoute();
+          } else if (self.state.overPtCtr > 0) {
+            // TODO implement over points
+            for (let i = 0; i < self.state.overPtCtr; i++) {
+              if (!self.state.overPoints[i]) {
+                self.addOverPoint(coordinate[0], coordinate[1], i);
+                break;
+              }
             }
           }
         }
+        else if (self.state.mode === "area" && self.state.areaAddress === "") {
+          self.setAreaPoint(coordinate[0], coordinate[1]);
+        }
       }
-      else if (self.state.mode === "area" && self.state.areaAddress === "") {
-        self.setAreaPoint(coordinate[0], coordinate[1]);
-      }
+
 
     };
 

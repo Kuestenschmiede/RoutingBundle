@@ -38,11 +38,11 @@ export class RouterResultContainer extends HorizontalPanel {
 
   render() {
     let result = "";
-    if (this.state.mode === "instr" && this.state.open) {
-        result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.state.open}/>
+    if ((this.state.mode === "instr" && this.props.routerInstructions)&& this.props.open ) {
+        result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.props.open}/>
     }
-    else if (this.state.mode === "feat" && this.state.open) {
-        result = <RouterFeatureList className={"c4g-route-feature-wrapper"} routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}/>
+    else if ((this.state.mode === "feat" || (!this.props.routerInstructions && this.props.featureList)) && this.props.open) {
+        result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId} routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}/>
     }
       let instructions = [];
       let time = "";
@@ -75,7 +75,7 @@ export class RouterResultContainer extends HorizontalPanel {
           );
       }
       let resultSwitcher = "";
-      if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.state.open) {
+      if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.open) {
           resultSwitcher = (
               <div className="c4g-router-mode-switch">
                   <button id="c4g-router-button-route" onMouseUp={this.setResultInstr}>Instructions</button>
@@ -84,7 +84,7 @@ export class RouterResultContainer extends HorizontalPanel {
           )
       }
     return (
-      <div className={this.props.className + (this.state.open ? " c4g-open" : " c4g-close")}>
+      <div className={this.props.className + (this.props.open ? " c4g-open" : " c4g-close")}>
           {routerHeader}
           {resultSwitcher}
           {result}
@@ -93,7 +93,7 @@ export class RouterResultContainer extends HorizontalPanel {
   }
 
   componentDidUpdate() {
-    let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
+    let className = this.props.className + (this.props.open ? " c4g-open" : " c4g-close");
     let container = document.getElementsByClassName(className)[0];
     const scope = this;
     if (container) {
@@ -102,11 +102,11 @@ export class RouterResultContainer extends HorizontalPanel {
   }
 
   open() {
-    this.setState({open: true});
+    this.props.setOpen(true);
   }
 
   close() {
-    this.setState({open: false});
+      this.props.setOpen(false);
   }
 
   slideInCollidingElements() {
