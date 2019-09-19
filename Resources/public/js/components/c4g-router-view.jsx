@@ -1719,6 +1719,8 @@ export class RouterView extends Component {
             {
               activeId: feature.getId(),
               openResults: true
+            }, () => {
+              document.querySelector(".c4g-route-feature-wrapper").scrollTo(0,document.querySelector("li.route-features-list-element.c4g-active").offsetTop);
             })
       }
       else {

@@ -23,7 +23,8 @@ export class RouterResultContainer extends HorizontalPanel {
     super(props);
     this.state.mode = "instr";
     this.setResultInstr = this.setResultInstr.bind(this);
-    this.setResultFeat = this.setResultFeat.bind(this)
+    this.setResultFeat = this.setResultFeat.bind(this);
+    this.clickControl = this.clickControl.bind(this);
   }
 
   setResultInstr(event) {
@@ -108,8 +109,16 @@ export class RouterResultContainer extends HorizontalPanel {
   close() {
       this.props.setOpen(false);
   }
+  clickControl() {
+    if (this.props.open) {
+        this.close();
+    } else {
+        this.open();
+    }
+  }
 
-  slideInCollidingElements() {
+
+    slideInCollidingElements() {
     // override parent method
   }
 
