@@ -142,7 +142,9 @@ export class RoutingPermalink {
   handleInitialAreaSearch(objParams) {
     this.router.setState({mode: "area"});
     let center = objParams.a;
-    center = center.split(",");
+    if (center) {
+      center = center.split(",");
+    }
     let detour = objParams.d;
     let searchtype = objParams.s;
     let forceStart = objParams.f;
@@ -151,11 +153,9 @@ export class RoutingPermalink {
       // jQuery(this.toggleDetourArea).val(detour);
       // jQuery(this.toggleDetourArea).trigger('input');
     }
-    console.log(center);
     if (center && center.length === 2) {
       this.updateLinkFragments("addressArea", center);
       this.router.setAreaPoint(center);
-      console.log(center);
     }
     if (searchtype) {
       this.updateLinkFragments("searchType", searchtype);
