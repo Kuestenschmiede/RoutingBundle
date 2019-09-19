@@ -1074,29 +1074,13 @@ export class RouterView extends Component {
     let profileId = this.props.mapController.data.profile;
     let url = 'con4gis/areaService/' + profileId + '/' + this.state.layerArea + '/' + this.state.detourArea + '/' + fromCoord;
     url += '?profile=' + this.state.currentProfile;
-    url = "https://www.tanke-guenstig.de/con4gis/areaService/1/2/7/"+ fromCoord + '?profile=' + this.state.currentProfile;
     if (self.areaAjax) {
       self.areaAjax.abort();
     }
 
     // this.spinner.show();
-
     self.areaAjax = jQuery.ajax({
-      // 'url': url
-      'url': url,
-      contentType: 'application/json',
-      dataType:'json',
-      responseType:'application/json',
-      crossDomain: true,
-      xhrFields: {
-        withCredentials: false
-      },
-      headers: {
-        'Access-Control-Allow-Credentials' : true,
-        'Access-Control-Allow-Origin':'https://www.tanke-guenstig.de/',
-        'Access-Control-Allow-Methods':'GET',
-        'Access-Control-Allow-Headers':'application/json',
-      }
+      'url': url
     }).done(function (response) {
         self.response = response;
         if (response) {
@@ -1186,7 +1170,6 @@ export class RouterView extends Component {
       url = 'con4gis/routeService/' + this.props.mapController.data.lang + '/'
         + profileId + '/' + this.state.layerRoute + '/'
         + this.state.detourRoute + '/' + fromCoord;
-      url = "https://www.tanke-guenstig.de/con4gis/routeService/1/2/" + this.state.detourRoute + '/' + fromCoord;
 
       if (overPoint) {
         for (var i = 0; i < overCoord.length; i++)
