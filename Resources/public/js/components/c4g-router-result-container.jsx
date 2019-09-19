@@ -106,7 +106,7 @@ export class RouterResultContainer extends HorizontalPanel {
   }
 
   close() {
-      this.props.setOpen(false);
+    this.props.setOpen(false);
   }
 
   slideInCollidingElements() {

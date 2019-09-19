@@ -58,7 +58,6 @@ export class RouterView extends Component {
       }
     }
 
-
     this.state = {
       router: props.router,
       objSettings: {
@@ -118,14 +117,21 @@ export class RouterView extends Component {
       waySource: this.state.routerWaySource,
       hintSource: this.state.routerHintSource,
       featureSource: this.state.featureSource
-    }
+    };
+    // TODO aus mapData übernehmen
+    let sliderOptions = {
+      min: 1,
+      max: 10,
+      value: this.state.mode === "route" ? this.state.detourRoute : this.state.detourArea,
+      router: this
+    };
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.props.open} className={this.props.className} profiles={this.state.profiles}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses}
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress}
-          toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode}
+          toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions}
         />
         <RouterResultContainer open={this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource}
@@ -1068,7 +1074,7 @@ export class RouterView extends Component {
     let profileId = this.props.mapController.data.profile;
     let url = 'con4gis/areaService/' + profileId + '/' + this.state.layerArea + '/' + this.state.detourArea + '/' + fromCoord;
     url += '?profile=' + this.state.currentProfile;
-
+    url = "https://www.tanke-guenstig.de/con4gis/areaService/1/2/7/"+ fromCoord + '?profile=' + this.state.currentProfile;
     if (self.areaAjax) {
       self.areaAjax.abort();
     }
@@ -1076,7 +1082,21 @@ export class RouterView extends Component {
     // this.spinner.show();
 
     self.areaAjax = jQuery.ajax({
-      'url': url
+      // 'url': url
+      'url': url,
+      contentType: 'application/json',
+      dataType:'json',
+      responseType:'application/json',
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: false
+      },
+      headers: {
+        'Access-Control-Allow-Credentials' : true,
+        'Access-Control-Allow-Origin':'https://www.tanke-guenstig.de/',
+        'Access-Control-Allow-Methods':'GET',
+        'Access-Control-Allow-Headers':'application/json',
+      }
     }).done(function (response) {
         self.response = response;
         if (response) {
@@ -1166,6 +1186,7 @@ export class RouterView extends Component {
       url = 'con4gis/routeService/' + this.props.mapController.data.lang + '/'
         + profileId + '/' + this.state.layerRoute + '/'
         + this.state.detourRoute + '/' + fromCoord;
+      url = "https://www.tanke-guenstig.de/con4gis/routeService/1/2/" + this.state.detourRoute + '/' + fromCoord;
 
       if (overPoint) {
         for (var i = 0; i < overCoord.length; i++)
@@ -1251,7 +1272,6 @@ export class RouterView extends Component {
         this.performViaRoute(this.state.fromPoint, this.state.toPoint);
       }
     }
-
   }
 
   /**
