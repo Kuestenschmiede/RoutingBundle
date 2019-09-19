@@ -15,6 +15,7 @@ import React, { Component } from "react";
 import { RouterAddressField } from "./c4g-router-address-field.jsx";
 import { RouterProfileSelection } from "./c4g-router-profile-selection.jsx";
 import { RouterLayerSelection } from "./c4g-router-layer-selection.jsx";
+import { RouterDetourSlider } from "./c4g-router-detour-slider.jsx";
 
 export class RouterAddressInput extends Component {
 
@@ -78,11 +79,13 @@ export class RouterAddressInput extends Component {
         <button className="c4g-router-switch" onMouseUp={swapFunction}></button>
         <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
         <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
+        <RouterDetourSlider min={this.props.sliderOptions.min} max={this.props.sliderOptions.max} value={this.props.sliderOptions.value} router={this.props.sliderOptions.router}/>
       </div>;
     } else if (this.props.detailsEnabled && this.props.mode === "area") {
       details = <div>
         <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
         <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
+        <RouterDetourSlider min={this.props.sliderOptions.min} max={this.props.sliderOptions.max} value={this.props.sliderOptions.value} router={this.props.sliderOptions.router}/>
       </div>;
     }
 

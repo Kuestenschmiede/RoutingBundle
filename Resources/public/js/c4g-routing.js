@@ -1557,45 +1557,7 @@ export class Router extends Sideboard {
    * @returns {HTMLElement}
    */
   createDetourSlider(mode, min, max, initialValue) {
-    const scope = this;
-    let key = "toggleDetour" + utils.capitalizeFirstLetter(mode);
-    scope[key] = document.createElement('input');
-    scope[key].className = routingConstants.ROUTE_TOGGLE;
-    scope[key].setAttribute('type', 'range');
-    scope[key].setAttribute('min', min);
-    scope[key].setAttribute('max', max);
-    scope[key].setAttribute('value', initialValue);
-    scope[key].setAttribute('step', 0.5);
 
-    let toggleDetourWrapper = document.createElement('div');
-    let output = document.createElement('output');
-    output.className = routingConstants.OUTPUT_DETOUR;
-    let p = document.createElement('p');
-    p.innerHTML = langRouteConstants.ROUTE_DETOUR;
-    output.innerHTML = 100;
-    toggleDetourWrapper.appendChild(p);
-    toggleDetourWrapper.appendChild(scope[key]);
-    toggleDetourWrapper.appendChild(output);
-    jQuery(scope[key]).on('input', function () {
-      let control = jQuery(this);
-      let range = control.attr('max') - control.attr('min');
-      let pos = ((control.val() - control.attr('min')) / range) * 100;
-      let posOffset = Math.round(50 * pos / 100) - (25);
-      let output = control.next('output');
-      output
-        .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-        .text(control.val() + " km");
-      scope.updateLinkFragments("detour", control.val());
-    });
-    jQuery(scope[key]).on('change', function () {
-      if (mode === "route") {
-        scope.recalculateRoute();
-      } else {
-        scope.performArea(scope.areaValue);
-      }
-    });
-    jQuery(scope[key]).trigger('input');
-    return toggleDetourWrapper;
   }
 
   addInterimField(insertId = null, olUid = null){
