@@ -13,7 +13,7 @@
 
 /** Routing und Umkreissuche  */
 $GLOBALS['TL_LANG'][$strName]['router_api_selection'] = ['Routing Server Technology','Choose Server Technology'];
-$GLOBALS['TL_LANG'][$strName]['router_api_key'] = ['API-Key', 'Enter your ORS- or Graphhopper-API-Key. You can generate the key <a href="https://openrouteservice.org/sign-up/" target="_blank">here (OpenRouteService)</a> or <a href="https://graphhopper.com/dashboard/#/register" target="_blank"> here (Graphhopper)</a>. Pay attention to the terms of use.'];
+$GLOBALS['TL_LANG'][$strName]['router_api_key'] = ['API-Key', 'Enter your ORS- or Graphhopper-API-Key. You can generate the key <a href="https://openrouteservice.org/sign-up/" target="_blank" rel="noopener">here (OpenRouteService)</a> or <a href="https://graphhopper.com/dashboard/#/register" target="_blank"> here (Graphhopper)</a>. Pay attention to the terms of use.'];
 $GLOBALS['TL_LANG'][$strName]['router_viaroute_url'] = ['Alternative URL (mandatory for OSRM-API 4)', 'Enter the URL of a ORS or OSRM Server, for example if you want to use your own. By default, either http://router.project-osrm.org/ , https://api.openrouteservice.org/ or https://graphhopper.com/api/1/route? is used. Pay attention to the providers\' copyright information.'];
 $GLOBALS['TL_LANG'][$strName]['routerHeadline'] = ['Headline Router', 'Default: Router'];
 $GLOBALS['TL_LANG'][$strName]['router_attribution'] = ['Override Router Copyright', 'Overrides the default attriubution. Recommended only if you are using an alternative API-Server, or if you have placed it in another, clearly visible, spot on your website!'];
@@ -60,12 +60,12 @@ $GLOBALS['TL_LANG'][$strName]['pirate'] = ['Arrrrr you a pirate?', 'Set language
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['area'] = "Area Search";
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['route'] = "Route Search";
 
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x) (<a href="http://project-osrm.org" target="_blank">usage policy</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x) (<a href="http://project-osrm.org" target="_blank">usage policy</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService (<a href="https://openrouteservice.org" target="_blank">usage policy</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper (<a href="https://www.graphhopper.com" target="_blank">usage policy</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla (<a href="http://valhalla.github.io/demos/routing" target="_blank">usage policy</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io mapservices (<a href="https://con4gis.io" target="_blank">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x) (<a href="http://project-osrm.org" target="_blank" rel="noopener">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x) (<a href="http://project-osrm.org" target="_blank" rel="noopener">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService (<a href="https://openrouteservice.org" target="_blank" rel="noopener">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper (<a href="https://www.graphhopper.com" target="_blank" rel="noopener">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla (<a href="http://valhalla.github.io/demos/routing" target="_blank" rel="noopener">usage policy</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io mapservices (<a href="https://con4gis.io" target="_blank" rel="noopener">usage policy</a>)';
 
 
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['0'] = 'Car';
