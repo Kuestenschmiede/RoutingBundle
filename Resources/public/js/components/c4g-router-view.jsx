@@ -872,7 +872,7 @@ export class RouterView extends Component {
       } else {
         // show error hint
         let alertHandler = new AlertHandler();
-        alertHandler.showInfoDialog(this.props.langConstants.ROUTER_VIEW_ALERT_ERROR, scope.props.langConstants.ROUTER_VIEW_ALERT_ADDRESS);
+        alertHandler.showInfoDialog(scope.props.langConstants.ROUTER_VIEW_ALERT_ERROR, scope.props.langConstants.ROUTER_VIEW_ALERT_ADDRESS);
       }
 
     }).catch(function () {
@@ -958,7 +958,7 @@ export class RouterView extends Component {
       } else {
         // show error hint
         let alertHandler = new AlertHandler();
-        alertHandler.showInfoDialog(this.props.langConstants.ROUTER_VIEW_ALERT_ERROR, this.props.langConstants.ROUTER_VIEW_ALERT_ADDRESS);
+        alertHandler.showInfoDialog(scope.props.langConstants.ROUTER_VIEW_ALERT_ERROR, scope.props.langConstants.ROUTER_VIEW_ALERT_ADDRESS);
       }
 
       if (opt_callback && typeof opt_callback === "function") {

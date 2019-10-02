@@ -65,7 +65,7 @@ export class AutocompleteInput extends Component {
     };
 
     return (
-      <input id={this.props.cssId} type="search" defaultValue={this.props.value} onInput={enterListener}
+      <input id={this.props.cssId} type="search" defaultValue={this.props.value} onKeyDown={enterListener}
              autoComplete="off" />
     );
   }
