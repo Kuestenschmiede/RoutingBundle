@@ -14,7 +14,7 @@
 $strName = 'tl_c4g_routing_configuration';
 $GLOBALS['TL_LANG'][$strName]['router_api_selection'] = ['Routing-Servertechnik','Auswahl der Servertechnik.'];
 $GLOBALS['TL_LANG'][$strName]['name'] = ['Bezeichnung','Bezeichnung der Routing-Konfiguration.'];
-$GLOBALS['TL_LANG'][$strName]['router_api_key'] = ['API-Key', 'Geben Sie hier Ihren ORS- oder Graphopper-API-Key ein. Den Key können Sie <a href="https://openrouteservice.org/sign-up/" target="_blank">hier (OpenRouteService)</a>  oder <a href="https://graphhopper.com/dashboard/#/register" target="_blank"> hier (Graphhopper)</a> generieren. Achten Sie auf die Servicebeschränkungen.'];
+$GLOBALS['TL_LANG'][$strName]['router_api_key'] = ['API-Key', 'Geben Sie hier Ihren ORS- oder Graphopper-API-Key ein. Den Key können Sie <a href="https://openrouteservice.org/sign-up/" target="_blank" rel="noopener">hier (OpenRouteService)</a>  oder <a href="https://graphhopper.com/dashboard/#/register" target="_blank"> hier (Graphhopper)</a> generieren. Achten Sie auf die Servicebeschränkungen.'];
 $GLOBALS['TL_LANG'][$strName]['router_viaroute_url'] = ['Alternative URL (verfplichtend für OSRM-API 4)', 'Geben Sie hier die URL des ORS oder OSRM Servers ein, wenn Sie z.B. einen eigenen Server nutzen möchten. Standardmäßig wird http://router.project-osrm.org/ , https://api.openrouteservice.org/  oder https://graphhopper.com/api/1/route? verwendet. Achten Sie dabei auf die Copyright Hinweise des Anbieters.'];
 $GLOBALS['TL_LANG'][$strName]['routerHeadline'] = ['Überschrift Router', 'Standard: Router'];
 $GLOBALS['TL_LANG'][$strName]['router_attribution'] = ['Copyright für Router überschreiben', 'Überschreibt die Standard-Attribution. Dies ist nur dann empfehlenswert, wenn Sie einen alternativen API-Server nutzen, oder die Attribution an einer anderen, offensichtlichen Stelle, auf der Seite platziert haben!'];
@@ -66,12 +66,12 @@ $GLOBALS['TL_LANG'][$strName]['pirate'] = ['Bist du ein Pirat?', 'Sprache auf Pi
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['area'] = "Umkreissuche";
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['route'] = "Routensuche";
 
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x) (<a href="http://project-osrm.org" target="_blank">Nutzungsbestimmungen</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x) (<a href="http://project-osrm.org" target="_blank">Nutzungsbestimmungen</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService (<a href="https://openrouteservice.org" target="_blank">Nutzungsbestimmungen</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper (<a href="https://www.graphhopper.com" target="_blank">Nutzungsbestimmungen</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla (<a href="http://valhalla.github.io/demos/routing" target="_blank">Nutzungsbestimmungen</a>)';
-$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io Kartendienste (<a href="https://con4gis.io" target="_blank">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x) (<a href="http://project-osrm.org" target="_blank" rel="noopener">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x) (<a href="http://project-osrm.org" target="_blank" rel="noopener">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['2'] = 'OpenRouteService (<a href="https://openrouteservice.org" target="_blank" rel="noopener">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['3'] = 'Graphhopper (<a href="https://www.graphhopper.com" target="_blank" rel="noopener">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['4'] = 'Valhalla (<a href="http://valhalla.github.io/demos/routing" target="_blank" rel="noopener">Nutzungsbestimmungen</a>)';
+$GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['5'] = 'con4gis.io Kartendienste (<a href="https://con4gis.io" target="_blank" rel="noopener">Nutzungsbestimmungen</a>)';
 
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['0'] = 'Auto';
 $GLOBALS['TL_LANG'][$strName]['references_router_profiles']['1'] = 'Lastwagen';
