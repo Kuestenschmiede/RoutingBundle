@@ -19,30 +19,6 @@ export class RouterDetourSlider extends Component {
 
   constructor(props) {
     super(props);
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleInput = this.handleInput.bind(this);
-  }
-
-  handleInput() {
-    let control = jQuery("." + routingConstants.ROUTE_TOGGLE);
-    let range = control.attr('max') - control.attr('min');
-    let pos = ((control.val() - control.attr('min')) / range) * 100;
-    let posOffset = Math.round(50 * pos / 100) - (25);
-    let output = control.next('output');
-    output
-      .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-      .text(control.val() + " km");
-    // TODO detour im view-state setten (darüber dann auch den permalink updaten)
-    // scope.updateLinkFragments("detour", control.val());
-  }
-
-  handleChange() {
-    if (this.props.router.state.mode === "route") {
-      this.props.router.recalculateRoute();
-    } else {
-      this.props.router.performArea();
-    }
   }
 
   componentDidMount() {
@@ -57,13 +33,17 @@ export class RouterDetourSlider extends Component {
       output
         .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
         .text(control.val() + " km");
-      // scope.updateLinkFragments("detour", control.val());
+      if (scope.props.router.props.mapController.data.usePermalink) {
+        scope.props.router.permalink.updateLinkFragments("detour", control.val());
+      }
     });
     element.on('change', function () {
       if (scope.props.router.state.mode === "route") {
-        scope.props.router.recalculateRoute();
+        scope.props.router.setState({detourRoute: element.val()}, scope.props.router.recalculateRoute);
       } else {
-        scope.props.router.performArea(scope.router.state.areaValue);
+        scope.props.router.setState({detourArea: element.val()}, () => {
+          scope.props.router.performArea(scope.router.state.areaValue);
+        });
       }
     });
     element.trigger('input');
@@ -71,26 +51,6 @@ export class RouterDetourSlider extends Component {
 
   render() {
     const scope = this;
-    // let key = "toggleDetour" + utils.capitalizeFirstLetter(mode);
-    // scope[key] = document.createElement('input');
-    // scope[key].className = routingConstants.ROUTE_TOGGLE;
-    // scope[key].setAttribute('type', 'range');
-    // scope[key].setAttribute('min', min);
-    // scope[key].setAttribute('max', max);
-    // scope[key].setAttribute('value', initialValue);
-    // scope[key].setAttribute('step', 0.5);
-    //
-    // let toggleDetourWrapper = document.createElement('div');
-    // let output = document.createElement('output');
-    // output.className = routingConstants.OUTPUT_DETOUR;
-    // let p = document.createElement('p');
-    // p.innerHTML = langRouteConstants.ROUTE_DETOUR;
-    // output.innerHTML = 100;
-    // toggleDetourWrapper.appendChild(p);
-    // toggleDetourWrapper.appendChild(scope[key]);
-    // toggleDetourWrapper.appendChild(output);
-
-
 
     return (
       <div>
