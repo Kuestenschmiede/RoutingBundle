@@ -51,10 +51,15 @@ export class RouterView extends Component {
     }
     let layerRoute = null;
     let layerArea = null;
-    for (let key in mapController.data.routerLayers) {
-      if (mapController.data.routerLayers.hasOwnProperty(key)) {
+    let layerValueRoute = null;
+    let layerValueArea = null;
+    const routerLayers = mapController.data.routerLayers;
+    for (let key in routerLayers) {
+      if (routerLayers.hasOwnProperty(key)) {
         layerRoute = layerRoute || key;
+        layerValueRoute = Object.keys(routerLayers[layerRoute])[0] || layerValueRoute;
         layerArea = layerArea || key;
+        layerValueArea = Object.keys(routerLayers[layerArea])[0] || layerValueArea;
       }
     }
 
@@ -86,6 +91,8 @@ export class RouterView extends Component {
       areaAddress: "",
       layerRoute: layerRoute,
       layerArea: layerArea,
+      layerValueRoute: layerValueRoute,
+      layerValueArea: layerValueArea,
       detourRoute: props.detourRoute.initial,
       detourArea: props.detourArea.initial,
       featureList: {
@@ -149,21 +156,23 @@ export class RouterView extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    let fragments = this.permalink.linkFragments;
-    if (this.state.fromPoint && fragments.fromAddress !== this.state.fromPoint.getCoordinates()) {
-      this.permalink.updateLinkFragments("fromAddress", this.state.fromPoint.getCoordinates());
-    }
-    if (this.state.toPoint && fragments.toAddress !== this.state.toPoint.getCoordinates()) {
-      this.permalink.updateLinkFragments("toAddress", this.state.toPoint.getCoordinates());
-    }
-    if (fragments.mode !== this.state.mode) {
-      this.permalink.updateLinkFragments("mode", this.state.mode);
-    }
-    if (fragments.detourArea !== this.state.detourArea) {
-      this.permalink.updateLinkFragments("detourArea", this.state.detourArea);
-    }
-    if (fragments.detourRoute !== this.state.detourRoute) {
-      this.permalink.updateLinkFragments("detourRoute", this.state.detourRoute);
+    if (this.props.mapController.data.usePermalink) {
+      let fragments = this.permalink.linkFragments;
+      if (this.state.fromPoint && fragments.fromAddress !== this.state.fromPoint.getCoordinates()) {
+        this.permalink.updateLinkFragments("fromAddress", this.state.fromPoint.getCoordinates());
+      }
+      if (this.state.toPoint && fragments.toAddress !== this.state.toPoint.getCoordinates()) {
+        this.permalink.updateLinkFragments("toAddress", this.state.toPoint.getCoordinates());
+      }
+      if (fragments.mode !== this.state.mode) {
+        this.permalink.updateLinkFragments("mode", this.state.mode);
+      }
+      if (fragments.detourArea !== this.state.detourArea) {
+        this.permalink.updateLinkFragments("detourArea", this.state.detourArea);
+      }
+      if (fragments.detourRoute !== this.state.detourRoute) {
+        this.permalink.updateLinkFragments("detourRoute", this.state.detourRoute);
+      }
     }
   }
   setActiveId(activeId) {
@@ -1267,7 +1276,7 @@ export class RouterView extends Component {
    */
   showFeatures(features, type = "table", mode = "router") {
     const self = this;
-    // self.routerFeaturesSource.clear();
+    self.routerFeaturesSource.clear();
     // interim clear of feature selection
     if (!features) {
       // TODO the calling function expects a return value; should probably be fixed
@@ -1275,8 +1284,9 @@ export class RouterView extends Component {
     }
     const mapData = this.mapData;
     let layerId = this.state.mode === "route" ? this.state.layerRoute : this.state.layerArea;
-    const layer = self.props.mapController.proxy.layerController.arrLayers[layerId];
-    let activeLayer = this.state.mode === "route" ? "Tanken": "Tanken";//self.activeLayerValue : self.activeLayerValueArea; //richtig anpassen, wenn vorhanden aus GUI
+    const layer = this.props.mapController.proxy.layerController.arrLayers[layerId];
+    let activeLayer = this.state.mode === "route" ? this.state.layerValueRoute : this.state.layerValueArea;
+    console.log(this.state.layerValueRoute);
     const unstyledFeatures = [];
     const contentFeatures = [];
     let missingStyles = [];
@@ -1301,7 +1311,7 @@ export class RouterView extends Component {
           let feature = features[i];
           let resultCoordinate;
           let contentFeature;
-          if (type == "overpass") {
+          if (type === "overpass") {
             if (feature.type === "node" && !feature.tags) {
               continue;
             }
@@ -1323,13 +1333,20 @@ export class RouterView extends Component {
           }
 
 
-          if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
+          if (mapData.routerLayers[layerId]
+            && mapData.routerLayers[layerId][activeLayer]
+            && mapData.routerLayers[layerId][activeLayer]['mapLabel']
+            && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]
+          ) {
             label = feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
-          }
-          else if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature.tags && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
+          } else if (mapData.routerLayers[layerId]
+            && mapData.routerLayers[layerId][activeLayer]
+            && mapData.routerLayers[layerId][activeLayer]['mapLabel']
+            && feature.tags
+            && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]
+          ) {
             label = feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
           }
-
           let locstyle = feature['locstyle'] || layer.locstyle;
           if (mapData.priorityFeatures && mapData.priorityLocstyle) {
             if (bestFeatures.includes(feature)) {
