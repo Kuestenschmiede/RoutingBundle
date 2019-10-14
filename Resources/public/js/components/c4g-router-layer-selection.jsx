@@ -38,7 +38,6 @@ export class RouterLayerSelection extends Component {
 
   setLayerValue(event) {
     let value = event.target.value;
-    console.log(value);
     const scope = this;
     this.props.router.setState({
       layerValueRoute: value
@@ -61,17 +60,22 @@ export class RouterLayerSelection extends Component {
         return <button onMouseUp={this.setLayerValue} key={this.props.layers[defaultLayer][name].mapLabel} value={name}>{name}</button>
       })}
     </div>;
-    return (
-      <React.Fragment>
-        <select className="c4g-router-layer-selection" onSelect={this.setLayer} defaultValue={defaultLayer}>
-          {Object.keys(this.props.layers).map((id) => {
-            let layer = arrLayers[id];
+    if (Object.keys(this.props.layers).length > 1) {
+      return (
+        <React.Fragment>
+          <select className="c4g-router-layer-selection" onSelect={this.setLayer} defaultValue={defaultLayer}>
+            {Object.keys(this.props.layers).map((id) => {
+              let layer = arrLayers[id];
 
-            return <option key={id} value={id}>{layer.name}</option>
-          })}
-        </select>
-        {layerValueSelection}
-      </React.Fragment>
-    );
+              return <option key={id} value={id}>{layer.name}</option>
+            })}
+          </select>
+          {layerValueSelection}
+        </React.Fragment>
+      );
+    } else {
+      return (<React.Fragment>{layerValueSelection}</React.Fragment>);
+    }
+
   }
 }
