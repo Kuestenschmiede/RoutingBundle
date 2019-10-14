@@ -772,8 +772,6 @@ export class RouterView extends Component {
       return;
     }
 
-    // TODO instructions für die anderen engines übergeben
-
     routerInstructionsHeader = document.createElement('div');
     routerInstructionsHeader.className = routingConstants.ROUTER_INSTRUCTIONS_HEADER;
 
@@ -1104,20 +1102,7 @@ export class RouterView extends Component {
             },
             "featureSource": self.routerFeaturesSource
           });
-          // let extent = self.routerFeaturesSource.getExtent();
-          // extent = extend(extent, self.areaLayer.getSource().getExtent());
-          // let view = self.props.mapController.map.getView();
-          // view.fit(extent, {
-          //   size: self.props.mapController.map.getSize(),
-          //   padding: [0, 0, 0, 0]
-          // });
-          // // clear route & route features
-          // self.routingWaySource.clear();
-          // self.routingAltWaySource.clear();
-          // self.routingHintSource.clear();
-          // self.locationsSource.clear();
-          // // jQuery(self.routerFeatureWrapper).empty();
-          // // jQuery(self.routerInstructionsWrapper).empty();
+
         }
 
       });
@@ -1279,14 +1264,12 @@ export class RouterView extends Component {
     self.routerFeaturesSource.clear();
     // interim clear of feature selection
     if (!features) {
-      // TODO the calling function expects a return value; should probably be fixed
       return [];
     }
     const mapData = this.mapData;
     let layerId = this.state.mode === "route" ? this.state.layerRoute : this.state.layerArea;
     const layer = this.props.mapController.proxy.layerController.arrLayers[layerId];
     let activeLayer = this.state.mode === "route" ? this.state.layerValueRoute : this.state.layerValueArea;
-    console.log(this.state.layerValueRoute);
     const unstyledFeatures = [];
     const contentFeatures = [];
     let missingStyles = [];

@@ -43,7 +43,6 @@ export class RouterLayerSelection extends Component {
     this.props.router.setState({
       layerValueRoute: value
     }, () => {
-      console.log("MACH DU FICKER");
       scope.props.router.showFeatures(scope.props.router.state.featureList.features, scope.props.router.state.featureList.type, "router");
     });
   }
