@@ -45,6 +45,30 @@ export class RouterDetourSlider extends Component {
     }
   }
 
+  componentDidMount() {
+    const scope = this;
+    const element = jQuery("." + routingConstants.ROUTE_TOGGLE);
+    element.on('input', function () {
+      let control = jQuery(this);
+      let range = control.attr('max') - control.attr('min');
+      let pos = ((control.val() - control.attr('min')) / range) * 100;
+      let posOffset = Math.round(50 * pos / 100) - (25);
+      let output = control.next('output');
+      output
+        .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
+        .text(control.val() + " km");
+      // scope.updateLinkFragments("detour", control.val());
+    });
+    element.on('change', function () {
+      if (scope.props.router.state.mode === "route") {
+        scope.props.router.recalculateRoute();
+      } else {
+        scope.props.router.performArea(scope.router.state.areaValue);
+      }
+    });
+    element.trigger('input');
+  }
+
   render() {
     const scope = this;
     // let key = "toggleDetour" + utils.capitalizeFirstLetter(mode);
@@ -65,25 +89,7 @@ export class RouterDetourSlider extends Component {
     // toggleDetourWrapper.appendChild(p);
     // toggleDetourWrapper.appendChild(scope[key]);
     // toggleDetourWrapper.appendChild(output);
-    // jQuery(scope[key]).on('input', function () {
-    //   let control = jQuery(this);
-    //   let range = control.attr('max') - control.attr('min');
-    //   let pos = ((control.val() - control.attr('min')) / range) * 100;
-    //   let posOffset = Math.round(50 * pos / 100) - (25);
-    //   let output = control.next('output');
-    //   output
-    //     .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-    //     .text(control.val() + " km");
-    //   scope.updateLinkFragments("detour", control.val());
-    // });
-    // jQuery(scope[key]).on('change', function () {
-    //   if (mode === "route") {
-    //     scope.recalculateRoute();
-    //   } else {
-    //     scope.performArea(scope.areaValue);
-    //   }
-    // });
-    // jQuery(scope[key]).trigger('input');
+
 
 
     return (
@@ -91,7 +97,7 @@ export class RouterDetourSlider extends Component {
         <p>Umweg</p>
         <input type="range" className={routingConstants.ROUTE_TOGGLE}
                min={this.props.min} max={this.props.max} defaultValue={this.props.value} step={0.5}/>
-        <output className={routingConstants.OUTPUT_DETOUR}>100</output>
+        <output className={routingConstants.OUTPUT_DETOUR}>{this.props.value}</output>
       </div>
     );
   }

@@ -120,18 +120,29 @@ export class RouterView extends Component {
   }
 
   render() {
+    const mapData = this.props.mapController.data;
     let sources = {
       waySource: this.state.routerWaySource,
       hintSource: this.state.routerHintSource,
       featureSource: this.state.featureSource
     };
-    // TODO aus mapData übernehmen
-    let sliderOptions = {
-      min: 1,
-      max: 10,
-      value: this.state.mode === "route" ? this.state.detourRoute : this.state.detourArea,
-      router: this
-    };
+    let sliderOptions = {};
+    if (this.state.mode === "route") {
+      sliderOptions = {
+        min: mapData.detourRoute.min,
+        max: mapData.detourRoute.max,
+        value: this.state.detourRoute,
+        router: this
+      };
+    } else if (this.state.mode === "area") {
+      sliderOptions = {
+        min: mapData.detourArea.min,
+        max: mapData.detourArea.max,
+        value: this.state.detourArea,
+        router: this
+      };
+    }
+
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.props.open} className={this.props.className} profiles={this.state.profiles}
