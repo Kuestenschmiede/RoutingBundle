@@ -1109,7 +1109,7 @@ export class RouterView extends Component {
           self.setState({
             "featureList": {
               "features": sortedFeatures,
-              "type": response.type
+              "type": response[1]
             },
             "featureSource": self.routerFeaturesSource
           });
