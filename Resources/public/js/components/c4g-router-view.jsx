@@ -186,9 +186,11 @@ export class RouterView extends Component {
       }
     }
   }
+
   setActiveId(activeId) {
     this.setState({"activeId": activeId});
   };
+
   setOpen(bool) {
     this.setState({"openResults": bool});
   };
@@ -223,6 +225,23 @@ export class RouterView extends Component {
 
     // overPoints[index] = point;
     this.setState({overPoints: overPoints}, () => scope.updateRouteLayersAndPoints());
+  }
+
+  setMode(mode) {
+    if (this.state.mode !== mode) {
+      let sources = {
+        waySource: this.state.routerWaySource,
+        hintSource: this.state.routerHintSource,
+        featureSource: this.state.featureSource
+      };
+      this.setState({mode: mode}, () => {
+        for (let key in sources) {
+          if (sources.hasOwnProperty(key) && sources[key]) {
+            sources[key].clear();
+          }
+        }
+      });
+    }
   }
 
   swapPoints() {
@@ -404,7 +423,7 @@ export class RouterView extends Component {
         scope.updateRouteLayersAndPoints();
         scope.recalculateRoute();
       });
-
+      console.log("deleteFunction");
     };
 
     const selectFromListener = function(event, ui) {
