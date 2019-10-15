@@ -22,7 +22,6 @@ export class RouterControls extends HorizontalPanel {
     super(props);
 
     this.state.router = this.props.router;
-    this.state.open = this.props.open;
     this.state.detailsEnabled = false;
 
     this.setRouteMode = this.setRouteMode.bind(this);
@@ -41,9 +40,9 @@ export class RouterControls extends HorizontalPanel {
   }
 
   render() {
-    let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
+    let className = this.props.className + (this.props.open ? " c4g-open" : " c4g-close");
     // propagate open state down to child components
-    let open = this.state.open;
+    let open = this.props.open;
 
     return (
       <div className={className}>
@@ -74,13 +73,31 @@ export class RouterControls extends HorizontalPanel {
 
   slideOutCollidingElements() {
     // override parent method
-    let className = this.props.className + (this.state.open ? " c4g-open" : " c4g-close");
+    let className = this.props.className + (this.props.open ? " c4g-open" : " c4g-close");
     let topValue = 0;
     let container = document.getElementsByClassName(className)[0];
     if (container) {
       topValue = container.offsetHeight;
     }
     jQuery(this.state.control.element).css("top", topValue + "px");
+  }
+
+  open() {
+    this.props.setOpen(true);
+    this.slideOutCollidingElements();
+  }
+
+  close() {
+    this.props.setOpen(false);
+    this.slideOutCollidingElements();
+  }
+
+  clickControl() {
+    if (this.props.open) {
+      this.close();
+    } else {
+      this.open();
+    }
   }
 
 

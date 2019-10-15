@@ -38,6 +38,7 @@ export class RouterView extends Component {
     super(props);
     this.setActiveId = this.setActiveId.bind(this);
     this.setOpen = this.setOpen.bind(this);
+    this.openControls = this.openControls.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
 
@@ -110,7 +111,8 @@ export class RouterView extends Component {
       toPoint: null,
       overPoints: [],
       profiles: arrProfiles,
-      currentProfile: 0
+      currentProfile: 0,
+      open: this.props.open || false
     };
     this.swapPoints = this.swapPoints.bind(this);
     if (mapController.data.usePermalink) {
@@ -145,7 +147,7 @@ export class RouterView extends Component {
 
     return (
       <React.Fragment>
-        <RouterControls router={this} open={this.props.open} className={this.props.className} profiles={this.state.profiles}
+        <RouterControls router={this} open={this.state.open} setOpen={this.openControls} className={this.props.className} profiles={this.state.profiles}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses}
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress}
@@ -158,6 +160,14 @@ export class RouterView extends Component {
         />
       </React.Fragment>
     );
+  }
+
+  openControls(open) {
+    if (open) {
+      this.setState({open: true});
+    } else {
+      this.setState({open: false});
+    }
   }
 
   componentDidMount() {
@@ -1742,6 +1752,9 @@ export class RouterView extends Component {
       coordinate;
 
     self.fnMapRouterInteraction = function (evt) {
+      if (self.state.open !== true) {
+        return;
+      }
       let feature = self.props.mapController.map.forEachFeatureAtPixel(evt.pixel,
           function (feature, layer) {
             return feature;
@@ -1749,15 +1762,15 @@ export class RouterView extends Component {
       );
       if (feature && feature.getId()) {
         self.setState(
-            {
-              activeId: feature.getId(),
-              openResults: true
-            }, () => {
-              // TODO behaves differently for route or area search
-              if (document.querySelector(".c4g-route-feature-wrapper")) {
-                document.querySelector(".c4g-route-feature-wrapper").scrollTo(0, document.querySelector("li.route-features-list-element.c4g-active").offsetTop);
-              }
-            });
+          {
+            activeId: feature.getId(),
+            openResults: true
+          }, () => {
+            // TODO behaves differently for route or area search
+            if (document.querySelector(".c4g-route-feature-wrapper")) {
+              document.querySelector(".c4g-route-feature-wrapper").scrollTo(0, document.querySelector("li.route-features-list-element.c4g-active").offsetTop);
+            }
+          });
       } else {
         coordinate = toLonLat(evt.coordinate);
         // clear old features
