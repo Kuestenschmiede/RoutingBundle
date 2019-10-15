@@ -51,7 +51,7 @@ export class RouterLayerSelection extends Component {
     let defaultLayer = 0;
     if (this.props.router.state.mode === "route") {
       defaultLayer = this.props.router.state.layerRoute;
-    } else if (this.props.router.state.mode === "route") {
+    } else if (this.props.router.state.mode === "area") {
       defaultLayer = this.props.router.state.layerArea;
     }
     const arrLayers = scope.props.router.props.mapController.proxy.layerController.arrLayers;

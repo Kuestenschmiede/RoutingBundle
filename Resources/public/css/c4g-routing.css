@@ -548,3 +548,7 @@ Router panel
     float: right;
     white-space: nowrap;
 }
+
+.c4g-router-panel.c4g-close {
+    display: none;
+}
