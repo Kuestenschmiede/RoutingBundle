@@ -148,7 +148,7 @@ export class RouterView extends Component {
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.state.open} setOpen={this.openControls} className={this.props.className} profiles={this.state.profiles}
-          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()}
+          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()} switchTargets={this.props.mapController.data.enableTargetSwitch}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses}
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress}
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions}

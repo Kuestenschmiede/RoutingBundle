@@ -50,7 +50,7 @@ export class RouterControls extends HorizontalPanel {
           <button id="c4g-router-button-route" onMouseUp={this.setRouteMode}>Route</button>
           <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
         </div>
-        <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={false}
+        <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile}
                             containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers}
                             fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress} sliderOptions={this.props.sliderOptions}
