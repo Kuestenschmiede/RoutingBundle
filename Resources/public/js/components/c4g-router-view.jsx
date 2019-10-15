@@ -1734,10 +1734,12 @@ export class RouterView extends Component {
               activeId: feature.getId(),
               openResults: true
             }, () => {
-              document.querySelector(".c4g-route-feature-wrapper").scrollTo(0,document.querySelector("li.route-features-list-element.c4g-active").offsetTop);
-            })
-      }
-      else {
+              // TODO behaves differently for route or area search
+              if (document.querySelector(".c4g-route-feature-wrapper")) {
+                document.querySelector(".c4g-route-feature-wrapper").scrollTo(0, document.querySelector("li.route-features-list-element.c4g-active").offsetTop);
+              }
+            });
+      } else {
         coordinate = toLonLat(evt.coordinate);
         // clear old features
         self.areaSource.clear();
@@ -1752,7 +1754,6 @@ export class RouterView extends Component {
             // self.updateLinkFragments("addressTo", coordinate);
             self.recalculateRoute();
           } else if (self.state.overPtCtr > 0) {
-            // TODO implement over points
             for (let i = 0; i < self.state.overPtCtr; i++) {
               if (!self.state.overPoints[i]) {
                 self.addOverPoint(coordinate[0], coordinate[1], i);
@@ -1765,10 +1766,7 @@ export class RouterView extends Component {
           self.setAreaPoint(coordinate[0], coordinate[1]);
         }
       }
-
-
     };
-
     this.props.mapController.map.on('click', self.fnMapRouterInteraction);
   }
 }

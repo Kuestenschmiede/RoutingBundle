@@ -42,7 +42,7 @@ export class RouterDetourSlider extends Component {
         scope.props.router.setState({detourRoute: element.val()}, scope.props.router.recalculateRoute);
       } else {
         scope.props.router.setState({detourArea: element.val()}, () => {
-          scope.props.router.performArea(scope.router.state.areaValue);
+          scope.props.router.performArea(scope.props.router.state.areaValue);
         });
       }
     });
