@@ -19,14 +19,6 @@ export class RouterAddressField extends Component {
 
   constructor(props) {
     super(props);
-    /*
-      Required props:
-      name
-      label
-      class
-      withPosition
-      alle für autocompleteHandler
-     */
 
     this.getPosition = this.getPosition.bind(this);
   }
@@ -58,7 +50,6 @@ export class RouterAddressField extends Component {
     } else {
       console.warn("The geolocation API is not available in your browser. Consider updating it or switching to a newer browser.");
     }
-
   }
 
   /**

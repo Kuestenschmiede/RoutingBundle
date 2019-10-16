@@ -43,13 +43,16 @@ export class RouterControls extends HorizontalPanel {
     let className = this.props.className + (this.props.open ? " c4g-open" : " c4g-close");
     // propagate open state down to child components
     let open = this.props.open;
-
+    let modeSwitcher = "";
+    if (this.props.router.props.mapController.data.showFeatures) {
+      modeSwitcher = <div className="c4g-router-mode-switch">
+        <button id="c4g-router-button-route" onMouseUp={this.setRouteMode}>Route</button>
+        <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
+      </div>;
+    }
     return (
       <div className={className}>
-        <div className="c4g-router-mode-switch">
-          <button id="c4g-router-button-route" onMouseUp={this.setRouteMode}>Route</button>
-          <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
-        </div>
+        {modeSwitcher}
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile} enableOverPoints={this.props.enableOverPoints}
                             containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers} resetFunctions={this.props.resetFunctions}

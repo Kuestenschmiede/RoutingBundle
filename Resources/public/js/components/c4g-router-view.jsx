@@ -114,7 +114,7 @@ export class RouterView extends Component {
       overPoints: [],
       profiles: arrProfiles,
       currentProfile: 0,
-      open: this.props.open || false
+      open: this.props.mapController.data.router_open || false
     };
     this.swapPoints = this.swapPoints.bind(this);
     if (mapController.data.usePermalink) {

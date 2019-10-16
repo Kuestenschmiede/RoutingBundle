@@ -81,26 +81,35 @@ export class RouterAddressInput extends Component {
     if (this.props.enableOverPoints) {
       overButton = <button className="c4g-router-over" onMouseUp={this.props.overSettings.overFunction}></button>;
     }
+    let featureSearchControls = "";
+    if (this.props.router.props.mapController.data.showFeatures) {
+      featureSearchControls = <React.Fragment>
+        <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
+        <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
+        <RouterDetourSlider min={this.props.sliderOptions.min} max={this.props.sliderOptions.max} value={this.props.sliderOptions.value} router={this.props.sliderOptions.router}/>
+      </React.Fragment>
+    }
     if (this.props.detailsEnabled && this.props.mode === "route") {
       details = <div className="buttonbar">
         {overButton}
         {swapButton}
-        <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
-        <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
-        <RouterDetourSlider min={this.props.sliderOptions.min} max={this.props.sliderOptions.max} value={this.props.sliderOptions.value} router={this.props.sliderOptions.router}/>
+        {featureSearchControls}
       </div>;
     } else if (this.props.detailsEnabled && this.props.mode === "area") {
       details = <div>
-        <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
-        <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
-        <RouterDetourSlider min={this.props.sliderOptions.min} max={this.props.sliderOptions.max} value={this.props.sliderOptions.value} router={this.props.sliderOptions.router}/>
+        {featureSearchControls}
       </div>;
+    }
+
+    let detailButton = "";
+    if (!(overButton === "" && swapButton === "" && featureSearchControls === "")) {
+      detailButton = <button onMouseUp={this.props.toggleDetails}>Mehr Optionen</button>;
     }
 
     return (
       <div className={this.props.className}>
         {input}
-        <button onMouseUp={this.props.toggleDetails}>Mehr Optionen</button>
+        {detailButton}
         {details}
       </div>
     );

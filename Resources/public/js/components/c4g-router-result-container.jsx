@@ -109,6 +109,7 @@ export class RouterResultContainer extends HorizontalPanel {
   close() {
     this.props.setOpen(false);
   }
+
   clickControl() {
     if (this.props.open) {
         this.close();
@@ -117,8 +118,7 @@ export class RouterResultContainer extends HorizontalPanel {
     }
   }
 
-
-    slideInCollidingElements() {
+  slideInCollidingElements() {
     // override parent method
   }
 
