@@ -113,8 +113,7 @@ class LoadAreaFeaturesListener
 //                }
 
                 $event->setReturnData([$requestData, $responseFeatures, $type, 'notOverpass']);
-            }
-            else if($objLayer->location_type == "overpass"){
+            } else if($objLayer->location_type == "overpass") {
                 $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : "http://overpass-api.de/api/interpreter";
                 $strBBox = $bounds['lower']->getLat() . "," . $bounds['left']->getLng() . "," . $bounds['upper']->getLat() . ",". $bounds['right']->getLng();
                 $query = $objLayer->ovp_request;
@@ -133,12 +132,12 @@ class LoadAreaFeaturesListener
                 if ($REQUEST->response) {
                     $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
                     $locations = [];
-                    $locations[] = [$point->getLng(), $point->getLat()];
+                    $locations[] = [floatval($point->getLng()), floatval($point->getLat())];
                     foreach($requestData['elements'] as $element){
                         if ($element['type'] == "node") {
                             $locations[] = [floatval($element['lon']),floatval($element['lat'])];
                         } else {
-                            break;
+                            continue;
                         }
                     }
                     //ToDo check performMatrix result

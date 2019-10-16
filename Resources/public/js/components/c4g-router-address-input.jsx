@@ -50,11 +50,11 @@ export class RouterAddressInput extends Component {
     if (this.props.mode === "route") {
       input = <React.Fragment>
         <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
-                            cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings}
+                            cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.from}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.fromAddress} router={this.props.router}/>
         {overForm}
         <RouterAddressField className="c4g-router-input-to" name="routingTo" label="Ziel"
-                            cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.objSettings}
+                            cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.to}
                             containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.toAddress} router={this.props.router}/>
       </React.Fragment>;
     } else {

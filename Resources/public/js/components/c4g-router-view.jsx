@@ -39,6 +39,8 @@ export class RouterView extends Component {
     this.setActiveId = this.setActiveId.bind(this);
     this.setOpen = this.setOpen.bind(this);
     this.openControls = this.openControls.bind(this);
+    this.resetFromPoint = this.resetFromPoint.bind(this);
+    this.resetToPoint = this.resetToPoint.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
 
@@ -145,11 +147,16 @@ export class RouterView extends Component {
       };
     }
 
+    let resetFunctions = {
+      from: this.resetFromPoint,
+      to: this.resetToPoint
+    };
+
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.state.open} setOpen={this.openControls} className={this.props.className} profiles={this.state.profiles}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()} switchTargets={this.props.mapController.data.enableTargetSwitch}
-          sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses}
+          sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress}
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions}
         />
@@ -417,23 +424,44 @@ export class RouterView extends Component {
 
   }
 
+  resetFromPoint() {
+    const scope = this;
+
+    let containerAddresses = scope.state.containerAddresses;
+    containerAddresses.arrFromPositions = [];
+    containerAddresses.arrFromNames = [];
+    this.setState({
+      fromPoint: null,
+      containerAddresses: containerAddresses,
+      fromAddress: ""
+    }, () => {
+      scope.updateRouteLayersAndPoints();
+      scope.recalculateRoute();
+    });
+  }
+
+  resetToPoint() {
+    const scope = this;
+
+    let containerAddresses = scope.state.containerAddresses;
+    containerAddresses.arrToPositions = [];
+    containerAddresses.arrToNames = [];
+    this.setState({
+      toPoint: null,
+      containerAddresses: containerAddresses,
+      toAddress: ""
+    }, () => {
+      scope.updateRouteLayersAndPoints();
+      scope.recalculateRoute();
+    });
+  }
+
   createAutocompleteFunctions() {
     let objFunctions = {};
     const scope = this;
     // set listener for the autocomplete from field
     const deleteFromListener = function(event) {
-      let containerAddresses = scope.state.containerAddresses;
-      containerAddresses.arrFromPositions = [];
-      containerAddresses.arrFromNames = [];
-      scope.setState({
-        fromPoint: null,
-        containerAddresses: containerAddresses,
-        fromAddress: ""
-      }, () => {
-        scope.updateRouteLayersAndPoints();
-        scope.recalculateRoute();
-      });
-      console.log("deleteFunction");
+      scope.resetFromPoint();
     };
 
     const selectFromListener = function(event, ui) {
@@ -466,18 +494,7 @@ export class RouterView extends Component {
 
     // set listener for the autocomplete to field
     const deleteToListener = function(event) {
-      let containerAddresses = scope.state.containerAddresses;
-      containerAddresses.arrToPositions = [];
-      containerAddresses.arrToNames = [];
-      scope.setState({
-        toPoint: null,
-        containerAddresses: containerAddresses,
-        toAddress: ""
-      }, () => {
-        scope.updateRouteLayersAndPoints();
-        scope.recalculateRoute();
-      });
-
+      scope.resetToPoint();
     };
 
     const selectToListener = function(event, ui){

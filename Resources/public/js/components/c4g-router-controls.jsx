@@ -52,7 +52,7 @@ export class RouterControls extends HorizontalPanel {
         </div>
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile}
-                            containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers}
+                            containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers} resetFunctions={this.props.resetFunctions}
                             fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress} sliderOptions={this.props.sliderOptions}
                             profiles={this.props.profiles} overSettings={this.props.overSettings} toggleDetails={this.toggleDetails} detailsEnabled={this.state.detailsEnabled}/>
       </div>
@@ -99,6 +99,4 @@ export class RouterControls extends HorizontalPanel {
       this.open();
     }
   }
-
-
 }
