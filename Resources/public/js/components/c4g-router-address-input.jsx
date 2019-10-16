@@ -77,9 +77,13 @@ export class RouterAddressInput extends Component {
     if (this.props.switchTargets) {
       swapButton = <button className="c4g-router-switch" onMouseUp={swapFunction}></button>;
     }
+    let overButton = "";
+    if (this.props.enableOverPoints) {
+      overButton = <button className="c4g-router-over" onMouseUp={this.props.overSettings.overFunction}></button>;
+    }
     if (this.props.detailsEnabled && this.props.mode === "route") {
       details = <div className="buttonbar">
-        <button className="c4g-router-over" onMouseUp={this.props.overSettings.overFunction}></button>
+        {overButton}
         {swapButton}
         <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
         <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
