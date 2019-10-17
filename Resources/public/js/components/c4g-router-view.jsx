@@ -41,6 +41,7 @@ export class RouterView extends Component {
     this.openControls = this.openControls.bind(this);
     this.resetFromPoint = this.resetFromPoint.bind(this);
     this.resetToPoint = this.resetToPoint.bind(this);
+    this.removeOverPoint = this.removeOverPoint.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
 
@@ -280,6 +281,13 @@ export class RouterView extends Component {
     overPoints.splice(index,1,point);
 
     // overPoints[index] = point;
+    this.setState({overPoints: overPoints}, () => scope.updateRouteLayersAndPoints());
+  }
+
+  removeOverPoint(index) {
+    const scope = this;
+    const overPoints = this.state.overPoints;
+    overPoints.splice(index, 1);
     this.setState({overPoints: overPoints}, () => scope.updateRouteLayersAndPoints());
   }
 

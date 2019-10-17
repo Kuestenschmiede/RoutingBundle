@@ -96,8 +96,18 @@ export class RouterResultContainer extends HorizontalPanel {
   componentDidUpdate() {
     let className = this.props.className + (this.props.open ? " c4g-open" : " c4g-close");
     let container = document.getElementsByClassName(className)[0];
+    let controlContainer = document.querySelector(".c4g-router-panel.c4g-open");
+    if (controlContainer) {
+      controlContainer = controlContainer[0];
+    }
+    let mapContainer = document.querySelector(".c4g_map")[0];
     const scope = this;
     if (container) {
+      if (controlContainer) {
+        if (container.offsetHeight + controlContainer.offsetHeight + 84 > mapContainer.offsetHeight) {
+          container.style.height = mapContainer.offsetHeight - controlContainer.offsetHeight;
+        }
+      }
       jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
     }
   }
