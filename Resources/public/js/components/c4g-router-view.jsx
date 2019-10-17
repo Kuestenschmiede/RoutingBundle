@@ -56,13 +56,15 @@ export class RouterView extends Component {
     let layerArea = null;
     let layerValueRoute = null;
     let layerValueArea = null;
-    const routerLayers = mapController.data.routerLayers;
-    for (let key in routerLayers) {
-      if (routerLayers.hasOwnProperty(key)) {
-        layerRoute = layerRoute || key;
-        layerValueRoute = Object.keys(routerLayers[layerRoute])[0] || layerValueRoute;
-        layerArea = layerArea || key;
-        layerValueArea = Object.keys(routerLayers[layerArea])[0] || layerValueArea;
+    if (mapController.data.showFeatures) {
+      const routerLayers = mapController.data.routerLayers;
+      for (let key in routerLayers) {
+        if (routerLayers.hasOwnProperty(key)) {
+          layerRoute = layerRoute || key;
+          layerValueRoute = Object.keys(routerLayers[layerRoute])[0] || layerValueRoute;
+          layerArea = layerArea || key;
+          layerValueArea = Object.keys(routerLayers[layerArea])[0] || layerValueArea;
+        }
       }
     }
 
