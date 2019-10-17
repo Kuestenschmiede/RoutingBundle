@@ -183,6 +183,10 @@ export class RouterView extends Component {
     if (this.props.mapController.data.usePermalink) {
       this.permalink.handleInitialParams();
     }
+    if (this.props.mapController.data.router_open) {
+      // workaround to position the button properly
+      jQuery(".c4g-router-panel-button-top.ol-control").css({top: "102px"});
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
