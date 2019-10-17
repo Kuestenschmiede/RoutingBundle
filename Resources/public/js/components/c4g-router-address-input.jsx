@@ -103,7 +103,7 @@ export class RouterAddressInput extends Component {
 
     let detailButton = "";
     if (!(overButton === "" && swapButton === "" && featureSearchControls === "")) {
-      detailButton = <button onMouseUp={this.props.toggleDetails}>Mehr Optionen</button>;
+      detailButton = <button className={"c4g-router-extended-options"} onMouseUp={this.props.toggleDetails}></button>;
     }
 
     return (

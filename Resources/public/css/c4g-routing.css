@@ -556,3 +556,11 @@ Router panel
 .c4g-router-panel.c4g-close {
     display: none;
 }
+
+button.c4g-router-extended-options:before {
+    content: "\f013";
+    margin: 0 5px 0 -3px;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
