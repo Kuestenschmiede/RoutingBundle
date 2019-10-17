@@ -206,6 +206,39 @@ export class RouterView extends Component {
     }
   }
 
+  setProfile(profile) {
+    this.setState({currentProfile: profile}, this.recalculateRoute);
+  }
+
+  setLayer(layer) {
+    if (this.state.mode === "route") {
+      this.setState({
+        layerRoute: layer
+      }, this.recalculateRoute);
+    } else {
+      this.setState({
+        layerArea: layer
+      }, this.performArea);
+    }
+  }
+
+  setLayerValue(layerValue) {
+    const scope = this;
+    if (this.state.mode === "route") {
+      this.setState({
+        layerValueRoute: layerValue
+      }, () => {
+        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "router");
+      });
+    } else if (this.state.mode === "area") {
+      this.setState({
+        layerValueArea: layerValue
+      }, () => {
+        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "area");
+      });
+    }
+  }
+
   setActiveId(activeId) {
     this.setState({"activeId": activeId});
   };

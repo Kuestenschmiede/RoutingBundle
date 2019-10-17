@@ -120,28 +120,32 @@ class LoadMapDataListener
 
         $event->setMapData($mapData);
     }
+    
     protected function getRouterAttribution($routerConfig) {
         $apiSelection = $routerConfig->getRouterApiSelection();
         switch($apiSelection) {
             case "0":
             case "1":
-                return "<a target=\"_blank\" href=\"http://project-osrm.org/\">Project OSRM</a> - OSRM hosting by <a target=\"_blank\" href=\"http://algo2.iti.kit.edu/\">KIT</a>";
+                $attributionRouting = "<a target=\"_blank\" href=\"http://project-osrm.org/\">Project OSRM</a> - OSRM hosting by <a target=\"_blank\" href=\"http://algo2.iti.kit.edu/\">KIT</a>";
                 break;
-             case "2":
-                return "<a target=\"_blank\" href=\"https://openrouteservice.org/\">openrouteservice</a> - ORS hosting by <a target=\"_blank\" href=\"https://www.geog.uni-heidelberg.de/gis/heigit_en.html\">HeiGIT</a>";
+            case "2":
+                $attributionRouting = "<a target=\"_blank\" href=\"https://openrouteservice.org/\">openrouteservice</a> - ORS hosting by <a target=\"_blank\" href=\"https://www.geog.uni-heidelberg.de/gis/heigit_en.html\">HeiGIT</a>";
                 break;
-             case "3":
-                return "Powered by <a href=\"https://www.graphhopper.com/\">GraphHopper API</a>";
+            case "3":
+                $attributionRouting = "Powered by <a href=\"https://www.graphhopper.com/\">GraphHopper API</a>";
                 break;
-             case "4":
-                return "<a target=\"_blank\" href=\"https://www.mapzen.com/blog/valhalla-intro/\">Valhalla</a>";
+            case "4":
+                $attributionRouting =  "<a target=\"_blank\" href=\"https://www.mapzen.com/blog/valhalla-intro/\">Valhalla</a>";
                 break;
             case "5":
                 $objSettings = C4gMapSettingsModel::findOnly();
                 $keyRouting = C4GUtils::getKey($objSettings, 1, "", false);
                 $attributionRouting = $keyRouting->attribution;
-                return $attributionRouting;
                 break;
         }
+        if ($routerConfig->getRouterAttribution()) {
+            $attributionRouting .= " " . $routerConfig->getRouterAttribution() . " ";
+        }
+        return $attributionRouting ?: "";
     }
 }

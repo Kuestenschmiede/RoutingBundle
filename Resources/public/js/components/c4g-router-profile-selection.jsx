@@ -22,9 +22,7 @@ export class RouterProfileSelection extends Component {
   }
 
   setProfile(profile) {
-    this.props.router.setState({
-      currentProfile: parseInt(profile.id, 10)
-    }, this.props.router.recalculateRoute);
+    this.props.router.setProfile(parseInt(profile.id, 10));
   }
 
   render() {

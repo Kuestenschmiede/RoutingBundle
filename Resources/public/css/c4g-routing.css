@@ -483,6 +483,14 @@ Router panel
     min-height: 36px;
 }
 
+.c4g-router-panel-button-top button:before {
+    content: "\f4d7";
+    margin: 0 5px 0 -3px;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+
 .c4g-router-panel.c4g-open {
     width: 50%;
     background-color: var(--main-color);
@@ -514,6 +522,14 @@ Router panel
     left: 50%;
     bottom: 20px;
     min-height: 36px;
+}
+
+.c4g-router-result-container-button-bottom button:before {
+    content: "\f03a";
+    margin: 0 5px 0 -3px;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
 }
 
 .c4g-router-result-container {

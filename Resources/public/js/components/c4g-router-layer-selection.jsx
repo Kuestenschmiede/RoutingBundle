@@ -24,35 +24,12 @@ export class RouterLayerSelection extends Component {
 
   setLayer(event) {
     let layer = event.target.value;
-    if (this.props.router.state.mode === "route") {
-      this.props.router.setState({
-        layerRoute: parseInt(layer, 10)
-      }, this.props.router.recalculateRoute);
-    } else {
-      this.props.router.setState({
-        layerArea: parseInt(layer, 10)
-      }, this.props.router.performArea);
-    }
-
+    this.props.router.setLayer(parseInt(layer, 10));
   }
 
   setLayerValue(event) {
     let value = event.target.value;
-    const scope = this;
-    if (this.props.router.state.mode === "route") {
-      this.props.router.setState({
-        layerValueRoute: value
-      }, () => {
-        scope.props.router.showFeatures(scope.props.router.state.featureList.features, scope.props.router.state.featureList.type, "router");
-      });
-    } else if (this.props.router.state.mode === "area") {
-      this.props.router.setState({
-        layerValueArea: value
-      }, () => {
-        scope.props.router.showFeatures(scope.props.router.state.featureList.features, scope.props.router.state.featureList.type, "area");
-      });
-    }
-
+    this.props.router.setLayerValue(value);
   }
 
   render() {
