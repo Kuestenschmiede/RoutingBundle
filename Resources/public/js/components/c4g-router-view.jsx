@@ -41,7 +41,6 @@ export class RouterView extends Component {
     this.openControls = this.openControls.bind(this);
     this.resetFromPoint = this.resetFromPoint.bind(this);
     this.resetToPoint = this.resetToPoint.bind(this);
-    this.removeOverPoint = this.removeOverPoint.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
 
@@ -284,13 +283,6 @@ export class RouterView extends Component {
     this.setState({overPoints: overPoints}, () => scope.updateRouteLayersAndPoints());
   }
 
-  removeOverPoint(index) {
-    const scope = this;
-    const overPoints = this.state.overPoints;
-    overPoints.splice(index, 1);
-    this.setState({overPoints: overPoints}, () => scope.updateRouteLayersAndPoints());
-  }
-
   setMode(mode) {
     if (this.state.mode !== mode) {
       let sources = {
@@ -367,9 +359,11 @@ export class RouterView extends Component {
       containerAddresses.arrOverPositions[fieldId] = [];
       containerAddresses.arrOverNames[fieldId] = [];
       let overPoints = scope.state.overPoints;
-      delete overPoints[fieldId];
+      overPoints.splice(fieldId, 1);
+      // delete overPoints[fieldId];
       let overAddresses = scope.state.overAddresses;
-      delete overAddresses[fieldId];
+      overAddresses.splice(fieldId, 1);
+      // delete overAddresses[fieldId];
       scope.setState({
         overPoints: overPoints,
         containerAddresses: containerAddresses,

@@ -42,7 +42,7 @@ export class RouterAddressInput extends Component {
           return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label="Zwischenziel"
                                      cssId={"routingOver-" + item} objFunctions={this.props.overSettings.objFunctions} objSettings={this.props.objSettings}
                                      containerAddresses={this.props.containerAddresses} value={this.props.overSettings.overAddresses[item]}
-                                     router={this.props.router} key={item} index={item} clearInput={() => {this.props.router.removeOverPoint(item)}}/>
+                                     router={this.props.router} key={item} index={item} clearInput={() => {this.props.overSettings.objFunctions[item].deleteFunction();}}/>
         });
     }
 

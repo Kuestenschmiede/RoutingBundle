@@ -39,6 +39,9 @@ export class RouterControls extends HorizontalPanel {
     this.props.router.setMode("area");
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    this.slideOutCollidingElements();
+  }
 
   render() {
     let className = this.props.className + (this.props.open ? " c4g-open " : " c4g-close ") + this.props.mode;
