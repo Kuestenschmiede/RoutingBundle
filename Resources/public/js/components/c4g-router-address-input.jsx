@@ -32,7 +32,6 @@ export class RouterAddressInput extends Component {
 
   }
 
-
   render() {
     let input = null;
     const scope = this;

@@ -39,8 +39,9 @@ export class RouterControls extends HorizontalPanel {
     this.props.router.setMode("area");
   }
 
+
   render() {
-    let className = this.props.className + (this.props.open ? " c4g-open" : " c4g-close");
+    let className = this.props.className + (this.props.open ? " c4g-open " : " c4g-close ") + this.props.mode;
     // propagate open state down to child components
     let open = this.props.open;
     let modeSwitcher = "";
@@ -63,11 +64,7 @@ export class RouterControls extends HorizontalPanel {
   }
 
   toggleDetails() {
-    if (!this.state.detailsEnabled) {
-      this.setState({detailsEnabled: true}, this.slideOutCollidingElements);
-    } else {
-      this.setState({detailsEnabled: false}, this.slideOutCollidingElements);
-    }
+    this.setState({detailsEnabled: !this.state.detailsEnabled}, this.slideOutCollidingElements);
   }
 
   slideInCollidingElements() {
