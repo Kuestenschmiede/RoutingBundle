@@ -57,7 +57,7 @@ export class RouterDetourSlider extends Component {
         <p>Umweg</p>
         <input type="range" className={routingConstants.ROUTE_TOGGLE}
                min={this.props.min} max={this.props.max} defaultValue={this.props.value} step={0.5}/>
-        <output className={routingConstants.OUTPUT_DETOUR}>{this.props.value}</output>
+        <output className={routingConstants.OUTPUT_DETOUR}>{this.props.value + " km"}</output>
       </div>
     );
   }
