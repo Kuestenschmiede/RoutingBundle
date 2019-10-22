@@ -95,7 +95,7 @@ export class RouterAddressInput extends Component {
         {featureSearchControls}
       </div>;
     } else if (this.props.detailsEnabled && this.props.mode === "area") {
-      details = <div>
+      details = <div className="buttonbar">
         {featureSearchControls}
       </div>;
     }
