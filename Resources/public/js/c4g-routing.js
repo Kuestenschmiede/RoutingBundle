@@ -384,11 +384,7 @@ export class Router extends Sideboard {
     this.fromValue = null;
     this.clearInput(this.$fromInput);
     if (this.overValue) {
-      for (var id in this.overValue) {
-        if (this.overValue.hasOwnProperty(id)){
-          this.clearOver(this.$overInput, id);
-        }
-      }
+      this.overValue = [];
       jQuery(".c4g-router-input-over").parent().remove();
     }
     this.toValue = null;
@@ -3419,16 +3415,16 @@ export class Router extends Sideboard {
    */
   clearOver($input, index) {
     if (this.overValue) {
-      // let intCount = -1;
-      // for(let i = 0; i < this.overValue.length; i++) {
-      //   if (this.overValue[i]['ol_uid'] === index) {
-      //     intCount = i;
-      //   }
-      // }
-      // // only remove if the overField is not empty (overField empty <=> intCount == 0)
-      // if (intCount > -1) {
-      //   this.overValue.splice(intCount, 1);
-      // }
+      let intCount = -1;
+      for(let i = 0; i < this.overValue.length; i++) {
+        if (this.overValue[i]['ol_uid'] === index) {
+          intCount = i;
+        }
+      }
+      // only remove if the overField is not empty (overField empty <=> intCount == 0)
+      if (intCount > -1) {
+        this.overValue.splice(intCount, 1);
+      }
       this.overValue.splice(index, 1);
     }
     this.$buttonOver.prop("disabled", false);
