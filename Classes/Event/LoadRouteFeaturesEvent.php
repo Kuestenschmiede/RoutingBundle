@@ -20,6 +20,8 @@ class LoadRouteFeaturesEvent extends Event
 {
     const NAME = "load.route.features";
 
+    private $profileId = 0;
+
     private $layerId = 0;
 
     private $detour = 0;
@@ -29,6 +31,22 @@ class LoadRouteFeaturesEvent extends Event
     private $features = [];
 
     private $bbox = "";
+
+    /**
+     * @return int
+     */
+    public function getProfileId()
+    {
+        return $this->profileId;
+    }
+
+    /**
+     * @param int $profileId
+     */
+    public function setProfileId($profileId)
+    {
+        $this->profileId = $profileId;
+    }
 
     /**
      * @return int

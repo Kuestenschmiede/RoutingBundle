@@ -93,6 +93,7 @@ class RouteService extends \Frontend
                 $points = $polyline->tunePolyline($points,0.1,0.4)->getPoints();
                 $event = new LoadRouteFeaturesEvent();
                 $event->setLayerId($layer);
+                $event->setProfileId($profileId);
                 $event->setPoints($points);
                 $event->setDetour($detour);
                 $this->eventDispatcher->dispatch($event::NAME, $event);

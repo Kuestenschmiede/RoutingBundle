@@ -14,6 +14,7 @@
 namespace con4gis\RoutingBundle\Classes\Listener;
 
 
+use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
 use Contao\System;
@@ -29,9 +30,11 @@ class LoadRouteFeaturesListener
         EventDispatcherInterface $eventDispatcher
     ) {
         $features = [];
+        $profileId = $event->getProfileId();
         $points = $event->getPoints();
         $layerId = $event->getLayerId();
         $detour = $event->getDetour();
+        $objMapsProfile = C4gMapProfilesModel::findBy('id', $profileId);
         $objLayer = C4gMapsModel::findById($layerId);
         if ($objLayer->location_type == "table") {
             $sourceTable = $objLayer->tab_source;
@@ -55,7 +58,8 @@ class LoadRouteFeaturesListener
             }
         }
         else if ($objLayer->location_type == "overpass") {
-            $url = "https://osm.kartenkueste.de/api/interpreter";
+            $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : "http://overpass-api.de/api/interpreter";
+
             $lineStringWKT = 'LINESTRING (';
             foreach ($points as $point) {
                 if ($point) {
