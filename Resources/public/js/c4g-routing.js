@@ -590,7 +590,7 @@ export class Router extends Sideboard {
                 jQuery(".router-content-switcher").css('display', 'block');
               }
               self.showRouteInstructions(response, 0);
-              if (response.features && response.features.elements) {
+              if (response.features && (response.features.elements || response.features.length > -1)) {
                 let sortedFeatures = self.showFeatures(response.features, response.type, "router");
 
                 self.showFeaturesInPortside(sortedFeatures, response.type, "router");
@@ -823,7 +823,7 @@ export class Router extends Sideboard {
    */
   showFeatures(features, type = "table", mode = "router") {
     const self = this;
-    // self.routerFeaturesSource.clear();
+    self.routerFeaturesSource.clear();
     // interim clear of feature selection
     if (!features) {
       // TODO the calling function expects a return value; should probably be fixed
@@ -836,7 +836,7 @@ export class Router extends Sideboard {
     const unstyledFeatures = [];
     let contentFeatures = [];
     let missingStyles = [];
-    const priceSortedFeatures = features.elements.slice();
+    const priceSortedFeatures = features.elements ? features.elements.slice() : features.slice();
     let bestFeatures = [];
     this.bestFeatureIds = [];
     if (mapData.priorityFeatures && mapData.priorityLocstyle && features.length > 0) {
@@ -961,17 +961,19 @@ export class Router extends Sideboard {
    * @param mode
    */
   showFeaturesInPortside(features, type, mode) {
-    const scope = this;
-    if (this.options.mapController.data.showFeatures) {
-      if (scope[mode + "FeatureWrapper"] === undefined) {
-        scope[mode + "FeatureWrapper"] = document.createElement('div');
-        jQuery(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
-        scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
+    if (features.length) {
+      const scope = this;
+      if (this.options.mapController.data.showFeatures) {
+        if (scope[mode + "FeatureWrapper"] === undefined) {
+          scope[mode + "FeatureWrapper"] = document.createElement('div');
+          jQuery(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
+          scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
+        }
       }
+      scope.features = features;
+      scope.type = type;
+      scope.reloadFeatureValues(mode);
     }
-    scope.features = features;
-    scope.type = type;
-    scope.reloadFeatureValues(mode);
   }
 
   /**
@@ -2779,6 +2781,10 @@ export class Router extends Sideboard {
         self.routerLayersInput = document.createElement('div');
         self.routerLayersSelect = document.createElement('select');
         self.routerLayersInput.appendChild(self.routerLayersSelect);
+        let optionBlank = document.createElement('option');
+        optionBlank.value = false;
+        optionBlank.textContent = "-";
+        self.routerLayersSelect.add(optionBlank);
         for (let i in mapData.routerLayers) {
           let option = document.createElement('option');
           option.value = i;
