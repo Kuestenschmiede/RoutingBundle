@@ -929,6 +929,7 @@ export class Router extends Sideboard {
           contentFeatures[id].set('hover_location', layer.hover_location);
           contentFeatures[id].set('hover_style', layer.hover_style);
           contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
+          contentFeatures[id].set('tid', parseInt(contentFeatures[id].get('id').split('/')[1]));
           contentFeatures[id].setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
         }
 
