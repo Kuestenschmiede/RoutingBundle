@@ -254,6 +254,7 @@ export class Router extends Sideboard {
           insertId++;
         }
       }
+
       this.$overInput = self.addInterimField(insertId, overPoint.ol_uid);
       self.performReverseSearch(this.$overInput, overPoint.getCoordinates());
       self.overValue.splice(insertId,0,overPoint);
@@ -371,24 +372,26 @@ export class Router extends Sideboard {
    * Clears all router input elements, feature sources and removes every map interaction.
    */
   preCloseFunction() {
-
-    this.routingWaySource.clear();
-    this.routingAltWaySource.clear();
-    this.routingHintSource.clear();
-    this.locationsSource.clear();
-    this.routerFeaturesSource.clear();
+    this.routingWaySource.clear(true);
+    this.routingAltWaySource.clear(true);
+    this.routingHintSource.clear(true);
+    this.locationsSource.clear(true);
+    this.routerFeaturesSource.clear(true);
 
     jQuery(this.routerInstructionsWrapper).empty();
+    jQuery(this.routerFeatureWrapper).empty();
+    jQuery(this.areaFeatureWrapper).empty();
+    this.fromValue = null;
     this.clearInput(this.$fromInput);
     if (this.overValue) {
       for (var id in this.overValue) {
-        this.clearOver(this.$overInput, id);
-        var elem = document.getElementById(id);
-        if (elem) {
-          elem.parentNode.parentNode.removeChild(elem.parentNode);
+        if (this.overValue.hasOwnProperty(id)){
+          this.clearOver(this.$overInput, id);
         }
       }
+      jQuery(".c4g-router-input-over").parent().remove();
     }
+    this.toValue = null;
     this.clearInput(this.$toInput);
 
     this.removeMapInputInteraction();
@@ -3416,16 +3419,17 @@ export class Router extends Sideboard {
    */
   clearOver($input, index) {
     if (this.overValue) {
-      let intCount = -1;
-      for(let i = 0; i < this.overValue.length; i++) {
-        if (this.overValue[i]['ol_uid'] === index) {
-          intCount = i;
-        }
-      }
-      // only remove if the overField is not empty (overField empty <=> intCount == 0)
-      if (intCount > -1) {
-        this.overValue.splice(intCount, 1);
-      }
+      // let intCount = -1;
+      // for(let i = 0; i < this.overValue.length; i++) {
+      //   if (this.overValue[i]['ol_uid'] === index) {
+      //     intCount = i;
+      //   }
+      // }
+      // // only remove if the overField is not empty (overField empty <=> intCount == 0)
+      // if (intCount > -1) {
+      //   this.overValue.splice(intCount, 1);
+      // }
+      this.overValue.splice(index, 1);
     }
     this.$buttonOver.prop("disabled", false);
     jQuery(this.routerInstructionsWrapper).empty();
@@ -3618,7 +3622,7 @@ export class Router extends Sideboard {
     jQuery(buttonClose).on('click', function () {
         jQuery(this).parent().remove();
       }
-    )
+    );
     errorDiv.appendChild(buttonClose);
     return errorDiv;
   }
