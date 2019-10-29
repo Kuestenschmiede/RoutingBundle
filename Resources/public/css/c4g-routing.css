@@ -525,9 +525,26 @@ Router panel
  */
 .c4g-router-panel-button-top {
     left: calc(50% - 42px/2);
-    top: 0px;
+    /*top: 0px;*/
     min-height: 36px;
+    position: relative;
 }
+
+/*
+TODO Testing
+ */
+div.c4g-geosearch {
+    position: relative;
+}
+div.c4g-overviewmap  {
+    position: relative;
+    top: 43px;
+}
+
+/**
+Todo Testing
+ */
+
 
 .c4g-router-panel-button-top button:before {
     content: "\f4d7";
@@ -579,6 +596,14 @@ button.c4g-router-position, button.c4g-router-input-clear {
     font-size: 1.3em;
     padding: 2px 0;
     float: left;
+}
+
+.c4g-router-headline {
+    color: rgba(255,255,255,.9);
+    color: var(--font-color);
+    background-color: transparent;
+    font-size: 1.5em;
+    padding: 10px;
 }
 
 /*
@@ -682,7 +707,28 @@ button.c4g-router-extended-options:before {
     font-size: inherit;
 }
 
-button.c4g-router-extended-options, button.c4g-router-over, button.c4g-router-switch{
+button.c4g-router-close {
+    padding: 2px 7px 0 6px;
+    font-size: 1.1em;
+    position: absolute;
+    right: 10px;
+}
+
+button.c4g-router-close:before {
+    content: "\f00d";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+
+button.c4g-router-extended-options {
+    padding: 2px 7px 0 6px;
+    font-size: 1.1em;
+    position: absolute;
+    right: 40px;
+}
+
+button.c4g-router-over, button.c4g-router-switch{
     padding: 2px 7px 0 6px;
     font-size: 1.1em;
     position: absolute;

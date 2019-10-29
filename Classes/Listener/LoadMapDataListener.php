@@ -101,6 +101,9 @@ class LoadMapDataListener
                 $mapData['priorityLocstyle'] = $routerConfig->getPriorityLocstyle();
                 $mapData['closeAfterSearch'] = $routerConfig->getCloseAfterSearch();
                 $mapData['showFeatures'] = $routerConfig->getShowFeatures();
+                $mapData['areaSearch'] = $routerConfig->getAreaSearch();
+                $mapData['areaSearchOnly'] = $routerConfig->getAreaSearchOnly();
+                $mapData['areaHeadline'] = $routerConfig->getAreaHeadline();
                 $mapData['featureLabel'] = $routerConfig->getFeatureLabel();
                 $mapData['showInstructions'] = $routerConfig->getShowInstructions();
                 $mapData['instructionLabel'] = $routerConfig->getInstructionLabel();

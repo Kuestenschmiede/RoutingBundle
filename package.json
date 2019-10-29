@@ -32,9 +32,9 @@
   "dependencies": {
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-react": "^6.24.1",
-    "ol": "^6.0.1",
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2",
+    "ol": "^6.1.0",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
     "react-popup": "^0.10.0"
   }
 }

@@ -15,6 +15,7 @@ import React, { Component } from "react";
 import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel.jsx";
 import {RouterAddressInput} from "./c4g-router-address-input.jsx"
 import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx"
+import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 
 export class RouterControls extends HorizontalPanel {
 
@@ -27,6 +28,7 @@ export class RouterControls extends HorizontalPanel {
     this.setRouteMode = this.setRouteMode.bind(this);
     this.setAreaMode = this.setAreaMode.bind(this);
     this.toggleDetails = this.toggleDetails.bind(this);
+    this.close = this.close.bind(this);
   }
 
   setRouteMode(event) {
@@ -48,14 +50,22 @@ export class RouterControls extends HorizontalPanel {
     // propagate open state down to child components
     let open = this.props.open;
     let modeSwitcher = "";
-    if (this.props.router.props.mapController.data.showFeatures) {
+    if (this.props.router.props.mapController.data.areaSearch && !this.props.router.props.mapController.data.areaSearchOnly) {
       modeSwitcher = <div className="c4g-router-mode-switch">
         <button id="c4g-router-button-route" onMouseUp={this.setRouteMode}>Route</button>
         <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
       </div>;
     }
+    let headline = "";
+    if (this.props.mode === "route") {
+      headline = this.props.router.props.mapController.data.routerHeadline;
+    } else if (this.props.mode === "area") {
+      headline = this.props.router.props.mapController.data.areaHeadline;
+    }
     return (
       <div className={className}>
+        <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
+                  detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
         {modeSwitcher}
         <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile} enableOverPoints={this.props.enableOverPoints}
@@ -71,7 +81,7 @@ export class RouterControls extends HorizontalPanel {
   }
 
   slideInCollidingElements() {
-    jQuery(this.state.control.element).css("top", 0 + "px");
+    // jQuery(this.state.control.element).css("top", 0 + "px");
   }
 
   slideOutCollidingElements() {
@@ -82,7 +92,7 @@ export class RouterControls extends HorizontalPanel {
     if (container) {
       topValue = container.offsetHeight;
     }
-    jQuery(this.state.control.element).css("top", topValue + "px");
+    // jQuery(this.state.control.element).css("top", topValue + "px");
   }
 
   open() {

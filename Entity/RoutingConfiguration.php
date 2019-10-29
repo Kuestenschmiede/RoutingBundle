@@ -228,6 +228,24 @@ class RoutingConfiguration extends BaseEntity
     
     /**
      * @var string
+     * @ORM\Column(type="string", length=1)
+     */
+    protected $areaSearch = '';
+    
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=1)
+     */
+    protected $areaSearchOnly = '';
+    
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $areaHeadline = '';
+    
+    /**
+     * @var string
      * @ORM\Column(type="string", length=100)
      */
     protected $featureLabel = '';
@@ -792,6 +810,38 @@ class RoutingConfiguration extends BaseEntity
     /**
      * @return string
      */
+    public function getAreaSearch(): string
+    {
+        return $this->areaSearch;
+    }
+    
+    /**
+     * @param string $areaSearch
+     */
+    public function setAreaSearch(string $areaSearch): void
+    {
+        $this->areaSearch = $areaSearch;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getAreaHeadline(): string
+    {
+        return $this->areaHeadline;
+    }
+    
+    /**
+     * @param string $areaHeadline
+     */
+    public function setAreaHeadline(string $areaHeadline): void
+    {
+        $this->areaHeadline = $areaHeadline;
+    }
+    
+    /**
+     * @return string
+     */
     public function getFeatureLabel(): string
     {
         return $this->featureLabel;
@@ -884,4 +934,21 @@ class RoutingConfiguration extends BaseEntity
     {
         $this->pirate = $pirate;
     }
+    
+    /**
+     * @return string
+     */
+    public function getAreaSearchOnly(): string
+    {
+        return $this->areaSearchOnly;
+    }
+    
+    /**
+     * @param string $areaSearchOnly
+     */
+    public function setAreaSearchOnly(string $areaSearchOnly): void
+    {
+        $this->areaSearchOnly = $areaSearchOnly;
+    }
+    
 }

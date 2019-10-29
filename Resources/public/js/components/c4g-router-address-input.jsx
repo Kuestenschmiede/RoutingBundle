@@ -100,15 +100,15 @@ export class RouterAddressInput extends Component {
       </div>;
     }
 
-    let detailButton = "";
-    if (!(overButton === "" && swapButton === "" && featureSearchControls === "")) {
-      detailButton = <button className={"c4g-router-extended-options"} onMouseUp={this.props.toggleDetails}></button>;
-    }
+    // let detailButton = "";
+    // if (!(overButton === "" && swapButton === "" && featureSearchControls === "")) {
+    //   detailButton = <button className={"c4g-router-extended-options"} onMouseUp={this.props.toggleDetails}></button>;
+    // }
 
     return (
       <div className={this.props.className}>
         {input}
-        {detailButton}
+        {/*{detailButton}*/}
         {details}
       </div>
     );

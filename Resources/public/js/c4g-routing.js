@@ -2372,7 +2372,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     }
 
     let routerControlProps = {
-      target: document.querySelector('#' + mapController.data.mapDiv + ' .' + cssConstants.OL_OVERLAYCONTAINER_SE),
+      target: document.querySelector('#' + mapController.data.mapDiv + ' .c4g-control-container-top-left'),
       mapController: mapController,
       direction: "top",
       withPosition: false,
