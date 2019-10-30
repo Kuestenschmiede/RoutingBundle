@@ -19,6 +19,23 @@ export class RouterProfileSelection extends Component {
     super(props);
 
     this.setProfile = this.setProfile.bind(this);
+
+    this.profileTranslation = {
+      0: "car",
+      1: "hgv",
+      2: "bike",
+      3: "bike",
+      4: "bike",
+      5: "bike",
+      6: "bike",
+      7: "bike",
+      8: "foot",
+      9: "foot",
+      10: "wheelchair",
+      11: "hgv",
+      12: "scooter",
+      13: "scooter"
+    };
   }
 
   setProfile(profile) {
@@ -30,8 +47,8 @@ export class RouterProfileSelection extends Component {
       <div className="c4g-router-profile-wrapper">
         {this.props.profiles.map((item) => {
           return <button onMouseUp={() => this.setProfile(item)}
-                         className={parseInt(item.id, 10) === this.props.currentProfile ? "c4g-active" : "c4g-inactive"}
-                  key={item.id}>{item.text}</button>
+                         className={"c4g-router-profile-" + this.profileTranslation[item.id] + (parseInt(item.id, 10) === this.props.currentProfile ? " c4g-active" : " c4g-inactive")}
+                  key={item.id}/>
         })}
       </div>
     );
