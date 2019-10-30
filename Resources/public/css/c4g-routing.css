@@ -524,10 +524,9 @@ button.c4g-popup-route-to:before {
 Router panel
  */
 .c4g-router-panel-button-top {
-    left: calc(50% - 42px/2);
+    left: 0;
     /*top: 0px;*/
     min-height: 36px;
-    position: relative;
 }
 
 /*

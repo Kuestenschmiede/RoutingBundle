@@ -104,7 +104,7 @@ export class RouterView extends Component {
         features: [],
         type: ""
       },
-      mode: props.mode || "route",
+      mode: mapController.data.initialMode,
       overPtCtr: 0,
       overAddresses: [],
       featureSource: undefined,

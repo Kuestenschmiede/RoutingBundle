@@ -100,7 +100,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_api_selection_3' => 'router_api_key,router_profiles',
         'router_api_selection_4' => 'router_api_key,router_profiles,pirate',
         'router_api_selection_5' => 'router_profiles',
-        'areaSearch'             => 'areaHeadline'
+        'areaSearch'             => 'areaHeadline,areaSearchOnly'
     ),
     
     // Fields
@@ -360,7 +360,6 @@ $GLOBALS['TL_DCA'][$strName] = array
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['areaSearchOnly'],
             'exclude'                 => true,
             'default'                 => false,
-            'eval'                    => ['submitOnChange' => true],
             'inputType'               => 'checkbox',
         ],
         'areaHeadline' => [
