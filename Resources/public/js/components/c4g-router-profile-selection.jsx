@@ -43,14 +43,18 @@ export class RouterProfileSelection extends Component {
   }
 
   render() {
-    return (
-      <div className="c4g-router-profile-wrapper">
-        {this.props.profiles.map((item) => {
-          return <button onMouseUp={() => this.setProfile(item)}
-                         className={"c4g-router-profile-" + this.profileTranslation[item.id] + (parseInt(item.id, 10) === this.props.currentProfile ? " c4g-active" : " c4g-inactive")}
-                  key={item.id}/>
-        })}
-      </div>
-    );
+    if (this.props.profiles.length === 1) {
+      return (<React.Fragment/>);
+    } else {
+      return (
+        <div className="c4g-router-profile-wrapper">
+          {this.props.profiles.map((item) => {
+            return <button onMouseUp={() => this.setProfile(item)}
+                           className={"c4g-router-profile-" + this.profileTranslation[item.id] + (parseInt(item.id, 10) === this.props.currentProfile ? " c4g-active" : " c4g-inactive")}
+                           key={item.id}/>
+          })}
+        </div>
+      );
+    }
   }
 }
