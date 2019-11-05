@@ -25,8 +25,10 @@ import {Vector as VectorSource} from "ol/source";
 import {Collection} from "ol";
 import {LineString} from "ol/geom";
 import {Modify, Select} from "ol/interaction";
+import {GeoJSON} from "ol/format";
 import {AlertHandler} from "./../../../../../CoreBundle/Resources/public/js/AlertHandler";
 import {RoutingPermalink} from "./../c4g-routing-permalink";
+const osmtogeojson = require('osmtogeojson');
 
 /**
  * Main router component. It consists of the RouterControls and RouterResultContainer components, and holds the
@@ -1288,7 +1290,7 @@ export class RouterView extends Component {
             } else {
               scope.showRouteLayer(response);
               scope.showRouteInstructions(response, 0, scope.routerWaySource, scope.routerHintSource);
-              if (response.features && response.features.length > 0) {
+              if (response.features && response.features.elements) {
                 let sortedFeatures = scope.showFeatures(response.features, response.type, "router");
                 scope.setState({
                   "featureList": {
@@ -1369,9 +1371,9 @@ export class RouterView extends Component {
     const layer = this.props.mapController.proxy.layerController.arrLayers[layerId];
     let activeLayer = this.state.mode === "route" ? this.state.layerValueRoute : this.state.layerValueArea;
     const unstyledFeatures = [];
-    const contentFeatures = [];
+    let contentFeatures = [];
     let missingStyles = [];
-    const priceSortedFeatures = features.slice();
+    const priceSortedFeatures = features.length ? features.slice() : features.elements.slice();
     let bestFeatures = [];
     this.bestFeatureIds = [];
     if (mapData.priorityFeatures && mapData.priorityLocstyle && features.length > 0) {
@@ -1386,22 +1388,13 @@ export class RouterView extends Component {
         this.bestFeatureIds.push(priceSortedFeatures[i]['id']);
       }
     }
-    featureLoop:
-        for (let i = 0; features && (i < features.length); i++) {
-          let label = "";
-          let feature = features[i];
-          let resultCoordinate;
-          let contentFeature;
-          if (type === "overpass") {
-            if (feature.type === "node" && !feature.tags) {
-              continue;
-            }
-            contentFeature = self.props.mapController.proxy.layerController.featureFromOverpass(feature, features, layer, true);
-            if(!contentFeature){
-              continue;
-            }
-          }
-          else {
+    if (type !== "overpass") {
+      featureLoop:
+          for (let i = 0; features && (i < features.length); i++) {
+            let label = "";
+            let feature = features[i];
+            let resultCoordinate;
+            let contentFeature;
             resultCoordinate = transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
             let point = new Point(resultCoordinate);
             contentFeature = new Feature(point);
@@ -1411,59 +1404,78 @@ export class RouterView extends Component {
             contentFeature.set('hover_style', layer.hover_style);
             contentFeature.set('zoom_onclick', layer.zoom_onclick);
             contentFeature.set('tid', feature.id);
-          }
 
-
-          if (mapData.routerLayers[layerId]
-            && mapData.routerLayers[layerId][activeLayer]
-            && mapData.routerLayers[layerId][activeLayer]['mapLabel']
-            && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]
-          ) {
-            label = feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
-          } else if (mapData.routerLayers[layerId]
-            && mapData.routerLayers[layerId][activeLayer]
-            && mapData.routerLayers[layerId][activeLayer]['mapLabel']
-            && feature.tags
-            && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]
-          ) {
-            label = feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
-          }
-          let locstyle = feature['locstyle'] || layer.locstyle;
-          if (mapData.priorityFeatures && mapData.priorityLocstyle) {
-            if (bestFeatures.includes(feature)) {
-              locstyle = mapData.priorityLocstyle;
+            if (mapData.routerLayers[layerId]
+                && mapData.routerLayers[layerId][activeLayer]
+                && mapData.routerLayers[layerId][activeLayer]['mapLabel']
+                && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]
+            ) {
+              label = feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
+            } else if (mapData.routerLayers[layerId]
+                && mapData.routerLayers[layerId][activeLayer]
+                && mapData.routerLayers[layerId][activeLayer]['mapLabel']
+                && feature.tags
+                && feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']]
+            ) {
+              label = feature.tags[mapData.routerLayers[layerId][activeLayer]['mapLabel']];
             }
-          }
+            let locstyle = feature['locstyle'] || layer.locstyle;
+            if (mapData.priorityFeatures && mapData.priorityLocstyle) {
+              if (bestFeatures.includes(feature)) {
+                locstyle = mapData.priorityLocstyle;
+              }
+            }
 
-          contentFeature.set('locationStyle', locstyle);
-          contentFeature.set('zIndex', i);
-          contentFeature.set('label', label);
-          if (locstyle && self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
-            contentFeature.setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
-            if (self.props.mapController.data.hideFeaturesWithoutLabel) {
-              if (label && label !== "") {
+            contentFeature.set('locationStyle', locstyle);
+            contentFeature.set('zIndex', i);
+            contentFeature.set('label', label);
+            if (locstyle && self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle] && self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style) {
+              contentFeature.setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[locstyle].style);
+              if (self.props.mapController.data.hideFeaturesWithoutLabel) {
+                if (label && label !== "") {
+                  contentFeatures.push(contentFeature);
+                }
+              } else {
                 contentFeatures.push(contentFeature);
               }
-            } else {
-              contentFeatures.push(contentFeature);
             }
-          }
-          else {
-            contentFeature.set('styleId', locstyle);
-            if (self.props.mapController.data.hideFeaturesWithoutLabel) {
-              if (label && label !== "") {
+            else {
+              contentFeature.set('styleId', locstyle);
+              if (self.props.mapController.data.hideFeaturesWithoutLabel) {
+                if (label && label !== "") {
+                  unstyledFeatures.push(contentFeature);
+                  missingStyles[locstyle] = locstyle;
+                }
+              } else {
                 unstyledFeatures.push(contentFeature);
                 missingStyles[locstyle] = locstyle;
               }
-            } else {
-              unstyledFeatures.push(contentFeature);
-              missingStyles[locstyle] = locstyle;
+            }
+            for (let tags in feature.tags) {
+              contentFeature.set(tags, feature.tags[tags]);
             }
           }
-          for (let tags in feature.tags) {
-            contentFeature.set(tags, feature.tags[tags]);
-          }
+    }
+    else {
+      const geojson = osmtogeojson(features);
+      const mapProj = self.props.mapController.map.getView().getProjection();
+      contentFeatures = new GeoJSON().readFeatures(geojson, {
+        dataProjection: 'EPSG:4326',
+        featureProjection: mapProj
+      });
+      for (let id in contentFeatures) {
+        if (contentFeatures.hasOwnProperty(id)) {
+          contentFeatures[id].set('loc_linkurl', layer.loc_linkurl);
+          contentFeatures[id].set('hover_location', layer.hover_location);
+          contentFeatures[id].set('hover_style', layer.hover_style);
+          contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
+          contentFeatures[id].set('tid', parseInt(contentFeatures[id].get('id').split('/')[1]));
+          contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
         }
+
+      }
+    }
+
     if (missingStyles && missingStyles.length > 0) {
       self.props.mapController.proxy.locationStyleController.loadLocationStyles(missingStyles, {
         done: function () {
@@ -1476,7 +1488,7 @@ export class RouterView extends Component {
         }
       });
     }
-    if (features && features.length > 0) {
+    if (contentFeatures && contentFeatures.length > 0) {
       this.routerFeaturesSource.addFeatures(contentFeatures);
     }
     return priceSortedFeatures;

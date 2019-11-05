@@ -103,7 +103,7 @@ class LoadRouteFeaturesListener
                 if ($REQUEST->response) {
                     try {
                         $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
-                        $features = $requestData['elements'];
+                        $features = $requestData;
                     } catch (\Exception $exception) {
                         $features = [];
                     }
