@@ -608,12 +608,14 @@ button.c4g-router-position, button.c4g-router-input-clear {
 /*
  * Router result container
  */
-.c4g-router-result-container-button-bottom {
+.c4g-router-result-container-button-bottom.c4g-open {
     left: calc(50% - 42px/2);
     bottom: 0px;
     min-height: 36px;
 }
-
+.c4g-router-result-container-button-bottom.c4g-close {
+    display: none;
+}
 
 .c4g-router-result-container-button-bottom button:before {
     content: "\f03a";

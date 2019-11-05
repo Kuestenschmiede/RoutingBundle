@@ -16,15 +16,31 @@ import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/c
 import {RouterInstructionsContainer} from "./c4g-router-instructions-container.jsx";
 import {RouterFeatureList} from "./c4g-router-feature-list.jsx";
 import {toHumanDistance, toHumanTime} from "../c4g-router-time-conversions";
+import {Control} from "ol/control";
 
-export class RouterResultContainer extends HorizontalPanel {
+export class RouterResultContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.state.mode = "instr";
     this.setResultInstr = this.setResultInstr.bind(this);
     this.setResultFeat = this.setResultFeat.bind(this);
     this.clickControl = this.clickControl.bind(this);
+
+    let element = document.createElement('div');
+    let button = document.createElement('button');
+    element.className = props.className + "-button-" + props.direction + " ol-control " + "ol-unselectable" + (props.visible ? " c4g-open" : " c4g-close");
+    element.appendChild(button);
+    this.clickControl = this.clickControl.bind(this);
+    jQuery(button).on('click', this.clickControl);
+    let mapController = props.mapController;
+    let control = new Control({element: element, target: props.target});
+    mapController.controls.horizontalPanel = control;
+    mapController.map.addControl(control);
+    // state variables (every property that has influence on this component)
+    this.state = {
+      mode: "instr",
+      control: control
+    };
   }
 
   setResultInstr(event) {
@@ -109,6 +125,11 @@ export class RouterResultContainer extends HorizontalPanel {
         }
       }
       jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
+    }
+    if (this.props.visible) {
+      jQuery(this.state.control.element).addClass("c4g-open").removeClass("c4g-close");
+    } else {
+      jQuery(this.state.control.element).addClass("c4g-close").removeClass("c4g-open");
     }
   }
 
