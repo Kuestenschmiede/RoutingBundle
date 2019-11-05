@@ -35,6 +35,7 @@
     "ol": "^6.1.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
-    "react-popup": "^0.10.0"
+    "react-popup": "^0.10.0",
+    "osmtogeojson": "^3.0.0-beta.3"
   }
 }
