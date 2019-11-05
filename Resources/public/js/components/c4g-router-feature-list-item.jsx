@@ -12,6 +12,8 @@
  */
 
 import React, { Component } from "react";
+import Polygon from "ol/geom";
+import Point from "ol/geom";
 import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
 import {transform, toLonLat, fromLonLat, transformExtent} from "ol/proj";
 import * as popupFunctionsDE from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-popup-info-de";
@@ -57,7 +59,12 @@ export class RouterFeatureListItem extends Component {
                     } else {
                         let style = scope.props.mapController.proxy.locationStyleController.arrLocStyles[clickStyleId].style;
                         tmpFeature.setStyle(style);
-                        scope.props.mapController.map.getView().setCenter(tmpFeature.getGeometry().getCoordinates());
+                        if (tmpFeature.getGeometry().getType() == "Polygon") {
+                            scope.props.mapController.map.getView().fit(tmpFeature.getGeometry().getExtent());
+                        }
+                        else {
+                            scope.props.mapController.map.getView().setCenter(tmpFeature.getGeometry().getCoordinates());
+                        }
                     }
                 }
 

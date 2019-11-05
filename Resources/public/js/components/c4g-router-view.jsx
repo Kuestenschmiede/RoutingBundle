@@ -1831,14 +1831,19 @@ export class RouterView extends Component {
           }
       );
       if (feature && feature.getId()) {
+        let activeId = feature.getId().search && feature.getId().search('/') ? parseFloat(feature.getId().substring(feature.getId().search('/') + 1)) : feature.getId();
         self.setState(
           {
-            activeId: feature.getId(),
+            activeId: activeId,
             openResults: true
           }, () => {
             // TODO behaves differently for route or area search
             if (document.querySelector(".c4g-route-feature-wrapper")) {
-              document.querySelector(".c4g-route-feature-wrapper").scrollTo(0, document.querySelector("li.route-features-list-element.c4g-active").offsetTop);
+              let featureWrapper = document.querySelector(".c4g-route-feature-wrapper");
+              let activeFeature = document.querySelector("li.route-features-list-element.c4g-active");
+              if (featureWrapper && activeFeature) {
+                featureWrapper.scrollTo(0, activeFeature.offsetTop);
+              }
             }
           });
       } else {
