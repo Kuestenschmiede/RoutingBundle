@@ -21,6 +21,3 @@ $GLOBALS['BE_MOD']['con4gis_maps'] = array_merge($GLOBALS['BE_MOD']['con4gis_map
         'tables' => "tl_c4g_routing_configuration"
     )
 ));
-
-//$GLOBALS['BE_MOD']['con4gis'] =
-//    \con4gis\CoreBundle\Resources\contao\classes\C4GUtils::sortBackendModules($GLOBALS['BE_MOD']['con4gis']);
