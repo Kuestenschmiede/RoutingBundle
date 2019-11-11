@@ -211,6 +211,9 @@ export class RouterView extends Component {
         this.permalink.updateLinkFragments("detourRoute", this.state.detourRoute);
       }
     }
+    if (prevState.open === true && this.state.open === false) {
+      this.setState({openResults: false});
+    }
   }
 
   setProfile(profile) {
