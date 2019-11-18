@@ -2384,7 +2384,8 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     };
 
     mapController.routerContainer = document.createElement('div');
-    ReactDOM.render(React.createElement(RouterView, routerControlProps), mapController.routerContainer);
+    mapController.components = mapController.components || {};
+    mapController.components.router = ReactDOM.render(React.createElement(RouterView, routerControlProps), mapController.routerContainer);
     jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
   }
 });
