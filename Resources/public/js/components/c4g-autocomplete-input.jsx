@@ -128,6 +128,13 @@ export class AutocompleteInput extends Component {
     else {
       url = settings.proxyUrl + "autocomplete.php?format=json&key=" + settings.keyAutocomplete + "&q=" + input;
     }
+    if (settings.geosearchParams) {
+      for (let param in settings.geosearchParams) {
+        if (settings.geosearchParams.hasOwnProperty(param)) {
+          url += "&" + param + "=" + settings.geosearchParams[param];
+        }
+      }
+    }
     $.ajax({url: url}).done(function(data) {
       let center;
       if (settings.center) {

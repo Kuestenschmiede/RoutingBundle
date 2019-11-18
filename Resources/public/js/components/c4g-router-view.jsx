@@ -79,7 +79,8 @@ export class RouterView extends Component {
           let center = mapController.map.getView().getCenter();
           center = transform(center, "EPSG:3857","EPSG:4326");
           return center;
-        }
+        },
+        "geosearchParams": mapController.data.geosearch.params
       },
       activeId: null,
       openResults: false,
@@ -1023,6 +1024,13 @@ export class RouterView extends Component {
       url = this.mapData.geosearch.url + "search.php?key=" + this.mapData.geosearch.searchKey + '&format=json&limit=1&q=' + encodeURI($input.val()) + viewbox;
     }
 
+    if (this.mapData.geosearch.params) {
+      for (let param in this.mapData.geosearch.params) {
+        if (this.mapData.geosearch.params.hasOwnProperty(param)) {
+          url += "&" + param + "=" + this.mapData.geosearch.params[param];
+        }
+      }
+    }
     jQuery.ajax({
       'url': url
     }).done(function (response) {
