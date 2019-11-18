@@ -150,8 +150,33 @@ class LoadAreaFeaturesListener
                                 }
                                 $locations[] = [$centerLon / $counter, $centerLat / $counter];
                             }
-                        } else {
-                            continue;
+                            else if ($element['type'] === "relation") {
+                                $centerLon = 0;
+                                $centerLat = 0;
+                                $counter = 0;
+                                foreach ($element['members'] as $memberId) {
+                                    $member = $requestData['elements'][array_search($memberId['ref'], array_Column($requestData['elements'], 'id'))];
+                                    if ($member['type'] === "node") {
+                                        $centerLon += floatval($element['lon']);
+                                        $centerLat += floatval($element['lat']);
+                                    }
+                                    else if ($member['type'] === "way") {
+                                        $centerWayLon = 0;
+                                        $centerWayLat = 0;
+                                        $counterWay = 0;
+                                        foreach ($member['nodes'] as $nodeId) {
+                                            $node = $requestData['elements'][array_search($nodeId, array_Column($requestData['elements'], 'id'))];
+                                            $centerWayLat += floatval($node['lat']);
+                                            $centerWayLon += floatval($node['lon']);
+                                            $counterWay++;
+                                        }
+                                        $centerLon += $centerWayLon / $counterWay;
+                                        $centerLat += $centerWayLat / $counterWay;
+                                    }
+                                    $counter++;
+                                }
+                                $locations[] = [$centerLon / $counter, $centerLat / $counter];
+                            }
                         }
                     }
                     //ToDo check performMatrix result
@@ -193,6 +218,18 @@ class LoadAreaFeaturesListener
                                         foreach ($requestData['elements'][$i-1]['nodes'] as $nodeId) {
                                             $node = $requestData['elements'][array_search($nodeId, array_Column($requestData['elements'], 'id'))];
                                             $features['elements'][] = $node;
+                                        }
+                                    }
+                                    else if ($requestData['elements'][$i-1]['type'] === "relation") {
+                                        foreach ($requestData['elements'][$i-1]['members'] as $memberId) {
+                                            $member = $requestData['elements'][array_search($memberId['ref'], array_Column($requestData['elements'], 'id'))];
+                                            $features['elements'][] = $member;
+                                            if ($member['type'] === "way") {
+                                                foreach($member['nodes'] as $nodeId) {
+                                                    $node = $requestData['elements'][array_search($nodeId, array_Column($requestData['elements'], 'id'))];
+                                                    $features['elements'][] = $node;
+                                                }
+                                            }
                                         }
                                     }
                                 }
