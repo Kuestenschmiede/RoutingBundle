@@ -43,6 +43,7 @@ export class RouterView extends Component {
     this.openControls = this.openControls.bind(this);
     this.resetFromPoint = this.resetFromPoint.bind(this);
     this.resetToPoint = this.resetToPoint.bind(this);
+    this.toggleResultDetails = this.toggleResultDetails.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
 
@@ -84,6 +85,7 @@ export class RouterView extends Component {
       },
       activeId: null,
       openResults: false,
+      resultDetailOpen: false,
       containerAddresses: {
         arrFromPositions: [],
         arrFromNames: [],
@@ -165,13 +167,21 @@ export class RouterView extends Component {
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} enableOverPoints={this.props.mapController.data.enableOverPoints}
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} target={this.props.target}
         />
-        <RouterResultContainer visible={this.state.open} open={this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
+        <RouterResultContainer visible={this.state.open} open={this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container c4g-beach"} mapController={this.props.mapController}
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource}
           layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}
-          activeId={this.state.activeId} setActiveId={this.setActiveId}
+          activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"}
         />
       </React.Fragment>
     );
+  }
+
+  toggleResultDetails() {
+    if (this.state.resultDetailOpen) {
+      this.setState({resultDetailOpen: false});
+    } else {
+      this.setState({resultDetailOpen: true});
+    }
   }
 
   openControls(open) {
@@ -295,7 +305,8 @@ export class RouterView extends Component {
       let sources = {
         waySource: this.state.routerWaySource,
         hintSource: this.state.routerHintSource,
-        featureSource: this.state.featureSource
+        featureSource: this.state.featureSource,
+        locationSource: this.locationsSource
       };
       this.setState({mode: mode}, () => {
         for (let key in sources) {
@@ -1212,7 +1223,8 @@ export class RouterView extends Component {
               "features": sortedFeatures,
               "type": response[1]
             },
-            "featureSource": self.routerFeaturesSource
+            "featureSource": self.routerFeaturesSource,
+            "openResults": true
           });
 
         }
@@ -1309,7 +1321,8 @@ export class RouterView extends Component {
                       "features":   sortedFeatures,
                       "type": response.type
                   },
-                  "featureSource": scope.routerFeaturesSource
+                  "featureSource": scope.routerFeaturesSource,
+                  "openResults": true
                 });
               }
             }

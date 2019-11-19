@@ -12,11 +12,10 @@
  */
 
 import React, { Component } from "react";
-import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel.jsx";
 import {RouterInstructionsContainer} from "./c4g-router-instructions-container.jsx";
 import {RouterFeatureList} from "./c4g-router-feature-list.jsx";
 import {toHumanDistance, toHumanTime} from "../c4g-router-time-conversions";
-import {Control} from "ol/control";
+import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx";
 
 export class RouterResultContainer extends Component {
 
@@ -25,21 +24,8 @@ export class RouterResultContainer extends Component {
     this.setResultInstr = this.setResultInstr.bind(this);
     this.setResultFeat = this.setResultFeat.bind(this);
     this.clickControl = this.clickControl.bind(this);
-
-    let element = document.createElement('div');
-    let button = document.createElement('button');
-    element.className = props.className + "-button-" + props.direction + " ol-control " + "ol-unselectable" + (props.visible ? " c4g-open" : " c4g-close");
-    element.appendChild(button);
-    this.clickControl = this.clickControl.bind(this);
-    jQuery(button).on('click', this.clickControl);
-    let mapController = props.mapController;
-    let control = new Control({element: element, target: props.target});
-    mapController.controls.horizontalPanel = control;
-    mapController.map.addControl(control);
-    // state variables (every property that has influence on this component)
     this.state = {
-      mode: "instr",
-      control: control
+      mode: "instr"
     };
   }
 
@@ -55,51 +41,60 @@ export class RouterResultContainer extends Component {
 
   render() {
     let result = "";
-    if ((this.state.mode === "instr" && this.props.routerInstructions)&& this.props.open ) {
+    if (this.props.detailOpen) {
+      if ((this.state.mode === "instr" && this.props.routerInstructions)) {
         result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.props.open}/>
-    }
-    else if ((this.state.mode === "feat" || (!this.props.routerInstructions && this.props.featureList)) && this.props.open) {
+      } else if ((this.state.mode === "feat" || (!this.props.routerInstructions && this.props.featureList))) {
         result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId} routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}/>
+      }
     }
-      let instructions = [];
-      let time = "";
-      let distance = "";
-      let profile = "";
-      if (this.props.routerInstructions && this.props.routerInstructions.instructions) {
-          instructions = this.props.routerInstructions.instructions;
-          time = toHumanTime(this.props.routerInstructions.time);
-          distance = toHumanDistance(this.props.routerInstructions.distance);
-          profile = this.props.routerInstructions.instructions[0].travel_type;
-      }
+    let instructions = [];
+    let time = "";
+    let distance = "";
+    let profile = "";
+    if (this.props.routerInstructions && this.props.routerInstructions.instructions) {
+      instructions = this.props.routerInstructions.instructions;
+      time = toHumanTime(this.props.routerInstructions.time);
+      distance = toHumanDistance(this.props.routerInstructions.distance);
+      profile = this.props.routerInstructions.instructions[0].travel_type;
+    }
 
-      let routerHeader = "";
-      if (time && distance && profile) {
-          routerHeader = (
-              <div className="c4g-router-instructions-header">
-                  <div className="c4g-router-route-profile">
-                      <label>Profil:</label>
-                      <em>{profile}</em>
-                  </div>
-                  <div className="c4g-router-route-time">
-                      <label>Dauer:</label>
-                      <em>{time}</em>
-                  </div>
-                  <div className="c4g-router-route-distance">
-                      <label>Distanz:</label>
-                      <em>{distance}</em>
-                  </div>
-              </div>
-          );
-      }
-      let resultSwitcher = "";
-      if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.open) {
-          resultSwitcher = (
-              <div className="c4g-router-mode-switch">
-                  <button id="c4g-router-button-route" onMouseUp={this.setResultInstr}>Instructions</button>
-                  <button id="c4g-router-button-area" onMouseUp={this.setResultFeat}>Features</button>
-              </div>
-          )
-      }
+    let routerHeader = "";
+    if ((time && distance && profile) || this.props.mode === "area") {
+      let routerHeaderContent = (
+        <div className="c4g-router-instructions-header">
+          <div className="c4g-router-route-profile">
+            <label>Profil:</label>
+            <em>{profile}</em>
+          </div>
+          <div className="c4g-router-route-time">
+            <label>Dauer:</label>
+            <em>{time}</em>
+          </div>
+          <div className="c4g-router-route-distance">
+            <label>Distanz:</label>
+            <em>{distance}</em>
+          </div>
+        </div>
+      );
+      let detailBtnClass = "c4g-beach-options";
+      let detailBtnCb = this.props.toggleDetailOpen;
+      let closeBtnClass = "c4g-titlebar-close";
+      let closeBtnCb = () => this.props.setOpen(false);
+      routerHeader = (<Titlebar wrapperClass={"c4g-router-results-header c4g-beach-header"} header={this.props.headline} headerClass={"c4g-router-results-headline c4g-beach-header-headline"}
+                                detailBtnClass={detailBtnClass} detailBtnCb={detailBtnCb} closeBtnClass={closeBtnClass} closeBtnCb={closeBtnCb}>
+        {routerHeaderContent}
+      </Titlebar>);
+    }
+    let resultSwitcher = "";
+    if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.detailOpen) {
+        resultSwitcher = (
+            <div className="c4g-router-mode-switch">
+                <button id="c4g-router-button-route" onMouseUp={this.setResultInstr}>Instructions</button>
+                <button id="c4g-router-button-area" onMouseUp={this.setResultFeat}>Features</button>
+            </div>
+        );
+    }
     return (
       <div className={this.props.className + (this.props.open ? " c4g-open" : " c4g-close")}>
           {routerHeader}
@@ -124,13 +119,13 @@ export class RouterResultContainer extends Component {
           container.style.height = mapContainer.offsetHeight - controlContainer.offsetHeight;
         }
       }
-      jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
+      // jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
     }
-    if (this.props.visible) {
-      jQuery(this.state.control.element).addClass("c4g-open").removeClass("c4g-close");
-    } else {
-      jQuery(this.state.control.element).addClass("c4g-close").removeClass("c4g-open");
-    }
+    // if (this.props.visible) {
+    //   jQuery(this.state.control.element).addClass("c4g-open").removeClass("c4g-close");
+    // } else {
+    //   jQuery(this.state.control.element).addClass("c4g-close").removeClass("c4g-open");
+    // }
   }
 
   open() {

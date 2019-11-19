@@ -288,7 +288,7 @@ select.c4g-router-layer-selection {
     color: var(--font-color);
     width: 200px;
     right: 0;
-    position: absolute;
+    /*position: absolute;*/
     padding: 10px;
 }
 .c4g-router-instructions-header > em {
@@ -632,6 +632,7 @@ button.c4g-router-position, button.c4g-router-input-clear {
     bottom: 0;
     transition: all 0.3s;
     left: 16.5%;
+    max-height: 100%;
 }
 
 .c4g-route-instructions-wrapper, .c4g-route-feature-wrapper {
