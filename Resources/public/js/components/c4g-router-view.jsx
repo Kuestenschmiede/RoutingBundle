@@ -159,6 +159,8 @@ export class RouterView extends Component {
       to: this.resetToPoint
     };
 
+    let strCurrentProfile = this.state.profiles[this.state.currentProfile].text;
+
     return (
       <React.Fragment>
         <RouterControls router={this} open={this.state.open} setOpen={this.openControls} className={this.props.className} profiles={this.state.profiles}
@@ -168,8 +170,8 @@ export class RouterView extends Component {
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} target={this.props.target}
         />
         <RouterResultContainer visible={this.state.open} open={this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container c4g-beach"} mapController={this.props.mapController}
-          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource}
-          layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource}
+          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
+          layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={strCurrentProfile}
           activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"}
         />
       </React.Fragment>
@@ -314,6 +316,7 @@ export class RouterView extends Component {
             sources[key].clear();
           }
         }
+        this.updateRouteLayersAndPoints();
       });
     }
   }
@@ -428,59 +431,59 @@ export class RouterView extends Component {
   updateRouteLayersAndPoints() {
     const scope = this;
     this.locationsSource.clear();
-    if (this.state.fromPoint) {
-      let tmpFeature = new Feature({
-        geometry: this.state.fromPoint.clone().transform('EPSG:4326', 'EPSG:3857')
-      });
-      if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
-        tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+    this.areaSource.clear();
+    if (this.state.mode === "route") {
+      if (this.state.fromPoint) {
+        let tmpFeature = new Feature({
+          geometry: this.state.fromPoint.clone().transform('EPSG:4326', 'EPSG:3857')
+        });
+        if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
+          tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+        }
+        this.locationsSource.addFeature(tmpFeature);
       }
-      this.locationsSource.addFeature(tmpFeature);
-    }
-    if (this.state.toPoint) {
-      let tmpFeature = new Feature({
-        geometry: this.state.toPoint.clone().transform('EPSG:4326', 'EPSG:3857')
-      });
-      if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
-        tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+      if (this.state.toPoint) {
+        let tmpFeature = new Feature({
+          geometry: this.state.toPoint.clone().transform('EPSG:4326', 'EPSG:3857')
+        });
+        if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
+          tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+        }
+        this.locationsSource.addFeature(tmpFeature);
       }
-      this.locationsSource.addFeature(tmpFeature);
-    }
-    if (!(this.state.fromPoint && this.state.toPoint)) {
-      this.routerWaySource.clear();
-    }
-    if (this.state.overPoints && Object.keys(this.state.overPoints).length > 0) {
-      for (let key in this.state.overPoints) {
-        if (this.state.overPoints.hasOwnProperty(key) && this.state.overPoints[key] !== null) {
-          let tmpFeature = new Feature({
-            geometry: this.state.overPoints[key].clone().transform('EPSG:4326', 'EPSG:3857')
-          });
-          if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
-            tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+      if (!(this.state.fromPoint && this.state.toPoint)) {
+        this.routerWaySource.clear();
+      }
+      if (this.state.overPoints && Object.keys(this.state.overPoints).length > 0) {
+        for (let key in this.state.overPoints) {
+          if (this.state.overPoints.hasOwnProperty(key) && this.state.overPoints[key] !== null) {
+            let tmpFeature = new Feature({
+              geometry: this.state.overPoints[key].clone().transform('EPSG:4326', 'EPSG:3857')
+            });
+            if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
+              tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+            }
+            this.locationsSource.addFeature(tmpFeature);
           }
-          this.locationsSource.addFeature(tmpFeature);
         }
       }
-    }
-    if (this.state.areaPoint) {
-      let tmpFeature = new Feature({
-        geometry: this.state.areaPoint.clone().transform('EPSG:4326', 'EPSG:3857')
-      });
-      if (this.props.mapController.data.router_point_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_point_locstyle]) {
-        tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_point_locstyle].style);
-      } else {
-        this.props.mapController.proxy.locationStyleController.loadLocationStyles([this.props.mapController.data.router_point_locstyle], {done: function() {
-            tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[scope.props.mapController.data.router_point_locstyle].style);
-          }});
-      }
-      this.areaSource.addFeature(tmpFeature);
-    }
-    if (this.state.mode === "route") {
       this.recalculateRoute();
-    } else {
+    } else if (this.state.mode === "area") {
+      if (this.state.areaPoint) {
+        let tmpFeature = new Feature({
+          geometry: this.state.areaPoint.clone().transform('EPSG:4326', 'EPSG:3857')
+        });
+        if (this.props.mapController.data.router_point_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_point_locstyle]) {
+          tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_point_locstyle].style);
+        } else {
+          this.props.mapController.proxy.locationStyleController.loadLocationStyles([this.props.mapController.data.router_point_locstyle], {done: function() {
+              tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[scope.props.mapController.data.router_point_locstyle].style);
+            }});
+        }
+        this.areaSource.addFeature(tmpFeature);
+      }
       this.performArea();
     }
-
   }
 
   resetFromPoint() {

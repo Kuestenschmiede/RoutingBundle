@@ -42,7 +42,7 @@ export class RouterResultContainer extends Component {
   render() {
     let result = "";
     if (this.props.detailOpen) {
-      if ((this.state.mode === "instr" && this.props.routerInstructions)) {
+      if ((this.state.mode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
         result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.props.open}/>
       } else if ((this.state.mode === "feat" || (!this.props.routerInstructions && this.props.featureList))) {
         result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId} routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}/>
@@ -52,16 +52,23 @@ export class RouterResultContainer extends Component {
     let time = "";
     let distance = "";
     let profile = "";
+    let detour = "";
+    let featureCount = "";
     if (this.props.routerInstructions && this.props.routerInstructions.instructions) {
       instructions = this.props.routerInstructions.instructions;
       time = toHumanTime(this.props.routerInstructions.time);
       distance = toHumanDistance(this.props.routerInstructions.distance);
       profile = this.props.routerInstructions.instructions[0].travel_type;
+    } else if (this.props.featureList) {
+      profile = this.props.profile;
+      detour = this.props.detour;
+      featureCount = this.props.featureList.features.length;
     }
 
     let routerHeader = "";
-    if ((time && distance && profile) || this.props.mode === "area") {
-      let routerHeaderContent = (
+    let routerHeaderContent = "";
+    if ((time && distance && profile) && this.props.mode === "route") {
+      routerHeaderContent = (
         <div className="c4g-router-instructions-header">
           <div className="c4g-router-route-profile">
             <label>Profil:</label>
@@ -77,6 +84,25 @@ export class RouterResultContainer extends Component {
           </div>
         </div>
       );
+    } else if ((detour && featureCount && profile) && this.props.mode === "area") {
+      routerHeaderContent = (
+        <div className="c4g-router-instructions-header">
+          <div className="c4g-router-route-profile">
+            <label>Profil:</label>
+            <em>{profile}</em>
+          </div>
+          <div className="c4g-router-area-detour">
+            <label>Umkreis:</label>
+            <em>{detour}</em>
+          </div>
+          <div className="c4g-router-area-featurecount">
+            <label>Gefundene Elemente:</label>
+            <em>{featureCount}</em>
+          </div>
+        </div>
+      );
+    }
+    if (routerHeaderContent) {
       let detailBtnClass = "c4g-beach-options";
       let detailBtnCb = this.props.toggleDetailOpen;
       let closeBtnClass = "c4g-titlebar-close";
@@ -86,8 +112,9 @@ export class RouterResultContainer extends Component {
         {routerHeaderContent}
       </Titlebar>);
     }
+
     let resultSwitcher = "";
-    if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.detailOpen) {
+    if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.detailOpen && this.props.mode === "route") {
         resultSwitcher = (
             <div className="c4g-router-mode-switch">
                 <button id="c4g-router-button-route" onMouseUp={this.setResultInstr}>Instructions</button>
@@ -119,13 +146,7 @@ export class RouterResultContainer extends Component {
           container.style.height = mapContainer.offsetHeight - controlContainer.offsetHeight;
         }
       }
-      // jQuery(scope.state.control.element).css("bottom", container.offsetHeight + "px");
     }
-    // if (this.props.visible) {
-    //   jQuery(this.state.control.element).addClass("c4g-open").removeClass("c4g-close");
-    // } else {
-    //   jQuery(this.state.control.element).addClass("c4g-close").removeClass("c4g-open");
-    // }
   }
 
   open() {
