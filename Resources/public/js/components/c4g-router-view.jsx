@@ -1416,6 +1416,7 @@ export class RouterView extends Component {
         this.bestFeatureIds.push(priceSortedFeatures[i]['id']);
       }
     }
+    // TODO die einzelnen Types auslagern in eigene funktionen
     if (type !== "overpass") {
       featureLoop:
           for (let i = 0; features && (i < features.length); i++) {
@@ -1491,6 +1492,8 @@ export class RouterView extends Component {
         dataProjection: 'EPSG:4326',
         featureProjection: mapProj
       });
+
+      let labelKey = mapData.routerLayers[layerId][activeLayer]['mapLabel'];
       for (let id in contentFeatures) {
         if (contentFeatures.hasOwnProperty(id)) {
           contentFeatures[id].set('loc_linkurl', layer.loc_linkurl);
@@ -1498,6 +1501,7 @@ export class RouterView extends Component {
           contentFeatures[id].set('hover_style', layer.hover_style);
           contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
           contentFeatures[id].set('tid', parseInt(contentFeatures[id].get('id').split('/')[1]));
+          contentFeatures[id].set('label', contentFeatures[id].get(labelKey));
           contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
         }
 

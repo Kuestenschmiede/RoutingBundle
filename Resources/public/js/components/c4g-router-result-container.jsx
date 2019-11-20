@@ -93,7 +93,7 @@ export class RouterResultContainer extends Component {
           </div>
           <div className="c4g-router-area-detour">
             <label>Umkreis:</label>
-            <em>{detour}</em>
+            <em>{detour} km</em>
           </div>
           <div className="c4g-router-area-featurecount">
             <label>Gefundene Elemente:</label>
