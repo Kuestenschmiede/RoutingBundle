@@ -47,6 +47,7 @@ $GLOBALS['TL_LANG'][$strName]['showInstructions'] = ['Routenhinweise einblenden'
 $GLOBALS['TL_LANG'][$strName]['instructionLabel'] = ['Buttontext für Routenhinweise', 'Hier können sie den Buttontext für die Anzeige der Routenhinweise angeben.'];
 $GLOBALS['TL_LANG'][$strName]['showFeatures'] = ['Ergebnisliste einblenden', 'Wenn Sie diese Checkbox aktivieren, werden Ergebnisse im Router dargestellt.'];
 $GLOBALS['TL_LANG'][$strName]['areaSearch'] = ['Umkreissuche aktivieren', 'Wenn Sie diese Checkbox aktivieren, wird die Umkreissuche aktiviert.'];
+$GLOBALS['TL_LANG'][$strName]['areaSearchOnly'] = ['Routensuche deaktivieren', 'Wenn Sie diese Checkbox aktivieren, wird die Suche entlang einer Route deaktiviert.'];
 $GLOBALS['TL_LANG'][$strName]['areaHeadline'] = ['Überschrift Umkreissuche', 'Standard: Umkreissuche'];
 $GLOBALS['TL_LANG'][$strName]['areaHeadlineDefault'] = "Umkreissuche";
 $GLOBALS['TL_LANG'][$strName]['featureLabel'] = ['Buttontext für Ergebnisliste', 'Hier können sie den Buttontext für die Anzeige der Ergebnisliste angeben.'];

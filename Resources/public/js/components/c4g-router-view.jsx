@@ -43,6 +43,7 @@ export class RouterView extends Component {
     this.openControls = this.openControls.bind(this);
     this.resetFromPoint = this.resetFromPoint.bind(this);
     this.resetToPoint = this.resetToPoint.bind(this);
+    this.resetAreaPoint = this.resetAreaPoint.bind(this);
     this.toggleResultDetails = this.toggleResultDetails.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
@@ -156,7 +157,8 @@ export class RouterView extends Component {
 
     let resetFunctions = {
       from: this.resetFromPoint,
-      to: this.resetToPoint
+      to: this.resetToPoint,
+      area: this.resetAreaPoint
     };
 
     let strCurrentProfile = this.state.profiles[this.state.currentProfile].text;
@@ -498,7 +500,6 @@ export class RouterView extends Component {
       fromAddress: ""
     }, () => {
       scope.updateRouteLayersAndPoints();
-      scope.recalculateRoute();
     });
   }
 
@@ -514,7 +515,21 @@ export class RouterView extends Component {
       toAddress: ""
     }, () => {
       scope.updateRouteLayersAndPoints();
-      scope.recalculateRoute();
+    });
+  }
+
+  resetAreaPoint() {
+    const scope = this;
+
+    let containerAddresses = scope.state.containerAddresses;
+    containerAddresses.arrAreaPositions = [];
+    containerAddresses.arrAreaNames = [];
+    this.setState({
+      areaPoint: null,
+      containerAddresses: containerAddresses,
+      areaAddress: ""
+    }, () => {
+      scope.updateRouteLayersAndPoints();
     });
   }
 
@@ -1407,6 +1422,8 @@ export class RouterView extends Component {
     if (mapData.priorityFeatures && mapData.priorityLocstyle && features.length > 0) {
       // sort by selected value for the map label ascending
       priceSortedFeatures.sort(function (a, b) {
+        // TODO andere Sortierungen möglich machen (z.B. alphabetisch)
+        // TODO sortieren in funktion auslagern
         return parseFloat(a[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) - parseFloat(b[mapData.routerLayers[layerId][activeLayer]['mapLabel']]);
       });
       let featureCount = parseInt(mapData.priorityFeatures, 10);
@@ -1480,8 +1497,10 @@ export class RouterView extends Component {
                 missingStyles[locstyle] = locstyle;
               }
             }
-            for (let tags in feature.tags) {
-              contentFeature.set(tags, feature.tags[tags]);
+            for (let tag in feature.tags) {
+              if (feature.tags.hasOwnProperty(tag)) {
+                contentFeature.set(tag, feature.tags[tag]);
+              }
             }
           }
     }

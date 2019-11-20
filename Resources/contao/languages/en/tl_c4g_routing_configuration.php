@@ -39,6 +39,7 @@ $GLOBALS['TL_LANG'][$strName]['showInstructions'] = ['Show Route Information', '
 $GLOBALS['TL_LANG'][$strName]['instructionLabel'] = ['Route information button caption', 'Enter a caption for the route information button.'];
 $GLOBALS['TL_LANG'][$strName]['showFeatures'] = ['Show Result List', 'If this is checked, results will be shown in the router.'];
 $GLOBALS['TL_LANG'][$strName]['areaSearch'] = ['Activate area search', 'If this is checked, area search will be activated.'];
+$GLOBALS['TL_LANG'][$strName]['areaSearchOnly'] = ['Disable route search', 'If this is checked, the search along the route is deactivated.'];
 $GLOBALS['TL_LANG'][$strName]['areaHeadline'] = ['Headline area search', 'Default: Area search'];
 $GLOBALS['TL_LANG'][$strName]['areaHeadlineDefault'] = "Area search";
 $GLOBALS['TL_LANG'][$strName]['featureLabel'] = ['Result list button caption', 'Enter a caption for the result list button.'];
