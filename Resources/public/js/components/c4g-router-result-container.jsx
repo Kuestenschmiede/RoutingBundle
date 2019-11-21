@@ -71,15 +71,15 @@ export class RouterResultContainer extends Component {
       routerHeaderContent = (
         <div className="c4g-router-instructions-header">
           <div className="c4g-router-route-profile">
-            <label>Profil:</label>
+            <label>{this.props.lang.ROUTER_VIEW_LABEL_PROFILE}</label>
             <em>{profile}</em>
           </div>
           <div className="c4g-router-route-time">
-            <label>Dauer:</label>
+            <label>{this.props.lang.ROUTER_VIEW_LABEL_TIME}</label>
             <em>{time}</em>
           </div>
           <div className="c4g-router-route-distance">
-            <label>Distanz:</label>
+            <label>{this.props.lang.ROUTER_VIEW_LABEL_DISTANCE}</label>
             <em>{distance}</em>
           </div>
         </div>
@@ -87,16 +87,16 @@ export class RouterResultContainer extends Component {
     } else if ((detour && featureCount && profile) && this.props.mode === "area") {
       routerHeaderContent = (
         <div className="c4g-router-instructions-header">
-          <div className="c4g-router-route-profile">
-            <label>Profil:</label>
+          <div className="c4g-router-area-profile">
+            <label>{this.props.lang.AREA_PROFILE}:</label>
             <em>{profile}</em>
           </div>
           <div className="c4g-router-area-detour">
-            <label>Umkreis:</label>
+            <label>{this.props.lang.AREA_DETOUR}:</label>
             <em>{detour} km</em>
           </div>
           <div className="c4g-router-area-featurecount">
-            <label>Gefundene Elemente:</label>
+            <label>{this.props.lang.AREA_FEATURECOUNT}:</label>
             <em>{featureCount}</em>
           </div>
         </div>

@@ -28,6 +28,7 @@ import {Modify, Select} from "ol/interaction";
 import {GeoJSON} from "ol/format";
 import {AlertHandler} from "./../../../../../CoreBundle/Resources/public/js/AlertHandler";
 import {RoutingPermalink} from "./../c4g-routing-permalink";
+import {getLanguage} from "./../routing-constant-i18n";
 const osmtogeojson = require('osmtogeojson');
 
 /**
@@ -47,7 +48,7 @@ export class RouterView extends Component {
     this.toggleResultDetails = this.toggleResultDetails.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
-
+    this.languageConstants = getLanguage(mapController.data);
     for (let key in mapController.data.router_profiles) {
       if (mapController.data.router_profiles.hasOwnProperty(key)) {
         arrProfiles.push({
@@ -174,7 +175,7 @@ export class RouterView extends Component {
         <RouterResultContainer visible={this.state.open} open={this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container c4g-beach"} mapController={this.props.mapController}
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
           layerRoute={this.state.layerRoute} layerArea={this.state.layerArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={strCurrentProfile}
-          activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"}
+          activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
         />
       </React.Fragment>
     );
