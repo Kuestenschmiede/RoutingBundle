@@ -232,7 +232,7 @@ export class RouterView extends Component {
   }
 
   setProfile(profile) {
-    this.setState({currentProfile: profile}, this.recalculateRoute);
+    this.setState({currentProfile: profile}, this.updateRouteLayersAndPoints);
   }
 
   setLayer(layer) {
@@ -341,7 +341,7 @@ export class RouterView extends Component {
       toPoint: newToPoint,
       toAddress: newToAddress,
       containerAddresses: containerAddresses
-    }, this.recalculateRoute);
+    }, this.updateRouteLayersAndPoints);
   }
 
   createOverSettings() {
@@ -394,7 +394,6 @@ export class RouterView extends Component {
         overPtCtr: scope.state.overPtCtr - 1
       }, () => {
         scope.updateRouteLayersAndPoints();
-        scope.recalculateRoute();
       });
     };
 
@@ -415,7 +414,6 @@ export class RouterView extends Component {
         overAddresses: overAddresses
       }, () => {
         scope.updateRouteLayersAndPoints();
-        scope.recalculateRoute();
       });
     };
 

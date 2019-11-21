@@ -771,6 +771,10 @@ button.c4g-router-switch{
     background: var(--shadow-color);
 }
 
+div.invisible {
+    display: none;
+}
+
 @media(max-width: 900px){
     .c4g-router-input-wrapper > div:not(.buttonbar) { width: calc(100% - 20px); }
 }

@@ -54,12 +54,12 @@ export class RouterResultContainer extends Component {
     let profile = "";
     let detour = "";
     let featureCount = "";
-    if (this.props.routerInstructions && this.props.routerInstructions.instructions) {
+    if (this.props.routerInstructions && this.props.routerInstructions.instructions && this.props.mode === "route") {
       instructions = this.props.routerInstructions.instructions;
       time = toHumanTime(this.props.routerInstructions.time);
       distance = toHumanDistance(this.props.routerInstructions.distance);
       profile = this.props.routerInstructions.instructions[0].travel_type;
-    } else if (this.props.featureList) {
+    } else if (this.props.featureList && this.props.mode === "area") {
       profile = this.props.profile;
       detour = this.props.detour;
       featureCount = this.props.featureList.features.length;
