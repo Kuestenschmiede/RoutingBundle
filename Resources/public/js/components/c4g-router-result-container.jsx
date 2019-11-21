@@ -44,7 +44,7 @@ export class RouterResultContainer extends Component {
     if (this.props.detailOpen) {
       if ((this.state.mode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
         result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.props.open}/>
-      } else if ((this.state.mode === "feat" || (!this.props.routerInstructions && this.props.featureList))) {
+      } else if (((this.state.mode === "feat" || this.props.mode === "area") || (!this.props.routerInstructions && this.props.featureList))) {
         result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId} routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}/>
       }
     }
