@@ -118,7 +118,7 @@
     white-space: nowrap;
 }
 
-.c4g-routing-toggle:active + output {
+.c4g-routing-toggle + output {
     display: block;
     transform: translateX(-50%);
 }
@@ -218,6 +218,7 @@ button.c4g-router-position:before {
     padding: 5px;
     margin: 2px;
     min-width: 141px;
+    height: 32px;
 }
 .c4g-router-input-wrapper > label {
     margin-right: 5px;
