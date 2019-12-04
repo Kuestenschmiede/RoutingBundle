@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "ol": "^5.3.3",
-    "osmtogeojson": "^3.0.0-beta.3"
+    "osmtogeojson": "^3.0.0-beta.4"
   }
 }
