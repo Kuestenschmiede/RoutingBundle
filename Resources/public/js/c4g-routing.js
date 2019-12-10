@@ -1900,6 +1900,7 @@ export class Router extends Sideboard {
         entryWrapper.appendChild(entry);
       }
       scope.entryWrapper = entryWrapper;
+      jQuery(".c4g-router-instructions-wrapper").css("display", "none");
       scope[mode + "FeatureWrapper"].appendChild(entryWrapper);
     }
   }
@@ -2612,6 +2613,8 @@ export class Router extends Sideboard {
           jQuery(".c4g-router-instructions-wrapper").css('display', 'block');
           jQuery(".router-features-display").css('display', 'none');
         });
+        jQuery(".c4g-router-instructions-wrapper").css('display', 'block');
+        jQuery(".router-features-display").css('display', 'none');
 
         self.contentSwitcher = document.createElement("div");
         self.contentSwitcher.className = "router-content-switcher";
