@@ -34,9 +34,7 @@ class TlC4gRoutingConfiguration
     {
         $this->db = Database::getInstance();
     }
-
-
-    // TODO im zweifel via saveCallback noch prüfen ob alles notwendige gesetzt ist
+    
     public function getRouterLayer($multiColumnWizard)
     {
         $arrColumnLayers = [
@@ -111,6 +109,7 @@ class TlC4gRoutingConfiguration
         } else {
             $locStyles = $this->db->prepare("SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name")->execute();
         }
+        $return[0] = "-";
         while ($locStyles->next()) {
             $return[$locStyles->id] = $locStyles->name;
         }

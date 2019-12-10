@@ -280,7 +280,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => 0,
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
-            'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
+            'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
         ],
         'openRouter' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['openRouter'],
