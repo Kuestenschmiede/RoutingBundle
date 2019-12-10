@@ -401,6 +401,7 @@ export class Router extends Sideboard {
     var self = this;
     this.options.mapController.map.un('click', self.fnMapRouterInteraction);
     self.options.mapController.map.removeInteraction(this.mapSelectInteraction);
+    self.options.mapController.map.removeInteraction(this.modWayInteraction);
   }
 
   /**
@@ -451,6 +452,8 @@ export class Router extends Sideboard {
     };
 
     this.options.mapController.map.on('click', self.fnMapRouterInteraction);
+    self.options.mapController.map.addInteraction(this.mapSelectInteraction);
+    self.options.mapController.map.addInteraction(this.modWayInteraction);
   }
 
   /**
@@ -2038,6 +2041,7 @@ export class Router extends Sideboard {
         scope.performArea(scope.areaValue);
       }
     };
+    scope.options.mapController.map.addInteraction(this.mapSelectInteraction);
     scope.options.mapController.map.on('click', scope.fnMapAreaInteraction);
     scope.updateLinkFragments("mode", "area");
   }
@@ -3413,7 +3417,10 @@ export class Router extends Sideboard {
 
 
     jQuery(this.routerInstructionsWrapper).empty();
-    this.recalculateRoute();
+
+    if (!($input[0] === this.$areaFromInput[0])) {
+      this.recalculateRoute();
+    }
     this.update();
   }
 
@@ -3594,7 +3601,9 @@ export class Router extends Sideboard {
       if (opt_callback && typeof opt_callback === "function") {
         opt_callback();
       }
-      self.recalculateRoute();
+      if (value === "fromValue" || value === "toValue") {
+        self.recalculateRoute();
+      }
     }).fail(function () {
       let alertHandler = new AlertHandler();
       alertHandler.showInfoDialog(langRouteConstants.ROUTER_VIEW_ALERT_ERROR, langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
