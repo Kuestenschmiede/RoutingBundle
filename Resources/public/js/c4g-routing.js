@@ -2390,50 +2390,5 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
   }
 });
 
-window.c4gMapsHooks.proxy_appendPopup = window.c4gMapsHooks.proxy_appendPopup || [];
-window.c4gMapsHooks.proxy_appendPopup.push(function(params) {
-  let objPopup = params.popup;
-  let feature = objPopup.feature;
-  let mapController = params.mapController;
-  if (mapController.controls.router && objPopup.popup.routing_link) {
-    let router = mapController.controls.router;
 
-    let routingHandler = function (event) {
-      if (mapController.activePortside !== router) {
-        router.open();
-      }
-
-      if (jQuery(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
-        // from address
-        router.setFromPoint(toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857"));
-      } else {
-        // to address
-        router.setToPoint(toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857"));
-      }
-    }; // end of "routingHandler()"
-
-    let routeButtonWrapper = document.createElement('div');
-    routeButtonWrapper.className = cssConstants.POPUP_ROUTE_WRAPPER;
-
-    let routeFromButton = document.createElement('button');
-    routeFromButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_FROM;
-    jQuery(routeFromButton).click(routingHandler);
-    routeButtonWrapper.appendChild(routeFromButton);
-
-    let routeFromButtonSpan = document.createElement('span');
-    routeFromButtonSpan.innerHTML = langRouteConstants.POPUP_ROUTE_FROM;
-    routeFromButton.appendChild(routeFromButtonSpan);
-
-    let routeToButton = document.createElement('button');
-    routeToButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_TO;
-    jQuery(routeToButton).click(routingHandler);
-    routeButtonWrapper.appendChild(routeToButton);
-
-    let routeToButtonSpan = document.createElement('span');
-    routeToButtonSpan.innerHTML = langRouteConstants.POPUP_ROUTE_TO;
-    routeToButton.appendChild(routeToButtonSpan);
-
-    window.c4gMapsPopup.$content.append(routeButtonWrapper);
-  }
-});
 

@@ -29,6 +29,8 @@ import {GeoJSON} from "ol/format";
 import {AlertHandler} from "./../../../../../CoreBundle/Resources/public/js/AlertHandler";
 import {RoutingPermalink} from "./../c4g-routing-permalink";
 import {getLanguage} from "./../routing-constant-i18n";
+import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
+
 const osmtogeojson = require('osmtogeojson');
 
 /**
@@ -647,7 +649,58 @@ export class RouterView extends Component {
   // =========================================================================================
   // Begin old functions migrated from routing.js
   // =========================================================================================
-  
+
+  addPopupHook() {
+    const scope = this;
+
+    window.c4gMapsHooks.proxy_appendPopup = window.c4gMapsHooks.proxy_appendPopup || [];
+    window.c4gMapsHooks.proxy_appendPopup.push(function(params) {
+      let objPopup = params.popup;
+      let feature = objPopup.feature;
+      let mapController = params.mapController;
+      if (mapController.components.router && objPopup.popup.routing_link && parseInt(mapController.data.popupHandling, 10) !== 3) {
+        let router = mapController.components.router;
+
+        let routingHandler = function (event) {
+          router.openControls(true);
+          router.setMode("route");
+          if (jQuery(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
+            // from address
+            let fromCoords = toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857");
+            router.setRouteFrom(fromCoords[0], fromCoords[1]);
+          } else {
+            // to address
+            let toCoords = toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857");
+            router.setRouteTo(toCoords[0], toCoords[1]);
+          }
+        }; // end of "routingHandler()"
+
+        let routeButtonWrapper = document.createElement('div');
+        routeButtonWrapper.className = cssConstants.POPUP_ROUTE_WRAPPER;
+
+        let routeFromButton = document.createElement('button');
+        routeFromButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_FROM;
+        jQuery(routeFromButton).click(routingHandler);
+        routeButtonWrapper.appendChild(routeFromButton);
+
+        let routeFromButtonSpan = document.createElement('span');
+        routeFromButtonSpan.innerHTML = scope.languageConstants.POPUP_ROUTE_FROM;
+        routeFromButton.appendChild(routeFromButtonSpan);
+
+        let routeToButton = document.createElement('button');
+        routeToButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_TO;
+        jQuery(routeToButton).click(routingHandler);
+        routeButtonWrapper.appendChild(routeToButton);
+
+        let routeToButtonSpan = document.createElement('span');
+        routeToButtonSpan.innerHTML = scope.languageConstants.POPUP_ROUTE_TO;
+        routeToButton.appendChild(routeToButtonSpan);
+
+        window.c4gMapsPopup.$content.append(routeButtonWrapper);
+      }
+    });
+  }
+
   init() {
     const self = this;
 
@@ -861,7 +914,7 @@ export class RouterView extends Component {
     }
 
     this.objFunctions = this.createAutocompleteFunctions();
-
+    this.addPopupHook();
     this.addMapInputInteraction();
   }
 
