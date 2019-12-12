@@ -162,10 +162,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
-            'xlabel' => array
-            (
-                array('tl_c4g_routing_configuration', 'locstylesLink')
-            )
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'router_to_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_to_locstyle'],
@@ -174,10 +171,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
-            'xlabel' => array
-            (
-                array('tl_c4g_routing_configuration', 'locstylesLink')
-            )
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'router_point_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_point_locstyle'],
@@ -186,10 +180,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
-            'xlabel' => array
-            (
-                array('tl_c4g_routing_configuration', 'locstylesLink')
-            )
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'router_interim_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_interim_locstyle'],
@@ -198,10 +189,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true],
-            'xlabel' => array
-            (
-                array('tl_c4g_routing_configuration', 'locstylesLink')
-            )
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'router_profiles' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_profiles'],
@@ -295,10 +283,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
-            'xlabel' => array
-            (
-                array('tl_c4g_routing_configuration', 'locstylesLink')
-            )
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'openRouter' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['openRouter'],
@@ -313,10 +298,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
-            'xlabel' => array
-            (
-                array('tl_c4g_routing_configuration', 'locstylesLink')
-            )
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'enableOverPoints' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['enableOverPoints'],
@@ -351,6 +333,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'closeAfterSearch' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['closeAfterSearch'],
