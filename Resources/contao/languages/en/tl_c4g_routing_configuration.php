@@ -101,3 +101,5 @@ $GLOBALS['TL_LANG'][$strName]['edit']       = ['Routing-Konfiguration bearbeiten
 $GLOBALS['TL_LANG'][$strName]['copy']       = ['Routing-Konfiguration duplizieren', 'Routing-Konfiguration ID %s duplizieren'];
 $GLOBALS['TL_LANG'][$strName]['delete']     = ['Routing-Konfiguration löschen', 'Routing-Konfiguration ID %s löschen'];
 $GLOBALS['TL_LANG'][$strName]['show']       = ['Details', 'Die Details des Routing-Konfiguration ID %s anzeigen'];
+
+$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['editMaps'] = 'Edit map structure';
