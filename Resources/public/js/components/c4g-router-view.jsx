@@ -127,6 +127,7 @@ export class RouterView extends Component {
       currentProfile: 0,
       open: (this.props.mapController.data.router_open === "1") || false
     };
+    this.popupRouteButtonWrapper = ""; // this is needed because of the different popup handlings
     this.swapPoints = this.swapPoints.bind(this);
     if (mapController.data.usePermalink) {
       this.permalink = new RoutingPermalink(this);
@@ -653,50 +654,60 @@ export class RouterView extends Component {
   addPopupHook() {
     const scope = this;
 
+    let createPopupWrapper = function (objPopup) {
+      let feature = objPopup.feature;
+      let router = scope;
+
+      let routingHandler = function (event) {
+        router.openControls(true);
+        router.setMode("route");
+        if (jQuery(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
+          // from address
+          let fromCoords = toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857");
+          router.setRouteFrom(fromCoords[0], fromCoords[1]);
+        } else {
+          // to address
+          let toCoords = toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857");
+          router.setRouteTo(toCoords[0], toCoords[1]);
+        }
+      }; // end of "routingHandler()"
+
+      let routeButtonWrapper = document.createElement('div');
+      routeButtonWrapper.className = cssConstants.POPUP_ROUTE_WRAPPER;
+
+      let routeFromButton = document.createElement('button');
+      routeFromButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_FROM;
+      jQuery(routeFromButton).click(routingHandler);
+      routeButtonWrapper.appendChild(routeFromButton);
+
+      let routeFromButtonSpan = document.createElement('span');
+      // routeFromButtonSpan.innerHTML = scope.languageConstants.POPUP_ROUTE_FROM;
+      routeFromButton.appendChild(routeFromButtonSpan);
+
+      let routeToButton = document.createElement('button');
+      routeToButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_TO;
+      jQuery(routeToButton).click(routingHandler);
+      routeButtonWrapper.appendChild(routeToButton);
+
+      let routeToButtonSpan = document.createElement('span');
+      // routeToButtonSpan.innerHTML = scope.languageConstants.POPUP_ROUTE_TO;
+      routeToButton.appendChild(routeToButtonSpan);
+      return routeButtonWrapper;
+    };
+
     window.c4gMapsHooks.proxy_appendPopup = window.c4gMapsHooks.proxy_appendPopup || [];
     window.c4gMapsHooks.proxy_appendPopup.push(function(params) {
-      let objPopup = params.popup;
-      let feature = objPopup.feature;
       let mapController = params.mapController;
-      if (mapController.components.router && objPopup.popup.routing_link && parseInt(mapController.data.popupHandling, 10) !== 3) {
-        let router = mapController.components.router;
-
-        let routingHandler = function (event) {
-          router.openControls(true);
-          router.setMode("route");
-          if (jQuery(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
-            // from address
-            let fromCoords = toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857");
-            router.setRouteFrom(fromCoords[0], fromCoords[1]);
-          } else {
-            // to address
-            let toCoords = toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857");
-            router.setRouteTo(toCoords[0], toCoords[1]);
-          }
-        }; // end of "routingHandler()"
-
-        let routeButtonWrapper = document.createElement('div');
-        routeButtonWrapper.className = cssConstants.POPUP_ROUTE_WRAPPER;
-
-        let routeFromButton = document.createElement('button');
-        routeFromButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_FROM;
-        jQuery(routeFromButton).click(routingHandler);
-        routeButtonWrapper.appendChild(routeFromButton);
-
-        let routeFromButtonSpan = document.createElement('span');
-        routeFromButtonSpan.innerHTML = scope.languageConstants.POPUP_ROUTE_FROM;
-        routeFromButton.appendChild(routeFromButtonSpan);
-
-        let routeToButton = document.createElement('button');
-        routeToButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_TO;
-        jQuery(routeToButton).click(routingHandler);
-        routeButtonWrapper.appendChild(routeToButton);
-
-        let routeToButtonSpan = document.createElement('span');
-        routeToButtonSpan.innerHTML = scope.languageConstants.POPUP_ROUTE_TO;
-        routeToButton.appendChild(routeToButtonSpan);
-
-        window.c4gMapsPopup.$content.append(routeButtonWrapper);
+      let objPopup = params.popup;
+      if (mapController.components.router
+        && objPopup.popup.routing_link
+      ) {
+        if (parseInt(mapController.data.popupHandling, 10) !== 3) {
+          let routeButtonWrapper = createPopupWrapper(objPopup);
+          window.c4gMapsPopup.$content.append(routeButtonWrapper);
+        } else {
+          params.comp.setRouteButtons(createPopupWrapper(objPopup));
+        }
       }
     });
   }
