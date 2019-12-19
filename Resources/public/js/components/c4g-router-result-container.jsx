@@ -123,7 +123,7 @@ export class RouterResultContainer extends Component {
         );
     }
     return (
-      <div className={this.props.className + (this.props.open ? " c4g-open" : " c4g-close")}>
+      <div className={this.props.className + (this.props.open ? " c4g-open" : " c4g-close") + (this.props.detailOpen ? " c4g-details-open" : "")}>
           {routerHeader}
           {resultSwitcher}
           {result}
