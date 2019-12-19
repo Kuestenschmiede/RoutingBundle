@@ -177,13 +177,6 @@ button.c4g-router-search:before {
     display: none;
 }
 
-button.c4g-router-position:before {
-    content: "\f05b";
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    font-size: 15px;
-}
-
 .c4g-routing-layer-values > .c4g-active {
     color: rgba(24, 61, 93,.8) !important;
     color: var(--main-color) !important;
@@ -217,10 +210,6 @@ button.c4g-router-position:before {
     white-space: nowrap;
     margin-top: 8px;
 }
-.c4g-router-input-wrapper {
-    display: flex;
-    justify-content: flex-start;
-}
 
 div.area .c4g-router-input-wrapper > div {
     width: calc(100% - 40px);
@@ -236,19 +225,17 @@ div.area .c4g-router-input-wrapper > div {
 }
 
 .buttonbar {
-    padding: 0 20px;
+    padding: 0 10px;
+    text-align: left;
 }
 
 .c4g-router-profile-wrapper {
-    width: 100px;
-    display: inline-block;
-    margin-right: 20px;
+    display: block;
+    margin-top: 10px;
 }
 
 .c4g-router-profile-wrapper button {
-    padding: 5px 10px;
-    width: 100%;
-    margin: 1px 0;
+   margin-right: 5px;
 }
 
 .c4g-router-layer-value-selection {
@@ -267,10 +254,21 @@ div.area .c4g-router-input-wrapper > div {
 }
 
 select.c4g-router-layer-selection {
-    width: calc(100% - 120px);
+    display: inline-block;
+    max-width: 400px;
+    width: 100%;
     padding: 5px 10px;
     background-color: var(--font-color);
     color: var(--main-color);
+    margin-top: 10px;
+    margin-right: 10%;
+    vertical-align: text-bottom;
+}
+
+select.c4g-router-layer-selection + div{
+    display: inline-block;
+    max-width: 400px;
+    width: 100%;
 }
 
 .c4g-router-input-wrapper > input {
@@ -295,7 +293,6 @@ select.c4g-router-layer-selection {
     border-radius: var(--button-radius-percent);
 }
 .c4g-router-instructions-header {
-    color: var(--font-color);
     width: 200px;
     max-width: calc(100% - 20px);
     right: 0;
@@ -502,12 +499,7 @@ button.c4g-router-over:before {
     font-weight: 900;
     font-size: inherit;
 }
-button.c4g-router-input-clear:before {
-    content: "\f1f8";
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    font-size: 15px;
-}
+
 .c4g-router.c4g-close > button:before {
     content: "\f4d7";
     font-family: 'Font Awesome 5 Free';
@@ -583,10 +575,6 @@ Todo Testing
     background-color: var(--font-color);
 }
 
-.c4g-router-input-wrapper {
-    display: inline-block;
-    width: 100%;
-}
 .c4g-router-input-wrapper input[type="search"] {
     padding: 3px 5px;
     margin-left: 10px;
@@ -601,7 +589,16 @@ Todo Testing
 button.c4g-router-position, button.c4g-router-input-clear {
     margin: 0 0 0 10px;
     height: 28px;
+    font-size: 15px;
 }
+
+button.c4g-router-position:before, button.c4g-router-input-clear:before {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+}
+
+button.c4g-router-position:before { content: "\f05b"; }
+button.c4g-router-input-clear:before { content: "\f1f8"; }
 
 .c4g-router-input-wrapper label{
     font-size: 20px;
@@ -609,7 +606,6 @@ button.c4g-router-position, button.c4g-router-input-clear {
 
 .c4g-router-headline {
     color: var(--font-color);
-    background-color: transparent;
     font-size: 20px;
 }
 
@@ -632,13 +628,8 @@ button.c4g-router-position, button.c4g-router-input-clear {
 }
 
 .c4g-router-result-container {
-    background-color: var(--main-color);
-    position: absolute;
-    bottom: 0;
     transition: all 0.3s;
-    left: calc(42px + .4em);
-    right: calc(42px + .4em);
-    max-height: calc(var(--map-height) - .2em);
+    max-height: calc(var(--map-height) - .4em - 38px);
 }
 
 .c4g-router-result-container.c4g-close {
@@ -647,8 +638,7 @@ button.c4g-router-position, button.c4g-router-input-clear {
 
 
 .c4g-route-instructions-wrapper, .c4g-route-feature-wrapper {
-    color: var(--font-color);
-    max-height: calc(var(--map-height) - 91px);
+    max-height: calc(var(--map-height) - 40px - 80px - 38px - .4em - 10px - 1px);
     overflow-y: scroll;
     margin: 80px 0 0 0;
     border-top: 1px solid var(--font-color);
@@ -658,7 +648,7 @@ button.c4g-router-position, button.c4g-router-input-clear {
 
 .c4g-router-mode-switch {
     position: absolute;
-    top: 30px;
+    top: 45px;
 }
 
 .c4g-router-panel.c4g-open .c4g-router-mode-switch {
@@ -678,17 +668,15 @@ button.c4g-router-position, button.c4g-router-input-clear {
 .c4g-router-panel.c4g-open .c4g-router-input-wrapper{
     display: inline-block;
     width: calc(100% - 27px - 27px - 55px);
-    margin: auto;
     text-align: center;
 }
 
 .c4g-router-mode-switch button {
     padding: 5px 10px;
-    width: calc(50% - 5px);
 }
 
 .c4g-router-mode-switch button:nth-child(2n + 1) {
-    margin-right: 10px;
+    margin: 0 10px;
 }
 
 .c4g-route-feature-wrapper {
@@ -703,11 +691,8 @@ button.c4g-router-position, button.c4g-router-input-clear {
 
 .c4g-router-instruction > div {
     padding: 5px;
-    min-width: 20px;
     vertical-align: top;
     display: inline-block;
-    text-align: start;
-
 }
 
 .c4g-router-instructions-header > div > em,
@@ -718,6 +703,12 @@ button.c4g-router-position, button.c4g-router-input-clear {
 
 .c4g-router-panel.c4g-close {
     display: none;
+}
+
+.c4g-router-results-header.c4g-beach-header > span {
+    font-size: 20px;
+    line-height: 40px;
+    padding-left: 10px;
 }
 
 .c4g-router-results-header.c4g-beach-header button{
@@ -731,70 +722,36 @@ button.c4g-router-position, button.c4g-router-input-clear {
     cursor: pointer;
 }
 
-.c4g-router-results-header.c4g-beach-header > span {
-    font-size: 20px;
-    line-height: 40px;
-    padding-left: 10px;
-}
-
 .c4g-router-results-header.c4g-beach-header button:nth-child(2n + 1){
     border-right: 1px solid var(--font-color);
 }
 
-button.c4g-router-extended-options:before {
-    content: "\f013";
+button.c4g-router-extended-options:before, button.c4g-router-close:before {
     font-family: 'Font Awesome 5 Free';
-    color: var(--font-color);
     font-weight: 900;
-    font-size: 15px;
 }
 
-button.c4g-router-close {
-    background: none;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    position: absolute;
-    height: 28px;
-    right: 5px;
-}
+button.c4g-router-extended-options:before { content: "\f013";}
+button.c4g-router-close:before { content: "\f00d"; }
 
-button.c4g-router-close:before {
-    content: "\f00d";
-    font-family: 'Font Awesome 5 Free';
-    color: var(--font-color);
-    font-weight: 900;
-    font-size: 15px;
-}
-
-button.c4g-router-extended-options {
+button.c4g-router-extended-options, button.c4g-router-close {
     background: none;
     border: none;
     outline: none;
     cursor: pointer;
     height: 28px;
     position: absolute;
-    right: 35px;
+    color: var(--font-color);
+    font-size: 15px;
+
 }
+
+button.c4g-router-extended-options { right: 35px; }
+button.c4g-router-close { right: 5px; }
 
 button.c4g-router-over, button.c4g-router-switch{
-    padding: 2px 7px 0 6px;
-    font-size: 1.1em;
-    position: absolute;
-    right: 10px;
-    bottom: 15px;
-}
-
-button.c4g-router-over {
-    position: absolute;
-    bottom: 15px;
-    right: 46px;
-}
-
-button.c4g-router-switch{
-    position: absolute;
-    right: 80px;
-    bottom: 15px;
+    font-size: 15px;
+    margin-right: 5px;
 }
 
 .c4g-router-instruction img{
@@ -825,11 +782,15 @@ div.invisible {
 @media(max-width: 1200px){
     .c4g-router-header { position: static; height: 25px;}
     .c4g-router-panel.c4g-open .c4g-router-input-wrapper { width: auto;}
+    .c4g-router-result-container { max-height: 100%; }
 }
 
 @media(max-width:670px){
-    .c4g-route-instructions-wrapper, .c4g-route-feature-wrapper {margin-top: 120px;     max-height: calc(var(--map-height) - 131px);}
-    .c4g-router-mode-switch { top: 75px; }
+    .c4g-route-instructions-wrapper, .c4g-route-feature-wrapper {margin-top: 10px;     max-height: calc(var(--map-height) - 165px - .2em);}
+    .c4g-router-mode-switch, .c4g-router-result-container.c4g-open .c4g-router-instructions-header { position: static; }
+    .c4g-router-mode-switch { max-width: calc(100% - 20px); margin: auto;}
+    .c4g-router-mode-switch button:nth-child(2n + 1) { margin: 0 10px 0 0; }
+    .c4g-router-mode-switch button { width: calc(50% - 5px); }
 }
 
 @media(max-width: 500px){
@@ -838,6 +799,4 @@ div.invisible {
     .c4g-router-input-wrapper > div { padding: 10px; }
     .c4g-router-panel.c4g-open .c4g-router-input-wrapper { width: 100%; }
     button.c4g-router-extended-options { margin: 0 10px 10px; position: static; }
-    .buttonbar>button:nth-child(2n) { margin: 0 10px; }
-    button.c4g-router-over, button.c4g-router-switch { position: static; }
 }
