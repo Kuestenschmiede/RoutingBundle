@@ -200,9 +200,8 @@ button.c4g-router-search:before {
 }
 
 .c4g-router-header {
-    position: absolute;
     width: calc(100% - 20px);
-    height: 0;
+    height: 10px;
     padding: 5px 10px;
 }
 
@@ -260,8 +259,7 @@ select.c4g-router-layer-selection {
     padding: 5px 10px;
     background-color: var(--font-color);
     color: var(--main-color);
-    margin-top: 10px;
-    margin-right: 10%;
+    margin: 10px 10% 10px 0;
     vertical-align: text-bottom;
 }
 
@@ -667,7 +665,7 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
 
 .c4g-router-panel.c4g-open .c4g-router-input-wrapper{
     display: inline-block;
-    width: calc(100% - 27px - 27px - 55px);
+    width: 100%;
     text-align: center;
 }
 
