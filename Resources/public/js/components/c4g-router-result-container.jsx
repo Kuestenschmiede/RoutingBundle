@@ -102,6 +102,7 @@ export class RouterResultContainer extends Component {
         </div>
       );
     }
+
     if (routerHeaderContent) {
       let detailBtnClass = "c4g-beach-options";
       let detailBtnCb = this.props.toggleDetailOpen;
@@ -147,6 +148,10 @@ export class RouterResultContainer extends Component {
           container.style.height = mapContainer.offsetHeight - controlContainer.offsetHeight;
         }
       }
+    }
+
+    if (this.props.mode === "area" && this.state.mode !== "feat") {
+      this.setState({mode: "feat"});
     }
   }
 

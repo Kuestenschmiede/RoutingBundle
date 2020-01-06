@@ -165,7 +165,10 @@ export class RouterView extends Component {
       area: this.resetAreaPoint
     };
 
-    let strCurrentProfile = this.state.profiles[this.state.currentProfile].text;
+    let strCurrentProfile = this.getProfileById(this.state.currentProfile);
+    if (strCurrentProfile) {
+      strCurrentProfile = strCurrentProfile.text;
+    }
 
     return (
       <React.Fragment>
@@ -182,6 +185,15 @@ export class RouterView extends Component {
         />
       </React.Fragment>
     );
+  }
+
+  getProfileById(id) {
+    for (let i = 0; i < this.state.profiles.length; i++) {
+      if (parseInt(this.state.profiles[i].id, 10) === parseInt(id, 10)) {
+        return this.state.profiles[i];
+      }
+    }
+    return null;
   }
 
   toggleResultDetails() {
