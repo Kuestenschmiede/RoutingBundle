@@ -44,13 +44,19 @@ $GLOBALS['TL_DCA'][$strName] = array
         ),
         'global_operations' => array
         (
-            'all' => array
-            (
+            'all' => [
                 'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href'                => 'act=select',
                 'class'               => 'header_edit_all',
                 'attributes'          => 'onclick="Backend.getScrollOffset();" accesskey="e"'
-            )
+            ],
+            'back' => [
+                'href'                => 'key=back',
+                'class'               => 'header_back',
+                'button_callback'     => ['\con4gis\CoreBundle\Classes\Helper\DcaHelper', 'back'],
+                'icon'                => 'back.svg',
+                'label'               => &$GLOBALS['TL_LANG']['MSC']['backBT'],
+            ],
         ),
         'operations' => array
         (
@@ -85,10 +91,10 @@ $GLOBALS['TL_DCA'][$strName] = array
     // Palettes
     'palettes' => array
     (
-        '__selector__'                => array('router_api_selection'),
+        '__selector__'                => array('router_api_selection', 'areaSearch'),
         'default'                     => '{general_legend},name,router_api_selection,router_viaroute_url,router_from_locstyle,router_to_locstyle,router_point_locstyle;'
                                         .'{extended_legend:hide},routerHeadline,router_attribution,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel;'
-                                        .'{search_legend:hide},showFeatures,featureLabel,initialMode,routerLayers,hideFeaturesWithoutLabel,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle,usePermalink;'
+                                        .'{search_legend:hide},areaSearch,showFeatures,featureLabel,initialMode,routerLayers,hideFeaturesWithoutLabel,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle,usePermalink;'
     ),
     
     
@@ -99,7 +105,8 @@ $GLOBALS['TL_DCA'][$strName] = array
         'router_api_selection_2' => 'router_api_key,router_profiles',
         'router_api_selection_3' => 'router_api_key,router_profiles',
         'router_api_selection_4' => 'router_api_key,router_profiles,pirate',
-        'router_api_selection_5' => 'router_profiles'
+        'router_api_selection_5' => 'router_profiles',
+        'areaSearch'             => 'areaHeadline,areaSearchOnly'
     ),
     
     // Fields
@@ -136,7 +143,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'exclude'                 => true,
             'inputType'               => 'radio',
             'default'                 => '5',
-            'options'                 => ['5','3','2','0','1','4'],
+            'options'                 => ['5','3','2','1','4'],
             'reference'               => &$GLOBALS['TL_LANG'][$strName]['references_router_api_selection'],
             'eval'                    => ['tl_class'=>'clr long','submitOnChange' => true],
         ],
@@ -161,7 +168,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
-//            'wizard'                  => [[$strName, 'editLocationStyle']],
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'router_to_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_to_locstyle'],
@@ -170,7 +177,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
-//            'wizard'                  => [[$strName, 'editLocationStyle']],
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'router_point_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_point_locstyle'],
@@ -179,7 +186,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true, 'mandatory' => true],
-//            'wizard'                  => [[$strName, 'editLocationStyle']],
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'router_interim_locstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_interim_locstyle'],
@@ -188,7 +195,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'w50','chosen' => true, 'includeBlankOption'=>true],
-//            'wizard'                  => [[$strName, 'editLocationStyle']],
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'router_profiles' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_profiles'],
@@ -235,6 +242,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'eval'                    => [
                 'columnsCallback'     => [$callbackClass,'getRouterLayer']
             ],
+            'xlabel' => [['tl_c4g_routing_configuration', 'mapsLink']]
         ],
         'customProfiles' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['customProfiles'],
@@ -243,7 +251,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => 'multiColumnWizard',
             'eval'                    => [
                 'columnsCallback'     => [$callbackClass,'getCustomProfileStructure']
-            ],
+            ]
         ],
         'hideFeaturesWithoutLabel' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['hideFeaturesWithoutLabel'],
@@ -280,7 +288,8 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => 0,
             'inputType'               => 'select',
             'options_callback'        => [$callbackClass,'getLocStyles'],
-            'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
+            'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'openRouter' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['openRouter'],
@@ -295,6 +304,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'enableOverPoints' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['enableOverPoints'],
@@ -329,6 +339,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => 0,
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
+            'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
         ],
         'closeAfterSearch' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['closeAfterSearch'],
@@ -348,6 +359,27 @@ $GLOBALS['TL_DCA'][$strName] = array
             'default'                 => false,
             'inputType'               => 'checkbox',
         ],
+        'areaSearch' => [
+            'label'                   => &$GLOBALS['TL_LANG'][$strName]['areaSearch'],
+            'exclude'                 => true,
+            'default'                 => false,
+            'eval'                    => ['submitOnChange' => true],
+            'inputType'               => 'checkbox',
+        ],
+        'areaSearchOnly' => [
+            'label'                   => &$GLOBALS['TL_LANG'][$strName]['areaSearchOnly'],
+            'exclude'                 => true,
+            'default'                 => false,
+            'inputType'               => 'checkbox',
+        ],
+        'areaHeadline' => [
+            'label'                   => &$GLOBALS['TL_LANG'][$strName]['areaHeadline'],
+            'filter'                  => false,
+            'inputType'               => 'text',
+            'default'                 => $GLOBALS['TL_LANG'][$strName]['areaHeadlineDefault'],
+            'eval'                    => [ 'tl_class'=>'clr', "maxlength" => 100],
+        ],
+        
         'featureLabel' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['featureLabel'],
             'filter'                  => false,
@@ -385,3 +417,19 @@ $GLOBALS['TL_DCA'][$strName] = array
     )
 );
 
+/**
+ * Class tl_c4g_routing_configuration
+ */
+class tl_c4g_routing_configuration extends Backend
+{
+    public function locstylesLink(Contao\DataContainer $dc)
+    {
+        return ' <a href="contao/main.php?do=c4g_map_locstyles&amp;table=tl_c4g_map_locstyles&amp;id=' . $dc->activeRecord->pid . '&amp;popup=1&amp;nb=1&amp;rt=' . REQUEST_TOKEN . '" title="' . Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_c4g_map_profiles']['editLocstyles']) . '" onclick="Backend.openModalIframe({\'title\':\'' . Contao\StringUtil::specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['editLocstyles'])) . '\',\'url\':this.href});return false">' . Contao\Image::getHtml('edit.svg') . '</a>';
+    }
+
+    public function mapsLink(Contao\DataContainer $dc)
+    {
+        return ' <a href="contao/main.php?do=c4g_maps&amp;table=tl_c4g_maps&amp;id=' . $dc->activeRecord->pid . '&amp;popup=1&amp;nb=1&amp;rt=' . REQUEST_TOKEN . '" title="' . Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['editMaps']) . '" onclick="Backend.openModalIframe({\'title\':\'' . Contao\StringUtil::specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['editMaps'])) . '\',\'url\':this.href});return false">' . Contao\Image::getHtml('edit.svg') . '</a>';
+    }
+
+}

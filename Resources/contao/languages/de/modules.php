@@ -11,4 +11,4 @@
  * @link       https://www.con4gis.org
  */
 
-$GLOBALS['TL_LANG']['MOD']['c4g_routing'] = array( 'Routingkonfiguration', 'Routing konfigurieren.');
+$GLOBALS['TL_LANG']['MOD']['c4g_routing_configuration'] = array( 'Routingkonfiguration', 'Routing konfigurieren.');

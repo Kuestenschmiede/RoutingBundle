@@ -14,7 +14,7 @@
 /**
  *  constants
  */
-export  var routingConstantsGerman = {
+export var routingConstantsGerman = {
   ROUTER_VIEW_ADDRESS_INPUT: 'Route finden',
   ROUTER_FROM_LABEL: 'Start',
   ROUTER_OVER_LABEL: 'Zwischenziel',
@@ -114,6 +114,8 @@ export  var routingConstantsGerman = {
 
   //new Router
   AREA_NAME:            'Umkreissuche',
+  AREA_PROFILE:         'Profil',
+  AREA_FEATURECOUNT:    'Gefundene Elemente',
   ROUTE_DETOUR:         'Umweg',
   AREA_DETOUR:          'Radius',
   INSTRUCTION_HEADLINE: 'Routenbeschreibung',

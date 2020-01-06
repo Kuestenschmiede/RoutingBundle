@@ -31,7 +31,20 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
         'inputType'               => 'select',
         'options_callback'        => [$callbackClass,'getRouterConfigs'],
         'eval'                    => ['tl_class'=>'clr','chosen' => true, 'includeBlankOption'=>true],
-        'sql'                     => "int(10) NOT NULL default '0'"
+        'sql'                     => "int(10) NOT NULL default '0'",
+        'xlabel'                  => [['tl_c4g_map_profiles_routing', 'configurationLink']]
     ]
 
 ],$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']);
+
+/**
+ * Class tl_c4g_map_profiles
+ */
+class tl_c4g_map_profiles_routing extends Backend
+{
+    public function configurationLink(Contao\DataContainer $dc)
+    {
+        return ' <a href="contao/main.php?do=c4g_routing&amp;table=tl_c4g_routing_configuration&amp;id=' . $dc->activeRecord->pid . '&amp;popup=1&amp;nb=1&amp;rt=' . REQUEST_TOKEN . '" title="' . Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_c4g_map_profiles']['editRoutingConfiguration']) . '" onclick="Backend.openModalIframe({\'title\':\'' . Contao\StringUtil::specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['editRoutingConfiguration'])) . '\',\'url\':this.href});return false">' . Contao\Image::getHtml('edit.svg') . '</a>';
+    }
+
+}

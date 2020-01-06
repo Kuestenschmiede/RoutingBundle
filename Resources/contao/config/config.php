@@ -14,10 +14,14 @@
 /**
  * Backend Modules
  */
-$GLOBALS['BE_MOD']['con4gis_maps'] = array_merge($GLOBALS['BE_MOD']['con4gis_maps'], array
+$GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], array
 (
-    'c4g_routing' => array
+    'c4g_routing_configuration' => array
     (
         'tables' => "tl_c4g_routing_configuration"
     )
 ));
+
+if(TL_MODE == "BE") {
+    $GLOBALS['TL_CSS'][] = '/bundles/con4gisrouting/css/con4gis.css';
+}

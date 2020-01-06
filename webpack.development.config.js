@@ -1,6 +1,6 @@
 var path = require('path');
 var config = {
-  entry: './Resources/public/js/c4g-routing.js',
+  entry: ['babel-polyfill', './Resources/public/js/c4g-routing.js'],
   mode: "development",
   output: {
     filename: 'c4g-routing.js',
@@ -10,15 +10,14 @@ var config = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: [{
-          loader: "echo-loader",
-        }, {
           loader: "babel-loader",
         }],
         include: [
           path.resolve('.'),
+          path.resolve('./Resources/public/js/components'),
           path.resolve('./../MapsBundle')
         ],
       }

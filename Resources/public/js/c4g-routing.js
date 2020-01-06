@@ -31,15 +31,18 @@ import {Modify, Select} from "ol/interaction";
 import {RoutingPermalink} from "./c4g-routing-permalink";
 import {AlertHandler} from "./../../../../CoreBundle/Resources/public/js/AlertHandler";
 import {AutocompleteHandler} from "./../../../../CoreBundle/Resources/public/js/AutocompleteHandler";
-import {GeoJSON} from "ol/format";
-const osmtogeojson = require('osmtogeojson');
+import ReactDOM from "react-dom";
+import React from "react";
+import {RouterView} from "./components/c4g-router-view.jsx";
 
 let langRouteConstants = {};
 const containerAddresses = {
   arrFromPositions: [],
   arrFromNames: [],
   arrToPositions: [],
-  arrToNames: []
+  arrToNames: [],
+  arrOverPositions: {},
+  arrOverNames: {},
 };
 
 'use strict';
@@ -312,13 +315,17 @@ export class Router extends Sideboard {
         this.viewArea.activate();
       }
     }
-    this.viewRouter = this.addRouterInterface();
+    // this.viewRouter = this.addRouterInterface();
     if (this.options.mapController.data.initialMode === "route" || !this.viewArea) {
-      this.viewRouter.activate();
+      // this.viewRouter.activate();
     }
+
+    // id => array of instructions, for each route one entry
+    this.routeInstructions = {};
 
     // store some vars for ajax-requests
     profileId = this.options.mapController.data.profile;
+
     this.geoSearchApi = this.options.mapController.data.api.geosearch + '/' + profileId;
     this.geoReverseSearchApi = this.options.mapController.data.api.geosearch_reverse + '/' + profileId;
     this.routingApi = this.options.mapController.data.api.routing + '/' + profileId;
@@ -401,60 +408,9 @@ export class Router extends Sideboard {
     var self = this;
     this.options.mapController.map.un('click', self.fnMapRouterInteraction);
     self.options.mapController.map.removeInteraction(this.mapSelectInteraction);
-    self.options.mapController.map.removeInteraction(this.modWayInteraction);
   }
 
-  /**
-   * Adds a click interaction for the router. Upon map click, the clicked points are converted to locations and the
-   * route search is started, as long as all mandatory properties are set.
-   */
-  addMapInputInteraction() {
 
-    var self = this,
-      coordinate;
-
-    self.fnMapRouterInteraction = function (evt) {
-
-      coordinate = toLonLat(evt.coordinate);
-      // clear old features
-      self.areaSource.clear();
-
-      if (self.$fromInput.val() === "") {
-        self.performReverseSearch(self.$fromInput, coordinate);
-        self.fromValue = new Point(coordinate);
-        self.updateLinkFragments("addressFrom", coordinate);
-        self.recalculateRoute();
-      } else if (self.$toInput.val() === "") {
-        self.performReverseSearch(self.$toInput, coordinate);
-        self.toValue = new Point(coordinate);
-        self.updateLinkFragments("addressTo", coordinate);
-        self.recalculateRoute();
-      } else if (self.$overInput) {
-
-        if (self.$overInput.val() === "") {
-          self.performReverseSearch(self.$overInput, coordinate);
-          if (!self.overValue) {
-            self.overValue = [];
-          }
-          self.overValue.push(new Point(coordinate));
-          let olUid = self.overValue[self.overValue.length - 1]['ol_uid'];
-          let deleteButton =  self.$overInput.next()[0];
-          // traverse the dom level until the delete button is found
-          while (!jQuery(deleteButton).hasClass('c4g-router-input-clear')) {
-            deleteButton = jQuery(deleteButton).next()[0];
-          }
-
-          deleteButton.id = olUid;
-          self.recalculateRoute();
-          self.$buttonOver.prop("disabled", false);
-        }
-      }
-    };
-
-    this.options.mapController.map.on('click', self.fnMapRouterInteraction);
-    self.options.mapController.map.addInteraction(this.mapSelectInteraction);
-    self.options.mapController.map.addInteraction(this.modWayInteraction);
-  }
 
   /**
    * Creates a wrapper element for the router attribution.
@@ -462,358 +418,30 @@ export class Router extends Sideboard {
    */
 
 
-  /**
-   * Checks the routing properties and triggers a new route search, when the mandatory parameters are set.
-   */
-  recalculateRoute() {
-    var tmpFeature,
-      proxy = this.options.mapController.proxy;
 
-    this.locationsSource.clear();
-    if (this.fromValue) {
-      tmpFeature = new Feature({
-        geometry: this.fromValue.clone().transform('EPSG:4326', 'EPSG:3857')
-      });
-      if (this.options.mapController.data.router_from_locstyle && proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_from_locstyle]) {
-        tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_from_locstyle].style);
-      }
-      this.locationsSource.addFeature(tmpFeature);
-    }
-    if (this.toValue) {
-      tmpFeature = new Feature({
-        geometry: this.toValue.clone().transform('EPSG:4326', 'EPSG:3857')
-      });
-      if (this.options.mapController.data.router_to_locstyle && proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_to_locstyle]) {
-        tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_to_locstyle].style);
-      }
-      this.locationsSource.addFeature(tmpFeature);
-    }
-    if (this.overValue) {
-      for (var propt in this.overValue) {
-        tmpFeature = new Feature({
-          geometry: this.overValue[propt].clone().transform('EPSG:4326', 'EPSG:3857')
-        });
-        if (this.options.mapController.data.router_interim_locstyle && proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_interim_locstyle]) {
-          tmpFeature.setStyle(proxy.locationStyleController.arrLocStyles[this.options.mapController.data.router_interim_locstyle].style);
-        }
-        this.locationsSource.addFeature(tmpFeature);
-      }
-    }
-    if (this.fromValue && this.toValue) {
-      if (this.overValue) {
-        this.performViaRoute(this.fromValue, this.toValue, this.overValue);
-      }
-      else {
-        this.performViaRoute(this.fromValue, this.toValue);
-      }
-    }
 
-  }
+
+
+
 
   /**
-   * Executes a route search with the given from and to points. Displays features and feature entries on success. Uses
-   * overpoints, if any are given.
-   * @param fromPoint
-   * @param toPoint
-   * @param overPoint
-   * @returns {string}
+   * Renders the feature list in the portside router, if configured.
+   * @param features
+   * @param type
+   * @param mode
    */
-  performViaRoute(fromPoint, toPoint, overPoint) {
-
-    var url,
-      self,
-      fromCoord,
-      toCoord,
-      overCoord;
-
-    self = this;
-    this.areaSource.clear();
-    this.mapSelectInteraction.getFeatures().clear();
-    if (!fromPoint) {
-      fromPoint = this.fromValue;
-      if (!fromPoint) {
-        return;
+  showFeaturesInPortside(features, type, mode) {
+    const scope = this;
+    if (this.options.mapController.data.showFeatures) {
+      if (scope[mode + "FeatureWrapper"] === undefined) {
+        scope[mode + "FeatureWrapper"] = document.createElement('div');
+        jQuery(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
+        scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
       }
     }
-    if (!toPoint) {
-      if (!toPoint) {
-        return;
-      }
-      toPoint = this.toValue;
-    }
-    if (!overPoint) {
-      if (this.overValue) {
-        overPoint = this.overValue;
-      }
-    }
-    fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
-    toCoord = [toPoint.getCoordinates()[1], toPoint.getCoordinates()[0]];
-    if (overPoint) {
-      overCoord = [];
-      for (var propt in overPoint) {
-        if (overPoint.hasOwnProperty(propt)) {
-          overCoord.push([overPoint[propt].getCoordinates()[1], overPoint[propt].getCoordinates()[0]]);
-        }
-      }
-    }
-
-    if (this.options.mapController.data.router_api_selection >= '1') {//OSRM-API:5.x or ORS- API
-      let profileId = this.options.mapController.data.profile;
-      url = 'con4gis/routeService/' + this.options.mapController.data.lang + '/'
-        + profileId + '/' + jQuery(self.routerLayersSelect).val() + '/'
-        + jQuery(self.toggleDetourRoute).val() + '/' + fromCoord;
-
-      if (overPoint) {
-        for (var i = 0; i < overCoord.length; i++)
-          url += ';' + overCoord[i];
-      }
-      url += ';' + toCoord;
-      if (this.routeProfile && this.routeProfile.active) {
-        url += '?profile=' + this.routeProfile.active;
-      }
-
-      if (self.routeAjax) {
-        self.routeAjax.abort();
-      }
-
-      this.spinner.show();
-
-      self.routeAjax = jQuery.ajax({
-        'url': url
-      })
-        .done(function (response) {
-          self.response = response;
-          if (response) {
-            if (response.error) {
-              let errorDiv = self.showRouterError(langRouteConstants[response.error]);
-              jQuery(self.fromInput).parent()[0].appendChild(errorDiv);
-            } else {
-              self.showRouteLayer(response);
-              if (response.features) {
-                jQuery(".router-content-switcher").css('display', 'block');
-              }
-              self.showRouteInstructions(response, 0);
-              if (response.features && (response.features.elements || response.features.length > -1)) {
-                let sortedFeatures = self.showFeatures(response.features, response.type, "router");
-
-                self.showFeaturesInPortside(sortedFeatures, response.type, "router");
-                jQuery(self.areaFeatureWrapper).empty();
-                jQuery(self.areaFromInput).val("");
-              }
-            }
-          }
-        })
-        .always(function () {
-          self.routeAjax = undefined;
-          self.spinner.hide();
-          self.update();
-          if (self.options.mapController.data.closeAfterSearch) {
-            self.close(true);
-          }
-        });
-
-
-      return '';
-
-    } else {//OSRM-API:<5
-      try {
-        url = 'con4gis/routeService/' + profileId + '?output=json&instructions=true&alt=false&loc_from=' + fromCoord + '&loc_to=' + toCoord;
-        this.spinner.show();
-
-        jQuery.ajax({
-          'url': url
-        })
-          .done(function (response) {
-
-            if (response) {
-              self.showRoute(response);
-            }
-
-          })
-          .always(function () {
-            self.spinner.hide();
-            self.update();
-          });
-
-        return '';
-      }
-      catch (Exception) {
-        console.log("Please use a more modern API-Version for the Routeservice")
-      }
-
-    }
-  }
-
-  /**
-   * Displays the main route.
-   * @param routeResponse
-   */
-  showRoute(routeResponse) {
-
-    this.showRouteLayer(routeResponse, 0);
-    this.showRouteInstructions(routeResponse, 0);
-  }
-
-  /**
-   * Show an alternate route.
-   * @param routeResponse
-   * @param routeNumber
-   */
-  showAltRoute(routeResponse, routeNumber) {
-    this.showRouteLayer(routeResponse, routeNumber);
-    this.showRouteInstructions(routeResponse, routeNumber);
-  }
-
-  /**
-   * Displays a route on the map.
-   * @param routeResponse
-   * @param routeNumber
-   */
-  showRouteLayer(routeResponse, routeNumber) {
-
-    var mapView,
-      wayPolyline,
-      routeFeatures,
-      altRouteFeatures,
-      rightPadding,
-      leftPadding,
-      routeNumber = routeNumber || 0;
-
-    if (routeResponse) {
-      this.routingWaySource.clear();
-      this.routingAltWaySource.clear();
-      mapView = this.options.mapController.map.getView();
-
-      if (this.options.mapController.data.router_api_selection == '1' || this.options.mapController.data.router_api_selection == '2' || routeResponse.routeType == '1' || routeResponse.routeType == '2') {//OSRM-API:5.x
-        wayPolyline = new Polyline();
-
-        // add route
-
-        if (routeResponse.routes ) {//check for alternative route
-          if (routeResponse.routes[1]) {
-            if (routeNumber === 1) {
-              altRouteFeatures = wayPolyline.readFeatures(routeResponse.routes[0].geometry, {
-                dataProjection: 'EPSG:4326',
-                featureProjection: mapView.getProjection()
-              });
-              altRouteFeatures[0].setId(0);
-            }
-            else {
-              altRouteFeatures = wayPolyline.readFeatures(routeResponse.routes[1].geometry, {
-                dataProjection: 'EPSG:4326',
-                featureProjection: mapView.getProjection()
-              });
-              altRouteFeatures[0].setId(1);
-            }
-          }
-          routeFeatures = wayPolyline.readFeatures(routeResponse.routes[routeNumber].geometry, {
-            dataProjection: 'EPSG:4326',
-            featureProjection: mapView.getProjection()
-          });
-          routeFeatures[0].setId(routeNumber);
-        }
-      } else if(this.options.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0'){//OSRM-API:<5
-        wayPolyline = new Polyline({
-          'factor': this.options.mapController.data.router_viaroute_precision || 1e6
-        });
-
-        // add route
-        routeFeatures = wayPolyline.readFeatures(routeResponse.route_geometry, {
-          dataProjection: 'EPSG:4326',
-          featureProjection: mapView.getProjection()
-        });
-      }
-      else if (this.options.mapController.data.router_api_selection == '3'){
-        wayPolyline = new Polyline();
-        if (routeResponse.paths && routeResponse.paths[1]) {//check for alternative route
-          if (routeNumber == 1) {
-            altRouteFeatures = wayPolyline.readFeatures(routeResponse.paths[0].points, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: mapView.getProjection()
-            });
-            altRouteFeatures[0].setId(0);
-          }
-          else {
-            altRouteFeatures = wayPolyline.readFeatures(routeResponse.paths[1].points, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: mapView.getProjection()
-            });
-            altRouteFeatures[0].setId(1);
-          }
-        }
-        routeFeatures = wayPolyline.readFeatures(routeResponse.paths[routeNumber].points, {
-          dataProjection: 'EPSG:4326',
-          featureProjection: mapView.getProjection()
-        });
-        routeFeatures[0].setId(routeNumber);
-      }
-      else if (this.options.mapController.data.router_api_selection == "4" || routeResponse.routeType == '4') {
-        wayPolyline = new Polyline({
-          'factor': 1e6
-        });
-        if (routeResponse.trip && routeResponse.trip.legs && routeResponse.trip.legs[1]) {//check for alternative route
-          if (routeNumber == 1) {
-            altRouteFeatures = wayPolyline.readFeatures(routeResponse.trip.legs[1].shape, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: mapView.getProjection()
-            });
-            altRouteFeatures[0].setId(0);
-          }
-          else {
-            altRouteFeatures = wayPolyline.readFeatures(routeResponse.trip.legs[1].shape, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: mapView.getProjection()
-            });
-            altRouteFeatures[0].setId(1);
-          }
-        }
-        routeFeatures = wayPolyline.readFeatures(routeResponse.trip.legs[routeNumber].shape, {
-          dataProjection: 'EPSG:4326',
-          featureProjection: mapView.getProjection()
-        });
-        routeFeatures[0].setId(routeNumber);
-      }
-      if (this.options.mapController.data.router_alternative == '1') {
-        if ((routeResponse.routes && (routeResponse.routes.length > 1) && (routeResponse.routes[1])) || (routeResponse.paths && (routeResponse.paths.length > 1) && (routeResponse.paths[1]))) {
-          this.routingAltWaySource.addFeatures(altRouteFeatures);
-        }
-      }
-      if (routeFeatures) {
-        this.routingWaySource.addFeatures(routeFeatures);
-        // render view
-        // so the route gets drawn before the animation starts
-        this.options.mapController.map.renderSync();
-
-        // animation
-        mapView.animate({
-          start: +new Date(),
-          duration: 2000,
-          resolution: mapView.getResolution(),
-          center: [0, 0]
-          //rotation: Math.PI
-        });
-
-        // calculate padding
-        leftPadding = 0;
-        if (this.options.mapController.activePortside && this.options.mapController.activePortside.container) {
-          leftPadding = jQuery(this.options.mapController.activePortside.container).outerWidth();
-        }
-
-        rightPadding = 0;
-        if (this.options.mapController.activeStarboard && this.options.mapController.activeStarboard.container) {
-          rightPadding = jQuery(this.options.mapController.activeStarboard.container).outerWidth();
-        }
-
-        // center on route
-        mapView.fit(
-          routeFeatures[0].getGeometry(),
-          {
-            size: this.options.mapController.map.getSize(),
-            padding: [0, rightPadding, 0, leftPadding]
-          }
-        );
-      }
-    }
+    scope.features = features;
+    scope.type = type;
+    scope.reloadFeatureValues(mode);
   }
 
   /**
@@ -854,24 +482,32 @@ export class Router extends Sideboard {
         this.bestFeatureIds.push(priceSortedFeatures[i]['id']);
       }
     }
-    if (type !== "overpass") {
-      featureLoop:
+    featureLoop:
         for (let i = 0; features && (i < features.length); i++) {
           let label = "";
           let feature = features[i];
           let resultCoordinate;
           let contentFeature;
-
-          resultCoordinate = transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
-          let point = new Point(resultCoordinate);
-          contentFeature = new Feature(point);
-          contentFeature.setId(feature.id);
-          contentFeature.set('loc_linkurl', layer.loc_linkurl);
-          contentFeature.set('hover_location', layer.hover_location);
-          contentFeature.set('hover_style', layer.hover_style);
-          contentFeature.set('zoom_onclick', layer.zoom_onclick);
-          contentFeature.set('tid', feature.id);
-
+          if (type == "overpass") {
+            if (feature.type === "node" && !feature.tags) {
+              continue;
+            }
+            contentFeature = self.layerController.featureFromOverpass(feature, features, layer, true);
+            if(!contentFeature){
+              continue;
+            }
+          }
+          else {
+            resultCoordinate = transform([parseFloat(feature['geox']), parseFloat(feature['geoy'])], 'EPSG:4326', 'EPSG:3857');
+            let point = new Point(resultCoordinate);
+            contentFeature = new Feature(point);
+            contentFeature.setId(feature.id);
+            contentFeature.set('loc_linkurl', layer.loc_linkurl);
+            contentFeature.set('hover_location', layer.hover_location);
+            contentFeature.set('hover_style', layer.hover_style);
+            contentFeature.set('zoom_onclick', layer.zoom_onclick);
+            contentFeature.set('tid', feature.id);
+          }
 
 
           if (mapData.routerLayers[layerId] && mapData.routerLayers[layerId][activeLayer] && mapData.routerLayers[layerId][activeLayer]['mapLabel'] && feature[mapData.routerLayers[layerId][activeLayer]['mapLabel']]) {
@@ -917,27 +553,6 @@ export class Router extends Sideboard {
             contentFeature.set(tags, feature.tags[tags]);
           }
         }
-    }
-    else {
-      const geojson = osmtogeojson(features);
-      const mapProj = self.options.mapController.map.getView().getProjection();
-      contentFeatures = new GeoJSON().readFeatures(geojson, {
-        dataProjection: 'EPSG:4326',
-        featureProjection: mapProj
-      });
-      for (let id in contentFeatures) {
-        if (contentFeatures.hasOwnProperty(id)) {
-          contentFeatures[id].set('loc_linkurl', layer.loc_linkurl);
-          contentFeatures[id].set('hover_location', layer.hover_location);
-          contentFeatures[id].set('hover_style', layer.hover_style);
-          contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
-          contentFeatures[id].set('tid', parseInt(contentFeatures[id].get('id').split('/')[1]));
-          contentFeatures[id].setStyle(self.options.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
-        }
-
-      }
-    }
-
     if (missingStyles && missingStyles.length > 0) {
       self.options.mapController.proxy.locationStyleController.loadLocationStyles(missingStyles, {
         done: function () {
@@ -955,28 +570,6 @@ export class Router extends Sideboard {
     }
     this.update();
     return priceSortedFeatures;
-  }
-
-  /**
-   * Renders the feature list in the portside router, if configured.
-   * @param features
-   * @param type
-   * @param mode
-   */
-  showFeaturesInPortside(features, type, mode) {
-    if (features.length) {
-      const scope = this;
-      if (this.options.mapController.data.showFeatures) {
-        if (scope[mode + "FeatureWrapper"] === undefined) {
-          scope[mode + "FeatureWrapper"] = document.createElement('div');
-          jQuery(scope[mode + "FeatureWrapper"]).addClass(mode + '-features-display');
-          scope[mode + "ViewContentWrapper"].appendChild(scope[mode + "FeatureWrapper"]);
-        }
-      }
-      scope.features = features;
-      scope.type = type;
-      scope.reloadFeatureValues(mode);
-    }
   }
 
   /**
@@ -1143,104 +736,7 @@ export class Router extends Sideboard {
     }
     return document.getElementsByTagName('base')[0].href + "bundles/con4gismaps/vendor/osrm/images/" + image;
   }
- /**
-   * Translates an integer number into the correct instruction icon (Graphhopper icons).
-   * @param intType
-   * @returns {string}
-   */
-  getInstructionIconValhalla(intType) {
-    let image;
-    switch (intType) {
-      case 0:
-        image = "default.png";
-        break;
-      case 1:
-        image = "head.png";
-        break;
-      case 2:
-        image = "head.png";
-        break;
-      case 3:
-        image = "head.png";
-        break;
-      case 4:
-        image = "target.png";
-        break;
-      case 5:
-        image = "target.png";
-        break;
-      case 6:
-        image = "target.png";
-        break;
-      case 7:
-        image = "continue.png";
-        break;
-      case 8:
-        image = "continue.png";
-        break;
-      case 9:
-        image = "slight-right.png";
-        break;
-      case 10:
-        image = "turn-right.png";
-        break;
-      case 11:
-        image = "sharp-right.png";
-        break;
-      case 12:
-        image = "u-turn.png";
-        break;
-      case 13:
-        image = "u-turn.png";
-        break;
-      case 14:
-        image = "sharp-left.png";
-        break;
-      case 15:
-        image = "turn-left.png";
-        break;
-      case 16:
-        image = "slight-left.png";
-        break;
-      case 17:
-        image = "continue.png";
-        break;
-      case 18:
-        image = "slight-right.png";
-        break;
-      case 19:
-        image = "slight-left.png";
-        break;
-      case 20:
-        image = "slight-right.png";
-        break;
-      case 21:
-        image = "slight-left.png";
-        break;
-      case 22:
-        image = "continue.png";
-        break;
-      case 23:
-        image = "slight-right.png";
-        break;
-      case 24:
-        image = "slight-left.png";
-      case 25:
-        image = "continue.png";
-        break;
-      case 26:
-        image = "round-about.png";
-        break;
-      case 27:
-        image = "round-about.png";
-        break;
-      default:
-        image = "default.png";
-        break;
 
-    }
-    return document.getElementsByTagName('base')[0].href + "bundles/con4gismaps/vendor/osrm/images/" + image;
-  }
 
   /**
    * Translates the type of an instruction into a string representation.
@@ -1430,339 +926,7 @@ export class Router extends Sideboard {
     return description;
   }
 
-  /**
-   * Displays the route instructions in the portside router.
-   * @param routeResponse
-   * @param routeNumber
-   */
-  showRouteInstructions(routeResponse, routeNumber) {
 
-    var self,
-      routerInstruction,
-      routerInstructionsHeader,
-      routerInstructionsHtml,
-      instr,
-      strType,
-      strMod,
-      rowstyle,
-      routeNumber = routeNumber || 0,
-      i,
-      j,
-      route_name_0 = "",
-      route_name_1 = "",
-      total_distance = "",
-      total_time = "";
-
-    self = this;
-    if (!this.options.mapController.data.showInstructions) {
-      return;
-    }
-
-    if (self.routerInstructionsWrapper === undefined) {
-      self.routerInstructionsWrapper = document.createElement('div');
-      self.routerInstructionsWrapper.className = routingConstants.ROUTER_INSTRUCTIONS_WRAPPER;
-      self.routerViewContentWrapper.appendChild(self.routerInstructionsWrapper);
-    } else {
-      jQuery(self.routerInstructionsWrapper).empty();
-    }
-
-    routerInstructionsHeader = document.createElement('div');
-    routerInstructionsHeader.className = routingConstants.ROUTER_INSTRUCTIONS_HEADER;
-
-    if (routeResponse) {
-      if (!(routeResponse.features && routeResponse.features.length > 0) || !this.options.mapController.data.showFeatures) {
-        jQuery(".c4g-router-instructions-wrapper").css('display', 'block');
-      }
-      if (this.options.mapController.data.router_api_selection == '1' || routeResponse.routeType == '1') {//OSRM-API:5.x
-        if (routeResponse.routes[routeNumber].legs[0].summary) {
-          route_name_0 = routeResponse.routes[routeNumber].legs[0].summary.split(",")[0];
-          route_name_1 = routeResponse.routes[routeNumber].legs[0].summary.split(",")[1];
-          if (routeResponse.routes[routeNumber].legs[1]) {
-            route_name_1 = routeResponse.routes[routeNumber].legs[1].summary.split(",")[1];
-          }
-
-        }
-        total_distance = this.toHumanDistance(routeResponse.routes[routeNumber].distance);
-        total_time = this.toHumanTime(routeResponse.routes[routeNumber].duration);
-      }
-
-      else if (this.options.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0') {//OSRM-API:<5
-        if (routeResponse.route_name) {
-          route_name_0 = routeResponse.route_name[0];
-          route_name_1 = routeResponse.route_name[1];
-        }
-
-        if (routeResponse.route_summary) {
-          total_distance = this.toHumanDistance(routeResponse.route_summary.total_distance);
-          total_time = this.toHumanTime(routeResponse.route_summary.total_time);
-        }
-
-
-      }
-      else if (this.options.mapController.data.router_api_selection == '2' || routeResponse.routeType == '2') {//OSR-API
-        total_time = this.toHumanTime(routeResponse.routes[routeNumber].summary.duration);
-        total_distance = this.toHumanDistance(routeResponse.routes[routeNumber].summary.distance);
-      }
-      else if (this.options.mapController.data.router_api_selection == '3' || routeResponse.routeType == '3') { //Graphhopper
-        total_distance = this.toHumanDistance(routeResponse.paths[0].distance);
-        total_time = this.toHumanTime(routeResponse.paths[0].time / 1000) ;
-      }
-      else if (this.options.mapController.data.router_api_selection == '4' || routeResponse.routeType == '4') { //Valhalla
-        total_distance = this.toHumanDistance(routeResponse.trip.summary.length *1000);
-        total_time = this.toHumanTime(routeResponse.trip.summary.time) ;
-      }
-
-      if (route_name_0 && route_name_1) {
-        routerInstructionsHeader.innerHTML = '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_ROUTE + '</label> <em>' + route_name_0 + ' &#8594; ' + route_name_1 + '</em><br>' + '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
-      }
-      else if (this.routeProfile && this.routeProfile.active) {
-        routerInstructionsHeader.innerHTML = '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_PROFILE + '</label> <em>' + this.options.mapController.data.router_profiles[this.routeProfile.active] + '</em><br>' + '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + langRouteConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
-      }
-
-
-      self.routerInstructionsWrapper.appendChild(routerInstructionsHeader);
-
-      routerInstruction = document.createElement('div');
-
-      routerInstructionsHtml = '<table class="' + routingConstants.ROUTER_INSTRUCTIONS_TABLE + '" cellpadding="0" cellspacing="0">';
-      if (this.options.mapController.data.router_api_selection === '1' || routeResponse.routeType == '1') {//OSRM-API:5.x
-        for (j = 0; j < routeResponse.routes[routeNumber].legs.length; j += 1) {
-          for (i = 0; i < routeResponse.routes[routeNumber].legs[j].steps.length; i += 1) {
-            instr = routeResponse.routes[routeNumber].legs[j].steps[i];
-
-            strType = instr.maneuver.type;
-            if (instr.maneuver.modifier) {
-              strMod = instr.maneuver.modifier;
-            }
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-            if (i % 2 === 0) {
-              rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-            }
-
-            rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-            routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-            routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIcon(strMod, strType) + '" alt=""/>';
-            routerInstructionsHtml += '</td>';
-
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
-
-
-            // build route description
-            var instructiontext = this.getTypeText(instr.maneuver.type).replace(/%s/, instr.name).replace(/%m/, this.getModifierText(instr.maneuver.modifier)).replace(/%z/, instr.maneuver.exit);
-            if (instr.name.length < 1) {
-              instructiontext = instructiontext.replace(/\[.*?\]/g, '');
-            } else {
-              instructiontext = instructiontext.replace(/\[(.*)\]/, "$1");
-            }
-            routerInstructionsHtml += instructiontext;
-
-
-            routerInstructionsHtml += '</div>';
-            routerInstructionsHtml += "</td>";
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-            if (i !== routeResponse.routes[routeNumber].legs[0].steps.length - 1) {
-              routerInstructionsHtml += this.toHumanDistance(instr.distance);
-            }
-            routerInstructionsHtml += "</td>";
-
-            routerInstructionsHtml += "</tr>";
-          }
-        }
-
-      } else if (this.options.mapController.data.router_api_selection === '0' || routeResponse.routeType == '0') {//OSRM-API:<5
-        for (i = 0; i < routeResponse.route_instructions.length; i += 1) {
-          instr = routeResponse.route_instructions[i];
-          rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-          if (i % 2 === 0) {
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-          }
-
-          rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-          routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-          routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getDrivingInstructionIcon(instr[0]) + '" alt=""/>';
-          routerInstructionsHtml += '</td>';
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr[3] + '">';
-
-          // build route description
-          if (instr[1] !== "") {
-            routerInstructionsHtml += this.getDrivingInstruction(instr[0]).replace(/\[(.*)\]/, "$1").replace(/%s/, instr[1]).replace(/%d/, this.getText(instr[6]));
-          } else {
-            routerInstructionsHtml += this.getDrivingInstruction(instr[0]).replace(/\[(.*)\]/, "").replace(/%d/, this.getText(instr[6]));
-          }
-
-
-          routerInstructionsHtml += '</div>';
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-          if (i !== routeResponse.route_instructions.length - 1) {
-            routerInstructionsHtml += this.toHumanDistance(instr[5]);
-          }
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += "</tr>";
-        }
-      }
-      else if (this.options.mapController.data.router_api_selection === '2' || routeResponse.routeType == '2') {//OpenRouteService
-        for (j = 0; j < routeResponse.routes[routeNumber].segments.length; j += 1) {
-          for (i = 0; i < routeResponse.routes[routeNumber].segments[j].steps.length; i += 1) {
-            instr = routeResponse.routes[routeNumber].segments[j].steps[i];
-
-            strType = instr.type;
-
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-            if (i % 2 === 0) {
-              rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-            }
-
-            rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-            routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-            routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconORS(strType) + '" alt=""/>';
-            routerInstructionsHtml += '</td>';
-
-            if (instr.maneuver) {
-              routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
-            }
-            else {
-              routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + 0 + '">';
-            }
-
-
-            // build route description
-
-            routerInstructionsHtml += instr.instruction;
-
-
-            routerInstructionsHtml += '</div>';
-            routerInstructionsHtml += "</td>";
-
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-            if (i !== routeResponse.routes[routeNumber].segments[0].steps.length - 1) {
-              routerInstructionsHtml += this.toHumanDistance(instr.distance);
-            }
-            routerInstructionsHtml += "</td>";
-
-            routerInstructionsHtml += "</tr>";
-          }
-        }
-      }
-      else if (this.options.mapController.data.router_api_selection === '3' || routeResponse.routeType == '3') { // Graphhopper
-        for (j = 0; j < routeResponse.paths[routeNumber].instructions.length; j += 1) {
-          instr = routeResponse.paths[routeNumber].instructions[j];
-
-          strType = (j == 0) ? 99 : instr.sign;
-
-          rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-          if (i % 2 === 0) {
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-          }
-
-          rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-          routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-          routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconGraphhopper(strType) + '" alt=""/>';
-          routerInstructionsHtml += '</td>';
-
-          if (instr.maneuver) {
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + instr.maneuver.location + '">';
-          }
-          else {
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-pos="' + 0 + '">';
-          }
-
-
-          // build route description
-
-          routerInstructionsHtml += instr.text;
-
-
-          routerInstructionsHtml += '</div>';
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-          if (j !== routeResponse.paths[routeNumber].instructions.length - 1 && j != 0) {
-            routerInstructionsHtml += this.toHumanDistance(instr.distance);
-          }
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += "</tr>";
-        }
-      }
-      else if (this.options.mapController.data.router_api_selection === '4' || routeResponse.routeType == '4') {
-        for (j = 0; j < routeResponse.trip.legs[routeNumber].maneuvers.length; j += 1) {
-          instr = routeResponse.trip.legs[routeNumber].maneuvers[j];
-
-          strType = instr.type;
-
-          rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_ODD;
-
-          if (i % 2 === 0) {
-            rowstyle = routingConstants.ROUTER_INSTRUCTIONS_ITEM_EVEN;
-          }
-
-          rowstyle += " " + routingConstants.ROUTER_INSTRUCTIONS_ITEM;
-
-          routerInstructionsHtml += '<tr class="' + rowstyle + '">';
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION + '">';
-          routerInstructionsHtml += '<img class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_ICON + '" src="' + this.getInstructionIconValhalla(strType) + '" alt=""/>';
-          routerInstructionsHtml += '</td>';
-
-          if ((instr.begin_shape_index || instr.begin_shape_index > -1) && instr.end_shape_index) {
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-start="' + instr.begin_shape_index + '"  data-end="' + instr.end_shape_index + '">';
-          }
-          else{
-            routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_TEXT + '" data-start="0"  data-end="0">';
-          }
-
-
-          // build route description
-
-          routerInstructionsHtml += instr.instruction;
-
-
-          routerInstructionsHtml += '</div>';
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += '<td class="' + routingConstants.ROUTER_INSTRUCTIONS_ITEM_DIRECTION_DISTANCE + '">';
-          if (j !== routeResponse.trip.legs[routeNumber].maneuvers.length - 1 && j != 0) {
-            routerInstructionsHtml += this.toHumanDistance(instr.length * 1000);
-          }
-          routerInstructionsHtml += "</td>";
-
-          routerInstructionsHtml += "</tr>";
-        }
-      }
-
-
-      routerInstructionsHtml += '</table>';
-
-      routerInstruction.innerHTML = routerInstructionsHtml;
-
-      self.routerInstructionsWrapper.appendChild(routerInstruction);
-
-      this.adjustInstructionMapInteraction();
-
-    }
-  }
 
   /**
    * Takes a feature as input and simulates a click on the feature entry that is connected to the given feature.
@@ -1908,87 +1072,7 @@ export class Router extends Sideboard {
     }
   }
 
-  /**
-   * Executes an area search with the given point as center. If there are any, the features in the perimeter will be
-   * drawn onto the map and displayed in the feature container.
-   * @param fromPoint
-   */
-  performArea(fromPoint) {
-    const self = this;
 
-    if (!fromPoint) {
-      return;
-    }
-    let fromCoord = [fromPoint.getCoordinates()[1], fromPoint.getCoordinates()[0]];
-    let profileId = this.options.mapController.data.profile;
-    let url = 'con4gis/areaService/' + profileId + '/' + jQuery(this.areaLayersSelect).val() + '/' + jQuery(self.toggleDetourArea).val() + '/' + fromCoord;
-    if (this.routeProfile && this.routeProfile.active) {
-      url += '?profile=' + this.routeProfile.active;
-    }
-    if (self.areaAjax) {
-      self.areaAjax.abort();
-    }
-
-    this.spinner.show();
-
-    self.areaAjax = jQuery.ajax({
-      'url': url
-    })
-      .done(function (response) {
-        self.response = response;
-        if (response) {
-          const routerLayers = self.options.mapController.data.routerLayers;
-          const chosenOption = self.activeLayerValueArea;
-          // response[0].sort(function(a,b) {
-          //   return parseFloat(a.distance) - parseFloat(b.distance);
-          // });
-          // this should be changed soon, as it totally messes up the logic of the structure
-          let sortedFeatures = self.showFeatures(response[0], response[1], "area");
-          let view = self.options.mapController.map.getView();
-          let leftPadding = 0;
-          if (self.options.mapController.activePortside && self.options.mapController.activePortside.container) {
-            leftPadding = jQuery(self.options.mapController.activePortside.container).outerWidth();
-          }
-
-          let rightPadding = 0;
-          if (self.options.mapController.activeStarboard && self.options.mapController.activeStarboard.container) {
-            rightPadding = jQuery(self.options.mapController.activeStarboard.container).outerWidth();
-          }
-          let extent = self.routerFeaturesSource.getExtent();
-          extent = extend(extent, self.areaLayer.getSource().getExtent());
-          view.fit(extent,
-            {
-              size: self.options.mapController.map.getSize(),
-              // padding: [0, rightPadding, 0, leftPadding]
-              // TODO rightPadding & leftPadding do not work as intended in mobile
-              padding: [0, 0, 0, 0]
-            }
-          );
-          self.showFeaturesInPortside(sortedFeatures, response[1], "area");
-          // clear route & route features
-          self.routingWaySource.clear();
-          self.routingAltWaySource.clear();
-          self.routingHintSource.clear();
-          self.locationsSource.clear();
-          jQuery(self.routerFeatureWrapper).empty();
-          jQuery(self.routerInstructionsWrapper).empty();
-          jQuery(".router-content-switcher").css('display', 'none');
-          jQuery(self.fromInput).val("");
-          self.fromValue = null;
-          jQuery(self.toInput).val("");
-          self.toValue = null;
-        }
-
-      })
-      .always(function () {
-        self.areaAjax = undefined;
-        self.spinner.hide();
-        self.update();
-        if (self.options.mapController.data.closeAfterSearch) {
-          self.close(true);
-        }
-      });
-  }
 
   /**
    * Takes the input coordinates and executes the reverse search. On success, the result location is inserted in the
@@ -2474,45 +1558,7 @@ export class Router extends Sideboard {
    * @returns {HTMLElement}
    */
   createDetourSlider(mode, min, max, initialValue) {
-    const scope = this;
-    let key = "toggleDetour" + utils.capitalizeFirstLetter(mode);
-    scope[key] = document.createElement('input');
-    scope[key].className = routingConstants.ROUTE_TOGGLE;
-    scope[key].setAttribute('type', 'range');
-    scope[key].setAttribute('min', min);
-    scope[key].setAttribute('max', max);
-    scope[key].setAttribute('value', initialValue);
-    scope[key].setAttribute('step', 0.5);
 
-    let toggleDetourWrapper = document.createElement('div');
-    let output = document.createElement('output');
-    output.className = routingConstants.OUTPUT_DETOUR;
-    let p = document.createElement('p');
-    p.innerHTML = langRouteConstants.ROUTE_DETOUR;
-    output.innerHTML = 100;
-    toggleDetourWrapper.appendChild(p);
-    toggleDetourWrapper.appendChild(scope[key]);
-    toggleDetourWrapper.appendChild(output);
-    jQuery(scope[key]).on('input', function () {
-      let control = jQuery(this);
-      let range = control.attr('max') - control.attr('min');
-      let pos = ((control.val() - control.attr('min')) / range) * 100;
-      let posOffset = Math.round(50 * pos / 100) - (25);
-      let output = control.next('output');
-      output
-        .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
-        .text(control.val() + " km");
-      scope.updateLinkFragments("detour", control.val());
-    });
-    jQuery(scope[key]).on('change', function () {
-      if (mode === "route") {
-        scope.recalculateRoute();
-      } else {
-        scope.performArea(scope.areaValue);
-      }
-    });
-    jQuery(scope[key]).trigger('input');
-    return toggleDetourWrapper;
   }
 
   addInterimField(insertId = null, olUid = null){
@@ -2639,7 +1685,6 @@ export class Router extends Sideboard {
       if (mapData.autocomplete) {
         const deleteFromListener = function(event) {
           self.fromValue = null;
-          containerAddresses.arrFromPositions = [];
           containerAddresses.arrFromPositions = [];
           self.recalculateRoute();
         };
@@ -3243,165 +2288,7 @@ export class Router extends Sideboard {
     return areaView;
   }
 
-  /**
-   * Creates an interaction for routing instructions. When hovering the instructions in the portside container, the
-   * location of the instruction is highlighted on the route.
-   * @param routerInstruction
-   */
-  adjustInstructionMapInteraction(routerInstruction) {
-    var self = this,
-      fnItemClick,
-      fnItemOver,
-      fnItemOut;
 
-    fnItemClick = function (element) {
-      if (self.routingWaySource && self.routingWaySource.getFeatures() && self.options.mapController.data.router_api_selection == '0') {
-        var feature = self.routingWaySource.getFeatures()[0];
-        if (feature) {
-          var currentCoordinates = feature.getGeometry().getCoordinates()[element.data('pos')];
-          self.routingHintSource.clear();
-          var currentHintFeature = new Feature({
-            geometry: new Point(currentCoordinates)
-          });
-          self.routingHintSource.addFeature(currentHintFeature);
-          self.options.mapController.map.getView().setCenter(currentCoordinates);
-        }
-      }
-      if (self.routingWaySource && self.options.mapController.data.router_api_selection >= '1') {
-        self.routingHintSource.clear();
-        feature = self.routingWaySource.getFeatures()[0];
-        let coordinates = feature.getGeometry().getCoordinates();
-        var coordLonLat = element.data('pos');
-        if (coordLonLat) {
-          var stringlonlat = coordLonLat.split(",");
-          stringlonlat[0] = parseFloat(stringlonlat[0]);
-          stringlonlat[1] = parseFloat(stringlonlat[1]);
-          var newCoord = fromLonLat(stringlonlat);
-          var currentHintFeature = new Feature({
-            geometry: new Point(newCoord)
-          })
-          self.routingHintSource.addFeature(currentHintFeature);
-          self.options.mapController.map.getView().setCenter(newCoord);
-        }
-        if (coordinates) {
-          let start = element.data('start');
-          let end = element.data('end');
-          if (start, end) {
-            let geom = new LineString(coordinates.slice(start, end))
-            var currentHintFeature = new Feature({
-              geometry: geom
-            })
-            currentHintFeature.setStyle(
-              new Style({
-                stroke: new Stroke({
-                  color: 'rgba(255, 0, 0, 1)',
-                  width: 20
-                })
-              }),
-            );
-            let currentZoom = self.options.mapController.map.getView().getZoom();
-            self.routingHintSource.addFeature(currentHintFeature);
-            self.options.mapController.map.getView().fit(geom);
-            let afterZoom = self.options.mapController.map.getView().getZoom();
-            let endZoom = Math.round((currentZoom + afterZoom)/2)
-            endZoom = (endZoom > afterZoom) ? afterZoom : endZoom;
-            self.options.mapController.map.getView().setZoom(endZoom);
-          }
-        }
-      }
-    };
-
-    fnItemOver = function (element) {
-      if (self.routingWaySource && self.routingWaySource.getFeatures() && self.options.mapController.data.router_api_selection == '0') {
-        var feature = self.routingWaySource.getFeatures()[0];
-        if (feature) {
-          self.routingHintSource.clear();
-          var currentHintFeature = new Feature({
-            geometry: new Point(feature.getGeometry().getCoordinates()[element.data('pos')])
-          });
-          self.routingHintSource.addFeature(currentHintFeature);
-        }
-      }
-      if (self.routingWaySource && self.routingWaySource.getFeatures() && self.options.mapController.data.router_api_selection >= '1') {
-        var feature = self.routingWaySource.getFeatures()[0];
-        if (feature) {
-          self.routingHintSource.clear();
-          var coordLonLat = element.data('pos');
-          if (coordLonLat) {
-            var stringlonlat = coordLonLat.split(",");
-            stringlonlat[0] = parseFloat(stringlonlat[0]);
-            stringlonlat[1] = parseFloat(stringlonlat[1]);
-            var newCoord = fromLonLat(stringlonlat);
-            var currentHintFeature = new Feature({
-              geometry: new Point(newCoord)
-            });
-            self.routingHintSource.addFeature(currentHintFeature);
-          }
-          feature = self.routingWaySource.getFeatures()[0];
-          let coordinates = feature.getGeometry().getCoordinates();
-          if (coordinates) {
-            let start = element.data('start');
-            let end = element.data('end');
-            if (start, end) {
-              var currentHintFeature = new Feature({
-                geometry: new LineString(coordinates.slice(start, end))
-              });
-              currentHintFeature.setStyle(
-                new Style({
-                  stroke: new Stroke({
-                    color: 'rgba(255, 0, 0, 1)',
-                    width: 15
-                  })
-                }),
-              );
-              self.routingHintSource.addFeature(currentHintFeature);
-            }
-          }
-        }
-      }
-
-    };
-
-    fnItemOut = function () {
-      self.routingHintSource.clear();
-    };
-
-
-    jQuery('[data-start]', routerInstruction).each(function (index, element) {
-
-      var $element = jQuery(element);
-
-      $element.click(function () {
-        fnItemClick($element);
-      });
-
-      $element.on('mouseenter', function () {
-        fnItemOver($element);
-      });
-
-      $element.on('mouseleave', function () {
-        fnItemOut();
-      });
-
-    });
-    jQuery('[data-pos]', routerInstruction).each(function (index, element) {
-
-      var $element = jQuery(element);
-
-      $element.click(function () {
-        fnItemClick($element);
-      });
-
-      $element.on('mouseenter', function () {
-        fnItemOver($element);
-      });
-
-      $element.on('mouseleave', function () {
-        fnItemOut();
-      });
-
-    });
-  }
 
   /**
    * Clears an input field.
@@ -3450,174 +2337,6 @@ export class Router extends Sideboard {
   }
 
   /**
-   * Converts a given coordinate into the corresponding location.
-   * @param $input    The input field in which the result location should be stored.
-   * @param value     The property that contains the coordinates.
-   */
-  performReverseSearch($input, value) {
-
-    var self = this,
-      url;
-
-    url = this.geoReverseSearchApi + '?format=json&lat=' + value[1] + '&lon=' + value[0];
-    if (this.mapData && this.mapData.geosearch && this.mapData.geosearch.reverseKey && this.mapData.geosearch.url) {
-      url = this.mapData.geosearch.url + "reverse.php?key=" + this.mapData.geosearch.reverseKey + '&format=json&lat=' + value[1] + '&lon=' + value[0];
-    }
-    this.spinner.show();
-
-    jQuery.ajax({
-      'url': url
-    })
-      .done(function (response) {
-
-        if (response) {
-          var value = "";
-          if (response.address) {
-            if (response.address.city) {
-              value = response.address.city;
-              if (response.address.road) {
-                value = ', ' + value;
-              }
-            }
-            if (response.address.town) {
-              value = response.address.town;
-              if (response.address.road) {
-                value = ', ' + value;
-              }
-            }
-            if (response.address.road) {
-              if (response.address.house_number) {
-                value = ' ' + response.address.house_number + value;
-              }
-              value = response.address.road + value;
-            }
-          }
-          if (value === "") {
-            value = response.display_name;
-          }
-          $input.val(value);
-
-          if ($input.attr('name') === "routingFrom") {
-            self.$routerFromClear.show();
-            // update address in link
-            // self.updateLinkFragments("addressFrom", value);
-          } else if ($input.attr('name') === "routingTo") {
-            self.$routerToClear.show();
-            // update address in link
-            // self.updateLinkFragments("addressTo", value);
-          } else if ($input.attr('name') === "areaFrom") {
-            // self.updateLinkFragments("addressArea", value);
-          }
-        }
-
-      })
-      .always(function () {
-        self.spinner.hide();
-      });
-
-  }
-
-  /**
-   * Searches the geo-coordinates for a given location.
-   * @param $input        The input field containing the location.
-   * @param value         The property in which the resulting coordinate should be stored.
-   * @param opt_callback  Optional callback. Is executed after successful search.
-   * @returns {string}
-   */
-  performSearch($input, value, opt_callback) {
-
-    var map,
-      bounds,
-      viewbox,
-      self,
-      url;
-
-    self = this;
-
-    if ($input.val() === "") {
-      //self.clearInput($input);
-      delete self[value];
-      return "";
-    }
-
-    map = self.options.mapController.map;
-    bounds = map.getView().calculateExtent(map.getSize());
-    bounds = transformExtent(bounds, map.getView().getProjection(), 'EPSG:4326');
-    viewbox = '&viewbox=' + bounds[0] + ',' + bounds[1] + ',' + bounds[2] + ',' + bounds[3];
-
-    url = self.geoSearchApi + '?format=json&limit=1&q=' + encodeURI($input.val()) + viewbox;
-    if (this.mapData && this.mapData.geosearch && this.mapData.geosearch.searchKey && this.mapData.geosearch.url) {
-      url = this.mapData.geosearch.url + "search.php?key=" + this.mapData.geosearch.searchKey + '&format=json&limit=1&q=' + encodeURI($input.val()) + viewbox;
-    }
-
-    jQuery.ajax({
-      'url': url
-    }).done(function (response) {
-
-      if (response.length > 0) {
-        if (value === "overValue") {
-          if (!self.overValue) {
-            self.overValue = [];
-          }
-          let overPoint = new Point([parseFloat(response[0].lon), parseFloat(response[0].lat)]);
-          let deleteButton =  $input.next()[0];
-          // traverse the dom level until the delete button is found
-          while (!jQuery(deleteButton).hasClass('c4g-router-input-clear')) {
-            deleteButton = jQuery(deleteButton).next()[0];
-          }
-
-          deleteButton.id = overPoint['ol_uid'];
-          self.overValue.push(overPoint);
-          self.$buttonOver.prop("disabled", false);
-        }
-        else {
-          let coords = [parseFloat(response[0].lon), parseFloat(response[0].lat)];
-          self[value] = new Point(coords);
-          switch(value) {
-            case "fromValue":
-              self.updateLinkFragments("addressFrom", coords);
-              break;
-            case "toValue":
-              self.updateLinkFragments("addressTo", coords);
-              break;
-            case "areaValue":
-              self.updateLinkFragments("addressArea", coords);
-              break;
-            default:
-              break;
-          }
-        }
-      } else {
-        // show error hint
-        let alertHandler = new AlertHandler();
-        alertHandler.showInfoDialog(langRouteConstants.ROUTER_VIEW_ALERT_ERROR, langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
-        // let errorDiv = self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
-        // let inputDiv = $input.parent()[0];
-        // inputDiv.appendChild(errorDiv);
-        // self.clearInput($input);
-        // delete self[value];
-      }
-
-      if (opt_callback && typeof opt_callback === "function") {
-        opt_callback();
-      }
-      if (value === "fromValue" || value === "toValue") {
-        self.recalculateRoute();
-      }
-    }).fail(function () {
-      let alertHandler = new AlertHandler();
-      alertHandler.showInfoDialog(langRouteConstants.ROUTER_VIEW_ALERT_ERROR, langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS);
-        // let inputDiv = $input.parent()[0];
-        // inputDiv.appendChild(self.showRouterError(langRouteConstants.ROUTER_VIEW_ALERT_ADDRESS));
-        // self.clearInput($input);
-        // delete self[value];
-      });
-
-    return "";
-
-  }
-
-  /**
    * Creates a div element that containts the given error text.
    * @param $field
    * @param errorText
@@ -3641,61 +2360,7 @@ export class Router extends Sideboard {
     return errorDiv;
   }
 
-  /**
-   * Converts a distance in meters to a more readable format.
-   * @param distanceInMeters  The distance to convert.
-   * @returns {string}
-   */
-  toHumanDistance(distanceInMeters) {
 
-    var distance,
-      humanDistance;
-
-    distance = parseInt(distanceInMeters, 10);
-    distance = distance / 1000;
-
-    if (distance >= 100) {
-      humanDistance = distance.toFixed(0) + '&nbsp;' + 'km';
-    } else if (distance >= 10) {
-      humanDistance = distance.toFixed(1) + '&nbsp;' + 'km';
-    } else if (distance >= 0.1) {
-      humanDistance = distance.toFixed(2) + '&nbsp;' + 'km';
-    } else {
-      humanDistance = (distance * 1000).toFixed(0) + '&nbsp;' + 'm';
-    }
-
-    return humanDistance;
-  }
-
-  /**
-   * Converts a time in seconds to a more readable format.
-   * @param timeInSeconds     The time to convert.
-   * @returns {string}
-   */
-  toHumanTime(timeInSeconds) {
-
-    var seconds,
-      minutes,
-      hours,
-      humanTime;
-
-    seconds = parseInt(timeInSeconds, 10);
-    minutes = parseInt(seconds / 60, 10);
-    seconds = seconds % 60;
-
-    hours = parseInt(minutes / 60, 10);
-    minutes = minutes % 60;
-
-    if (hours === 0 && minutes === 0) {
-      humanTime = seconds + '&nbsp;' + 's';
-    } else if (hours === 0) {
-      humanTime = minutes + '&nbsp;' + 'min';
-    } else {
-      humanTime = hours + '&nbsp;' + 'h' + '&nbsp;' + minutes + '&nbsp;' + 'min';
-    }
-
-    return humanTime;
-  }
 }
 
 // hook to make the mapController load the router at the end of its constructor
@@ -3705,66 +2370,36 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
   let mapController = params.mapController;
   if(mapController.data.router_enable){
     mapController.map.removeControl(mapController.controls.router);
-    let router = new Router({
-      tipLabel: langRouteConstants.CTRL_ROUTER,
-      target: params.Container,
-      mapController: mapController,
-      defaultOpen: false,
-      direction: "left",
-      name: "router"
-    });
-    if (mapController.data.router_open || mapController.data.initialParams) {
-      router.open();
-    }
-    mapController.map.addControl(router);
-    mapController.controls.router = router;
-  }
-});
 
-window.c4gMapsHooks.proxy_appendPopup = window.c4gMapsHooks.proxy_appendPopup || [];
-window.c4gMapsHooks.proxy_appendPopup.push(function(params) {
-  let objPopup = params.popup;
-  let feature = objPopup.feature;
-  let mapController = params.mapController;
-  if (mapController.controls.router && objPopup.popup.routing_link) {
-    let router = mapController.controls.router;
-
-    let routingHandler = function (event) {
-      if (mapController.activePortside !== router) {
-        router.open();
-      }
-
-      if (jQuery(event.currentTarget).hasClass(cssConstants.POPUP_ROUTE_FROM)) {
-        // from address
-        router.setFromPoint(toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857"));
+    if (typeof mapController.data !== 'undefined') {
+      if (mapController.data.lang === "de") {
+        langRouteConstants = routingConstantsGerman;
+      } else if (mapController.data.lang === "en") {
+        langRouteConstants = routingConstantsEnglish;
       } else {
-        // to address
-        router.setToPoint(toLonLat(feature.getGeometry().getCoordinates(), "EPSG:3857"));
+        // fallback
+        langRouteConstants = routingConstantsEnglish;
       }
-    }; // end of "routingHandler()"
+    }
 
-    let routeButtonWrapper = document.createElement('div');
-    routeButtonWrapper.className = cssConstants.POPUP_ROUTE_WRAPPER;
+    let routerControlProps = {
+      target: document.querySelector('#' + mapController.data.mapDiv + ' .c4g-control-container-top-left'),
+      mapController: mapController,
+      direction: "top",
+      withPosition: false,
+      detourRoute: mapController.data.detourRoute,
+      detourArea: mapController.data.detourArea,
+      containerAddresses: containerAddresses,
+      className: "c4g-router-panel",
+      langConstants: langRouteConstants
+    };
 
-    let routeFromButton = document.createElement('button');
-    routeFromButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_FROM;
-    jQuery(routeFromButton).click(routingHandler);
-    routeButtonWrapper.appendChild(routeFromButton);
-
-    let routeFromButtonSpan = document.createElement('span');
-    routeFromButtonSpan.innerHTML = langRouteConstants.POPUP_ROUTE_FROM;
-    routeFromButton.appendChild(routeFromButtonSpan);
-
-    let routeToButton = document.createElement('button');
-    routeToButton.className = cssConstants.ICON + ' ' + cssConstants.POPUP_ROUTE_TO;
-    jQuery(routeToButton).click(routingHandler);
-    routeButtonWrapper.appendChild(routeToButton);
-
-    let routeToButtonSpan = document.createElement('span');
-    routeToButtonSpan.innerHTML = langRouteConstants.POPUP_ROUTE_TO;
-    routeToButton.appendChild(routeToButtonSpan);
-
-    window.c4gMapsPopup.$content.append(routeButtonWrapper);
+    mapController.routerContainer = document.createElement('div');
+    mapController.components = mapController.components || {};
+    mapController.components.router = ReactDOM.render(React.createElement(RouterView, routerControlProps), mapController.routerContainer);
+    jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
   }
 });
+
+
 

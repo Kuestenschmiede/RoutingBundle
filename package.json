@@ -23,13 +23,19 @@
     "babel-loader": "^7.1.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "echo-loader": "0.0.1",
-    "webpack": "^4.41.2",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "ol": "^5.3.3",
-    "osmtogeojson": "^3.0.0-beta.4"
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "ol": "^6.1.1",
+    "osmtogeojson": "^3.0.0-beta.4",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
+    "react-popup": "^0.10.0"
   }
 }

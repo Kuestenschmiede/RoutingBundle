@@ -59,18 +59,18 @@ class LoadMapDataListener
                 $mapData['router_interim_locstyle'] = $routerConfig->getRouterInterimLocstyle();
                 $mapData['router_api_selection'] = $routerConfig->getRouterApiSelection();
                 $mapData['router_alternative'] = $routerConfig->getRouterAlternative();
-                if($routerConfig->getRouterProfiles()){
+                if ($routerConfig->getRouterProfiles()) {
                     $router_profiles = array_flip($routerConfig->getRouterProfiles());
                     foreach($router_profiles as $key => $router_profile){
                         $router_profiles[$key] = $GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['references_router_profiles'][$key];
                     }
                     $mapData['router_profiles'] = $router_profiles;
                 }
-                if($routerConfig->getCustomProfiles()) {
+                if ($routerConfig->getCustomProfiles()) {
                     $mapData['customProfiles'] = $routerConfig->getCustomProfiles();
                 }
                 $routerLayers = $routerConfig->getRouterLayers();
-                if($routerLayers && $routerLayers[0] && $routerLayers[0]['key']){
+                if ($routerLayers && $routerLayers[0] && $routerLayers[0]['key']) {
                     $returnLayers = [];
                     foreach ($routerLayers as $routerLayer) {
                         $routerLayer['key'] = str_replace(" ", "", $routerLayer['key']);
@@ -101,6 +101,9 @@ class LoadMapDataListener
                 $mapData['priorityLocstyle'] = $routerConfig->getPriorityLocstyle();
                 $mapData['closeAfterSearch'] = $routerConfig->getCloseAfterSearch();
                 $mapData['showFeatures'] = $routerConfig->getShowFeatures();
+                $mapData['areaSearch'] = $routerConfig->getAreaSearch();
+                $mapData['areaSearchOnly'] = $routerConfig->getAreaSearchOnly();
+                $mapData['areaHeadline'] = $routerConfig->getAreaHeadline();
                 $mapData['featureLabel'] = $routerConfig->getFeatureLabel();
                 $mapData['showInstructions'] = $routerConfig->getShowInstructions();
                 $mapData['instructionLabel'] = $routerConfig->getInstructionLabel();
@@ -120,30 +123,32 @@ class LoadMapDataListener
 
         $event->setMapData($mapData);
     }
+    
     protected function getRouterAttribution($routerConfig) {
         $apiSelection = $routerConfig->getRouterApiSelection();
         switch($apiSelection) {
             case "0":
-                return "<a target=\"_blank\" href=\"http://project-osrm.org/\">Project OSRM</a> - OSRM hosting by <a target=\"_blank\" href=\"http://algo2.iti.kit.edu/\">KIT</a>";
+            case "1":
+                $attributionRouting = "<a target=\"_blank\" href=\"http://project-osrm.org/\">Project OSRM</a> - OSRM hosting by <a target=\"_blank\" href=\"http://algo2.iti.kit.edu/\">KIT</a>";
                 break;
-             case "1":
-                return "<a target=\"_blank\" href=\"http://project-osrm.org/\">Project OSRM</a> - OSRM hosting by <a target=\"_blank\" href=\"http://algo2.iti.kit.edu/\">KIT</a>";
+            case "2":
+                $attributionRouting = "<a target=\"_blank\" href=\"https://openrouteservice.org/\">openrouteservice</a> - ORS hosting by <a target=\"_blank\" href=\"https://www.geog.uni-heidelberg.de/gis/heigit_en.html\">HeiGIT</a>";
                 break;
-             case "2":
-                return "<a target=\"_blank\" href=\"https://openrouteservice.org/\">openrouteservice</a> - ORS hosting by <a target=\"_blank\" href=\"https://www.geog.uni-heidelberg.de/gis/heigit_en.html\">HeiGIT</a>";
+            case "3":
+                $attributionRouting = "Powered by <a href=\"https://www.graphhopper.com/\">GraphHopper API</a>";
                 break;
-             case "3":
-                return "Powered by <a href=\"https://www.graphhopper.com/\">GraphHopper API</a>";
-                break;
-             case "4":
-                return "<a target=\"_blank\" href=\"https://www.mapzen.com/blog/valhalla-intro/\">Valhalla</a>";
+            case "4":
+                $attributionRouting =  "<a target=\"_blank\" href=\"https://www.mapzen.com/blog/valhalla-intro/\">Valhalla</a>";
                 break;
             case "5":
                 $objSettings = C4gMapSettingsModel::findOnly();
                 $keyRouting = C4GUtils::getKey($objSettings, 1, "", false);
                 $attributionRouting = $keyRouting->attribution;
-                return $attributionRouting;
                 break;
         }
+        if ($routerConfig->getRouterAttribution()) {
+            $attributionRouting .= " " . $routerConfig->getRouterAttribution() . " ";
+        }
+        return $attributionRouting ?: "";
     }
 }

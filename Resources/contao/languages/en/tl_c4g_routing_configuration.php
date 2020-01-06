@@ -38,6 +38,10 @@ $GLOBALS['TL_LANG'][$strName]['closeAfterSearch'] = ['Close Router after Search'
 $GLOBALS['TL_LANG'][$strName]['showInstructions'] = ['Show Route Information', 'Check this top show information about the route.'];
 $GLOBALS['TL_LANG'][$strName]['instructionLabel'] = ['Route information button caption', 'Enter a caption for the route information button.'];
 $GLOBALS['TL_LANG'][$strName]['showFeatures'] = ['Show Result List', 'If this is checked, results will be shown in the router.'];
+$GLOBALS['TL_LANG'][$strName]['areaSearch'] = ['Activate area search', 'If this is checked, area search will be activated.'];
+$GLOBALS['TL_LANG'][$strName]['areaSearchOnly'] = ['Disable route search', 'If this is checked, the search along the route is deactivated.'];
+$GLOBALS['TL_LANG'][$strName]['areaHeadline'] = ['Headline area search', 'Default: Area search'];
+$GLOBALS['TL_LANG'][$strName]['areaHeadlineDefault'] = "Area search";
 $GLOBALS['TL_LANG'][$strName]['featureLabel'] = ['Result list button caption', 'Enter a caption for the result list button.'];
 $GLOBALS['TL_LANG'][$strName]['initialMode'] = ['Initial View', 'Choose the initial view in the router.'];
 $GLOBALS['TL_LANG'][$strName]['minDetourArea'] = ['Minimum Radius Area Search (km)', 'The minimum radius to search.'];
@@ -97,3 +101,5 @@ $GLOBALS['TL_LANG'][$strName]['edit']       = ['Routing-Konfiguration bearbeiten
 $GLOBALS['TL_LANG'][$strName]['copy']       = ['Routing-Konfiguration duplizieren', 'Routing-Konfiguration ID %s duplizieren'];
 $GLOBALS['TL_LANG'][$strName]['delete']     = ['Routing-Konfiguration löschen', 'Routing-Konfiguration ID %s löschen'];
 $GLOBALS['TL_LANG'][$strName]['show']       = ['Details', 'Die Details des Routing-Konfiguration ID %s anzeigen'];
+
+$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['editMaps'] = 'Edit map structure';

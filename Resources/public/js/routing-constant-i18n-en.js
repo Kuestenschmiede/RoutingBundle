@@ -115,6 +115,8 @@ export  var routingConstantsEnglish = {
 
   //new Router
   AREA_NAME:            'Search perimeter',
+  AREA_PROFILE:         'Profile',
+  AREA_FEATURECOUNT:    'Found features',
   ROUTE_DETOUR:         'Detour',
   AREA_DETOUR:          'Radius',
   INSTRUCTION_HEADLINE: 'Route Instructions',

@@ -16,6 +16,7 @@ namespace con4gis\RoutingBundle\Classes\Listener;
 
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
+use con4gis\MapsBundle\Resources\contao\models\C4gMapTablesModel;
 use con4gis\RoutingBundle\Classes\Event\LoadAreaFeaturesEvent;
 use con4gis\RoutingBundle\Classes\LatLng;
 use con4gis\RoutingBundle\Classes\Services\AreaService;
@@ -55,17 +56,27 @@ class LoadAreaFeaturesListener
             ->getRepository(RoutingConfiguration::class);
         $routerConfig = $routerConfigRepo->findOneBy(['id' => $objMapsProfile->routerConfig]);
         if($routerConfig instanceof RoutingConfiguration){
+            $type = $routerConfig->getRouterApiSelection();
             if ($objLayer->location_type == "table") {
-                $sourceTable = $objLayer->tab_source;
-                $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
+                $objConfig = C4gMapTablesModel::findByPk($objLayer->tab_source);
+                $sourceTable = $objConfig->tableSource;
                 $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';
                 $onClause = $objLayer->tabJoinclause ? ' ' . htmlspecialchars_decode($objLayer->tabJoinclause) : '';
-                $sqlLoc = " WHERE ". $arrConfig['geox'] . " BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND " . $arrConfig['geoy'] . " BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
-                $sqlSelect = $sourceTable.".". $arrConfig['geox']." AS geox,".$sourceTable.".".$arrConfig['geoy']." AS geoy";
-                $sqlSelect = $arrConfig['locstyle'] ? $sqlSelect . ", " .$sourceTable."." . $arrConfig['locstyle'] . " AS locstyle" : $sqlSelect;
-                $sqlSelect = $arrConfig['label'] ? $sqlSelect . ", " . $sourceTable.".". $arrConfig['label'] . " AS label" : $sqlSelect;
-                $sqlSelect = $arrConfig['tooltip'] ? $sqlSelect . ", ". $sourceTable."." . $arrConfig['tooltip'] . " AS tooltip" : $sqlSelect;
-                $sqlWhere = $arrConfig['sqlwhere'] ? $arrConfig['sqlwhere'] : '';
+                if ($objConfig->geox && $objConfig->geoy) {
+                    $sqlLoc = " WHERE ". $objConfig->geox . " BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND " . $objConfig->geoy . " BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
+                    $sqlSelect = $sourceTable . ".". $objConfig->geox . " AS geox," . $sourceTable . "." . $objConfig->geoy." AS geoy";
+                }
+                else if ($objConfig->geolocation) {
+                    $sqlLoc = " WHERE SUBSTRING_INDEX(". $objConfig->geolocation . ", ',', -1) BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND SUBSTRING_INDEX(" . $objConfig->geolocation . ",',',1) BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
+                    $sqlSelect = "SUBSTRING_INDEX(". $objConfig->geolocation . ", ',', -1) AS geox, SUBSTRING_INDEX(" . $objConfig->geolocation . ",',',1) AS geoy";
+                }
+                else{
+                    //@ToDo ¯\_(ツ)_/¯
+                }
+                $sqlSelect = $objConfig->locstyle ? $sqlSelect . ", " .$sourceTable."." . $objConfig->locstyle . " AS locstyle" : $sqlSelect;
+                $sqlSelect = $objConfig->label ? $sqlSelect . ", " . $sourceTable.".". $objConfig->label . " AS label" : $sqlSelect;
+                $sqlSelect = $objConfig->tooltip ? $sqlSelect . ", ". $sourceTable."." . $objConfig->tooltip . " AS tooltip" : $sqlSelect;
+                $sqlWhere = $objConfig->sqlwhere ? $objConfig->sqlwhere : '';
                 $sqlAnd = $sqlWhere ? ' AND ' : '';
                 $strQuery = "SELECT ".$sourceTable.".id,". $sqlSelect ." FROM ".$sourceTable . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
                 $pointFeatures = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
@@ -81,28 +92,28 @@ class LoadAreaFeaturesListener
                 }
                 //ToDo check performMatrix result
                 $requestData = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile,$profile,$locations), true);
+                $type = $requestData['responseType'] ?: $type;
                 $finalResponseFeatures = [];
-                for($i = 1; $i < count($requestData['distances'][0]); $i++) {
-                    if ($routerConfig->getRouterApiSelection() == "1") {
-                        if($requestData['distances'][0][$i] < $distance){
-                            $finalResponseFeatures[] = $responseFeatures[$i-1];
-                        }
-                    }
-                    else if ($routerConfig->getRouterApiSelection() == "2") {
-                        if($requestData['distances'][0][$i] < $distance){
-                            $finalResponseFeatures[] = $responseFeatures[$i-1];
-                        }
-                    }
-                    else if ($routerConfig->getRouterApiSelection() == "3") {
-                        if($requestData['distances'][0][$i] < floatval($distance)*1000){
-                            $finalResponseFeatures[] = $responseFeatures[$i-1];
-                        }
-                    }
-                }
+//                for($i = 1; $i < count($requestData['distances'][0]); $i++) {
+//                    if ($routerConfig->getRouterApiSelection() == "1") {
+//                        if($requestData['distances'][0][$i] < $distance){
+//                            $finalResponseFeatures[] = $responseFeatures[$i-1];
+//                        }
+//                    }
+//                    else if ($routerConfig->getRouterApiSelection() == "2") {
+//                        if($requestData['distances'][0][$i] < $distance){
+//                            $finalResponseFeatures[] = $responseFeatures[$i-1];
+//                        }
+//                    }
+//                    else if ($routerConfig->getRouterApiSelection() == "3") {
+//                        if($requestData['distances'][0][$i] < floatval($distance)*1000){
+//                            $finalResponseFeatures[] = $responseFeatures[$i-1];
+//                        }
+//                    }
+//                }
 
-                $event->setReturnData(\GuzzleHttp\json_encode([$finalResponseFeatures,'notOverpass']));
-            }
-            else if($objLayer->location_type == "overpass"){
+                $event->setReturnData([$requestData, $responseFeatures, $type, 'notOverpass']);
+            } else if($objLayer->location_type == "overpass") {
                 $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : "http://overpass-api.de/api/interpreter";
                 $strBBox = $bounds['lower']->getLat() . "," . $bounds['left']->getLng() . "," . $bounds['upper']->getLat() . ",". $bounds['right']->getLng();
                 $query = $objLayer->ovp_request;
@@ -121,7 +132,7 @@ class LoadAreaFeaturesListener
                 if ($REQUEST->response) {
                     $requestData = \GuzzleHttp\json_decode($REQUEST->response, true);
                     $locations = [];
-                    $locations[] = [$point->getLng(), $point->getLat()];
+                    $locations[] = [floatval($point->getLng()), floatval($point->getLat())];
                     foreach($requestData['elements'] as $element){
                         if ($element['tags']) {
                             if ($element['type'] === "node") {
@@ -139,8 +150,33 @@ class LoadAreaFeaturesListener
                                 }
                                 $locations[] = [$centerLon / $counter, $centerLat / $counter];
                             }
-                        } else {
-                            continue;
+                            else if ($element['type'] === "relation") {
+                                $centerLon = 0;
+                                $centerLat = 0;
+                                $counter = 0;
+                                foreach ($element['members'] as $memberId) {
+                                    $member = $requestData['elements'][array_search($memberId['ref'], array_Column($requestData['elements'], 'id'))];
+                                    if ($member['type'] === "node") {
+                                        $centerLon += floatval($element['lon']);
+                                        $centerLat += floatval($element['lat']);
+                                    }
+                                    else if ($member['type'] === "way") {
+                                        $centerWayLon = 0;
+                                        $centerWayLat = 0;
+                                        $counterWay = 0;
+                                        foreach ($member['nodes'] as $nodeId) {
+                                            $node = $requestData['elements'][array_search($nodeId, array_Column($requestData['elements'], 'id'))];
+                                            $centerWayLat += floatval($node['lat']);
+                                            $centerWayLon += floatval($node['lon']);
+                                            $counterWay++;
+                                        }
+                                        $centerLon += $centerWayLon / $counterWay;
+                                        $centerLat += $centerWayLat / $counterWay;
+                                    }
+                                    $counter++;
+                                }
+                                $locations[] = [$centerLon / $counter, $centerLat / $counter];
+                            }
                         }
                     }
                     //ToDo check performMatrix result
@@ -184,17 +220,27 @@ class LoadAreaFeaturesListener
                                             $features['elements'][] = $node;
                                         }
                                     }
+                                    else if ($requestData['elements'][$i-1]['type'] === "relation") {
+                                        foreach ($requestData['elements'][$i-1]['members'] as $memberId) {
+                                            $member = $requestData['elements'][array_search($memberId['ref'], array_Column($requestData['elements'], 'id'))];
+                                            $features['elements'][] = $member;
+                                            if ($member['type'] === "way") {
+                                                foreach($member['nodes'] as $nodeId) {
+                                                    $node = $requestData['elements'][array_search($nodeId, array_Column($requestData['elements'], 'id'))];
+                                                    $features['elements'][] = $node;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             break;
                     }
                     $event->setReturnData(\GuzzleHttp\json_encode([$features,'overpass']));
                 } else {
-                    $event->setReturnData(\GuzzleHttp\json_encode([]));
+                    $event->setReturnData([]);
                 }
             }
         }
     }
-
-
 }

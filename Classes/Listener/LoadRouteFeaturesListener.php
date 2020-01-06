@@ -16,6 +16,7 @@ namespace con4gis\RoutingBundle\Classes\Listener;
 
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
+use con4gis\MapsBundle\Resources\contao\models\C4gMapTablesModel;
 use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
 use Contao\System;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -37,25 +38,35 @@ class LoadRouteFeaturesListener
         $objMapsProfile = C4gMapProfilesModel::findBy('id', $profileId);
         $objLayer = C4gMapsModel::findById($layerId);
         if ($objLayer->location_type == "table") {
-            $sourceTable = $objLayer->tab_source;
-            $arrConfig = $GLOBALS['con4gis']['maps']['sourcetable'][$sourceTable];
+            $objConfig = C4gMapTablesModel::findByPk($objLayer->tab_source);
             foreach ($points as $point) {
                 $bounds = $point->getLatLngBounds($point,$detour);
                 $andbewhereclause = $objLayer->tab_whereclause ? ' AND ' . htmlspecialchars_decode($objLayer->tab_whereclause) : '';
                 $onClause = $objLayer->tabJoinclause ? ' ' . htmlspecialchars_decode($objLayer->tabJoinclause) : '';
-                $sqlLoc = " WHERE ". $arrConfig['geox'] . " BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND " . $arrConfig['geoy'] . " BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
-                $sqlSelect = $sourceTable.".". $arrConfig['geox']." AS geox,".$sourceTable.".".$arrConfig['geoy']." AS geoy";
-                $sqlSelect = $arrConfig['locstyle'] ? $sqlSelect . ", " .$sourceTable."." . $arrConfig['locstyle'] . " AS locstyle" : $sqlSelect;
-                $sqlSelect = $arrConfig['label'] ? $sqlSelect . ", " . $sourceTable.".". $arrConfig['label'] . " AS label" : $sqlSelect;
-                $sqlSelect = $arrConfig['tooltip'] ? $sqlSelect . ", ". $sourceTable."." . $arrConfig['tooltip'] . " AS tooltip" : $sqlSelect;
-                $sqlWhere = $arrConfig['sqlwhere'] ? $arrConfig['sqlwhere'] : '';
+                if ($objConfig->geox && $objConfig->geoy) {
+                    $sqlLoc = " WHERE ". $objConfig->geox . " BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND " . $objConfig->geoy . " BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
+                    $sqlSelect = $objConfig->tableSource . "." . $objConfig->geox ." AS geox," . $objConfig->tableSource . "." . $objConfig->geoy . " AS geoy";
+                }
+                else if ($objConfig->geolocation) {
+                    $sqlLoc = " WHERE SUBSTRING_INDEX(". $objConfig->geolocation . ", ',', -1) BETWEEN " . $bounds['left']->getLng() . " AND ". $bounds['right']->getLng() . " AND SUBSTRING_INDEX(" . $objConfig->geolocation . ",',',1) BETWEEN " . $bounds['lower']->getLat() . " AND ". $bounds['upper']->getLat();
+                    $sqlSelect = "SUBSTRING_INDEX(". $objConfig->geolocation . ", ',', -1) AS geox, SUBSTRING_INDEX(" . $objConfig->geolocation . ",',',1) AS geoy";
+                }
+                else {
+                    continue;
+                    //@Todo handling for missing locations
+                }
+                $sqlSelect = $objConfig->locstyle ? $sqlSelect . ", " . $objConfig->tableSource . "." . $objConfig->locstyle . " AS locstyle" : $sqlSelect;
+                $sqlSelect = $objConfig->label ? $sqlSelect . ", " . $objConfig->tableSource . "." . $objConfig->label . " AS label" : $sqlSelect;
+                $sqlSelect = $objConfig->tooltip ? $sqlSelect . ", ". $objConfig->tableSource."." . $objConfig->tooltip . " AS tooltip" : $sqlSelect;
+                $sqlWhere = $objConfig->sqlwhere ? $objConfig->sqlwhere : '';
                 $sqlAnd = $sqlWhere ? ' AND ' : '';
-                $strQuery = "SELECT ".$sourceTable.".id,". $sqlSelect ." FROM ".$sourceTable . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
+                $strQuery = "SELECT " . $objConfig->tableSource.".id,". $sqlSelect ." FROM ".$objConfig->tableSource . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
                 $featurePoint = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
                 if (!$this->checkIfArrayContainsFeature($featurePoint[0], $features)) {
                     $features = array_merge($features,$featurePoint);
                 }
             }
+            $event->setFeatures($features);
         }
         else if ($objLayer->location_type == "overpass") {
             $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : "http://overpass-api.de/api/interpreter";

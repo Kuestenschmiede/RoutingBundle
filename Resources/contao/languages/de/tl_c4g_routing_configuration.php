@@ -46,6 +46,10 @@ $GLOBALS['TL_LANG'][$strName]['closeAfterSearch'] = ['Router nach Suche schließ
 $GLOBALS['TL_LANG'][$strName]['showInstructions'] = ['Routenhinweise einblenden', 'Wenn Sie diese Checkbox aktivieren, werden Routenhinweise angezeigt.'];
 $GLOBALS['TL_LANG'][$strName]['instructionLabel'] = ['Buttontext für Routenhinweise', 'Hier können sie den Buttontext für die Anzeige der Routenhinweise angeben.'];
 $GLOBALS['TL_LANG'][$strName]['showFeatures'] = ['Ergebnisliste einblenden', 'Wenn Sie diese Checkbox aktivieren, werden Ergebnisse im Router dargestellt.'];
+$GLOBALS['TL_LANG'][$strName]['areaSearch'] = ['Umkreissuche aktivieren', 'Wenn Sie diese Checkbox aktivieren, wird die Umkreissuche aktiviert.'];
+$GLOBALS['TL_LANG'][$strName]['areaSearchOnly'] = ['Routensuche deaktivieren', 'Wenn Sie diese Checkbox aktivieren, wird die Suche entlang einer Route deaktiviert.'];
+$GLOBALS['TL_LANG'][$strName]['areaHeadline'] = ['Überschrift Umkreissuche', 'Standard: Umkreissuche'];
+$GLOBALS['TL_LANG'][$strName]['areaHeadlineDefault'] = "Umkreissuche";
 $GLOBALS['TL_LANG'][$strName]['featureLabel'] = ['Buttontext für Ergebnisliste', 'Hier können sie den Buttontext für die Anzeige der Ergebnisliste angeben.'];
 $GLOBALS['TL_LANG'][$strName]['initialMode'] = ['Initiale Sicht', 'Wählen Sie aus, welche Sicht im Router initial angezeigt werden soll.'];
 $GLOBALS['TL_LANG'][$strName]['minDetourArea'] = ['Minimaler Radius Gebietssuche (km)', 'Ab welcher Entfernung zum Standort soll gesucht werden?'];
@@ -102,3 +106,5 @@ $GLOBALS['TL_LANG'][$strName]['edit']       = ['Routing-Konfiguration bearbeiten
 $GLOBALS['TL_LANG'][$strName]['copy']       = ['Routing-Konfiguration duplizieren', 'Routing-Konfiguration ID %s duplizieren'];
 $GLOBALS['TL_LANG'][$strName]['delete']     = ['Routing-Konfiguration löschen', 'Routing-Konfiguration ID %s löschen'];
 $GLOBALS['TL_LANG'][$strName]['show']       = ['Details', 'Die Details des Routing-Konfiguration ID %s anzeigen'];
+
+$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['editMaps'] = 'Kartenstuktur bearbeiten';

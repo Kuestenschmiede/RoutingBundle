@@ -51,7 +51,53 @@ class AreaService
         $event->setLocation($location);
         $event->setProfile($profile);
         $this->eventDispatcher->dispatch($event::NAME, $event);
-        return $event->getReturnData();
+        $eventResponse = $event->getReturnData();
+        $matrixResponse = $eventResponse[0];
+        if ($matrixResponse !== "[") {
+
+            $requestData = $eventResponse[1];
+            $requestData = $requestData['elements'] ?: $requestData;
+            switch ($eventResponse[2]) {
+                case 1:
+                    for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
+                        if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
+                            $requestData[$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                            $features[] = $requestData[$i-1];
+                        }
+                    }
+                    break;
+                case 2:
+                    for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
+                        if ($matrixResponse['distances'][0][$i] < $distance) {
+                            $requestData[$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                            $features[] = $requestData[$i-1];
+                        }
+                    }
+                    break;
+                case 3:
+                    for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
+                        if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
+                            $requestData[$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                            $features[] = $requestData['elements'][$i-1];
+                        }
+                    }
+                    break;
+                case 4:
+                    for($i = 1; $i < count($matrixResponse['sources_to_targets'][0]); $i++) {
+                        if ($matrixResponse['sources_to_targets'][0][$i]['distance'] < $distance) {
+                            $requestData[$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                            $features[] = $requestData[$i-1];
+                        }
+                    }
+                    break;
+
+            }
+
+            return json_encode([$features, $eventResponse[3]]);
+        }
+        else {
+            return $eventResponse;
+        }
     }
     
     public function performMatrix($mapsProfile, $routingProfile, $locations, $opt_options = null)

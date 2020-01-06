@@ -15,7 +15,7 @@
 /**
  *  constants
  */
-export  var routingConstants = {
+export var routingConstants = {
   ROUTER_INPUT_WRAPPER: 'c4g-router-input-wrapper',
   ROUTER_PROFILE_WRAPPER: 'c4g-router-profile-wrapper',
   ROUTER_INPUT_FROM: 'c4g-router-input-from',
