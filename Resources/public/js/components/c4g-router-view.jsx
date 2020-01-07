@@ -269,13 +269,13 @@ export class RouterView extends Component {
       this.setState({
         layerValueRoute: layerValue
       }, () => {
-        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "router");
+        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "router", true);
       });
     } else if (this.state.mode === "area") {
       this.setState({
         layerValueArea: layerValue
       }, () => {
-        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "area");
+        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "area", true);
       });
     }
   }
@@ -1477,11 +1477,13 @@ export class RouterView extends Component {
    * @param mode
    * @returns {*}
    */
-  showFeatures(features, type = "table", mode = "router") {
+  showFeatures(features, type = "table", mode = "router", noClear) {
     const self = this;
-    self.routerFeaturesSource.clear();
+    if (!noClear) {
+      self.routerFeaturesSource.clear();
+    }
     // interim clear of feature selection
-    if (!features || features === []) {
+    if (!features || features.length === 0) {
       return [];
     }
     const mapData = this.mapData;
