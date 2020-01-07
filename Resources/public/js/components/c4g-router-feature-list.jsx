@@ -20,15 +20,20 @@ export class RouterFeatureList extends Component {
     super(props);
     this.setActiveId = this.setActiveId.bind(this);
   }
+
   setActiveId(activeId) {
       this.setState({"activeId": activeId})
   }
+
   render() {
     return (
       <div className={this.props.className}>
         <ul>
           {this.props.featureList.features.map((feature, index) => {
-            return <RouterFeatureListItem feature={feature} type={this.props.featureList.type} active={this.props.activeId == feature.id} setActiveId={this.props.setActiveId} routeMode={this.props.routeMode} mapController={this.props.mapController} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureSource={this.props.featureSource} key={index}/>
+            return <RouterFeatureListItem feature={feature} type={this.props.featureList.type} active={this.props.activeId == feature.id}
+                                          setActiveId={this.props.setActiveId} routeMode={this.props.routeMode} mapController={this.props.mapController}
+                                          layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureSource={this.props.featureSource}
+                                          key={index} layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea}/>
           })}
         </ul>
       </div>

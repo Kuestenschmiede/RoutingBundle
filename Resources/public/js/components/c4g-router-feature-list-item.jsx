@@ -84,6 +84,7 @@ export class RouterFeatureListItem extends Component {
         jQuery(this).addClass(cssConstants.ACTIVE).removeClass(cssConstants.INACTIVE);
         // jQuery("div.c4g-portside-content-container").animate({scrollTop: entry.offsetTop - 300});
     }
+
     render() {
         const scope = this;
         let currentFeature = null;
@@ -102,18 +103,19 @@ export class RouterFeatureListItem extends Component {
                 
             }
             else {
+                let layerValue = this.props.routeMode === "route" ? this.props.layerValueRoute : this.props.layerValueArea;
                 objHook =  {
                     entry: "",
                     feature: this.props.feature,
                     // values: values,
                     labels: ['name'],
                     // router: scope,
-                    activeLayerValue: "Super E5"
+                    activeLayerValue: layerValue
                 };
                 utils.callHookFunctions(window.c4gMapsHooks.routePluginEntry, objHook);
                 featureEntryContent = objHook.entry;
             }
-            let element = {__html: featureEntryContent + "<br>"}
+            let element = {__html: featureEntryContent + "<br>"};
             return (
                 <li dangerouslySetInnerHTML={element} className={this.props.active ? "route-features-list-element c4g-active": "route-features-list-element c4g-inactive"} onMouseUp={this.clickFeature}/>
             );
