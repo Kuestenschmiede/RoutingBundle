@@ -252,13 +252,18 @@ export class RouterView extends Component {
   }
 
   setLayer(layer) {
+    let routerLayers = this.props.mapController.data.routerLayers;
+    let layerValues = routerLayers[layer];
+    let newDefaultLayerValue = Object.keys(layerValues)[0];
     if (this.state.mode === "route") {
       this.setState({
-        layerRoute: layer
+        layerRoute: layer,
+        layerValueRoute: newDefaultLayerValue
       }, this.recalculateRoute);
     } else {
       this.setState({
-        layerArea: layer
+        layerArea: layer,
+        layerValueArea: newDefaultLayerValue
       }, this.performArea);
     }
   }
@@ -269,13 +274,13 @@ export class RouterView extends Component {
       this.setState({
         layerValueRoute: layerValue
       }, () => {
-        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "router", true);
+        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "router", false);
       });
     } else if (this.state.mode === "area") {
       this.setState({
         layerValueArea: layerValue
       }, () => {
-        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "area", true);
+        scope.showFeatures(scope.state.featureList.features, scope.state.featureList.type, "area", false);
       });
     }
   }
@@ -1458,8 +1463,6 @@ export class RouterView extends Component {
    * Checks the routing properties and triggers a new route search, when the mandatory parameters are set.
    */
   recalculateRoute() {
-    var tmpFeature,
-      proxy = this.props.mapController.proxy;
     if (this.state.fromPoint && this.state.toPoint) {
       if (this.state.overPoints && Object.keys(this.state.overPoints).length > 0) {
         this.performViaRoute(this.state.fromPoint, this.state.toPoint, this.state.overPoints);
@@ -1475,12 +1478,13 @@ export class RouterView extends Component {
    * @param features
    * @param type
    * @param mode
+   * @param noClear
    * @returns {*}
    */
   showFeatures(features, type = "table", mode = "router", noClear) {
     const self = this;
     if (!noClear) {
-      self.routerFeaturesSource.clear();
+      this.routerFeaturesSource.clear();
     }
     // interim clear of feature selection
     if (!features || features.length === 0) {
