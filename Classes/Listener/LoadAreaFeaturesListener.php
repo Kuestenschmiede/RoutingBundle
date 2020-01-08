@@ -186,6 +186,7 @@ class LoadAreaFeaturesListener
                     $type = $matrixResponse['responseType'] ? $matrixResponse['responseType'] : $routerConfig->getRouterApiSelection();
                     switch ($type) {
                         case 1:
+                        case 3:
                             for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
                                 if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
                                     $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
@@ -201,13 +202,13 @@ class LoadAreaFeaturesListener
                                 }
                             }
                             break;
-                        case 3:
-                            for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
-                                if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
-                                    $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
-                                    $features['elements'][] = $requestData['elements'][$i-1];
-                                }
-                            }
+                        
+//                            for($i = 1; $i < count($matrixResponse['distances'][0]); $i++) {
+//                                if ($matrixResponse['distances'][0][$i] < $distance * 1000) {
+//                                    $requestData['elements'][$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+//                                    $features['elements'][] = $requestData['elements'][$i-1];
+//                                }
+//                            }
                             break;
                         case 4:
                             for($i = 1; $i < count($matrixResponse['sources_to_targets'][0]); $i++) {
