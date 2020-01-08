@@ -38,10 +38,7 @@ class AreaService
     {
         $this->eventDispatcher = $eventDispatcher;
     }
-
-
-
-
+    
     public function getResponse($profileId, $layerId, $distance, $location, $profile)
     {
         $event = new LoadAreaFeaturesEvent();
@@ -85,7 +82,7 @@ class AreaService
                 case 4:
                     for($i = 1; $i < count($matrixResponse['sources_to_targets'][0]); $i++) {
                         if ($matrixResponse['sources_to_targets'][0][$i]['distance'] < $distance) {
-                            $requestData[$i-1]['distance'] = $matrixResponse['distances'][0][$i];
+                            $requestData[$i-1]['distance'] = $matrixResponse['sources_to_targets'][0][$i]['distance'];
                             $features[] = $requestData[$i-1];
                         }
                     }

@@ -1508,12 +1508,15 @@ export class RouterView extends Component {
         this.bestFeatureIds.push(priceSortedFeatures[i]['id']);
       }
     }
-    if (type === "petrols") {
+    if (type === "petrols" && mode !== "area") {
       features = features.elements;
     }
     if (type !== "overpass") {
       featureLoop:
         for (let i = 0; features && (i < features.length); i++) {
+          if (!features[i].id) {
+            continue;
+          }
           let label = "";
           let feature = features[i];
           let resultCoordinate;
