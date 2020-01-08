@@ -103,7 +103,7 @@ export class RouterAddressInput extends Component {
     if (this.props.router.props.mapController.data.showFeatures) {
       featureSearchControls = <React.Fragment>
         <RouterProfileSelection profiles={this.props.profiles} router={this.props.router} currentProfile={this.props.currentProfile}/>
-        <RouterLayerSelection layers={this.props.layers} router={this.props.router}/>
+        <RouterLayerSelection layers={this.props.layers} router={this.props.router} activeLayerValue={this.props.router.state.mode === "route" ? this.props.router.state.layerValueRoute : this.props.router.state.layerValueArea}/>
         <RouterDetourSlider min={this.props.sliderOptions.min} max={this.props.sliderOptions.max} value={this.props.sliderOptions.value} router={this.props.sliderOptions.router}/>
       </React.Fragment>
     }
