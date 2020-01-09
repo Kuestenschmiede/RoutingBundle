@@ -1587,13 +1587,19 @@ export class RouterView extends Component {
           }
         }
     } else {
-      const geojson = osmtogeojson(features);
+      let geojson;
+
+      if (features.elements) {
+        geojson = osmtogeojson(features);
+        this.geoJsonFeatures = geojson;
+      } else {
+        geojson = this.geoJsonFeatures;
+      }
       const mapProj = self.props.mapController.map.getView().getProjection();
       contentFeatures = new GeoJSON().readFeatures(geojson, {
         dataProjection: 'EPSG:4326',
         featureProjection: mapProj
       });
-
       let labelKey = mapData.routerLayers[layerId][activeLayer]['mapLabel'];
       for (let id in contentFeatures) {
         if (contentFeatures.hasOwnProperty(id)) {
@@ -1605,7 +1611,6 @@ export class RouterView extends Component {
           contentFeatures[id].set('label', contentFeatures[id].get(labelKey));
           contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
         }
-
       }
     }
 
