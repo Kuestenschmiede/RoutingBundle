@@ -4,7 +4,7 @@
  * the gis-kit for Contao CMS.
  *
  * @package    con4gis
- * @version    6
+ * @version    7
  * @author     con4gis contributors (see "authors.txt")
  * @license    LGPL-3.0-or-later
  * @copyright  Küstenschmiede GmbH Software & Design
@@ -13,12 +13,11 @@
 
 namespace con4gis\RoutingBundle\Classes\Event;
 
-
 use Symfony\Component\EventDispatcher\Event;
 
 class LoadRouteFeaturesEvent extends Event
 {
-    const NAME = "load.route.features";
+    const NAME = 'load.route.features';
 
     private $profileId = 0;
 
@@ -30,7 +29,7 @@ class LoadRouteFeaturesEvent extends Event
 
     private $features = [];
 
-    private $bbox = "";
+    private $bbox = '';
 
     /**
      * @return int

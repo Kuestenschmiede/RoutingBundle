@@ -4,7 +4,7 @@
  * the gis-kit for Contao CMS.
  *
  * @package    con4gis
- * @version    6
+ * @version    7
  * @author     con4gis contributors (see "authors.txt")
  * @license    LGPL-3.0-or-later
  * @copyright  Küstenschmiede GmbH Software & Design
@@ -34,63 +34,63 @@ class TlC4gRoutingConfiguration
     {
         $this->db = Database::getInstance();
     }
-    
+
     public function getRouterLayer($multiColumnWizard)
     {
         $arrColumnLayers = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['layers'],
+            'label' => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['layers'],
             'inputType' => 'select',
-            'eval'      => ['chosen'=>true, 'includeBlankOption'=>true, 'style'=>'min-width:200px;width:200px;']
+            'eval' => ['chosen' => true, 'includeBlankOption' => true, 'style' => 'min-width:200px;width:200px;'],
         ];
         $arrLayers = $this->db->prepare('SELECT * FROM tl_c4g_maps WHERE published=1')
             ->execute()->fetchAllAssoc();
-        $arrOptions =[];
-        foreach ($arrLayers as $arrLayer){
+        $arrOptions = [];
+        foreach ($arrLayers as $arrLayer) {
             $arrOptions[$arrLayer['id']] = $arrLayer['name'];
         }
         $arrColumnLayers['options'] = $arrOptions;
         $arrColumnKey = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['key'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
+            'label' => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['key'],
+            'filter' => false,
+            'inputType' => 'text',
+            'eval' => ['tl_class' => 'w50'],
         ];
         $arrColumnValue = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['value'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
+            'label' => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['value'],
+            'filter' => false,
+            'inputType' => 'text',
+            'eval' => ['tl_class' => 'w50'],
         ];
         $arrColumnLabels = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['label'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
+            'label' => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['label'],
+            'filter' => false,
+            'inputType' => 'text',
+            'eval' => ['tl_class' => 'w50'],
         ];
         $arrColumnMapLabels = [
-            'label'     => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['mapLabel'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
+            'label' => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['routerLayer']['mapLabel'],
+            'filter' => false,
+            'inputType' => 'text',
+            'eval' => ['tl_class' => 'w50'],
         ];
         $return = [
-            'layers'    => $arrColumnLayers,
-            'key'       => $arrColumnKey,
-            'value'     => $arrColumnValue,
-            'label'     => $arrColumnLabels,
-            'mapLabel'  => $arrColumnMapLabels
+            'layers' => $arrColumnLayers,
+            'key' => $arrColumnKey,
+            'value' => $arrColumnValue,
+            'label' => $arrColumnLabels,
+            'mapLabel' => $arrColumnMapLabels,
         ];
+
         return $return;
     }
-    public function getRouterProfiles(DataContainer $dc){
+    public function getRouterProfiles(DataContainer $dc)
+    {
         $activeAPI = $dc->activeRecord->router_api_selection;
         if ($activeAPI == 2) {
             return ['0','1','2','3','4','5','6','8','9','10'];
-        }
-        else if ($activeAPI == 3){
+        } elseif ($activeAPI == 3) {
             return ['0', '1', '2', '3', '5', '8', '9', '11', '12'];
-        }
-        else if ($activeAPI == 4 || $activeAPI == 5){
+        } elseif ($activeAPI == 4 || $activeAPI == 5) {
             return ['0', '1', '2', '3', '5', '8', '12', '13'];
         }
     }
@@ -102,17 +102,18 @@ class TlC4gRoutingConfiguration
      */
     public function getLocStyles(DataContainer $dc)
     {
-        $profile = $this->db->prepare("SELECT locstyles FROM tl_c4g_map_profiles WHERE id=?")->execute($dc->activeRecord->profile);
-        $ids = deserialize($profile->locstyles,true);
-        if (count($ids)>0) {
-            $locStyles = $this->db->prepare("SELECT id,name FROM tl_c4g_map_locstyles WHERE id IN (".implode(',',$ids).") ORDER BY name")->execute();
+        $profile = $this->db->prepare('SELECT locstyles FROM tl_c4g_map_profiles WHERE id=?')->execute($dc->activeRecord->profile);
+        $ids = deserialize($profile->locstyles, true);
+        if (count($ids) > 0) {
+            $locStyles = $this->db->prepare('SELECT id,name FROM tl_c4g_map_locstyles WHERE id IN (' . implode(',', $ids) . ') ORDER BY name')->execute();
         } else {
-            $locStyles = $this->db->prepare("SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name")->execute();
+            $locStyles = $this->db->prepare('SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name')->execute();
         }
-        $return[0] = "-";
+        $return[0] = '-';
         while ($locStyles->next()) {
             $return[$locStyles->id] = $locStyles->name;
         }
+
         return $return;
     }
 
@@ -122,11 +123,11 @@ class TlC4gRoutingConfiguration
             return;
         }
 
-        $objProfile = $this->db->prepare("SELECT * FROM tl_c4g_map_profiles WHERE id=?")
+        $objProfile = $this->db->prepare('SELECT * FROM tl_c4g_map_profiles WHERE id=?')
             ->limit(1)
             ->execute($dc->id);
         if ($objProfile->router) {
-            if($objProfile->router_api_selection > 1){
+            if ($objProfile->router_api_selection > 1) {
                 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router'] =
                     str_replace('router_api_selection,','router_api_selection,router_api_key,',
                         $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['subpalettes']['router']);
@@ -136,7 +137,7 @@ class TlC4gRoutingConfiguration
             }
         }
     }
-    
+
     public function getRouterConfigs(DataContainer $dc)
     {
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
@@ -145,34 +146,36 @@ class TlC4gRoutingConfiguration
         foreach ($configs as $config) {
             $arrConfigs[$config->getId()] = $config->getName();
         }
+
         return $arrConfigs;
     }
 
     public function getCustomProfileStructure($multiColumnwizard)
     {
         $arrColumnProfileKey = [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['profileKey'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
+            'label' => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['profileKey'],
+            'filter' => false,
+            'inputType' => 'text',
+            'eval' => ['tl_class' => 'w50'],
         ];
         $arrColumnShowName = [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['showName'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
+            'label' => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['showName'],
+            'filter' => false,
+            'inputType' => 'text',
+            'eval' => ['tl_class' => 'w50'],
         ];
         $arrColumnFA = [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['fontAwesome'],
-            'filter'                  => false,
-            'inputType'               => 'text',
-            'eval'                    => ['tl_class'=>'w50']
+            'label' => &$GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['customProfile']['fontAwesome'],
+            'filter' => false,
+            'inputType' => 'text',
+            'eval' => ['tl_class' => 'w50'],
         ];
         $return = [
-            'profileKey'    => $arrColumnProfileKey,
-            'showName'      => $arrColumnShowName,
-            'fontAwesome'   => $arrColumnFA
+            'profileKey' => $arrColumnProfileKey,
+            'showName' => $arrColumnShowName,
+            'fontAwesome' => $arrColumnFA,
         ];
+
         return $return;
     }
 }

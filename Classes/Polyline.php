@@ -4,7 +4,7 @@
  * the gis-kit for Contao CMS.
  *
  * @package    con4gis
- * @version    6
+ * @version    7
  * @author     con4gis contributors (see "authors.txt")
  * @license    LGPL-3.0-or-later
  * @copyright  Küstenschmiede GmbH Software & Design
@@ -13,90 +13,98 @@
 
 namespace con4gis\RoutingBundle\Classes;
 
-class Polyline {
-
+class Polyline
+{
     protected $points;
     const EARTH_RADIUS = 6378.137;
     const LAT_WIDTH = 111.3;
 
-    public function __construct(array $points) {
+    public function __construct(array $points)
+    {
         $this->points = $points;
     }
 
-    public function getPoints() {
+    public function getPoints()
+    {
         return $this->points;
     }
 
-    public function asSqlPolygon() {
-        $points = array();
-        foreach ($this->points AS $p){
+    public function asSqlPolygon()
+    {
+        $points = [];
+        foreach ($this->points as $p) {
             $points[] = $p->getLat() . ' ' . $p->getLng();
         }
         $points[] = $this->points[0]->getLat() . ' ' . $this->points[0]->getLng();
+
         return join(',', $points);
     }
 
-    public function getSize() {
+    public function getSize()
+    {
         return count($this->points);
     }
 
-    public function fromEncodedString($string = null, $encoding = 1e-5) {
+    public function fromEncodedString($string = null, $encoding = 1e-5)
+    {
         if (!is_string($string)) {
             throw new \InvalidArgumentException(sprintf('Expecting string, %s given', gettype($string)));
         }
 
-        $points = array();
+        $points = [];
         $index = $i = 0;
-        $previous = array(0,0);
-        while( $i < strlen($string)  ) {
+        $previous = [0,0];
+        while ($i < strlen($string)) {
             $shift = $result = 0x00;
             do {
-                $bit = ord(substr($string,$i++)) - 63;
+                $bit = ord(substr($string, $i++)) - 63;
                 $result |= ($bit & 0x1f) << $shift;
                 $shift += 5;
-            } while( $bit >= 0x20 ) ;
+            } while ($bit >= 0x20) ;
 
             $diff = ($result & 1) ? ~($result >> 1) : ($result >> 1);
             $number = $previous[$index % 2] + $diff;
             $previous[$index % 2] = $number;
             $index++;
-            $points[] = $number *$encoding;
+            $points[] = $number * $encoding;
         }
 
-        $return = array();
+        $return = [];
         if (count($points) < 2) {
-            return array();
+            return [];
         }
         do {
             $return[] = new LatLng(array_shift($points), array_shift($points));
-        }
-        while (!empty($points));
+        } while (!empty($points));
 
         return new self($return);
     }
-    public function tunePolyline(Polyline $polyline, $pBetweenDist = 1, $pMaxDist = 2) {
-        $points = array();
+    public function tunePolyline(Polyline $polyline, $pBetweenDist = 1, $pMaxDist = 2)
+    {
+        $points = [];
         $maxDist = 0;
         $latLngs = $polyline->getPoints();
         $points[] = $latLngs[0];
 
         $numPoints = count($latLngs);
         for ($c = 0; $c < $numPoints - 1; $c++) {
-            if (($betweenDist = $this->getDistance($latLngs[$c], $latLngs[$c+1])) > $pBetweenDist || $maxDist > $pMaxDist) {
-                $points[] = $latLngs[$c+1];
+            if (($betweenDist = $this->getDistance($latLngs[$c], $latLngs[$c + 1])) > $pBetweenDist || $maxDist > $pMaxDist) {
+                $points[] = $latLngs[$c + 1];
                 $maxDist = 0;
-            }
-            else {
+            } else {
                 $maxDist += $betweenDist;
             }
         }
-        $points[] = $latLngs[$numPoints-1];
+        $points[] = $latLngs[$numPoints - 1];
+
         return new Polyline($points);
     }
-    public function getDistance(LatLng $latLng1, LatLng $latLng2) {
+    public function getDistance(LatLng $latLng1, LatLng $latLng2)
+    {
         $lat = ($latLng1->getLat() + $latLng2->getLat()) / 2 * 0.01745;
         $dy = self::LAT_WIDTH * ($latLng1->getLat() - $latLng2->getLat());
         $dx = self::LAT_WIDTH * cos($lat) * ($latLng1->getLng() - $latLng2->getLng());
+
         return sqrt(pow($dx, 2) + pow($dy, 2));
     }
 }

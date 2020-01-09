@@ -4,7 +4,7 @@
  * the gis-kit for Contao CMS.
  *
  * @package    con4gis
- * @version    6
+ * @version    7
  * @author     con4gis contributors (see "authors.txt")
  * @license    LGPL-3.0-or-later
  * @copyright  Küstenschmiede GmbH Software & Design
@@ -12,7 +12,6 @@
  */
 
 namespace con4gis\RoutingBundle\Classes\Listener;
-
 
 use con4gis\CoreBundle\Resources\contao\classes\C4GUtils;
 use con4gis\MapsBundle\Classes\Events\LoadMapdataEvent;
@@ -29,7 +28,7 @@ class LoadMapDataListener
      * @var EntityManager
      */
     private $entityManager = null;
-    
+
     /**
      * LoadMapDataListener constructor.
      * @param EntityManager $entityManager
@@ -38,7 +37,7 @@ class LoadMapDataListener
     {
         $this->entityManager = $entityManager;
     }
-    
+
     public function onloadMapDataAddRouterData(LoadMapdataEvent $event,
                                                $eventName,
                                                EventDispatcherInterface $eventDispatcher)
@@ -61,7 +60,7 @@ class LoadMapDataListener
                 $mapData['router_alternative'] = $routerConfig->getRouterAlternative();
                 if ($routerConfig->getRouterProfiles()) {
                     $router_profiles = array_flip($routerConfig->getRouterProfiles());
-                    foreach($router_profiles as $key => $router_profile){
+                    foreach ($router_profiles as $key => $router_profile) {
                         $router_profiles[$key] = $GLOBALS['TL_LANG']['tl_c4g_routing_configuration']['references_router_profiles'][$key];
                     }
                     $mapData['router_profiles'] = $router_profiles;
@@ -73,24 +72,24 @@ class LoadMapDataListener
                 if ($routerLayers && $routerLayers[0] && $routerLayers[0]['key']) {
                     $returnLayers = [];
                     foreach ($routerLayers as $routerLayer) {
-                        $routerLayer['key'] = str_replace(" ", "", $routerLayer['key']);
-                        $routerLayer['label'] = str_replace(" ", "", $routerLayer['label']);
-                        $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(",", $routerLayer['key']);
-                        $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(",", $routerLayer['label']);
+                        $routerLayer['key'] = str_replace(' ', '', $routerLayer['key']);
+                        $routerLayer['label'] = str_replace(' ', '', $routerLayer['label']);
+                        $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(',', $routerLayer['key']);
+                        $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(',', $routerLayer['label']);
                         $returnLayers[$routerLayer['layers']][$routerLayer['value']]['mapLabel'] = $routerLayer['mapLabel'];
                     }
                     $mapData['routerLayers'] = $returnLayers;
                 }
                 $mapData['clickLocstyle'] = $routerConfig->getClickLocstyle();
                 $mapData['detourArea'] = [
-                    "min" => $routerConfig->getMinDetourArea(),
-                    "max" => $routerConfig->getMaxDetourArea(),
-                    "initial" => $routerConfig->getInitialDetourArea()
+                    'min' => $routerConfig->getMinDetourArea(),
+                    'max' => $routerConfig->getMaxDetourArea(),
+                    'initial' => $routerConfig->getInitialDetourArea(),
                 ];
                 $mapData['detourRoute'] = [
-                    "min" => $routerConfig->getMinDetourRoute(),
-                    "max" => $routerConfig->getMaxDetourRoute(),
-                    "initial" => $routerConfig->getInitialDetourRoute()
+                    'min' => $routerConfig->getMinDetourRoute(),
+                    'max' => $routerConfig->getMaxDetourRoute(),
+                    'initial' => $routerConfig->getInitialDetourRoute(),
                 ];
                 $mapData['router_open'] = $routerConfig->getOpenRouter();
                 $mapData['areaCenterLocstyle'] = $routerConfig->getAreaCenterLocstyle();
@@ -113,7 +112,7 @@ class LoadMapDataListener
                 $mapData['hideFeaturesWithoutLabel'] = $routerConfig->getHideFeaturesWithoutLabel();
                 $objSettings = C4gMapSettingsModel::findOnly();
                 if ($objSettings->con4gisIoUrl && $objSettings->con4gisIoKey) {
-                    if ($key = C4GUtils::getKey($objSettings,7)) {
+                    if ($key = C4GUtils::getKey($objSettings, 7)) {
                         $mapData['proxyUrl'] = $objSettings->con4gisIoUrl;
                         $mapData['autocomplete'] = $key;
                     }
@@ -123,32 +122,39 @@ class LoadMapDataListener
 
         $event->setMapData($mapData);
     }
-    
-    protected function getRouterAttribution($routerConfig) {
+
+    protected function getRouterAttribution($routerConfig)
+    {
         $apiSelection = $routerConfig->getRouterApiSelection();
-        switch($apiSelection) {
-            case "0":
-            case "1":
-                $attributionRouting = "<a target=\"_blank\" href=\"http://project-osrm.org/\">Project OSRM</a> - OSRM hosting by <a target=\"_blank\" href=\"http://algo2.iti.kit.edu/\">KIT</a>";
+        switch ($apiSelection) {
+            case '0':
+            case '1':
+                $attributionRouting = '<a target="_blank" href="http://project-osrm.org/">Project OSRM</a> - OSRM hosting by <a target="_blank" href="http://algo2.iti.kit.edu/">KIT</a>';
+
                 break;
-            case "2":
-                $attributionRouting = "<a target=\"_blank\" href=\"https://openrouteservice.org/\">openrouteservice</a> - ORS hosting by <a target=\"_blank\" href=\"https://www.geog.uni-heidelberg.de/gis/heigit_en.html\">HeiGIT</a>";
+            case '2':
+                $attributionRouting = '<a target="_blank" href="https://openrouteservice.org/">openrouteservice</a> - ORS hosting by <a target="_blank" href="https://www.geog.uni-heidelberg.de/gis/heigit_en.html">HeiGIT</a>';
+
                 break;
-            case "3":
-                $attributionRouting = "Powered by <a href=\"https://www.graphhopper.com/\">GraphHopper API</a>";
+            case '3':
+                $attributionRouting = 'Powered by <a href="https://www.graphhopper.com/">GraphHopper API</a>';
+
                 break;
-            case "4":
-                $attributionRouting =  "<a target=\"_blank\" href=\"https://www.mapzen.com/blog/valhalla-intro/\">Valhalla</a>";
+            case '4':
+                $attributionRouting = '<a target="_blank" href="https://www.mapzen.com/blog/valhalla-intro/">Valhalla</a>';
+
                 break;
-            case "5":
+            case '5':
                 $objSettings = C4gMapSettingsModel::findOnly();
-                $keyRouting = C4GUtils::getKey($objSettings, 1, "", false);
+                $keyRouting = C4GUtils::getKey($objSettings, 1, '', false);
                 $attributionRouting = $keyRouting->attribution;
+
                 break;
         }
         if ($routerConfig->getRouterAttribution()) {
-            $attributionRouting .= " " . $routerConfig->getRouterAttribution() . " ";
+            $attributionRouting .= ' ' . $routerConfig->getRouterAttribution() . ' ';
         }
-        return $attributionRouting ?: "";
+
+        return $attributionRouting ?: '';
     }
 }
