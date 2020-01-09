@@ -26,10 +26,11 @@ export class RouterFeatureList extends Component {
   }
 
   render() {
+    let sortedFeatures = this.sortFeatures();
     return (
       <div className={this.props.className}>
         <ul>
-          {this.props.featureList.features.map((feature, index) => {
+          {sortedFeatures.map((feature, index) => {
             return <RouterFeatureListItem feature={feature} type={this.props.featureList.type} active={this.props.activeId == feature.id}
                                           setActiveId={this.props.setActiveId} routeMode={this.props.routeMode} mapController={this.props.mapController}
                                           layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureSource={this.props.featureSource}
@@ -38,5 +39,27 @@ export class RouterFeatureList extends Component {
         </ul>
       </div>
     );
+  }
+
+  sortFeatures() {
+    const routerLayers = this.props.mapController.data.routerLayers;
+    const currentLayer = this.props.routeMode === "area" ? this.props.layerArea : this.props.layerRoute;
+    const currentLayerValue = this.props.routeMode === "area" ? this.props.layerValueArea : this.props.layerValueRoute;
+    const currentLabelProp = routerLayers[currentLayer][currentLayerValue]['mapLabel'];
+    let features = [...this.props.featureList.features];
+    return features.sort(function (a, b) {
+      let aValues = a, bValues = b;
+      if (a.tags && b.tags) {
+        aValues = a.tags;
+        bValues = b.tags;
+      }
+      if (isNaN(aValues[currentLabelProp])) {
+        // string values
+        return aValues[currentLabelProp] < bValues[currentLabelProp] ? -1 : 1;
+      } else {
+        // numeric values
+        return aValues[currentLabelProp] - bValues[currentLabelProp];
+      }
+    });
   }
 }
