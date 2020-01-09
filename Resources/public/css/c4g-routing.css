@@ -6,7 +6,7 @@
     min-width: 30%;
     width: auto !important;
 }
-.c4g-routing-layers-select{
+.c4g-router-layers-selection {
     background-color: rgba(24, 61, 93,.8);
     background-color: var(--main-color);
     color: rgba(255,255,255,.9);
@@ -750,6 +750,12 @@ button.c4g-router-close { right: 5px; }
 button.c4g-router-over, button.c4g-router-switch{
     font-size: 15px;
     margin-right: 5px;
+}
+
+.c4g-router-layer-value-selection > button.c4g-active {
+    color: rgba(0,155,222,.5);
+    color: var(--font-color);
+    background-color: var(--main-color);
 }
 
 .c4g-router-instruction img{
