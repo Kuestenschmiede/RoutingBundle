@@ -13,6 +13,7 @@
 
 /** Routing und Umkreissuche  */
 $GLOBALS['TL_LANG'][$strName]['router_api_selection'] = ['Routing Server Technology','Choose Server Technology'];
+$GLOBALS['TL_LANG'][$strName]['name'] = ['Name','Name of the routing configuration.'];
 $GLOBALS['TL_LANG'][$strName]['router_api_key'] = ['API-Key', 'Enter your ORS- or Graphhopper-API-Key. You can generate the key <a href="https://openrouteservice.org/sign-up/" target="_blank" rel="noopener">here (OpenRouteService)</a> or <a href="https://graphhopper.com/dashboard/#/register" target="_blank"> here (Graphhopper)</a>. Pay attention to the terms of use.'];
 $GLOBALS['TL_LANG'][$strName]['router_viaroute_url'] = ['Alternative URL (mandatory for OSRM-API 4)', 'Enter the URL of a ORS or OSRM Server, for example if you want to use your own. By default, either http://router.project-osrm.org/ , https://api.openrouteservice.org/ or https://graphhopper.com/api/1/route? is used. Pay attention to the providers\' copyright information.'];
 $GLOBALS['TL_LANG'][$strName]['routerHeadline'] = ['Headline Router', 'Default: Router'];
@@ -28,6 +29,12 @@ $GLOBALS['TL_LANG'][$strName]['routerLayer']['key'] = ['Key','Key for the evalua
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['value'] = ['Button Text','The text for the corresponding button.'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['label'] = ['Label','Label for the map elements.'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['mapLabel'] = ['Label Field','Fieldname for the label generation.'];
+
+$GLOBALS['TL_LANG'][$strName]['customProfiles'] = ['Eigene Routingprofile', 'Own Routing Profiles'];
+$GLOBALS['TL_LANG'][$strName]['customProfile']['profileKey'] = ['Key for the profile','Key for the profile when addressing the API.'];
+$GLOBALS['TL_LANG'][$strName]['customProfile']['showName'] = ['Display name','Name of the profile for display in the frontend.'];
+$GLOBALS['TL_LANG'][$strName]['customProfile']['fontAwesome'] = ['Fontawesome Unicode','Fontawesome Unicode for the display in the frontend.'];
+
 $GLOBALS['TL_LANG'][$strName]['hideFeaturesWithoutLabel'] = ['Hide features without label','Check this to hide features that have no label.'];
 $GLOBALS['TL_LANG'][$strName]['openRouter'] = ['Router initially opened', 'Check this to open the router initially.'];
 $GLOBALS['TL_LANG'][$strName]['router_alternative'] = ['Alternative Routes', 'Should alternative routes be displayed?'];

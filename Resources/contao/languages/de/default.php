@@ -28,4 +28,4 @@ $GLOBALS['TL_LANG']['c4g_maps']['router_profiles']['9'] = 'WandererIn';
 $GLOBALS['TL_LANG']['c4g_maps']['router_profiles']['10']= 'Rollstuhl';
 $GLOBALS['TL_LANG']['c4g_maps']['router_profiles']['11']= 'Transporter';
 $GLOBALS['TL_LANG']['c4g_maps']['router_profiles']['12']= 'Roller';
-$GLOBALS['TL_LANG']['c4g_maps']['router_profiles']['12']= 'Motorrad';
+$GLOBALS['TL_LANG']['c4g_maps']['router_profiles']['13']= 'Motorrad';
