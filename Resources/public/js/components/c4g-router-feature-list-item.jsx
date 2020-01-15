@@ -97,7 +97,9 @@ export class RouterFeatureListItem extends Component {
         let objHook = null;
         if (currentFeature) {
             if (this.props.type === "overpass") {
-                featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
+                if (currentFeature.getStyle()) {
+                    featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
+                }
             }
             else if (this.props.type === "notOverpass") {
                 

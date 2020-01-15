@@ -42,7 +42,7 @@ class TlC4gRoutingConfiguration
             'inputType' => 'select',
             'eval' => ['chosen' => true, 'includeBlankOption' => true, 'style' => 'min-width:200px;width:200px;'],
         ];
-        $arrLayers = $this->db->prepare('SELECT * FROM tl_c4g_maps WHERE published=1')
+        $arrLayers = $this->db->prepare('SELECT * FROM tl_c4g_maps')
             ->execute()->fetchAllAssoc();
         $arrOptions = [];
         foreach ($arrLayers as $arrLayer) {

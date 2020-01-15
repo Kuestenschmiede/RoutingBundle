@@ -15,8 +15,10 @@ namespace con4gis\RoutingBundle\Classes\Listener;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\MapsBundle\Classes\Events\LoadMapdataEvent;
+use con4gis\MapsBundle\Classes\Services\LayerService;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
+use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use con4gis\RoutingBundle\Entity\RoutingConfiguration;
 use Contao\System;
 use Doctrine\ORM\EntityManager;
@@ -28,14 +30,20 @@ class LoadMapDataListener
      * @var EntityManager
      */
     private $entityManager = null;
-
+    
+    /**
+     * @var LayerService
+     */
+    private $layerService = null;
+    
     /**
      * LoadMapDataListener constructor.
      * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, LayerService $layerService)
     {
         $this->entityManager = $entityManager;
+        $this->layerService = $layerService;
     }
 
     public function onloadMapDataAddRouterData(LoadMapdataEvent $event,
@@ -77,6 +85,9 @@ class LoadMapDataListener
                         $returnLayers[$routerLayer['layers']][$routerLayer['value']]['keys'] = explode(',', $routerLayer['key']);
                         $returnLayers[$routerLayer['layers']][$routerLayer['value']]['labels'] = explode(',', $routerLayer['label']);
                         $returnLayers[$routerLayer['layers']][$routerLayer['value']]['mapLabel'] = $routerLayer['mapLabel'];
+                        $layerId = $routerLayer['layers'];
+                        $objLayer = C4gMapsModel::findByPk($layerId);
+                        $returnLayers[$routerLayer['layers']][$routerLayer['value']]['layerData'] = $this->layerService->parseLayer($objLayer, $mapData['lang']);
                     }
                     $mapData['routerLayers'] = $returnLayers;
                 }

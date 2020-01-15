@@ -746,6 +746,14 @@ export class RouterView extends Component {
     this.props.mapController.proxy.locationStyleController.loadLocationStyles(styles);
     let mapData = this.props.mapController.data;
 
+    // create router layer object
+    this.objLayers = {};
+    for (let key in mapData.routerLayers) {
+      if (mapData.routerLayers.hasOwnProperty(key)) {
+        this.objLayers[key] = mapData.routerLayers[key][Object.keys(mapData.routerLayers[key])[0]];
+      }
+    }
+
     // Add router layer(s)
     this.routingAltWaySource = new VectorSource();
     this.routerWaySource = new VectorSource();
@@ -1472,6 +1480,10 @@ export class RouterView extends Component {
     }
   }
 
+  getActiveLayer(layerId) {
+    return this.objLayers[layerId];
+  }
+
   /**
    * Clears the current features from the map and displays the given new features. The features are sorted by the configured
    * property. The function takes the backend configuration according to prioritized features into account.
@@ -1492,8 +1504,8 @@ export class RouterView extends Component {
     }
     const mapData = this.mapData;
     let layerId = this.state.mode === "route" ? this.state.layerRoute : this.state.layerArea;
-    const layer = this.props.mapController.proxy.layerController.arrLayers[layerId];
     let activeLayer = this.state.mode === "route" ? this.state.layerValueRoute : this.state.layerValueArea;
+    const layer = this.getActiveLayer(layerId);
     const unstyledFeatures = [];
     let contentFeatures = [];
     let missingStyles = [];
@@ -1609,7 +1621,7 @@ export class RouterView extends Component {
           contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
           contentFeatures[id].set('tid', parseInt(contentFeatures[id].get('id').split('/')[1]));
           contentFeatures[id].set('label', contentFeatures[id].get(labelKey));
-          contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
+          //contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
         }
       }
     }

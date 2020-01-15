@@ -40,7 +40,7 @@ export class RouterLayerSelection extends Component {
     } else if (this.props.router.state.mode === "area") {
       defaultLayer = this.props.router.state.layerArea;
     }
-    const arrLayers = scope.props.router.props.mapController.proxy.layerController.arrLayers;
+    const arrLayers = scope.props.router.objLayers;
     let layerValueSelection = "";
     if (Object.keys(this.props.layers[defaultLayer]).length > 1) {
       layerValueSelection = <div className={"c4g-router-layer-value-selection"}>
@@ -55,7 +55,7 @@ export class RouterLayerSelection extends Component {
         <React.Fragment>
           <select className="c4g-router-layer-selection" onChange={this.setLayer} defaultValue={defaultLayer}>
             {Object.keys(this.props.layers).map((id) => {
-              let layer = arrLayers[id];
+              let layer = arrLayers[id].layerData;
 
               return <option key={id} value={id}>{layer.name}</option>
             })}

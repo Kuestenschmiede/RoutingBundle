@@ -2369,7 +2369,7 @@ window.c4gMapsHooks.mapController_addControls = window.c4gMapsHooks.mapControlle
 window.c4gMapsHooks.mapController_addControls.push(function(params){
   let mapController = params.mapController;
   if(mapController.data.router_enable){
-    mapController.map.removeControl(mapController.controls.router);
+    // mapController.map.removeControl(mapController.controls.router);
 
     if (typeof mapController.data !== 'undefined') {
       if (mapController.data.lang === "de") {
