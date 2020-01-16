@@ -30,12 +30,12 @@ class LoadMapDataListener
      * @var EntityManager
      */
     private $entityManager = null;
-    
+
     /**
      * @var LayerService
      */
     private $layerService = null;
-    
+
     /**
      * LoadMapDataListener constructor.
      * @param EntityManager $entityManager
