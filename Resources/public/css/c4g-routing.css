@@ -298,7 +298,7 @@ select.c4g-router-layer-selection + div{
 }
 
 .c4g-router-result-container.c4g-open .c4g-router-instructions-header{
-    position: absolute;
+    /*position: absolute;*/
 }
 
 .c4g-router-instructions-header > em {
@@ -556,8 +556,8 @@ Todo Testing
 }
 
 .c4g-router-panel.c4g-open {
-    background-color: var(--main-color);
-    position: absolute;
+    /*background-color: var(--main-color);*/
+    /*position: absolute;*/
     top: .2em;
     transition: all 0.3s;
     left: calc(42px + .4em);
@@ -645,7 +645,7 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
 }
 
 .c4g-router-mode-switch {
-    position: absolute;
+    /*position: absolute;*/
     top: 45px;
 }
 
@@ -803,4 +803,23 @@ div.invisible {
     .c4g-router-input-wrapper > div { padding: 10px; }
     .c4g-router-panel.c4g-open .c4g-router-input-wrapper { width: 100%; }
     button.c4g-router-extended-options { margin: 0 10px 10px; position: static; }
+}
+
+/**
+begin new styling, ready to be reworked
+ */
+.c4g-router-container-right {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    min-width: 240px;
+    max-width: 42%;
+    background: var(--main-color);
+    z-index: 60;
+}
+.c4g-router-container-right.c4g-close {
+    right: -100%;
+}
+.c4g-router-container-right.c4g-open {
+    right: 0;
 }
