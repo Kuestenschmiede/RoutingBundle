@@ -98,11 +98,13 @@ export class RouterControls extends HorizontalPanel {
   open() {
     this.props.setOpen(true);
     this.slideOutCollidingElements();
+    jQuery(this.props.router.props.mapController.routerContainer).removeClass("c4g-close").addClass("c4g-open");
   }
 
   close() {
     this.props.setOpen(false);
     this.slideOutCollidingElements();
+    jQuery(this.props.router.props.mapController.routerContainer).removeClass("c4g-open").addClass("c4g-close");
   }
 
   clickControl() {
