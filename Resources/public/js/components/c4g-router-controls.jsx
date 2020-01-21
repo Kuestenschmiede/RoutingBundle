@@ -23,11 +23,9 @@ export class RouterControls extends HorizontalPanel {
     super(props);
 
     this.state.router = this.props.router;
-    this.state.detailsEnabled = false;
 
     this.setRouteMode = this.setRouteMode.bind(this);
     this.setAreaMode = this.setAreaMode.bind(this);
-    this.toggleDetails = this.toggleDetails.bind(this);
     this.close = this.close.bind(this);
   }
 
@@ -71,13 +69,9 @@ export class RouterControls extends HorizontalPanel {
                             objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile} enableOverPoints={this.props.enableOverPoints}
                             containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers} resetFunctions={this.props.resetFunctions}
                             fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress} sliderOptions={this.props.sliderOptions}
-                            profiles={this.props.profiles} overSettings={this.props.overSettings} toggleDetails={this.toggleDetails} detailsEnabled={this.state.detailsEnabled}/>
+                            profiles={this.props.profiles} overSettings={this.props.overSettings}/>
       </div>
     );
-  }
-
-  toggleDetails() {
-    this.setState({detailsEnabled: !this.state.detailsEnabled}, this.slideOutCollidingElements);
   }
 
   slideInCollidingElements() {

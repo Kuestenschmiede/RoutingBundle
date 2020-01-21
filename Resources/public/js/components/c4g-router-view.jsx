@@ -217,10 +217,10 @@ export class RouterView extends Component {
     if (this.props.mapController.data.usePermalink) {
       this.permalink.handleInitialParams();
     }
-    if (this.props.mapController.data.router_open) {
-      // workaround to position the button properly
-      jQuery(".c4g-router-panel-button-top.ol-control").css({top: "102px"});
-    }
+    // if (this.props.mapController.data.router_open) {
+    //   // workaround to position the button properly
+    //   jQuery(".c4g-router-panel-button-top.ol-control").css({top: "102px"});
+    // }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -243,7 +243,10 @@ export class RouterView extends Component {
       }
     }
     if (prevState.open === true && this.state.open === false) {
-      this.setState({openResults: false});
+      jQuery(this.props.mapController.routerContainer).removeClass("c4g-open").addClass("c4g-close");
+    }
+    if (this.state.open) {
+      this.props.mapController.hideOtherComponents(this);
     }
   }
 

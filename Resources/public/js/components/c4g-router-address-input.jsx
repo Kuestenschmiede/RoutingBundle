@@ -51,23 +51,9 @@ export class RouterAddressInput extends Component {
     let areaClsAddition = "";
     if (this.props.mode === "route") {
       areaClsAddition = " invisible";
-      // input = <React.Fragment>
-      //   <RouterAddressField className="c4g-router-input-from" name="routingFrom" label="Start"
-      //                       cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.from}
-      //                       containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.fromAddress} router={this.props.router}/>
-      //   {overForm}
-      //   <RouterAddressField className="c4g-router-input-to" name="routingTo" label="Ziel"
-      //                       cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.to}
-      //                       containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.toAddress} router={this.props.router}/>
-      // </React.Fragment>;
     } else {
       fromClsAddition = " invisible";
       toClsAddition = " invisible";
-      // input = <React.Fragment>
-      //   <RouterAddressField className="c4g-router-input-area" name="areaFrom" label="Zentrum"
-      //                       cssId="areaInput" objFunctions={this.props.objFunctions.areaFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.area}
-      //                       containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.areaAddress} router={this.props.router}/>
-      // </React.Fragment>;
     }
 
     input = <React.Fragment>
@@ -107,22 +93,17 @@ export class RouterAddressInput extends Component {
         <RouterDetourSlider min={this.props.sliderOptions.min} max={this.props.sliderOptions.max} value={this.props.sliderOptions.value} router={this.props.sliderOptions.router}/>
       </React.Fragment>
     }
-    if (this.props.detailsEnabled && this.props.mode === "route") {
+    if (this.props.mode === "route") {
       details = <div className="buttonbar">
         {overButton}
         {swapButton}
         {featureSearchControls}
       </div>;
-    } else if (this.props.detailsEnabled && this.props.mode === "area") {
+    } else if (this.props.mode === "area") {
       details = <div className="buttonbar">
         {featureSearchControls}
       </div>;
     }
-
-    // let detailButton = "";
-    // if (!(overButton === "" && swapButton === "" && featureSearchControls === "")) {
-    //   detailButton = <button className={"c4g-router-extended-options"} onMouseUp={this.props.toggleDetails}></button>;
-    // }
 
     return (
       <div className={this.props.className}>
