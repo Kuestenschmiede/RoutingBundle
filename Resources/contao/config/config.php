@@ -23,7 +23,3 @@ $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], array
         'icon' => 'bundles/con4giscore/images/be-icons/edit.svg'
     )
 ));
-
-if(TL_MODE == "BE") {
-    $GLOBALS['TL_CSS'][] = '/bundles/con4gisrouting/css/con4gis.css';
-}
