@@ -19,6 +19,8 @@ export class RouterDetourSlider extends Component {
 
   constructor(props) {
     super(props);
+
+    this.updated = false;
   }
 
   componentDidMount() {
@@ -60,5 +62,36 @@ export class RouterDetourSlider extends Component {
         <output className={routingConstants.OUTPUT_DETOUR}>{this.props.value + " km"}</output>
       </div>
     );
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    let element = document.querySelector("." + routingConstants.ROUTE_TOGGLE);
+    const scope = this;
+    if (!this.updated) {
+      jQuery(element).on('input', function () {
+        let control = jQuery(this);
+        let range = control.attr('max') - control.attr('min');
+        let pos = ((control.val() - control.attr('min')) / range) * 100;
+        let posOffset = Math.round(50 * pos / 100) - (25);
+        let output = control.next('output');
+        output
+          .css('left', 'calc(' + pos + '% - ' + posOffset + 'px)')
+          .text(control.val() + " km");
+        if (scope.props.router.props.mapController.data.usePermalink) {
+          scope.props.router.permalink.updateLinkFragments("detour", control.val());
+        }
+      });
+      jQuery(element).on('change', function () {
+        if (scope.props.router.state.mode === "route") {
+          scope.props.router.setState({detourRoute: jQuery(element).val()}, scope.props.router.recalculateRoute);
+        } else {
+          scope.props.router.setState({detourArea: jQuery(element).val()}, () => {
+            scope.props.router.performArea(scope.props.router.state.areaValue);
+          });
+        }
+      });
+      jQuery(element).trigger('input');
+      this.updated = true;
+    }
   }
 }

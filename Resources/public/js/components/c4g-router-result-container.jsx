@@ -41,16 +41,14 @@ export class RouterResultContainer extends Component {
 
   render() {
     let result = "";
-    if (this.props.detailOpen) {
-      if ((this.state.mode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
-        result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.props.open}/>
-      } else if (((this.state.mode === "feat" || this.props.mode === "area") || (!this.props.routerInstructions && this.props.featureList))) {
-        result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId}
-                                    routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea}
-                                    featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}
-                                    layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea}
-        />
-      }
+    if ((this.state.mode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
+      result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.props.open}/>
+    } else if (((this.state.mode === "feat" || this.props.mode === "area") || (!this.props.routerInstructions && this.props.featureList))) {
+      result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId}
+                                  routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea}
+                                  featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}
+                                  layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea}
+      />
     }
     let instructions = [];
     let time = "";
@@ -107,19 +105,19 @@ export class RouterResultContainer extends Component {
       );
     }
 
-    if (routerHeaderContent) {
-      let detailBtnClass = "c4g-beach-options";
-      let detailBtnCb = this.props.toggleDetailOpen;
-      let closeBtnClass = "c4g-titlebar-close";
-      let closeBtnCb = () => this.props.setOpen(false);
-      routerHeader = (<Titlebar wrapperClass={"c4g-router-results-header c4g-beach-header"} header={this.props.headline} headerClass={"c4g-router-results-headline c4g-beach-header-headline"}
-                                detailBtnClass={detailBtnClass} detailBtnCb={detailBtnCb} closeBtnClass={closeBtnClass} closeBtnCb={closeBtnCb}>
-        {routerHeaderContent}
-      </Titlebar>);
-    }
+    // if (routerHeaderContent) {
+    //   // let detailBtnClass = "c4g-beach-options";
+    //   // let detailBtnCb = this.props.toggleDetailOpen;
+    //   let closeBtnClass = "c4g-titlebar-close";
+    //   let closeBtnCb = () => this.props.setOpen(false);
+    //   routerHeader = (<Titlebar wrapperClass={"c4g-router-results-header c4g-beach-header"} header={this.props.headline} headerClass={"c4g-router-results-headline c4g-beach-header-headline"}
+    //                             detailBtnClass={""} detailBtnCb={""} closeBtnClass={closeBtnClass} closeBtnCb={closeBtnCb}>
+    //     {routerHeaderContent}
+    //   </Titlebar>);
+    // }
 
     let resultSwitcher = "";
-    if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.detailOpen && this.props.mode === "route") {
+    if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.mode === "route") {
         resultSwitcher = (
             <div className="c4g-router-mode-switch">
                 <button id="c4g-router-button-route" onMouseUp={this.setResultInstr}>Instructions</button>
@@ -129,8 +127,8 @@ export class RouterResultContainer extends Component {
     }
     return (
       <div className={this.props.className + (this.props.open ? " c4g-open" : " c4g-close")
-      + (this.props.detailOpen && this.props.open ? " c4g-details-open" : "")}>
-          {routerHeader}
+      + (this.props.open ? " c4g-details-open" : "")}>
+          {routerHeaderContent}
           {resultSwitcher}
           {result}
       </div>
