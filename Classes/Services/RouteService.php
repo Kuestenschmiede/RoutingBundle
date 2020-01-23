@@ -428,7 +428,7 @@ class RouteService extends \Frontend
             $profile = '&profile=' . $profile . '&format=json&language=' . $language . '&geometry_format=encodedpolyline&maneuvers=true&preference=recommended';
             $url = $strRoutingUrl . $apiKey . $coordinates . $profile;
             $request = $this->createRequest();
-            $request->send(str_replace("|", "%7C", $url));
+            $request->send(str_replace('|', '%7C', $url));
             $response = $request->response;
 
             try {
