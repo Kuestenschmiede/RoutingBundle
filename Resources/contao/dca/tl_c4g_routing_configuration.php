@@ -34,14 +34,16 @@ $GLOBALS['TL_DCA'][$strName] = array
         'sorting' => array
         (
             'mode'                    => 1,
-            'fields'                  => array('name'),
+            'fields'                  => array('name','router_api_selection'),
+            'headerFields'            => ['name','router_api_selection'],
             'flag'                    => 1,
             'icon'                    => 'bundles/con4giscore/images/be-icons/con4gis.org_dark.svg',
         ),
         'label' => array
         (
-            'fields'                  => array('name'),
-            'format'                  => '%s'
+            'fields'                  => array('name','router_api_selection'),
+            //'format'                  => '%s',
+            'showColumns'             => true
         ),
         'global_operations' => array
         (
