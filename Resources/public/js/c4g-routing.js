@@ -2396,7 +2396,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     let openRouter = mapController.data.router_open;
 
     mapController.routerContainer = document.createElement('div');
-    mapController.routerContainer.className = "c4g-router-container-right " + (openRouter ? "c4g-open" : "c4g-close");
+    mapController.routerContainer.className = "c4g-sideboard c4g-router-container-right " + (openRouter ? "c4g-open" : "c4g-close");
     mapController.components = mapController.components || {};
     mapController.components.router = ReactDOM.render(React.createElement(RouterView, routerControlProps), mapController.routerContainer);
     jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
