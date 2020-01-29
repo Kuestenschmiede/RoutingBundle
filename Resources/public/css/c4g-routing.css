@@ -534,22 +534,6 @@ Router panel
     min-height: 36px;
 }
 
-/*
-TODO Testing
- */
-div.c4g-geosearch {
-    position: relative;
-}
-div.c4g-overviewmap  {
-    position: relative;
-    top: 43px;
-}
-
-/**
-Todo Testing
- */
-
-
 .c4g-router-panel-button-top button:before {
     content: "\f4d7";
     font-family: 'Font Awesome 5 Free';
