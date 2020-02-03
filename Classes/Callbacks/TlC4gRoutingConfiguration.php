@@ -103,7 +103,6 @@ class TlC4gRoutingConfiguration
     public function getLocStyles(DataContainer $dc)
     {
         $locStyles = $this->db->prepare('SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name')->execute();
-        $return[0] = '-';
         if ($locStyles) {
             while ($locStyles->next()) {
                 $return[$locStyles->id] = $locStyles->name;
