@@ -57,7 +57,10 @@ class LoadMapDataListener
             $routerConfig = $this->entityManager->getRepository(RoutingConfiguration::class)
                 ->findOneBy(['id' => $profile->routerConfig]);
             if ($routerConfig instanceof RoutingConfiguration) {
-                $mapData['router_enable'] = $profile->geosearch && $profile->router;
+                $mapFunctions = unserialize($profile->mapFunctions);
+                $buttons = array_flip($mapFunctions);
+
+                $mapData['router_enable'] = array_key_exists('routing', $buttons) ? $buttons['routing'] + 1 : 0;
                 $mapData['router_viaroute_precision'] = $routerConfig->getRouterViarouteUrl() ? 1e5 : 1e6;
                 $mapData['attribution']['router'] = $this->getRouterAttribution($routerConfig);
                 $mapData['router_from_locstyle'] = $routerConfig->getRouterFromLocstyle();
