@@ -1508,7 +1508,7 @@ export class RouterView extends Component {
     const mapData = this.mapData;
     let layerId = this.state.mode === "route" ? this.state.layerRoute : this.state.layerArea;
     let activeLayer = this.state.mode === "route" ? this.state.layerValueRoute : this.state.layerValueArea;
-    const layer = this.getActiveLayer(layerId);
+    const layer = this.getActiveLayer(layerId).layerData;
     const unstyledFeatures = [];
     let contentFeatures = [];
     let missingStyles = [];
@@ -1570,7 +1570,6 @@ export class RouterView extends Component {
               locstyle = mapData.priorityLocstyle;
             }
           }
-
           contentFeature.set('locationStyle', locstyle);
           contentFeature.set('zIndex', i);
           contentFeature.set('label', label);
@@ -1624,7 +1623,7 @@ export class RouterView extends Component {
           contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
           contentFeatures[id].set('tid', parseInt(contentFeatures[id].get('id').split('/')[1]));
           contentFeatures[id].set('label', contentFeatures[id].get(labelKey));
-          //contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
+          contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
         }
       }
     }
