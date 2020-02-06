@@ -42,7 +42,7 @@ export class RouterLayerSelection extends Component {
     }
     const arrLayers = scope.props.router.objLayers;
     let layerValueSelection = "";
-    if (Object.keys(this.props.layers[defaultLayer]).length > 1) {
+    if (this.props.layers && (Object.keys(this.props.layers[defaultLayer]).length > 1)) {
       layerValueSelection = <div className={"c4g-router-layer-value-selection"}>
         {Object.keys(this.props.layers[defaultLayer]).map((name) => {
           return <button className={this.props.activeLayerValue === name ? "c4g-active" : "c4g-inactive"} onMouseUp={this.setLayerValue} key={this.props.layers[defaultLayer][name].mapLabel} value={name}>{name}</button>
@@ -50,7 +50,7 @@ export class RouterLayerSelection extends Component {
       </div>;
     }
 
-    if (Object.keys(this.props.layers).length > 1) {
+    if (this.props.layers && (Object.keys(this.props.layers).length > 1)) {
       return (
         <React.Fragment>
           <select className="c4g-router-layer-selection" onChange={this.setLayer} defaultValue={defaultLayer}>

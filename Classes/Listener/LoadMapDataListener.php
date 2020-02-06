@@ -53,14 +53,14 @@ class LoadMapDataListener
         $mapData = $event->getMapData();
         System::loadLanguageFile('tl_c4g_routing_configuration');
         $profile = C4gMapProfilesModel::findById($mapData['profile']);
-        if ($profile->router) {
+        $mapFunctions = unserialize($profile->mapFunctions);
+        $buttons = array_flip($mapFunctions);
+        $enabled = array_key_exists('routing', $buttons) ? $buttons['routing'] + 1 : 0;
+        if ($enabled) {
             $routerConfig = $this->entityManager->getRepository(RoutingConfiguration::class)
                 ->findOneBy(['id' => $profile->routerConfig]);
             if ($routerConfig instanceof RoutingConfiguration) {
-                $mapFunctions = unserialize($profile->mapFunctions);
-                $buttons = array_flip($mapFunctions);
-
-                $mapData['router_enable'] = array_key_exists('routing', $buttons) ? $buttons['routing'] + 1 : 0;
+                $mapData['router_enable'] = $enabled;
                 $mapData['router_viaroute_precision'] = $routerConfig->getRouterViarouteUrl() ? 1e5 : 1e6;
                 $mapData['attribution']['router'] = $this->getRouterAttribution($routerConfig);
                 $mapData['router_from_locstyle'] = $routerConfig->getRouterFromLocstyle();

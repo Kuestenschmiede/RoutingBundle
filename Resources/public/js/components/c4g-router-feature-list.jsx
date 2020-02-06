@@ -27,6 +27,13 @@ export class RouterFeatureList extends Component {
 
   render() {
     let sortedFeatures = this.sortFeatures();
+    if (!sortedFeatures) {
+      return (
+          <div className={this.props.className}>
+          </div>
+      );
+    }
+
     return (
       <div className={this.props.className}>
         <ul>
@@ -45,6 +52,11 @@ export class RouterFeatureList extends Component {
     const routerLayers = this.props.mapController.data.routerLayers;
     const currentLayer = this.props.routeMode === "area" ? this.props.layerArea : this.props.layerRoute;
     const currentLayerValue = this.props.routeMode === "area" ? this.props.layerValueArea : this.props.layerValueRoute;
+
+    if (!routerLayers) {
+      return;
+    }
+
     const currentLabelProp = routerLayers[currentLayer][currentLayerValue]['mapLabel'];
     let features = [...this.props.featureList.features];
     return features.sort(function (a, b) {
