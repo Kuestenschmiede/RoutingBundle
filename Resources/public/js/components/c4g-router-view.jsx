@@ -512,7 +512,6 @@ export class RouterView extends Component {
 
   resetFromPoint() {
     const scope = this;
-
     let containerAddresses = scope.state.containerAddresses;
     containerAddresses.arrFromPositions = [];
     containerAddresses.arrFromNames = [];
@@ -527,7 +526,6 @@ export class RouterView extends Component {
 
   resetToPoint() {
     const scope = this;
-
     let containerAddresses = scope.state.containerAddresses;
     containerAddresses.arrToPositions = [];
     containerAddresses.arrToNames = [];
@@ -542,7 +540,6 @@ export class RouterView extends Component {
 
   resetAreaPoint() {
     const scope = this;
-
     let containerAddresses = scope.state.containerAddresses;
     containerAddresses.arrAreaPositions = [];
     containerAddresses.arrAreaNames = [];
@@ -666,10 +663,6 @@ export class RouterView extends Component {
 
     return objFunctions;
   }
-
-  // =========================================================================================
-  // Begin old functions migrated from routing.js
-  // =========================================================================================
 
   addPopupHook() {
     const scope = this;
