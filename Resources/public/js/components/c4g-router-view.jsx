@@ -44,6 +44,7 @@ export class RouterView extends Component {
     super(props);
     this.setActiveId = this.setActiveId.bind(this);
     this.setOpen = this.setOpen.bind(this);
+    this.close = this.close.bind(this);
     this.openControls = this.openControls.bind(this);
     this.resetFromPoint = this.resetFromPoint.bind(this);
     this.resetToPoint = this.resetToPoint.bind(this);
@@ -206,8 +207,8 @@ export class RouterView extends Component {
     }
 
     return (
-      <React.Fragment>
-        <div>
+      <div className={"c4g-router-wrapper"}>
+        <React.Fragment>
           <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
                        detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
           <div className={"c4g-router-switcher"}>
@@ -217,8 +218,8 @@ export class RouterView extends Component {
             {swapButton}
             {overButton}
           </div>
-        </div>
-        <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} className={this.props.className} profiles={this.state.profiles}
+        </React.Fragment>
+        <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()} switchTargets={this.props.mapController.data.enableTargetSwitch}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} enableOverPoints={this.props.mapController.data.enableOverPoints}
@@ -230,8 +231,13 @@ export class RouterView extends Component {
            layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
           activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
         />
-      </React.Fragment>
+      </div>
     );
+  }
+
+  close() {
+    this.openControls(false);
+    jQuery(this.props.mapController.routerContainer).removeClass("c4g-open").addClass("c4g-close");
   }
 
   getProfileById(id) {
@@ -255,6 +261,7 @@ export class RouterView extends Component {
     if (open) {
       this.props.mapController.hideOtherComponents(this);
       this.setState({open: true, openSettings: true});
+      jQuery(this.props.mapController.routerContainer).removeClass("c4g-close").addClass("c4g-open");
     } else {
       this.setState({open: false});
     }
