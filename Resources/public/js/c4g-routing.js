@@ -55,7 +55,6 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       detourRoute: mapController.data.detourRoute,
       detourArea: mapController.data.detourArea,
       containerAddresses: containerAddresses,
-      className: "c4g-router-panel",
       langConstants: langRouteConstants
     };
     let openRouter = mapController.data.router_open;

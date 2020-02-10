@@ -48,7 +48,7 @@ export class RouterControls extends HorizontalPanel {
 
   render() {
     const scope = this;
-    let className = this.props.className + (this.props.open ? " c4g-open " : " c4g-close ") + this.props.mode;
+    let className = "c4g-router-content" + (this.props.open ? " c4g-open " : " c4g-close ") + this.props.mode;
     // propagate open state down to child components
     let open = this.props.open;
     let modeSwitcher = "";
