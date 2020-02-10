@@ -28,6 +28,8 @@ export class RouterControls extends HorizontalPanel {
     this.setRouteMode = this.setRouteMode.bind(this);
     this.setAreaMode = this.setAreaMode.bind(this);
     this.close = this.close.bind(this);
+
+
   }
 
   setRouteMode(event) {
@@ -45,6 +47,7 @@ export class RouterControls extends HorizontalPanel {
   }
 
   render() {
+    const scope = this;
     let className = this.props.className + (this.props.open ? " c4g-open " : " c4g-close ") + this.props.mode;
     // propagate open state down to child components
     let open = this.props.open;
@@ -55,18 +58,12 @@ export class RouterControls extends HorizontalPanel {
         <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
       </div>;
     }
-    let headline = "";
-    if (this.props.mode === "route") {
-      headline = this.props.router.props.mapController.data.routerHeadline;
-    } else if (this.props.mode === "area") {
-      headline = this.props.router.props.mapController.data.areaHeadline;
-    }
+
+
+
     if (this.state.showForm) {
       return (
         <div className={className}>
-          <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
-                    detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
-          <button className={"c4g-router-hide-form-button"} onMouseUp={() => {this.setState({showForm: !this.state.showForm})}}/>
           {modeSwitcher}
           <RouterAddressInput className="c4g-router-input-content" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
                               objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile} enableOverPoints={this.props.enableOverPoints}

@@ -130,14 +130,19 @@ export class RouterResultContainer extends Component {
             </div>
         );
     }
-    return (
-      <div className={this.props.className + (this.props.open ? " c4g-open" : " c4g-close")
-      + (this.props.open ? " c4g-details-open" : "")}>
+    if (this.props.open) {
+      return (
+        <div className={this.props.className + (this.props.open ? " c4g-open" : " c4g-close")
+        + (this.props.open ? " c4g-details-open" : "")}>
           {routerHeaderContent}
           {resultSwitcher}
           {result}
-      </div>
-    );
+        </div>
+      );
+    } else {
+      return null;
+    }
+
   }
 
   componentDidUpdate() {

@@ -30,6 +30,7 @@ import {AlertHandler} from "./../../../../../CoreBundle/Resources/public/js/Aler
 import {RoutingPermalink} from "./../c4g-routing-permalink";
 import {getLanguage} from "./../routing-constant-i18n";
 import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
+import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 
 const osmtogeojson = require('osmtogeojson');
 
@@ -89,7 +90,6 @@ export class RouterView extends Component {
       },
       activeId: null,
       openResults: false,
-      resultDetailOpen: false,
       containerAddresses: {
         arrFromPositions: [],
         arrFromNames: [],
@@ -125,13 +125,31 @@ export class RouterView extends Component {
       overPoints: [],
       profiles: arrProfiles,
       currentProfile: 0,
-      open: (this.props.mapController.data.router_open === "1") || false
+      open: (this.props.mapController.data.router_open === "1") || false,
+      openSettings: (this.props.mapController.data.router_open === "1") || false
     };
     this.popupRouteButtonWrapper = ""; // this is needed because of the different popup handlings
     this.swapPoints = this.swapPoints.bind(this);
     if (mapController.data.usePermalink) {
       this.permalink = new RoutingPermalink(this);
     }
+    this.profileTranslation = {
+      0: "car",
+      1: "hgv",
+      2: "bike",
+      3: "bike",
+      4: "bike",
+      5: "bike",
+      6: "bike",
+      7: "bike",
+      8: "foot",
+      9: "foot",
+      10: "wheelchair",
+      11: "hgv",
+      12: "scooter",
+      13: "scooter"
+    };
+
     this.init();
   }
 
@@ -165,22 +183,50 @@ export class RouterView extends Component {
       area: this.resetAreaPoint
     };
 
-    let strCurrentProfile = this.getProfileById(this.state.currentProfile);
-    if (strCurrentProfile) {
-      strCurrentProfile = strCurrentProfile.text;
+    const swapFunction = function() {
+      scope.props.overSettings.swapFunction();
+      const tmpFrom = jQuery("#routingFrom").val();
+      jQuery("#routingFrom").val(jQuery("#routingTo").val());
+      jQuery("#routingTo").val(tmpFrom);
+    };
+    let swapButton = "";
+    if (this.props.switchTargets && this.props.mode === "route") {
+      swapButton = <button className="c4g-router-switch" onMouseUp={swapFunction} />;
+    }
+    let overButton = "";
+    if (this.props.enableOverPoints && this.props.mode === "route") {
+      overButton = <button className="c4g-router-over" onMouseUp={this.state.overSettings.overFunction} />;
+    }
+    let headline = "";
+    if (this.state.mode === "route") {
+      headline = this.props.mapController.data.routerHeadline;
+    } else if (this.state.mode === "area") {
+      headline = this.props.mapController.data.areaHeadline;
     }
 
     return (
       <React.Fragment>
-        <RouterControls router={this} open={this.state.open} setOpen={this.openControls} className={this.props.className} profiles={this.state.profiles}
+        <div>
+          <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
+                       detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
+          <div className={"c4g-router-switcher"}>
+            <button className={"c4g-router-hide-form-button"} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}}/>
+            <button className={"c4g-router-show-results-button"} onMouseUp={() => {this.setState({openResults: !this.state.openResults})}}/>
+            <button className={"c4g-router-profile-" + this.profileTranslation[this.state.currentProfile]}/>
+            {swapButton}
+            {overButton}
+          </div>
+        </div>
+        <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} className={this.props.className} profiles={this.state.profiles}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()} switchTargets={this.props.mapController.data.enableTargetSwitch}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} enableOverPoints={this.props.mapController.data.enableOverPoints}
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} target={this.props.target}
         />
-        <RouterResultContainer visible={this.state.open} open={this.state.open} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
+        <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
-          layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea} layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
+          layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea}
+           layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
           activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
         />
       </React.Fragment>
@@ -207,7 +253,7 @@ export class RouterView extends Component {
   openControls(open) {
     if (open) {
       this.props.mapController.hideOtherComponents(this);
-      this.setState({open: true});
+      this.setState({open: true, openSettings: true});
     } else {
       this.setState({open: false});
     }
@@ -248,6 +294,19 @@ export class RouterView extends Component {
     if (this.state.open) {
       this.props.mapController.hideOtherComponents(this);
     }
+    if (this.state.openSettings && !prevState.openSettings) {
+      this.setState({openResults: false});
+    }
+    if (this.state.openResults && !prevState.openResults) {
+      this.setState({openSettings: false});
+    }
+    if (!this.state.openResults && !this.state.openSettings && prevState.openSettings) {
+      this.setState({openSettings: true});
+    }
+    if (!this.state.openSettings && !this.state.openResults && prevState.openResults) {
+      this.setState({openResults: true});
+    }
+
   }
 
   setProfile(profile) {
