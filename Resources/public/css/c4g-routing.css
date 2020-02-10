@@ -198,7 +198,7 @@ button.c4g-router-search:before {
 .c4g-router.c4g-portside-control button:before {
     content: "R";
 }
-
+/*
 .c4g-router-header {
     width: calc(100% - .6em - 23px);
     padding: 0 .2em;
@@ -208,7 +208,7 @@ button.c4g-router-search:before {
     overflow: hidden;
     max-width: 100%;
     -webkit-text-fill-color: white;
-}
+}*/
 
 .c4g-popup-route-wrapper {
     white-space: nowrap;
@@ -236,10 +236,23 @@ div.area .c4g-router-input-wrapper > div {
 }
 
 .c4g-router-profile-wrapper button {
-   margin-right: .2em;
-   margin-top: .2em;
-   width: 35px;
+    margin-right: .2em;
+    margin-top: .2em;
+    height: 28px;
+    width: 32px;
+    border: none;
+    outline: none;
+    vertical-align: top;
 }
+
+.c4g-router-profile-wrapper button.c4g-inactive {
+    cursor: pointer;
+}
+
+.c4g-router-profile-wrapper button.c4g-active {
+    cursor: not-allowed;
+}
+
 
 .c4g-router-layer-value-selection {
     float: right;
@@ -271,14 +284,14 @@ select.c4g-router-layer-selection + div{
     width: 100%;
 }
 
-.c4g-router-input-wrapper > input {
+.c4g-router-input-content > input {
     box-sizing: border-box;
     padding: 5px;
     margin: 2px;
     min-width: 141px;
     height: 32px;
 }
-.c4g-router-input-wrapper > label {
+.c4g-router-input-content > label {
     margin-right: 5px;
     vertical-align: middle;
     margin-top: auto;
@@ -343,18 +356,22 @@ select.c4g-router-layer-selection + div{
     background-color: rgba(255,255,255,.9);
     background-color: var(--font-color);
 }
-.c4g-router-profile-wrapper button {
+.c4g-router-profile-wrapper button.c4g-inactive {
     color: var(--main-color);
-    border-color: var(--shadow-color);
     background-color: var(--font-color);
 }
+
+.c4g-router-profile-wrapper button.c4g-active {
+    color: var(--font-color);
+    background-color: transparent;
+}
+
 .c4g-router-profile-wrapper .c4g-active ul {
     color: rgba(24, 61, 93,.8);
     color: var(--main-color);
 }
 
-.c4g-router-profile-wrapper .c4g-active button,
-.c4g-router-profile-wrapper button.c4g-active {
+.c4g-router-profile-wrapper .c4g-active button{
     color: rgba(0,155,222,.5);
     color: var(--font-color);
     background-color: var(--main-color);
@@ -562,18 +579,6 @@ Router panel
     padding: 0px;
 }
 
-button.c4g-router-position, button.c4g-router-input-clear {
-    padding: 1px 1px 0 0;
-    height: 28px;
-    width: 35px;
-    font-size: 15px;
-}
-
-button.c4g-router-position:not(:last-child), button.c4g-router-input-clear:not(:last-child) {
-    margin: .2em .2em 0 0;
-}
-
-
 
 button.c4g-router-position:before, button.c4g-router-input-clear:before {
     font-family: 'Font Awesome 5 Free';
@@ -588,10 +593,6 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
     font-size: 20px;
 }
 
-.c4g-router-headline {
-    color: var(--font-color);
-    font-size: 20px;
-}
 
 /*
  * Router result container
@@ -720,7 +721,7 @@ button.c4g-router-extended-options:before, button.c4g-router-close:before {
 button.c4g-router-extended-options:before { content: "\f013";}
 button.c4g-router-close:before { content: "\f00d"; }
 
-button.c4g-router-extended-options, button.c4g-router-close {
+button.c4g-router-extended-options {
     background: none;
     border: none;
     outline: none;
@@ -733,7 +734,6 @@ button.c4g-router-extended-options, button.c4g-router-close {
 }
 
 button.c4g-router-extended-options { right: 35px; }
-button.c4g-router-close { right: 5px; }
 
 button.c4g-router-over, button.c4g-router-switch{
     font-size: 15px;
