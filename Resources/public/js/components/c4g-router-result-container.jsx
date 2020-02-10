@@ -27,6 +27,22 @@ export class RouterResultContainer extends Component {
     this.state = {
       mode: "instr"
     };
+    this.profileTranslation = {
+      0: "car",
+      1: "hgv",
+      2: "bike",
+      3: "bike",
+      4: "bike",
+      5: "bike",
+      6: "bike",
+      7: "bike",
+      8: "foot",
+      9: "foot",
+      10: "wheelchair",
+      11: "hgv",
+      12: "scooter",
+      13: "scooter"
+    };
   }
 
   setResultInstr(event) {
@@ -60,9 +76,9 @@ export class RouterResultContainer extends Component {
       instructions = this.props.routerInstructions.instructions;
       time = toHumanTime(this.props.routerInstructions.time);
       distance = toHumanDistance(this.props.routerInstructions.distance);
-      profile = this.props.routerInstructions.instructions[0].travel_type;
+      profile = <button className={"c4g-router-profile-" + this.profileTranslation[this.props.profile]}/>;
     } else if (this.props.featureList && this.props.mode === "area") {
-      profile = this.props.profile;
+      profile = <button className={"c4g-router-profile-" + this.profileTranslation[this.props.profile]}/>;
       detour = this.props.detour;
       featureCount = this.props.featureList.features.length;
     }
@@ -104,17 +120,6 @@ export class RouterResultContainer extends Component {
         </div>
       );
     }
-
-    // if (routerHeaderContent) {
-    //   // let detailBtnClass = "c4g-beach-options";
-    //   // let detailBtnCb = this.props.toggleDetailOpen;
-    //   let closeBtnClass = "c4g-titlebar-close";
-    //   let closeBtnCb = () => this.props.setOpen(false);
-    //   routerHeader = (<Titlebar wrapperClass={"c4g-router-results-header c4g-beach-header"} header={this.props.headline} headerClass={"c4g-router-results-headline c4g-beach-header-headline"}
-    //                             detailBtnClass={""} detailBtnCb={""} closeBtnClass={closeBtnClass} closeBtnCb={closeBtnCb}>
-    //     {routerHeaderContent}
-    //   </Titlebar>);
-    // }
 
     let resultSwitcher = "";
     if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.mode === "route") {
