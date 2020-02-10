@@ -504,6 +504,19 @@ span.c4g-active:hover ul {
 /*    color: rgba(24, 61, 93,.8);*/
 /*    color: var(--main-color);*/
 /*}*/
+
+button.c4g-router-hide-form-button:before {
+    content: "\f085";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+button.c4g-router-show-results-button:before {
+    content: "\f0ca";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
 button.c4g-router-switch:before {
     content: "\f0dc";
     font-family: 'Font Awesome 5 Free';
@@ -621,15 +634,12 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
     height: max-content;
 }
 
-
+/*
 .c4g-route-instructions-wrapper, .c4g-route-feature-wrapper {
     max-height: calc(var(--map-height) - 40px - 80px - 38px - .4em - 10px - 1px);
     overflow-y: scroll;
-    margin: 80px 0 0 0;
-    border-top: 1px solid var(--font-color);
-    padding: 10px 0 0 0;
     word-break: break-word;
-}
+}*/
 
 .c4g-router-mode-switch {
     /*position: absolute;*/
@@ -741,6 +751,14 @@ button.c4g-router-over, button.c4g-router-switch{
     padding: 2px 0 0 0;
     width: 35px;
     height: 23px;
+}
+
+.c4g-router-input-content > div >label {
+    display: block;
+}
+
+.c4g-router-input-content > div {
+    margin-top: .4em;
 }
 
 .c4g-router-layer-value-selection > button.c4g-active {
