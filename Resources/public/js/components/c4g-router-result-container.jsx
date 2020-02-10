@@ -57,41 +57,25 @@ export class RouterResultContainer extends Component {
 
   render() {
     let result = "";
-    if ((this.state.mode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
-      result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController} routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource} routerHintSource={this.props.routerHintSource} open={this.props.open}/>
-    } else if (((this.state.mode === "feat" || this.props.mode === "area") || (!this.props.routerInstructions && this.props.featureList))) {
-      result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId}
-                                  routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea}
-                                  featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}
-                                  layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea}
-      />
-    }
+
     let instructions = [];
     let time = "";
     let distance = "";
-    let profile = "";
     let detour = "";
     let featureCount = "";
     if (this.props.routerInstructions && this.props.routerInstructions.instructions && this.props.mode === "route") {
       instructions = this.props.routerInstructions.instructions;
       time = toHumanTime(this.props.routerInstructions.time);
       distance = toHumanDistance(this.props.routerInstructions.distance);
-      profile = <button className={"c4g-router-profile-" + this.profileTranslation[this.props.profile]}/>;
     } else if (this.props.featureList && this.props.mode === "area") {
-      profile = <button className={"c4g-router-profile-" + this.profileTranslation[this.props.profile]}/>;
       detour = this.props.detour;
       featureCount = this.props.featureList.features.length;
     }
 
-    let routerHeader = "";
     let routerHeaderContent = "";
-    if ((time && distance && profile) && this.props.mode === "route") {
+    if ((time && distance) && this.props.mode === "route") {
       routerHeaderContent = (
         <div className="c4g-router-instructions-header">
-          <div className="c4g-router-route-profile">
-            <label>{this.props.lang.ROUTER_VIEW_LABEL_PROFILE}</label>
-            <em>{profile}</em>
-          </div>
           <div className="c4g-router-route-time">
             <label>{this.props.lang.ROUTER_VIEW_LABEL_TIME}</label>
             <em>{time}</em>
@@ -102,13 +86,9 @@ export class RouterResultContainer extends Component {
           </div>
         </div>
       );
-    } else if ((detour && featureCount && profile) && this.props.mode === "area") {
+    } else if ((detour && featureCount) && this.props.mode === "area") {
       routerHeaderContent = (
         <div className="c4g-router-instructions-header">
-          <div className="c4g-router-area-profile">
-            <label>{this.props.lang.AREA_PROFILE}:</label>
-            <em>{profile}</em>
-          </div>
           <div className="c4g-router-area-detour">
             <label>{this.props.lang.AREA_DETOUR}:</label>
             <em>{detour} km</em>
@@ -130,12 +110,21 @@ export class RouterResultContainer extends Component {
             </div>
         );
     }
+    if ((this.state.mode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
+      result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController}
+                                            routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource}
+                                            routerHintSource={this.props.routerHintSource} open={this.props.open} header={routerHeaderContent} switcher={resultSwitcher}/>
+    } else if (((this.state.mode === "feat" || this.props.mode === "area") || (!this.props.routerInstructions && this.props.featureList))) {
+      result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId}
+                                  routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea}
+                                  featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}
+                                  layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea} header={routerHeaderContent} switcher={resultSwitcher}
+      />
+    }
     if (this.props.open) {
       return (
         <div className={this.props.className + (this.props.open ? " c4g-open" : " c4g-close")
         + (this.props.open ? " c4g-details-open" : "")}>
-          {routerHeaderContent}
-          {resultSwitcher}
           {result}
         </div>
       );

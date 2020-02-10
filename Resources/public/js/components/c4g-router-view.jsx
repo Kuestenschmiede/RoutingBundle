@@ -154,6 +154,7 @@ export class RouterView extends Component {
   }
 
   render() {
+    const scope = this;
     const mapData = this.props.mapController.data;
     let sources = {
       waySource: this.state.routerWaySource,

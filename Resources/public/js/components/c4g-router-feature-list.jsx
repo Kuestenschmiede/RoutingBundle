@@ -36,6 +36,8 @@ export class RouterFeatureList extends Component {
 
     return (
       <div className={this.props.className}>
+        {this.props.header}
+        {this.props.switcher}
         <ul>
           {sortedFeatures.map((feature, index) => {
             return <RouterFeatureListItem feature={feature} type={this.props.featureList.type} active={this.props.activeId == feature.id}
