@@ -54,8 +54,8 @@ export class RouterControls extends HorizontalPanel {
     let modeSwitcher = "";
     if (this.props.router.props.mapController.data.areaSearch && !this.props.router.props.mapController.data.areaSearchOnly) {
       modeSwitcher = <div className="c4g-router-mode-switch">
-        <button id="c4g-router-button-route" onMouseUp={this.setRouteMode}>Route</button>
-        <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
+        <button id="c4g-router-button-route" className={(this.props.mode === "route" ? "c4g-active" : "c4g-inactive")} onMouseUp={this.setRouteMode}>Route</button>
+        <button id="c4g-router-button-area" className={(this.props.mode === "area" ? "c4g-active" : "c4g-inactive")} onMouseUp={this.setAreaMode}>Area</button>
       </div>;
     }
 

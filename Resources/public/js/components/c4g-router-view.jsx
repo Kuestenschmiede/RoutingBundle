@@ -213,8 +213,8 @@ export class RouterView extends Component {
                        detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
           <div className={"c4g-router-switcher"}>
             <div>
-            <button className={"c4g-router-hide-form-button"} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}}/>
-            <button className={"c4g-router-show-results-button"} onMouseUp={() => {this.setState({openResults: !this.state.openResults})}}/>
+            <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}}/>
+            <button className={"c4g-router-show-results-button " + (this.state.openResults ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openResults: !this.state.openResults})}}/>
             </div>
             <button className={"c4g-router-profile-" + this.profileTranslation[this.state.currentProfile]}/>
             {swapButton}
