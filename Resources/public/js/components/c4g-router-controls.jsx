@@ -59,8 +59,6 @@ export class RouterControls extends HorizontalPanel {
       </div>;
     }
 
-
-
     if (this.state.showForm) {
       return (
         <div className={className}>

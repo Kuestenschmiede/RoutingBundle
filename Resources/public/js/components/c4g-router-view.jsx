@@ -221,7 +221,7 @@ export class RouterView extends Component {
             {overButton}
           </div>
         </React.Fragment>
-        <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles}
+        <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles} className={"c4g-router-panel"}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()} switchTargets={this.props.mapController.data.enableTargetSwitch}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
           mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} enableOverPoints={this.props.mapController.data.enableOverPoints}
