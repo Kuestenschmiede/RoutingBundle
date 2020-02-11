@@ -221,11 +221,6 @@ div.area .c4g-router-input-wrapper > div {
     padding: .2em;
 }
 
-.buttonbar {
-    padding: .2em;
-    text-align: left;
-}
-
 .c4g-router-profile-wrapper {
     display: block;
     margin-top: .2em;
@@ -255,10 +250,16 @@ div.area .c4g-router-input-wrapper > div {
     width: 100px;
 }
 
+.c4g-router-layer-value-selection button:not(.c4g-active) {
+    color: var(--main-color);
+    background-color: var(--font-color);
+}
+
 .c4g-router-layer-value-selection button {
     padding: 5px 10px;
-    width: 98px;
-    margin-top: 10px;
+    border: none;
+    outline: none;
+    cursor: pointer;
 }
 
 .c4g-router-layer-value-selection button:last-child{
@@ -268,10 +269,12 @@ div.area .c4g-router-input-wrapper > div {
 select.c4g-router-layer-selection {
     display: inline-block;
     width: 100%;
-    padding: 5px 10px;
+    padding: .2em .4em;
+    border: none;
+    outline: none;
     background-color: var(--font-color);
     color: var(--main-color);
-    margin: 10px 10% 10px 0;
+    margin: .4em 0;
     vertical-align: text-bottom;
 }
 
@@ -689,6 +692,9 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
 .c4g-router-result-container > div > div[class*=instruction] {
     padding: .2em 0;
 }
+.c4g-router-result-container > div > div[class$=instruction] div:nth-child(2){
+    max-width: calc(100% - 65px - .2em - 100px);
+}
 
 .c4g-router-result-container > div > div[class*=instruction] > div:not(:last-child) {
     margin-right: .4em;
@@ -763,14 +769,14 @@ button.c4g-router-over, button.c4g-router-switch{
     display: block;
 }
 
-.c4g-router-input-content > div {
-    margin-top: .4em;
+.c4g-router-layer-value-selection > button.c4g-active {
+    color: var(--font-color);
+    background: none;
 }
 
-.c4g-router-layer-value-selection > button.c4g-active {
-    color: rgba(0,155,222,.5);
-    color: var(--font-color);
-    background-color: var(--main-color);
+.c4g-router-layer-value-selection > button.c4g-active{
+    font-weight: bold;
+    cursor: not-allowed;
 }
 
 .c4g-router-instruction img{
@@ -816,4 +822,8 @@ begin new styling, ready to be reworked
 /* Handle */
 .c4g-router-result-container::-webkit-scrollbar-thumb {
     background: var(--font-color);
+}
+
+div[class*=c4g-router-input] > div > input {
+    max-width: calc(100% - ((32px + .2em)*2));
 }
