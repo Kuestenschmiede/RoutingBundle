@@ -29,7 +29,9 @@ export class RouterControls extends HorizontalPanel {
     this.setAreaMode = this.setAreaMode.bind(this);
     this.close = this.close.bind(this);
 
-
+    if (props.mapController.data.router_div) {
+      document.querySelector(".c4g-router-panel-button-top").className += " c4g-external";
+    }
   }
 
   setRouteMode(event) {

@@ -60,9 +60,20 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
     let openRouter = mapController.data.router_open;
 
     if (!mapController.routerContainer) {
-      mapController.routerContainer = document.createElement('div');
-      mapController.routerContainer.className = "c4g-sideboard c4g-router-container-right " + (openRouter ? "c4g-open" : "c4g-close");
-      jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
+      if (mapController.data.router_div) {
+        mapController.routerContainer = document.querySelector("." + mapController.data.router_div);
+        if (!mapController.routerContainer) {
+          mapController.routerContainer = document.createElement('div');
+          mapController.routerContainer.className = "c4g-sideboard c4g-router-container-right " + (openRouter ? "c4g-open" : "c4g-close");
+          jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
+        } else {
+          mapController.routerContainer.className += " c4g-external";
+        }
+      } else {
+        mapController.routerContainer = document.createElement('div');
+        mapController.routerContainer.className = "c4g-sideboard c4g-router-container-right " + (openRouter ? "c4g-open" : "c4g-close");
+        jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
+      }
     }
     let arrComponents = params.arrComps;
     arrComponents.push(ReactDOM.createPortal(React.createElement(RouterView, routerControlProps), mapController.routerContainer));
