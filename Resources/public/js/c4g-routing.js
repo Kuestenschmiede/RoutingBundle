@@ -33,9 +33,7 @@ window.c4gMapsHooks = window.c4gMapsHooks || {};
 window.c4gMapsHooks.mapController_addControls = window.c4gMapsHooks.mapController_addControls || [];
 window.c4gMapsHooks.mapController_addControls.push(function(params){
   let mapController = params.mapController;
-  if(mapController.data.router_enable){
-    // mapController.map.removeControl(mapController.controls.router);
-
+  if (mapController.data.router_enable && params.component === "router") {
     if (typeof mapController.data !== 'undefined') {
       if (mapController.data.lang === "de") {
         langRouteConstants = routingConstantsGerman;
@@ -55,15 +53,20 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       detourRoute: mapController.data.detourRoute,
       detourArea: mapController.data.detourArea,
       containerAddresses: containerAddresses,
-      langConstants: langRouteConstants
+      langConstants: langRouteConstants,
+      ref: (node) => {mapController.components.router = node;},
+      key: 22
     };
     let openRouter = mapController.data.router_open;
 
-    mapController.routerContainer = document.createElement('div');
-    mapController.routerContainer.className = "c4g-sideboard c4g-router-container-right " + (openRouter ? "c4g-open" : "c4g-close");
-    mapController.components = mapController.components || {};
-    mapController.components.router = ReactDOM.render(React.createElement(RouterView, routerControlProps), mapController.routerContainer);
-    jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
+    if (!mapController.routerContainer) {
+      mapController.routerContainer = document.createElement('div');
+      mapController.routerContainer.className = "c4g-sideboard c4g-router-container-right " + (openRouter ? "c4g-open" : "c4g-close");
+      jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
+    }
+    let arrComponents = params.arrComps;
+    arrComponents.push(ReactDOM.createPortal(React.createElement(RouterView, routerControlProps), mapController.routerContainer));
+    params.arrComps = arrComponents;
   }
 });
 
