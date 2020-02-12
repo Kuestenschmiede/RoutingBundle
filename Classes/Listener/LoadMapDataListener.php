@@ -19,6 +19,7 @@ use con4gis\MapsBundle\Classes\Services\LayerService;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
+use con4gis\MapsBundle\Resources\contao\modules\ExternalMapElement;
 use con4gis\RoutingBundle\Entity\RoutingConfiguration;
 use Contao\System;
 use Doctrine\ORM\EntityManager;
@@ -56,6 +57,11 @@ class LoadMapDataListener
         $mapFunctions = unserialize($profile->mapFunctions);
         $buttons = array_flip($mapFunctions);
         $enabled = array_key_exists('routing', $buttons) ? $buttons['routing'] + 1 : 0;
+        $externalComponents = unserialize($profile->external_elements);
+        $externalClasses = ExternalMapElement::$arrClasses;
+        if (in_array('routing', $externalComponents)) {
+            $mapData['router_div'] = $externalClasses['routing'];
+        }
         if ($enabled) {
             $routerConfig = $this->entityManager->getRepository(RoutingConfiguration::class)
                 ->findOneBy(['id' => $profile->routerConfig]);
