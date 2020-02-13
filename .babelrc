@@ -10,7 +10,10 @@
   "plugins": [
     "transform-react-jsx",
     "transform-class-properties",
-    "transform-es2015-modules-commonjs"
+    "transform-es2015-modules-commonjs",
+    ["transform-runtime", {
+      "regenerator": true
+    }]
   ],
   "ignore": [
     "*/node_modules,*/"
