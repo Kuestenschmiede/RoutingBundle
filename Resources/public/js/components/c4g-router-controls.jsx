@@ -16,6 +16,7 @@ import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/c
 import {RouterAddressInput} from "./c4g-router-address-input.jsx"
 import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx"
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
+import {getLanguage} from "./../routing-constant-i18n";
 
 export class RouterControls extends HorizontalPanel {
 
@@ -28,6 +29,8 @@ export class RouterControls extends HorizontalPanel {
     this.setRouteMode = this.setRouteMode.bind(this);
     this.setAreaMode = this.setAreaMode.bind(this);
     this.close = this.close.bind(this);
+
+    this.langConstants = getLanguage(props.mapController.data);
 
     if (props.mapController.data.router_div) {
       document.querySelector(".c4g-router-panel-button-top").className += " c4g-external";
@@ -56,8 +59,8 @@ export class RouterControls extends HorizontalPanel {
     let modeSwitcher = "";
     if (this.props.router.props.mapController.data.areaSearch && !this.props.router.props.mapController.data.areaSearchOnly) {
       modeSwitcher = <div className="c4g-router-mode-switch">
-        <button id="c4g-router-button-route" className={(this.props.mode === "route" ? "c4g-active" : "c4g-inactive")} onMouseUp={this.setRouteMode}>Route</button>
-        <button id="c4g-router-button-area" className={(this.props.mode === "area" ? "c4g-active" : "c4g-inactive")} onMouseUp={this.setAreaMode}>Area</button>
+        <button id="c4g-router-button-route" className={(this.props.mode === "route" ? "c4g-active" : "c4g-inactive")} onMouseUp={this.setRouteMode} title={this.langConstants.ROUTER_FIND_ROUTE}>Route</button>
+        <button id="c4g-router-button-area" className={(this.props.mode === "area" ? "c4g-active" : "c4g-inactive")} onMouseUp={this.setAreaMode} title={this.langConstants.AREA_NAME}>Area</button>
       </div>;
     }
 

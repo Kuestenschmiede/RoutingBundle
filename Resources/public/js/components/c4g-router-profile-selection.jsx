@@ -12,6 +12,7 @@
  */
 
 import React, { Component } from "react";
+import {getLanguage} from "./../routing-constant-i18n";
 
 export class RouterProfileSelection extends Component {
 
@@ -36,6 +37,17 @@ export class RouterProfileSelection extends Component {
       12: "scooter",
       13: "scooter"
     };
+
+    this.languageConstants = getLanguage(props.router.props.mapController.data);
+
+    this.profileLang = {
+      "car": this.languageConstants.CAR,
+      "hgv": this.languageConstants.TRUCK,
+      "bike": this.languageConstants.BIKE,
+      "foot": this.languageConstants.WALK,
+      "wheelchair": this.languageConstants.WHEEL,
+      "scooter": this.languageConstants.SCOOT
+    };
   }
 
   setProfile(profile) {
@@ -51,7 +63,7 @@ export class RouterProfileSelection extends Component {
           {this.props.profiles.map((item) => {
             return <button onMouseUp={() => this.setProfile(item)}
                            className={"c4g-router-profile-" + this.profileTranslation[item.id] + (parseInt(item.id, 10) === this.props.currentProfile ? " c4g-active" : " c4g-inactive")}
-                           key={item.id}/>
+                           key={item.id} title={this.profileLang[this.profileTranslation[item.id]]}/>
           })}
         </div>
       );

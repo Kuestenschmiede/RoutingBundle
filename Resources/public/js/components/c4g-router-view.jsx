@@ -207,10 +207,10 @@ export class RouterView extends Component {
     if (this.state.featureList.features.length > 0
       && ((this.state.fromAddress && this.state.toAddress && this.state.mode === "route")
         || this.state.areaAddress && this.state.mode === "area")) {
-      switcherButtons.push(<button id="c4g-router-button-area" onMouseUp={this.setResultFeat} key={1}>Features</button>);
+      switcherButtons.push(<button id="c4g-router-button-feature" onMouseUp={this.setResultFeat} key={1} title={"Ergebnisliste anzeigen"}>Features</button>);
     }
     if (instructions && (instructions.length > 0) && this.state.mode === "route") {
-      switcherButtons.push(<button id="c4g-router-button-route" onMouseUp={this.setResultInstr} key={2}>Instructions</button>);
+      switcherButtons.push(<button id="c4g-router-button-instructions" onMouseUp={this.setResultInstr} key={2} title={"Routenhinweise anzeigen"}>Instructions</button>);
     }
     if (switcherButtons.length > 0) {
       resultSwitcher = (
@@ -227,7 +227,7 @@ export class RouterView extends Component {
                        detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
           <div className={"c4g-router-switcher"}>
             <div>
-            <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}}/>
+            <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}} title={"Routeneinstellungen"}/>
               {resultSwitcher}
             </div>
             <RouterProfileSelection profiles={this.state.profiles} router={this} currentProfile={this.state.currentProfile}/>
