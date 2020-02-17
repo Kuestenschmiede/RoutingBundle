@@ -187,20 +187,7 @@ export class RouterView extends Component {
 
     const overSettings = this.createOverSettings();
 
-    const swapFunction = function() {
-      scope.swapPoints();
-      const tmpFrom = jQuery("#routingFrom").val();
-      jQuery("#routingFrom").val(jQuery("#routingTo").val());
-      jQuery("#routingTo").val(tmpFrom);
-    };
-    let swapButton = "";
-    if (this.props.mapController.data.enableTargetSwitch && this.state.mode === "route") {
-      swapButton = <button className="c4g-router-switch" onMouseUp={swapFunction} />;
-    }
-    let overButton = "";
-    if (this.props.mapController.data.enableOverPoints && this.state.mode === "route") {
-      overButton = <button className="c4g-router-over" onMouseUp={overSettings.overFunction} />;
-    }
+
     let headline = "";
     if (this.state.mode === "route") {
       headline = this.props.mapController.data.routerHeadline;
@@ -219,14 +206,12 @@ export class RouterView extends Component {
             <button className={"c4g-router-show-results-button " + (this.state.openResults ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openResults: !this.state.openResults})}}/>
             </div>
             <button className={"c4g-router-profile-" + this.profileTranslation[this.state.currentProfile]}/>
-            {swapButton}
-            {overButton}
           </div>
         </React.Fragment>
         <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles} className={"c4g-router-panel"}
           objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={overSettings} enableOverPoints={this.props.mapController.data.enableOverPoints}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
-          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress}
+          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} switchTargets={this.props.mapController.data.enableTargetSwitch}
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} target={this.props.target}
         />
         <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}

@@ -56,6 +56,21 @@ export class RouterAddressInput extends Component {
       toClsAddition = " invisible";
     }
 
+    const swapFunction = function() {
+      scope.props.overSettings.swapPoints();
+      const tmpFrom = jQuery("#routingFrom").val();
+      jQuery("#routingFrom").val(jQuery("#routingTo").val());
+      jQuery("#routingTo").val(tmpFrom);
+    };
+    let swapButton = "";
+    if (this.props.switchTargets && this.props.mode === "route") {
+      swapButton = <button className="c4g-router-switch" onMouseUp={swapFunction} />;
+    }
+    let overButton = "";
+    if (this.props.enableOverPoints && this.props.mode === "route") {
+      overButton = <button className="c4g-router-over" onMouseUp={this.props.overSettings.overFunction} />;
+    }
+
     input = <React.Fragment>
       <RouterAddressField className={"c4g-router-input-from" + fromClsAddition} name="routingFrom" label="Start"
                           cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.from}
@@ -80,6 +95,8 @@ export class RouterAddressInput extends Component {
     }
     if (this.props.mode === "route") {
       details = <div className="buttonbar">
+        {overButton}
+        {swapButton}
         {featureSearchControls}
       </div>;
     } else if (this.props.mode === "area") {
