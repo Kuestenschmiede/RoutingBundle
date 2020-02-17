@@ -37,7 +37,7 @@ export class RouterAddressInput extends Component {
     const scope = this;
 
     let overForm = "";
-    if (this.props.detailsEnabled && this.props.mode === "route") {
+    if (this.props.enableOverPoints && this.props.mode === "route") {
       overForm = Object.keys(this.props.overSettings.overPoints).map((item) => {
           return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label="Zwischenziel"
                                      cssId={"routingOver-" + item} objFunctions={this.props.overSettings.objFunctions} objSettings={this.props.objSettings}

@@ -185,19 +185,21 @@ export class RouterView extends Component {
       area: this.resetAreaPoint
     };
 
+    const overSettings = this.createOverSettings();
+
     const swapFunction = function() {
-      scope.props.overSettings.swapFunction();
+      scope.swapPoints();
       const tmpFrom = jQuery("#routingFrom").val();
       jQuery("#routingFrom").val(jQuery("#routingTo").val());
       jQuery("#routingTo").val(tmpFrom);
     };
     let swapButton = "";
-    if (this.props.switchTargets && this.props.mode === "route") {
+    if (this.props.mapController.data.enableTargetSwitch && this.state.mode === "route") {
       swapButton = <button className="c4g-router-switch" onMouseUp={swapFunction} />;
     }
     let overButton = "";
-    if (this.props.enableOverPoints && this.props.mode === "route") {
-      overButton = <button className="c4g-router-over" onMouseUp={this.state.overSettings.overFunction} />;
+    if (this.props.mapController.data.enableOverPoints && this.state.mode === "route") {
+      overButton = <button className="c4g-router-over" onMouseUp={overSettings.overFunction} />;
     }
     let headline = "";
     if (this.state.mode === "route") {
@@ -222,9 +224,9 @@ export class RouterView extends Component {
           </div>
         </React.Fragment>
         <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles} className={"c4g-router-panel"}
-          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()} switchTargets={this.props.mapController.data.enableTargetSwitch}
+          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={overSettings} enableOverPoints={this.props.mapController.data.enableOverPoints}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
-          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} enableOverPoints={this.props.mapController.data.enableOverPoints}
+          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress}
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} target={this.props.target}
         />
         <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
