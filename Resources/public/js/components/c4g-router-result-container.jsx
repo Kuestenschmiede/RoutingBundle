@@ -21,12 +21,8 @@ export class RouterResultContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.setResultInstr = this.setResultInstr.bind(this);
-    this.setResultFeat = this.setResultFeat.bind(this);
+
     this.clickControl = this.clickControl.bind(this);
-    this.state = {
-      mode: "instr"
-    };
     this.profileTranslation = {
       0: "car",
       1: "hgv",
@@ -45,26 +41,15 @@ export class RouterResultContainer extends Component {
     };
   }
 
-  setResultInstr(event) {
-    event.stopPropagation();
-    this.setState({mode: "instr"});
-  }
 
-  setResultFeat(event) {
-    event.stopPropagation();
-    this.setState({mode: "feat"});
-  }
 
   render() {
     let result = "";
-
-    let instructions = [];
     let time = "";
     let distance = "";
     let detour = "";
     let featureCount = "";
     if (this.props.routerInstructions && this.props.routerInstructions.instructions && this.props.mode === "route") {
-      instructions = this.props.routerInstructions.instructions;
       time = toHumanTime(this.props.routerInstructions.time);
       distance = toHumanDistance(this.props.routerInstructions.distance);
     } else if (this.props.featureList && this.props.mode === "area") {
@@ -101,24 +86,16 @@ export class RouterResultContainer extends Component {
       );
     }
 
-    let resultSwitcher = "";
-    if ((instructions.length > 0 || this.props.featureList.features.length > 0) && this.props.mode === "route") {
-        resultSwitcher = (
-            <div className="c4g-router-mode-switch">
-                <button id="c4g-router-button-route" onMouseUp={this.setResultInstr}>Instructions</button>
-                <button id="c4g-router-button-area" onMouseUp={this.setResultFeat}>Features</button>
-            </div>
-        );
-    }
-    if ((this.state.mode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
+
+    if ((this.props.resultMode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
       result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController}
                                             routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource}
-                                            routerHintSource={this.props.routerHintSource} open={this.props.open} header={routerHeaderContent} switcher={resultSwitcher}/>
-    } else if (((this.state.mode === "feat" || this.props.mode === "area") || (!this.props.routerInstructions && this.props.featureList))) {
+                                            routerHintSource={this.props.routerHintSource} open={this.props.open} header={routerHeaderContent}/>
+    } else if (((this.props.resultMode === "feat" || this.props.mode === "area") || (!this.props.routerInstructions && this.props.featureList))) {
       result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId}
                                   routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea}
                                   featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}
-                                  layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea} header={routerHeaderContent} switcher={resultSwitcher}
+                                  layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea} header={routerHeaderContent}
       />
     }
     if (this.props.open) {
@@ -131,7 +108,6 @@ export class RouterResultContainer extends Component {
     } else {
       return null;
     }
-
   }
 
   componentDidUpdate() {
@@ -151,8 +127,8 @@ export class RouterResultContainer extends Component {
       }
     }
 
-    if (this.props.mode === "area" && this.state.mode !== "feat") {
-      this.setState({mode: "feat"});
+    if (this.props.mode === "area" && this.props.resultMode !== "feat") {
+      this.props.router.setState({resultMode: "feat"});
     }
   }
 

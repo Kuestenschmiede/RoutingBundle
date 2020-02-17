@@ -51,6 +51,8 @@ export class RouterView extends Component {
     this.resetToPoint = this.resetToPoint.bind(this);
     this.resetAreaPoint = this.resetAreaPoint.bind(this);
     this.toggleResultDetails = this.toggleResultDetails.bind(this);
+    this.setResultInstr = this.setResultInstr.bind(this);
+    this.setResultFeat = this.setResultFeat.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
     this.languageConstants = getLanguage(mapController.data);
@@ -128,7 +130,9 @@ export class RouterView extends Component {
       profiles: arrProfiles,
       currentProfile: 0,
       open: (this.props.mapController.data.router_open === "1") || false,
-      openSettings: (this.props.mapController.data.router_open === "1") || false
+      openSettings: (this.props.mapController.data.router_open === "1") || false,
+      routerInstructions: {},
+      resultMode: "instr"
     };
     this.popupRouteButtonWrapper = ""; // this is needed because of the different popup handlings
     this.swapPoints = this.swapPoints.bind(this);
@@ -196,6 +200,24 @@ export class RouterView extends Component {
       headline = this.props.mapController.data.areaHeadline;
     }
 
+    let instructions = this.state.routerInstructions.instructions;
+
+    let resultSwitcher = "";
+    let switcherButtons = [];
+    if (this.state.featureList.features.length > 0) {
+      switcherButtons.push(<button id="c4g-router-button-area" onMouseUp={this.setResultFeat}>Features</button>);
+    }
+    if (instructions && (instructions.length > 0) && this.state.mode === "route") {
+      switcherButtons.push(<button id="c4g-router-button-route" onMouseUp={this.setResultInstr}>Instructions</button>);
+    }
+    if (switcherButtons.length > 0) {
+      resultSwitcher = (
+        <div className="c4g-router-mode-switch">
+          {switcherButtons}
+        </div>
+      );
+    }
+
     return (
       <div className={"c4g-router-wrapper"}>
         <React.Fragment>
@@ -204,7 +226,7 @@ export class RouterView extends Component {
           <div className={"c4g-router-switcher"}>
             <div>
             <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}}/>
-            <button className={"c4g-router-show-results-button " + (this.state.openResults ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openResults: !this.state.openResults})}}/>
+              {resultSwitcher}
             </div>
             <RouterProfileSelection profiles={this.state.profiles} router={this} currentProfile={this.state.currentProfile}/>
           </div>
@@ -217,12 +239,22 @@ export class RouterView extends Component {
         />
         <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
-          layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea}
+          layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea} resultMode={this.state.resultMode} router={this}
            layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
           activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
         />
       </div>
     );
+  }
+
+  setResultInstr(event) {
+    event.stopPropagation();
+    this.setState({resultMode: "instr", openResults: true});
+  }
+
+  setResultFeat(event) {
+    event.stopPropagation();
+    this.setState({resultMode: "feat", openResults: true});
   }
 
   close() {
