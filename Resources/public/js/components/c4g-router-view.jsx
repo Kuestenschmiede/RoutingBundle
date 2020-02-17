@@ -31,6 +31,7 @@ import {RoutingPermalink} from "./../c4g-routing-permalink";
 import {getLanguage} from "./../routing-constant-i18n";
 import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
+import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx";
 
 const osmtogeojson = require('osmtogeojson');
 
@@ -205,7 +206,7 @@ export class RouterView extends Component {
             <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}}/>
             <button className={"c4g-router-show-results-button " + (this.state.openResults ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openResults: !this.state.openResults})}}/>
             </div>
-            <button className={"c4g-router-profile-" + this.profileTranslation[this.state.currentProfile]}/>
+            <RouterProfileSelection profiles={this.state.profiles} router={this} currentProfile={this.state.currentProfile}/>
           </div>
         </React.Fragment>
         <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles} className={"c4g-router-panel"}
