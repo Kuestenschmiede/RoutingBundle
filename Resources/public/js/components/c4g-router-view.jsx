@@ -204,11 +204,13 @@ export class RouterView extends Component {
 
     let resultSwitcher = "";
     let switcherButtons = [];
-    if (this.state.featureList.features.length > 0) {
-      switcherButtons.push(<button id="c4g-router-button-area" onMouseUp={this.setResultFeat}>Features</button>);
+    if (this.state.featureList.features.length > 0
+      && ((this.state.fromAddress && this.state.toAddress && this.state.mode === "route")
+        || this.state.areaAddress && this.state.mode === "area")) {
+      switcherButtons.push(<button id="c4g-router-button-area" onMouseUp={this.setResultFeat} key={1}>Features</button>);
     }
     if (instructions && (instructions.length > 0) && this.state.mode === "route") {
-      switcherButtons.push(<button id="c4g-router-button-route" onMouseUp={this.setResultInstr}>Instructions</button>);
+      switcherButtons.push(<button id="c4g-router-button-route" onMouseUp={this.setResultInstr} key={2}>Instructions</button>);
     }
     if (switcherButtons.length > 0) {
       resultSwitcher = (
@@ -334,6 +336,9 @@ export class RouterView extends Component {
     }
     if (!this.state.openSettings && !this.state.openResults && prevState.openResults) {
       this.setState({openResults: true});
+    }
+    if (this.state.mode === "route" && (!this.state.fromAddress || !this.state.toAddress) && this.state.openResults && prevState.mode === "area") {
+      this.setState({openResults: false});
     }
 
   }

@@ -71,15 +71,17 @@ export class RouterAddressInput extends Component {
       overButton = <button className="c4g-router-over" onMouseUp={this.props.overSettings.overFunction} />;
     }
 
+    let idx = this.props.overSettings.overPoints.length + 1;
+
     input = <React.Fragment>
-      <RouterAddressField className={"c4g-router-input-from" + fromClsAddition} name="routingFrom" label="Start"
+      <RouterAddressField className={"c4g-router-input-from" + fromClsAddition} name="routingFrom" label="Start" key={idx}
                           cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.from}
                           containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.fromAddress} router={this.props.router}/>
       {overForm}
-      <RouterAddressField className={"c4g-router-input-to" + toClsAddition} name="routingTo" label="Ziel"
+      <RouterAddressField className={"c4g-router-input-to" + toClsAddition} name="routingTo" label="Ziel" key={idx + 1}
                           cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.to}
                           containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.toAddress} router={this.props.router}/>
-      <RouterAddressField className={"c4g-router-input-area" + areaClsAddition} name="areaFrom" label="Zentrum"
+      <RouterAddressField className={"c4g-router-input-area" + areaClsAddition} name="areaFrom" label="Zentrum" key={idx + 2}
                           cssId="areaInput" objFunctions={this.props.objFunctions.areaFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.area}
                           containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.areaAddress} router={this.props.router}/>
     </React.Fragment>;
