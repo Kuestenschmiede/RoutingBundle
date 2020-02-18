@@ -668,10 +668,6 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
     cursor: pointer;
 }
 
-.c4g-router-mode-switch button:nth-child(2n) {
-    margin: 0 0 .4em .2em;
-}
-
 .c4g-router-content.c4g-close {
     display: none;
 }
@@ -758,11 +754,16 @@ button.c4g-router-extended-options {
 button.c4g-router-extended-options { right: 35px; }
 
 button.c4g-router-over, button.c4g-router-switch{
-    font-size: 15px;
-    margin-right: .2em;
-    padding: 2px 0 0 0;
-    width: 35px;
-    height: 23px;
+    height: 28px;
+    width: 32px;
+    border: none;
+    outline: none;
+    margin: .4em .2em 0 0;
+}
+
+button.c4g-router-over, button.c4g-router-switch {
+    color: var(--main-color);
+    background-color: var(--font-color);
 }
 
 .c4g-router-input-content > div >label {

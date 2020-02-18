@@ -207,10 +207,10 @@ export class RouterView extends Component {
     if (this.state.featureList.features.length > 0
       && ((this.state.fromAddress && this.state.toAddress && this.state.mode === "route")
         || this.state.areaAddress && this.state.mode === "area")) {
-      switcherButtons.push(<button id="c4g-router-button-feature" onMouseUp={this.setResultFeat} key={1} title={"Ergebnisliste anzeigen"}>Features</button>);
+      switcherButtons.push(<button id="c4g-router-button-feature" onMouseUp={this.setResultFeat} key={1} title={"Ergebnisliste anzeigen"}></button>);
     }
     if (instructions && (instructions.length > 0) && this.state.mode === "route") {
-      switcherButtons.push(<button id="c4g-router-button-instructions" onMouseUp={this.setResultInstr} key={2} title={"Routenhinweise anzeigen"}>Instructions</button>);
+      switcherButtons.push(<button id="c4g-router-button-instructions" onMouseUp={this.setResultInstr} key={2} title={"Routenhinweise anzeigen"}></button>);
     }
     if (switcherButtons.length > 0) {
       resultSwitcher = (
