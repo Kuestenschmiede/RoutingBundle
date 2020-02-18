@@ -127,6 +127,7 @@ class LoadMapDataListener
                 $mapData['showInstructions'] = $routerConfig->getShowInstructions();
                 $mapData['instructionLabel'] = $routerConfig->getInstructionLabel();
                 $mapData['initialMode'] = $routerConfig->getInitialMode();
+                $mapData['initialResultMode'] = $routerConfig->getInitialResultMode();
                 $mapData['routeStartButton'] = $routerConfig->getRouteStartButton();
                 $mapData['usePermalink'] = $routerConfig->getUsePermalink();
                 $mapData['hideFeaturesWithoutLabel'] = $routerConfig->getHideFeaturesWithoutLabel();
