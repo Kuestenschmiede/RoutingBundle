@@ -156,8 +156,10 @@ button.c4g-area-search:before {
     content: "\f5a0";
 }
 
-button.c4g-router-search:before {
+button#c4g-router-button-instructions:before {
     content: "\f4d7";
+    font-family: "Font Awesome 5 Free";
+    font-weight: bold;
 }
 
 .route-features-list-element.c4g-active {
@@ -224,16 +226,6 @@ div.area .c4g-router-input-wrapper > div {
 .c4g-router-profile-wrapper {
     display: block;
     margin-top: .2em;
-}
-
-.c4g-router-profile-wrapper button {
-    margin-right: .2em;
-    margin-top: .2em;
-    height: 28px;
-    width: 32px;
-    border: none;
-    outline: none;
-    vertical-align: top;
 }
 
 .c4g-router-profile-wrapper button.c4g-inactive {
@@ -521,7 +513,7 @@ button.c4g-router-hide-form-button:before {
     font-weight: 900;
 }
 
-button.c4g-router-show-results-button:before {
+button#c4g-router-button-feature:before {
     content: "\f0ca";
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
@@ -635,9 +627,14 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
 }
 
 .c4g-router-result-container {
+    width: 100%;
     transition: all 0.3s;
     max-height: calc(var(--map-height) - .4em - ((32px + .4em) * 2));
     overflow-y: auto;
+}
+
+.c4g-router-content {
+    width: calc(100% - .8em);
 }
 
 .c4g-router-result-container.c4g-close {
@@ -654,15 +651,6 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
     float: right;
     padding: 28px 10px 45px;
     position: static;
-}
-
-.c4g-router-panel.c4g-open .c4g-router-mode-switch button {
-    padding: 5px 10px;
-    width: 100%;
-    margin: 10px 0;
-    border: none;
-    outline: none;
-    cursor: pointer;
 }
 
 .c4g-router-panel.c4g-open .c4g-router-input-wrapper{
@@ -707,9 +695,6 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
 
 .c4g-router-result-container > div > div[class*=instruction] {
     padding: .2em 0;
-}
-.c4g-router-result-container > div > div[class$=instruction] div:nth-child(2){
-    max-width: calc(100% - 65px - .2em - 100px);
 }
 
 .c4g-router-result-container > div > div[class*=instruction] > div:not(:last-child) {
@@ -756,7 +741,6 @@ button.c4g-router-extended-options:before, button.c4g-router-close:before {
     font-weight: 900;
 }
 
-button.c4g-router-extended-options:before { content: "\f013";}
 button.c4g-router-close:before { content: "\f00d"; }
 
 button.c4g-router-extended-options {
@@ -807,14 +791,6 @@ div.invisible {
 /**
 begin new styling, ready to be reworked
  */
-.c4g-router-container-right {
-    position: absolute;
-    top: .2em;
-    height: calc(var(--map-height) - .4em);
-    min-width: 240px;
-    max-width: 42%;
-    background: var(--main-color);
-    z-index: 60;
 }
 .c4g-router-container-right.c4g-close {
     right: -100%;
