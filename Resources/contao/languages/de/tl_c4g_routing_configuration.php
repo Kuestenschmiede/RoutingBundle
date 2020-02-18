@@ -52,6 +52,7 @@ $GLOBALS['TL_LANG'][$strName]['areaHeadline'] = ['Überschrift Umkreissuche', 'S
 $GLOBALS['TL_LANG'][$strName]['areaHeadlineDefault'] = "Umkreissuche";
 $GLOBALS['TL_LANG'][$strName]['featureLabel'] = ['Buttontext für Ergebnisliste', 'Hier können sie den Buttontext für die Anzeige der Ergebnisliste angeben.'];
 $GLOBALS['TL_LANG'][$strName]['initialMode'] = ['Initiale Sicht', 'Wählen Sie aus, welche Sicht im Router initial angezeigt werden soll.'];
+$GLOBALS['TL_LANG'][$strName]['initialResultMode'] = ['Initiale Ergebnis-Sicht', 'Wählen Sie, ob nach einer Suche zunächst die Ergebnisliste oder die Routenhinweise angezeigt werden sollen.'];
 $GLOBALS['TL_LANG'][$strName]['minDetourArea'] = ['Minimaler Radius Gebietssuche (km)', 'Ab welcher Entfernung zum Standort soll gesucht werden?'];
 $GLOBALS['TL_LANG'][$strName]['maxDetourArea'] = ['Maximaler Radius Gebietssuche (km)', 'Bis zu welcher Entfernung zum Standort soll gesucht werden?'];
 $GLOBALS['TL_LANG'][$strName]['initialDetourArea'] = ['Initialer Radius Gebietssuche (km)', 'Welche Entfernung soll standardmäßig verwendet werden?'];
@@ -69,6 +70,9 @@ $GLOBALS['TL_LANG'][$strName]['pirate'] = ['Bist du ein Pirat?', 'Sprache auf Pi
  */
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['area'] = "Umkreissuche";
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['route'] = "Routensuche";
+
+$GLOBALS['TL_LANG'][$strName]['references_router_result_modes']['feat'] = "Ergebnisse";
+$GLOBALS['TL_LANG'][$strName]['references_router_result_modes']['instr'] = "Routenhinweise";
 
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x) (<a href="http://project-osrm.org" target="_blank" rel="noopener">Nutzungsbestimmungen</a>)';
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x) (<a href="http://project-osrm.org" target="_blank" rel="noopener">Nutzungsbestimmungen</a>)';

@@ -132,7 +132,7 @@ export class RouterView extends Component {
       open: (this.props.mapController.data.router_open === "1") || false,
       openSettings: (this.props.mapController.data.router_open === "1") || false,
       routerInstructions: {},
-      resultMode: "instr"
+      resultMode: props.mapController.data.initialResultMode || "instr"
     };
     this.popupRouteButtonWrapper = ""; // this is needed because of the different popup handlings
     this.swapPoints = this.swapPoints.bind(this);
