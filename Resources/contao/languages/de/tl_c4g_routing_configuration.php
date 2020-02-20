@@ -63,7 +63,7 @@ $GLOBALS['TL_LANG'][$strName]['areaCenterLocstyle'] = ['Lokationsstil Zentrum (U
 $GLOBALS['TL_LANG'][$strName]['priorityFeatures'] = ['Priorisierte Features', 'Die hier angegebene Anzahl an Features mit dem niedrigsten Wert für das Kartenlabel werden in der Karte anders dargestellt.'];
 $GLOBALS['TL_LANG'][$strName]['priorityLocstyle'] = ['Lokationsstil priorisierte Features', 'Geben Sie hier einen Lokationsstil an, in dem die priorisierten Features dargestellt werden.'];
 $GLOBALS['TL_LANG'][$strName]['usePermalink'] = ['Router-Permalink generieren', 'Aktivieren Sie diese Checkbox, um die aktuelle Routen- bzw. Umkreissuche in der URL zu speichern.'];
-$GLOBALS['TL_LANG'][$strName]['pirate'] = ['Bist du ein Pirat?', 'Sprache auf Pirat (Englisch) festsetzen.'];
+$GLOBALS['TL_LANG'][$strName]['pirate'] = ['Piratensprache einschalten', 'Sprache auf Pirat (Englisch) festsetzen.'];
 /**
  * References
  */
