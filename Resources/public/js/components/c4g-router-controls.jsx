@@ -16,6 +16,7 @@ import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/c
 import {RouterAddressInput} from "./c4g-router-address-input.jsx"
 import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx"
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
+import {getLanguage} from "./../routing-constant-i18n";
 
 export class RouterControls extends HorizontalPanel {
 
@@ -23,10 +24,17 @@ export class RouterControls extends HorizontalPanel {
     super(props);
 
     this.state.router = this.props.router;
+    this.state.showForm = true;
 
     this.setRouteMode = this.setRouteMode.bind(this);
     this.setAreaMode = this.setAreaMode.bind(this);
     this.close = this.close.bind(this);
+
+    this.langConstants = getLanguage(props.mapController.data);
+
+    if (props.mapController.data.router_div) {
+      document.querySelector(".c4g-router-panel-button-top").className += " c4g-external";
+    }
   }
 
   setRouteMode(event) {
@@ -44,34 +52,39 @@ export class RouterControls extends HorizontalPanel {
   }
 
   render() {
-    let className = this.props.className + (this.props.open ? " c4g-open " : " c4g-close ") + this.props.mode;
+    const scope = this;
+    let className = "c4g-router-content" + (this.props.open ? " c4g-open " : " c4g-close ") + this.props.mode;
     // propagate open state down to child components
     let open = this.props.open;
     let modeSwitcher = "";
     if (this.props.router.props.mapController.data.areaSearch && !this.props.router.props.mapController.data.areaSearchOnly) {
       modeSwitcher = <div className="c4g-router-mode-switch">
-        <button id="c4g-router-button-route" onMouseUp={this.setRouteMode}>Route</button>
-        <button id="c4g-router-button-area" onMouseUp={this.setAreaMode}>Area</button>
+        <button id="c4g-router-button-route" className={(this.props.mode === "route" ? "c4g-active" : "c4g-inactive")} onMouseUp={this.setRouteMode} title={this.langConstants.ROUTER_FIND_ROUTE}>Route</button>
+        <button id="c4g-router-button-area" className={(this.props.mode === "area" ? "c4g-active" : "c4g-inactive")} onMouseUp={this.setAreaMode} title={this.langConstants.AREA_NAME}>Area</button>
       </div>;
     }
-    let headline = "";
-    if (this.props.mode === "route") {
-      headline = this.props.router.props.mapController.data.routerHeadline;
-    } else if (this.props.mode === "area") {
-      headline = this.props.router.props.mapController.data.areaHeadline;
+
+    if (this.state.showForm) {
+      return (
+        <div className={className}>
+          {modeSwitcher}
+          <RouterAddressInput className="c4g-router-input-content" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
+                              objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile} enableOverPoints={this.props.enableOverPoints}
+                              containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers} resetFunctions={this.props.resetFunctions}
+                              fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress} sliderOptions={this.props.sliderOptions}
+                              profiles={this.props.profiles} overSettings={this.props.overSettings}/>
+        </div>
+      );
+    } else {
+      return (
+        <div className={className}>
+          <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
+                    detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
+          <button className={"c4g-router-hide-form-button"} onMouseUp={() => {this.setState({showForm: !this.state.showForm})}}/>
+        </div>
+      );
     }
-    return (
-      <div className={className}>
-        <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
-                  detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
-        {modeSwitcher}
-        <RouterAddressInput className="c4g-router-input-wrapper" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
-                            objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile} enableOverPoints={this.props.enableOverPoints}
-                            containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers} resetFunctions={this.props.resetFunctions}
-                            fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress} sliderOptions={this.props.sliderOptions}
-                            profiles={this.props.profiles} overSettings={this.props.overSettings}/>
-      </div>
-    );
+
   }
 
   slideInCollidingElements() {

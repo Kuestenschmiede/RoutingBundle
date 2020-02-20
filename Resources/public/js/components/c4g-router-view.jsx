@@ -30,6 +30,8 @@ import {AlertHandler} from "./../../../../../CoreBundle/Resources/public/js/Aler
 import {RoutingPermalink} from "./../c4g-routing-permalink";
 import {getLanguage} from "./../routing-constant-i18n";
 import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
+import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
+import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx";
 
 const osmtogeojson = require('osmtogeojson');
 
@@ -43,11 +45,14 @@ export class RouterView extends Component {
     super(props);
     this.setActiveId = this.setActiveId.bind(this);
     this.setOpen = this.setOpen.bind(this);
+    this.close = this.close.bind(this);
     this.openControls = this.openControls.bind(this);
     this.resetFromPoint = this.resetFromPoint.bind(this);
     this.resetToPoint = this.resetToPoint.bind(this);
     this.resetAreaPoint = this.resetAreaPoint.bind(this);
     this.toggleResultDetails = this.toggleResultDetails.bind(this);
+    this.setResultInstr = this.setResultInstr.bind(this);
+    this.setResultFeat = this.setResultFeat.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
     this.languageConstants = getLanguage(mapController.data);
@@ -89,7 +94,6 @@ export class RouterView extends Component {
       },
       activeId: null,
       openResults: false,
-      resultDetailOpen: false,
       containerAddresses: {
         arrFromPositions: [],
         arrFromNames: [],
@@ -125,17 +129,38 @@ export class RouterView extends Component {
       overPoints: [],
       profiles: arrProfiles,
       currentProfile: 0,
-      open: (this.props.mapController.data.router_open === "1") || false
+      open: (this.props.mapController.data.router_open === "1") || false,
+      openSettings: (this.props.mapController.data.router_open === "1") || false,
+      routerInstructions: {},
+      resultMode: props.mapController.data.initialResultMode || "instr"
     };
     this.popupRouteButtonWrapper = ""; // this is needed because of the different popup handlings
     this.swapPoints = this.swapPoints.bind(this);
     if (mapController.data.usePermalink) {
       this.permalink = new RoutingPermalink(this);
     }
+    this.profileTranslation = {
+      0: "car",
+      1: "hgv",
+      2: "bike",
+      3: "bike",
+      4: "bike",
+      5: "bike",
+      6: "bike",
+      7: "bike",
+      8: "foot",
+      9: "foot",
+      10: "wheelchair",
+      11: "hgv",
+      12: "scooter",
+      13: "scooter"
+    };
+
     this.init();
   }
 
   render() {
+    const scope = this;
     const mapData = this.props.mapController.data;
     let sources = {
       waySource: this.state.routerWaySource,
@@ -165,26 +190,80 @@ export class RouterView extends Component {
       area: this.resetAreaPoint
     };
 
-    let strCurrentProfile = this.getProfileById(this.state.currentProfile);
-    if (strCurrentProfile) {
-      strCurrentProfile = strCurrentProfile.text;
+    const overSettings = this.createOverSettings();
+
+
+    let headline = "";
+    if (this.state.mode === "route") {
+      headline = this.props.mapController.data.routerHeadline;
+    } else if (this.state.mode === "area") {
+      headline = this.props.mapController.data.areaHeadline;
+    }
+
+    let instructions = this.state.routerInstructions.instructions;
+
+    let resultSwitcher = "";
+    let switcherButtons = [];
+    if (this.state.featureList.features.length > 0
+      && ((this.state.fromAddress && this.state.toAddress && this.state.mode === "route")
+        || this.state.areaAddress && this.state.mode === "area")) {
+      switcherButtons.push(<button id="c4g-router-button-feature" className={(this.state.resultMode === "feat" && this.state.openResults) ? "c4g-active" : "c4g-inactive"}
+                                   onMouseUp={this.setResultFeat} key={1} title={"Ergebnisliste anzeigen"} />);
+    }
+    if (instructions && (instructions.length > 0) && this.state.mode === "route") {
+      switcherButtons.push(<button id="c4g-router-button-instructions" className={(this.state.resultMode === "instr" && this.state.openResults) ? "c4g-active" : "c4g-inactive"}
+                                   onMouseUp={this.setResultInstr} key={2} title={"Routenhinweise anzeigen"} />);
+    }
+    if (switcherButtons.length > 0) {
+      resultSwitcher = (
+        <div className="c4g-router-mode-switch">
+          {switcherButtons}
+        </div>
+      );
     }
 
     return (
-      <React.Fragment>
-        <RouterControls router={this} open={this.state.open} setOpen={this.openControls} className={this.props.className} profiles={this.state.profiles}
-          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={this.createOverSettings()} switchTargets={this.props.mapController.data.enableTargetSwitch}
+      <div className={"c4g-router-wrapper"}>
+        <React.Fragment>
+          <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
+                       detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
+          <div className={"c4g-router-switcher"}>
+            <div>
+            <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}} title={"Routeneinstellungen"}/>
+              {resultSwitcher}
+            </div>
+            <RouterProfileSelection profiles={this.state.profiles} router={this} currentProfile={this.state.currentProfile}/>
+          </div>
+        </React.Fragment>
+        <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles} className={"c4g-router-panel"}
+          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={overSettings} enableOverPoints={this.props.mapController.data.enableOverPoints}
           sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
-          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} enableOverPoints={this.props.mapController.data.enableOverPoints}
+          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} switchTargets={this.props.mapController.data.enableTargetSwitch}
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} target={this.props.target}
         />
-        <RouterResultContainer visible={this.state.open} open={this.state.open} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container c4g-beach"} mapController={this.props.mapController}
+        <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
           mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
-          layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea} layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={strCurrentProfile}
+          layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea} resultMode={this.state.resultMode} router={this}
+           layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
           activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
         />
-      </React.Fragment>
+      </div>
     );
+  }
+
+  setResultInstr(event) {
+    event.stopPropagation();
+    this.setState({resultMode: "instr", openResults: true});
+  }
+
+  setResultFeat(event) {
+    event.stopPropagation();
+    this.setState({resultMode: "feat", openResults: true});
+  }
+
+  close() {
+    this.openControls(false);
+    jQuery(this.props.mapController.routerContainer).removeClass("c4g-open").addClass("c4g-close");
   }
 
   getProfileById(id) {
@@ -207,7 +286,8 @@ export class RouterView extends Component {
   openControls(open) {
     if (open) {
       this.props.mapController.hideOtherComponents(this);
-      this.setState({open: true});
+      this.setState({open: true, openSettings: true});
+      jQuery(this.props.mapController.routerContainer).removeClass("c4g-close").addClass("c4g-open");
     } else {
       this.setState({open: false});
     }
@@ -217,10 +297,9 @@ export class RouterView extends Component {
     if (this.props.mapController.data.usePermalink) {
       this.permalink.handleInitialParams();
     }
-    // if (this.props.mapController.data.router_open) {
-    //   // workaround to position the button properly
-    //   jQuery(".c4g-router-panel-button-top.ol-control").css({top: "102px"});
-    // }
+    if (this.props.mapController.data.router_div) {
+      this.setState({open: true});
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -248,6 +327,22 @@ export class RouterView extends Component {
     if (this.state.open) {
       this.props.mapController.hideOtherComponents(this);
     }
+    if (this.state.openSettings && !prevState.openSettings) {
+      this.setState({openResults: false});
+    }
+    if (this.state.openResults && !prevState.openResults) {
+      this.setState({openSettings: false});
+    }
+    if (!this.state.openResults && !this.state.openSettings && prevState.openSettings) {
+      this.setState({openSettings: true});
+    }
+    if (!this.state.openSettings && !this.state.openResults && prevState.openResults) {
+      this.setState({openResults: true});
+    }
+    if (this.state.mode === "route" && (!this.state.fromAddress || !this.state.toAddress) && this.state.openResults && prevState.mode === "area") {
+      this.setState({openResults: false});
+    }
+
   }
 
   setProfile(profile) {
@@ -512,7 +607,6 @@ export class RouterView extends Component {
 
   resetFromPoint() {
     const scope = this;
-
     let containerAddresses = scope.state.containerAddresses;
     containerAddresses.arrFromPositions = [];
     containerAddresses.arrFromNames = [];
@@ -527,7 +621,6 @@ export class RouterView extends Component {
 
   resetToPoint() {
     const scope = this;
-
     let containerAddresses = scope.state.containerAddresses;
     containerAddresses.arrToPositions = [];
     containerAddresses.arrToNames = [];
@@ -542,7 +635,6 @@ export class RouterView extends Component {
 
   resetAreaPoint() {
     const scope = this;
-
     let containerAddresses = scope.state.containerAddresses;
     containerAddresses.arrAreaPositions = [];
     containerAddresses.arrAreaNames = [];
@@ -666,10 +758,6 @@ export class RouterView extends Component {
 
     return objFunctions;
   }
-
-  // =========================================================================================
-  // Begin old functions migrated from routing.js
-  // =========================================================================================
 
   addPopupHook() {
     const scope = this;
@@ -1508,7 +1596,7 @@ export class RouterView extends Component {
     const mapData = this.mapData;
     let layerId = this.state.mode === "route" ? this.state.layerRoute : this.state.layerArea;
     let activeLayer = this.state.mode === "route" ? this.state.layerValueRoute : this.state.layerValueArea;
-    const layer = this.getActiveLayer(layerId);
+    const layer = this.getActiveLayer(layerId).layerData;
     const unstyledFeatures = [];
     let contentFeatures = [];
     let missingStyles = [];
@@ -1570,7 +1658,6 @@ export class RouterView extends Component {
               locstyle = mapData.priorityLocstyle;
             }
           }
-
           contentFeature.set('locationStyle', locstyle);
           contentFeature.set('zIndex', i);
           contentFeature.set('label', label);
@@ -1624,7 +1711,7 @@ export class RouterView extends Component {
           contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
           contentFeatures[id].set('tid', parseInt(contentFeatures[id].get('id').split('/')[1]));
           contentFeatures[id].set('label', contentFeatures[id].get(labelKey));
-          //contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
+          contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
         }
       }
     }

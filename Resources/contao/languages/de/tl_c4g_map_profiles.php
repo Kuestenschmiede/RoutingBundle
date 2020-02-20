@@ -19,3 +19,8 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['editRoutingConfiguration'] = 'Routin
 
 /** legend */
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routing_legend'] = 'Routen- und Umkreissuche';
+
+/** references */
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['mapFunctions']['reference']['routing'] = ['Routing', 'Fügt einen Button in der Karte hinzu, mit dem der Router geöffnet werden kann.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['initial_open_comp']['refs']['routing'] = 'Routing';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['element_type_refs']['routing'] = "Routing";

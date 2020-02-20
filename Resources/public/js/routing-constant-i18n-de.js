@@ -122,6 +122,7 @@ export var routingConstantsGerman = {
   FEATURES_HEADLINE:    'Lokationen',
   ROUTE_POSITION:       'Position ermitteln',
   START_ROUTE:          'Suche starten',
+  REMOVE_ADDRESS:       'Adresse löschen',
 
   CAR:                  'Auto',
   BIKE:                 'Fahrrad',

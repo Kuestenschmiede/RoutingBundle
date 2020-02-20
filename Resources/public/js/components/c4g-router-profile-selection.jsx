@@ -12,6 +12,7 @@
  */
 
 import React, { Component } from "react";
+import {getLanguage} from "./../routing-constant-i18n";
 
 export class RouterProfileSelection extends Component {
 
@@ -36,25 +37,57 @@ export class RouterProfileSelection extends Component {
       12: "scooter",
       13: "scooter"
     };
+
+    this.languageConstants = getLanguage(props.router.props.mapController.data);
+
+    this.profileLang = {
+      "car": this.languageConstants.CAR,
+      "hgv": this.languageConstants.TRUCK,
+      "bike": this.languageConstants.BIKE,
+      "foot": this.languageConstants.WALK,
+      "wheelchair": this.languageConstants.WHEEL,
+      "scooter": this.languageConstants.SCOOT
+    };
+
+    this.state = {
+      showPopup: false
+    }
   }
 
   setProfile(profile) {
     this.props.router.setProfile(parseInt(profile.id, 10));
+    this.setState({showPopup: false});
   }
 
   render() {
     if (this.props.profiles.length === 1) {
-      return (<React.Fragment/>);
+      return (<div className="c4g-router-profile-wrapper">
+        <button className={"c4g-router-profile-" + this.profileTranslation[this.props.currentProfile] + " c4g-active"}
+                      key={this.props.currentProfile} title={this.profileLang[this.profileTranslation[this.props.currentProfile]]}/>
+      </div>);
     } else {
-      return (
-        <div className="c4g-router-profile-wrapper">
-          {this.props.profiles.map((item) => {
-            return <button onMouseUp={() => this.setProfile(item)}
-                           className={"c4g-router-profile-" + this.profileTranslation[item.id] + (parseInt(item.id, 10) === this.props.currentProfile ? " c4g-active" : " c4g-inactive")}
-                           key={item.id}/>
-          })}
-        </div>
-      );
+      if (this.state.showPopup) {
+        return (
+          <div className="c4g-router-profile-wrapper c4g-popup">
+            <button className={"c4g-titlebar-close"} onMouseUp={() => this.setState({showPopup: false})}/>
+            {this.props.profiles.map((item) => {
+              return <button onMouseUp={() => this.setProfile(item)}
+                             className={"c4g-router-profile-" + this.profileTranslation[item.id] + (parseInt(item.id, 10) === this.props.currentProfile ? " c4g-active" : " c4g-inactive")}
+                             key={item.id} title={this.profileLang[this.profileTranslation[item.id]]}/>
+            })}
+          </div>
+        );
+      } else {
+        return (<div className="c4g-router-profile-wrapper">
+          <button onMouseUp={() => this.setState({showPopup: true})} className={"c4g-router-profile-" + this.profileTranslation[this.props.currentProfile] + " c4g-active"}
+                  key={this.props.currentProfile} title={this.profileLang[this.profileTranslation[this.props.currentProfile]]}/>
+        </div>);
+      }
+
     }
+  }
+
+  showProfileSelection() {
+    this.setState({showPopup: true});
   }
 }

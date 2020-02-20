@@ -14,11 +14,14 @@
 import React, { Component } from "react";
 import {AutocompleteInput} from "./c4g-autocomplete-input.jsx";
 import {Point} from "ol/geom";
+import {getLanguage} from "./../routing-constant-i18n";
 
 export class RouterAddressField extends Component {
 
   constructor(props) {
     super(props);
+
+    this.languageConstants = getLanguage(this.props.router.props.mapController.data);
 
     this.getPosition = this.getPosition.bind(this);
     this.removeContent = this.removeContent.bind(this);
@@ -27,7 +30,7 @@ export class RouterAddressField extends Component {
   render() {
     let positionButton = null;
     if (this.props.withPosition) {
-      positionButton = <button className="c4g-router-position" onMouseUp={this.getPosition}></button>;
+      positionButton = <button className="c4g-router-position" onMouseUp={this.getPosition} title={this.languageConstants.ROUTE_POSITION}/>;
     }
     return (
       <div className={this.props.className}>
@@ -36,7 +39,7 @@ export class RouterAddressField extends Component {
                            cssId={this.props.cssId} objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} popup={this.props.popup}
                            containerAddresses={this.props.containerAddresses} autoComplete="off" router={this.props.router} value={this.props.value} index={this.props.index}/>
         {positionButton}
-        <button className={"c4g-router-input-clear"} onMouseUp={this.removeContent}></button>
+        <button className={"c4g-router-input-clear"} onMouseUp={this.removeContent} title={this.languageConstants.REMOVE_ADDRESS}/>
       </div>
     );
   }

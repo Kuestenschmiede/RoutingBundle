@@ -50,7 +50,8 @@ $GLOBALS['TL_LANG'][$strName]['areaSearchOnly'] = ['Disable route search', 'If t
 $GLOBALS['TL_LANG'][$strName]['areaHeadline'] = ['Headline area search', 'Default: Area search'];
 $GLOBALS['TL_LANG'][$strName]['areaHeadlineDefault'] = "Area search";
 $GLOBALS['TL_LANG'][$strName]['featureLabel'] = ['Result list button caption', 'Enter a caption for the result list button.'];
-$GLOBALS['TL_LANG'][$strName]['initialMode'] = ['Initial View', 'Choose the initial view in the router.'];
+$GLOBALS['TL_LANG'][$strName]['initialMode'] = ['Initial view', 'Choose the initial view in the router.'];
+$GLOBALS['TL_LANG'][$strName]['initialResultMode'] = ['Initial result view', 'Choose the initial view in the router results (feature list or route instructions).'];
 $GLOBALS['TL_LANG'][$strName]['minDetourArea'] = ['Minimum Radius Area Search (km)', 'The minimum radius to search.'];
 $GLOBALS['TL_LANG'][$strName]['maxDetourArea'] = ['Maximum Radius Area Search (km)', 'The maximum radius to search.'];
 $GLOBALS['TL_LANG'][$strName]['initialDetourArea'] = ['Initial Radius Area Search (km)', 'The initial radius to search.'];
@@ -70,6 +71,9 @@ $GLOBALS['TL_LANG'][$strName]['pirate'] = ['Arrrrr you a pirate?', 'Set language
  */
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['area'] = "Area Search";
 $GLOBALS['TL_LANG'][$strName]['references_router_modes']['route'] = "Route Search";
+
+$GLOBALS['TL_LANG'][$strName]['references_router_result_modes']['feat'] = "Features";
+$GLOBALS['TL_LANG'][$strName]['references_router_result_modes']['instr'] = "Instructions";
 
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['0'] = 'OpenSourceRoutingMachine (API 4.x) (<a href="http://project-osrm.org" target="_blank" rel="noopener">usage policy</a>)';
 $GLOBALS['TL_LANG'][$strName]['references_router_api_selection']['1'] = 'OpenSourceRoutingMachine (API 5.x) (<a href="http://project-osrm.org" target="_blank" rel="noopener">usage policy</a>)';

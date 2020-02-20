@@ -102,16 +102,11 @@ class TlC4gRoutingConfiguration
      */
     public function getLocStyles(DataContainer $dc)
     {
-        $profile = $this->db->prepare('SELECT locstyles FROM tl_c4g_map_profiles WHERE id=?')->execute($dc->activeRecord->profile);
-        $ids = deserialize($profile->locstyles, true);
-        if (count($ids) > 0) {
-            $locStyles = $this->db->prepare('SELECT id,name FROM tl_c4g_map_locstyles WHERE id IN (' . implode(',', $ids) . ') ORDER BY name')->execute();
-        } else {
-            $locStyles = $this->db->prepare('SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name')->execute();
-        }
-        $return[0] = '-';
-        while ($locStyles->next()) {
-            $return[$locStyles->id] = $locStyles->name;
+        $locStyles = $this->db->prepare('SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name')->execute();
+        if ($locStyles) {
+            while ($locStyles->next()) {
+                $return[$locStyles->id] = $locStyles->name;
+            }
         }
 
         return $return;

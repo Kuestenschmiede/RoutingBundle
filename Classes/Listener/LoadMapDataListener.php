@@ -19,6 +19,7 @@ use con4gis\MapsBundle\Classes\Services\LayerService;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
+use con4gis\MapsBundle\Resources\contao\modules\ExternalMapElement;
 use con4gis\RoutingBundle\Entity\RoutingConfiguration;
 use Contao\System;
 use Doctrine\ORM\EntityManager;
@@ -53,11 +54,19 @@ class LoadMapDataListener
         $mapData = $event->getMapData();
         System::loadLanguageFile('tl_c4g_routing_configuration');
         $profile = C4gMapProfilesModel::findById($mapData['profile']);
-        if ($profile->router) {
+        $mapFunctions = unserialize($profile->mapFunctions);
+        $buttons = array_flip($mapFunctions);
+        $enabled = array_key_exists('routing', $buttons) ? $buttons['routing'] + 1 : 0;
+        $externalComponents = unserialize($profile->external_elements);
+        $externalClasses = ExternalMapElement::$arrClasses;
+        if (in_array('routing', $externalComponents)) {
+            $mapData['router_div'] = $externalClasses['routing'];
+        }
+        if ($enabled) {
             $routerConfig = $this->entityManager->getRepository(RoutingConfiguration::class)
                 ->findOneBy(['id' => $profile->routerConfig]);
             if ($routerConfig instanceof RoutingConfiguration) {
-                $mapData['router_enable'] = $profile->geosearch && $profile->router;
+                $mapData['router_enable'] = $enabled;
                 $mapData['router_viaroute_precision'] = $routerConfig->getRouterViarouteUrl() ? 1e5 : 1e6;
                 $mapData['attribution']['router'] = $this->getRouterAttribution($routerConfig);
                 $mapData['router_from_locstyle'] = $routerConfig->getRouterFromLocstyle();
@@ -118,6 +127,7 @@ class LoadMapDataListener
                 $mapData['showInstructions'] = $routerConfig->getShowInstructions();
                 $mapData['instructionLabel'] = $routerConfig->getInstructionLabel();
                 $mapData['initialMode'] = $routerConfig->getInitialMode();
+                $mapData['initialResultMode'] = $routerConfig->getInitialResultMode();
                 $mapData['routeStartButton'] = $routerConfig->getRouteStartButton();
                 $mapData['usePermalink'] = $routerConfig->getUsePermalink();
                 $mapData['hideFeaturesWithoutLabel'] = $routerConfig->getHideFeaturesWithoutLabel();

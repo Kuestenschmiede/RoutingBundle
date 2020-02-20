@@ -270,6 +270,12 @@ class RoutingConfiguration extends BaseEntity
     
     /**
      * @var string
+     * @ORM\Column(type="string", length=10)
+     */
+    protected $initialResultMode = '';
+    
+    /**
+     * @var string
      * @ORM\Column(type="string", length=1)
      */
     protected $usePermalink = '';
@@ -901,6 +907,22 @@ class RoutingConfiguration extends BaseEntity
     public function setInitialMode(string $initialMode): void
     {
         $this->initialMode = $initialMode;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getInitialResultMode(): string
+    {
+        return $this->initialResultMode;
+    }
+    
+    /**
+     * @param string $initialResultMode
+     */
+    public function setInitialResultMode(string $initialResultMode): void
+    {
+        $this->initialResultMode = $initialResultMode;
     }
     
     /**

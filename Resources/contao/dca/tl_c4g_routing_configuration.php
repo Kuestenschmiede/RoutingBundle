@@ -34,14 +34,16 @@ $GLOBALS['TL_DCA'][$strName] = array
         'sorting' => array
         (
             'mode'                    => 1,
-            'fields'                  => array('name'),
+            'fields'                  => array('name','router_api_selection'),
+            'headerFields'            => ['name','router_api_selection'],
             'flag'                    => 1,
-            'icon'                    => 'bundles/con4giscore/images/be-icons/con4gis.org_dark.svg',
+            'icon'                    => 'bundles/con4giscore/images/be-icons/con4gis_blue.svg',
         ),
         'label' => array
         (
-            'fields'                  => array('name'),
-            'format'                  => '%s'
+            'fields'                  => array('name','router_api_selection'),
+            //'format'                  => '%s',
+            'showColumns'             => true
         ),
         'global_operations' => array
         (
@@ -95,7 +97,7 @@ $GLOBALS['TL_DCA'][$strName] = array
         '__selector__'                => array('router_api_selection', 'areaSearch'),
         'default'                     => '{general_legend},name,router_api_selection,router_viaroute_url,router_from_locstyle,router_to_locstyle,router_point_locstyle;'
                                         .'{extended_legend:hide},routerHeadline,router_attribution,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel;'
-                                        .'{search_legend:hide},areaSearch,showFeatures,featureLabel,initialMode,routerLayers,hideFeaturesWithoutLabel,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle,usePermalink;'
+                                        .'{search_legend:hide},areaSearch,showFeatures,featureLabel,initialMode,initialResultMode,routerLayers,hideFeaturesWithoutLabel,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle,usePermalink;'
     ),
     
     
@@ -408,6 +410,14 @@ $GLOBALS['TL_DCA'][$strName] = array
             'inputType'               => "select",
             'options'                 => ['area', 'route'],
             'reference'               => &$GLOBALS['TL_LANG'][$strName]['references_router_modes'],
+        ],
+        'initialResultMode' => [
+            'label'                   => &$GLOBALS['TL_LANG'][$strName]['initialResultMode'],
+            'exclude'                 => true,
+            'default'                 => "route",
+            'inputType'               => "select",
+            'options'                 => ['feat', 'instr'],
+            'reference'               => &$GLOBALS['TL_LANG'][$strName]['references_router_result_modes'],
         ],
         'usePermalink' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['usePermalink'],
