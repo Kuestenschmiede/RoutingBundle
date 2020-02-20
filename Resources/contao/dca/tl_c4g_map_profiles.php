@@ -18,6 +18,8 @@ Contao\CoreBundle\DataContainer\PaletteManipulator::create()
     ->applyToPalette('default', 'tl_c4g_map_profiles');
 
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['mapFunctions']['options'][] = 'routing';
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['initial_open_comp']['options'][] = 'routing';
+
 
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields'] = array_merge([
     'router' => [
