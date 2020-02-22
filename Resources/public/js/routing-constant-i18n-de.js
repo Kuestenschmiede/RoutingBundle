@@ -111,6 +111,7 @@ export var routingConstantsGerman = {
   ROUTER_ERROR_SEARCHING: 'Fehler beim Suchen der Adresse',
   ROUTER_CALC_ROUTE: 'Berechne Route...',
   ROUTER_ERROR_CALC_ROUTE: 'Fehler beim Berechnen der Route',
+  ROUTER_SETTINGS: 'Routeneinstellungen',
 
   //new Router
   AREA_NAME:            'Umkreissuche',
@@ -130,6 +131,8 @@ export var routingConstantsGerman = {
   WALK:                 'Fußgänger',
   WHEEL:                'Rollstuhl',
   SCOOT:                'Roller',
+
+  CLOSE: 'Schließen',
 
   NONE: '' // last line
 }; // end of "css constants" ---
