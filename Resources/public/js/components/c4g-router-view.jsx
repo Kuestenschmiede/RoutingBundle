@@ -130,8 +130,8 @@ export class RouterView extends Component {
       overPoints: [],
       profiles: arrProfiles,
       currentProfile: 0,
-      open: (this.props.mapController.data.router_open === "1") || false,
-      openSettings: (this.props.mapController.data.router_open === "1") || false,
+      open: (props.mapController.data.initial_open_comp === "routing") || false, //ToDO
+      openSettings: (props.mapController.data.initial_open_comp === "routing") || false, //ToDO
       routerInstructions: {},
       resultMode: props.mapController.data.initialResultMode || "instr"
     };
@@ -227,10 +227,10 @@ export class RouterView extends Component {
       <div className={"c4g-router-wrapper"}>
         <React.Fragment>
           <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
-                       detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
+                       detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close} closeBtnTitle={this.languageConstants.CLOSE}/>
           <div className={"c4g-router-switcher"}>
             <div>
-            <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}} title={"Routeneinstellungen"}/>
+            <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}} title={this.languageConstants.ROUTER_SETTINGS}/>
               {resultSwitcher}
             </div>
             <RouterProfileSelection profiles={this.state.profiles} router={this} currentProfile={this.state.currentProfile}/>

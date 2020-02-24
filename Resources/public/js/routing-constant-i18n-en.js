@@ -110,6 +110,7 @@ export  var routingConstantsEnglish = {
   ROUTER_ERROR_SEARCHING: 'Fault! Can not find address',
   ROUTER_CALC_ROUTE: 'Calc route...',
   ROUTER_ERROR_CALC_ROUTE: 'Fault! Can not calc address',
+  ROUTER_SETTINGS: 'Routing settings',
   CTRL_ROUTER: 'Toggle router',
 
 
@@ -130,6 +131,8 @@ export  var routingConstantsEnglish = {
   WALK:                 'Pedestrian',
   WHEEL:                'Wheelchair',
   SCOOT:                'Router',
+
+  CLOSE: 'Close',
 
   NONE: '' // last line
 }; // end of "css constants" ---

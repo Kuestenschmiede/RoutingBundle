@@ -125,6 +125,10 @@ $GLOBALS['TL_DCA'][$strName] = array
         'tstamp' => [
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
+
+        'importId' => [
+            'eval'                    => ['doNotCopy' => true]
+        ],
         
         'router_viaroute_url' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_viaroute_url'],
