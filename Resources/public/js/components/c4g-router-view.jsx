@@ -32,6 +32,7 @@ import {getLanguage} from "./../routing-constant-i18n";
 import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx";
+import {utils} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
 
 const osmtogeojson = require('osmtogeojson');
 
@@ -285,7 +286,7 @@ export class RouterView extends Component {
 
   openControls(open) {
     if (open) {
-      this.props.mapController.hideOtherComponents(this);
+      this.props.mapController.setOpenComponent(this);
       this.setState({open: true, openSettings: true});
       jQuery(this.props.mapController.routerContainer).removeClass("c4g-close").addClass("c4g-open");
     } else {
@@ -326,6 +327,10 @@ export class RouterView extends Component {
     }
     if (this.state.open) {
       this.props.mapController.hideOtherComponents(this);
+      jQuery(this.props.mapController.routerContainer).addClass("c4g-open").removeClass("c4g-close");
+      if (!this.state.openSettings && !this.state.openResults) {
+        this.setState({openSettings: true});
+      }
     }
     if (this.state.openSettings && !prevState.openSettings) {
       this.setState({openResults: false});
@@ -341,6 +346,12 @@ export class RouterView extends Component {
     }
     if (this.state.mode === "route" && (!this.state.fromAddress || !this.state.toAddress) && this.state.openResults && prevState.mode === "area") {
       this.setState({openResults: false});
+    }
+    if (this.props.mapController.data.caching && !this.state.open) {
+      let panelVal = utils.getValue('panel');
+      if (panelVal === this.constructor.name) {
+        utils.storeValue('panel', "");
+      }
     }
 
   }
