@@ -55,9 +55,10 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       containerAddresses: containerAddresses,
       langConstants: langRouteConstants,
       ref: (node) => {mapController.components.router = node;},
-      key: 22
+      key: 22,
+      open: mapController.data.initial_open_comp === "router"
     };
-    let openRouter = mapController.data.router_open;
+    let openRouter = mapController.data.router_open && (mapController.data.initial_open_comp === "router");
 
     if (!mapController.routerContainer) {
       if (mapController.data.router_div) {
