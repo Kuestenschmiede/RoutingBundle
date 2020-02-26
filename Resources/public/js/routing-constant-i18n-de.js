@@ -23,6 +23,9 @@ export var routingConstantsGerman = {
   ROUTER_CLEAR_HTML: '',
   ROUTER_Label_Interim: 'Zwischenziel',
 
+  ROUTER_DEFAULT_HEADLINE_ROUTE: 'Router',
+  ROUTER_DEFAULT_HEADLINE_AREA: 'Umkreissuche',
+
   ROUTER_SWITCH:'Wechsel von Start und Ziel',
   ROUTER_OVER:'Zwischenziel hinzufügen',
   ROUTER_PRINT:'Routenbeschreibung drucken',
