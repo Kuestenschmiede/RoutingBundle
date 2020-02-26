@@ -296,7 +296,6 @@ select.c4g-router-layer-selection + div{
     border-radius: var(--button-radius-percent);
 }
 .c4g-router-instructions-header {
-    width: 200px;
     display: inline-block;
     margin-bottom: .2em;
 }
@@ -654,13 +653,6 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
     overflow-x: hidden;
 }
 
-.c4g-router-mode-switch button {
-    padding: 5px 10px;
-    border: none;
-    outline: none;
-    cursor: pointer;
-}
-
 .c4g-router-content.c4g-close {
     display: none;
 }
@@ -696,8 +688,11 @@ button.c4g-router-input-clear:before { content: "\f1f8"; }
 
 .c4g-router-instructions-header > div > em,
 .c4g-router-instruction-distance {
-    float: right;
     white-space: nowrap;
+}
+
+.c4g-router-instructions-header label {
+    margin-right: 20px;
 }
 
 .c4g-router-panel.c4g-close {
