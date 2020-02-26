@@ -773,15 +773,23 @@ button.c4g-router-over, button.c4g-router-switch {
 
 .c4g-router-switcher .c4g-router-profile-wrapper.c4g-popup > button.c4g-titlebar-close {
     background: none;
-    width: 10px;
-    height: 10px;
-    right: 2px;
-    top: 1px;
+    width: 16px;
+    height: 16px;
+    right: -9px;
+    top: -9px;
     margin: 0;
     padding: 0;
     position: absolute;
     color: var(--font-color);
     font-size: 10px;
+    background-color: var(--main-color);
+    z-index: -1;
+}
+
+.c4g-router-switcher .c4g-router-profile-wrapper.c4g-popup > button.c4g-titlebar-close:before {
+    position: absolute;
+    top: 2px;
+    right: 4px;
 }
 
 .c4g-router-input-from, .c4g-router-input-area {
