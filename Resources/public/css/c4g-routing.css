@@ -759,7 +759,7 @@ button.c4g-router-over, button.c4g-router-switch {
 .c4g-router-switcher .c4g-router-profile-wrapper.c4g-popup {
     position: absolute;
     background: var(--main-color);
-    padding: 12px 0 4px 4px;
+    padding: 4px 0 0 4px;
     max-width: calc(32px * 3 + 12px);
 }
 
