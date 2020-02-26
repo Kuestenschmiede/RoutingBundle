@@ -775,7 +775,7 @@ button.c4g-router-over, button.c4g-router-switch {
     background: none;
     width: 16px;
     height: 16px;
-    right: -9px;
+    right: -12px;
     top: -9px;
     margin: 0;
     padding: 0;
@@ -783,7 +783,6 @@ button.c4g-router-over, button.c4g-router-switch {
     color: var(--font-color);
     font-size: 10px;
     background-color: var(--main-color);
-    z-index: -1;
 }
 
 .c4g-router-switcher .c4g-router-profile-wrapper.c4g-popup > button.c4g-titlebar-close:before {
