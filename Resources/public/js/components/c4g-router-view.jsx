@@ -196,9 +196,9 @@ export class RouterView extends Component {
 
     let headline = "";
     if (this.state.mode === "route") {
-      headline = this.props.mapController.data.routerHeadline;
+      headline = this.props.mapController.data.routerHeadline || this.languageConstants.ROUTER_DEFAULT_HEADLINE_ROUTE;
     } else if (this.state.mode === "area") {
-      headline = this.props.mapController.data.areaHeadline;
+      headline = this.props.mapController.data.areaHeadline || this.languageConstants.ROUTER_DEFAULT_HEADLINE_AREA;
     }
 
     let instructions = this.state.routerInstructions.instructions;

@@ -22,6 +22,9 @@ export  var routingConstantsEnglish = {
   ROUTER_CLEAR_HTML: '',
   ROUTER_Label_Interim: 'Interim Goal',
 
+  ROUTER_DEFAULT_HEADLINE_ROUTE: 'Router',
+  ROUTER_DEFAULT_HEADLINE_AREA: 'Area search',
+
   ROUTER_SWITCH:'Switch between Start and End',
   ROUTER_OVER:'Add interim goal',
   ROUTER_PRINT:'Print route description',
