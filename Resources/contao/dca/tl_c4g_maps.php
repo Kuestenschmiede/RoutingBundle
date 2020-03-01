@@ -11,9 +11,15 @@
  * @link       https://www.con4gis.org
  */
 foreach ($GLOBALS['TL_DCA']['tl_c4g_maps']['palettes'] as $id => $pallete) {
-    $newPallete = str_replace('popup_info,', 'popup_info,routing_to,', $pallete);
-    $GLOBALS['TL_DCA']['tl_c4g_maps']['palettes'][$id] = $newPallete;
+    if ($id == 'table') {
+        $newPallete = str_replace('tab_filter_alias,', 'tab_filter_alias,routing_to,', $pallete);
+        $GLOBALS['TL_DCA']['tl_c4g_maps']['palettes'][$id] = $newPallete;
+    } else {
+        $newPallete = str_replace('popup_info,', 'popup_info,routing_to,', $pallete);
+        $GLOBALS['TL_DCA']['tl_c4g_maps']['palettes'][$id] = $newPallete;
+    }
 }
+
 $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['routing_to'] = [
     'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_maps']['routing_to'],
     'exclude'                 => true,
