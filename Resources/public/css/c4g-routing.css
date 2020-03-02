@@ -851,3 +851,20 @@ begin new styling, ready to be reworked
 div[class*=c4g-router-input] > div > input {
     max-width: calc(100% - ((32px + .2em)*2));
 }
+
+.c4g-sideboard > div > div > span.c4g-router-headline {
+    width: calc(100% - 1.2em - 32px - 32px );
+}
+
+button.c4g-sideboard-hide {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    right: calc(32px + .2em);
+    top: .2em;
+    margin: 0;
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+}
