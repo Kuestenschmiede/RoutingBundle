@@ -227,7 +227,7 @@ export class RouterView extends Component {
       <div className={"c4g-router-wrapper"}>
         <React.Fragment>
           <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
-                       detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close} closeBtnTitle={this.languageConstants.CLOSE}/>
+                       detailBtnClass={"c4g-router-extended-options"} hideContainer={".c4g-router-container-right"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close} closeBtnTitle={this.languageConstants.CLOSE}/>
           <div className={"c4g-router-switcher"}>
             <div>
             <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}} title={this.languageConstants.ROUTER_SETTINGS}/>
@@ -243,7 +243,7 @@ export class RouterView extends Component {
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} target={this.props.target}
         />
         <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
+          mode={this.state.mode} routerInstructions={this.state.routerInstructions} feaTitlebartureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
           layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea} resultMode={this.state.resultMode} router={this}
            layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
           activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
@@ -324,11 +324,13 @@ export class RouterView extends Component {
     }
     if (prevState.open === true && this.state.open === false) {
       this.routerLayerGroup.setVisible(false);
+      this.modWayInteraction.setActive(false);
       jQuery(this.props.mapController.routerContainer).removeClass("c4g-open").addClass("c4g-close");
     }
     if (this.state.open) {
       this.props.mapController.hideOtherComponents(this);
       this.routerLayerGroup.setVisible(true);
+      this.modWayInteraction.setActive(true);
       jQuery(this.props.mapController.routerContainer).addClass("c4g-open").removeClass("c4g-close");
       if (!this.state.openSettings && !this.state.openResults) {
         this.setState({openSettings: true});
@@ -947,9 +949,15 @@ export class RouterView extends Component {
       ]
     });
     this.modWayInteraction.on('modifystart', function (event) {
+      if (self.state.open !== true) {
+        return;
+      }
       self.modifyStartPoint = new Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
     });
     this.modWayInteraction.on('modifyend', function (event) {
+      if (self.state.open !== true) {
+        return;
+      }
       let overPoint = new Point(event.mapBrowserEvent.coordinate).transform("EPSG:3857", "EPSG:4326");
       let minDistance = Infinity;
       let insertId;

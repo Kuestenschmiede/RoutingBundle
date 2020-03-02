@@ -115,10 +115,22 @@ export class RouterControls extends HorizontalPanel {
   }
 
   clickControl() {
+    let hidden = this.props.router.props.mapController.routerContainer.className.includes('c4g-close');
     if (this.props.open) {
-      this.close();
-    } else {
+      if (!hidden) {
+        this.close();
+      }
+      else {
+        jQuery(this.props.router.props.mapController.routerContainer).removeClass("c4g-close").addClass("c4g-open");
+      }
+
+    }
+    else if (!this.props.open){
       this.open();
     }
+
+
+
+
   }
 }
