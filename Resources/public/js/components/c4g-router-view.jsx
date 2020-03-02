@@ -323,6 +323,10 @@ export class RouterView extends Component {
       }
     }
     if (prevState.open === true && this.state.open === false) {
+      this.state.routerWaySource.clear();
+      this.state.routerHintSource.clear();
+      this.state.featureSource.clear();
+      this.locationsSource.clear();
       jQuery(this.props.mapController.routerContainer).removeClass("c4g-open").addClass("c4g-close");
     }
     if (this.state.open) {
