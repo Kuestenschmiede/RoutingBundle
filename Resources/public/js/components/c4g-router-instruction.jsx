@@ -30,7 +30,7 @@ export class RouterInstruction extends Component {
   render() {
     return(
       <div className={"c4g-router-instruction"} onMouseUp={this.fnItemClick} onMouseLeave={this.fnItemOut} onMouseEnter={this.fnItemOver} key={this.props.id}>
-        <div><img src={this.getInstructionIconValhalla(this.props.imgPath)} alt=""/></div>
+        <div><img src={this.getInstructionIcon(this.props.imgPath)} alt=""/></div>
         <div>{this.props.instrText}</div>
         <div className="c4g-router-instruction-distance">{toHumanDistance(this.props.instrDist * 1000)}</div>
       </div>
@@ -118,6 +118,18 @@ export class RouterInstruction extends Component {
   fnItemOut = function () {
     this.props.routerHintSource.clear();
   };
+
+  getInstructionIcon(intType) {
+    let routerEngine = this.props.mapController.data.router_api_selection;
+    switch (routerEngine) {
+      case '4':
+        return this.getInstructionIconValhalla(intType);
+      case '3':
+        return this.getInstructionIconGraphhopper(intType);
+      case '2':
+        return this.getInstructionIconORS(intType);
+    }
+  }
 
   /**
    * Translates an integer number into the correct instruction icon (Graphhopper icons).
@@ -216,7 +228,105 @@ export class RouterInstruction extends Component {
         break;
 
     }
-    // return document.getElementsByTagName('base')[0].href + "bundles/con4gismaps/vendor/osrm/images/" + image;
+    return "bundles/con4gismaps/vendor/osrm/images/" + image;
+  }
+
+  getInstructionIconGraphhopper(intType) {
+    let image;
+    switch (intType) {
+      case 0:
+        image = "continue.png";
+        break;
+      case -2:
+        image = "turn-left.png";
+        break;
+      case 2:
+        image = "turn-right.png";
+        break;
+      case -1:
+        image = "turn-left.png";
+        break;
+      case 1:
+        image = "turn-right.png";
+        break;
+      case -3:
+        image = "sharp-left.png";
+        break;
+      case 3:
+        image = "sharp-right.png";
+        break;
+      case -7:
+        image = "slight-left.png";
+        break;
+      case 7:
+        image = "slight-right.png";
+        break;
+      case 6:
+        image = "round-about.png";
+        break;
+      case 4:
+        image = "target.png";
+        break;
+      case 5:
+        image = "target.png";
+        break;
+      case -98:
+        image = "u-turn.png";
+        break;
+      case 99:
+        image = "head.png";
+        break;
+    }
+    return "bundles/con4gismaps/vendor/osrm/images/" + image;
+  }
+
+  getInstructionIconORS(intType) {
+    let image;
+    switch (intType) {
+      case 0:
+        image = "turn-left.png";
+        break;
+      case 1:
+        image = "turn-right.png";
+        break;
+      case 2:
+        image = "sharp-left.png";
+        break;
+      case 3:
+        image = "sharp-right.png";
+        break;
+      case 4:
+        image = "slight-left.png";
+        break;
+      case 5:
+        image = "slight-right.png";
+        break;
+      case 6:
+        image = "continue.png";
+        break;
+      case 7:
+        image = "round-about.png";
+        break;
+      case 8:
+        image = "round-about.png";
+        break;
+      case 9:
+        image = "u-turn.png";
+        break;
+      case 10:
+        image = "target.png";
+        break;
+      case 11:
+        image = "head.png";
+        break;
+      case 12:
+        image = "slight-left.png";
+        break;
+      case 13:
+        image = "slight-right.png";
+        break;
+
+    }
     return "bundles/con4gismaps/vendor/osrm/images/" + image;
   }
 

@@ -1113,9 +1113,7 @@ export class RouterView extends Component {
         }
         total_distance = (routeResponse.routes[routeNumber].distance);
         total_time = (routeResponse.routes[routeNumber].duration);
-      }
-
-      else if (this.props.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0') {//OSRM-API:<5
+      } else if (this.props.mapController.data.router_api_selection == '0' || routeResponse.routeType == '0') {//OSRM-API:<5
         if (routeResponse.route_name) {
           route_name_0 = routeResponse.route_name[0];
           route_name_1 = routeResponse.route_name[1];
@@ -1127,8 +1125,7 @@ export class RouterView extends Component {
         }
 
 
-      }
-      else if (this.props.mapController.data.router_api_selection == '2' || routeResponse.routeType == '2') {//ORS-API
+      } else if (this.props.mapController.data.router_api_selection == '2' || routeResponse.routeType == '2') {//ORS-API
         total_time = (routeResponse.routes[routeNumber].summary.duration);
         total_distance = (routeResponse.routes[routeNumber].summary.distance);
         let instructions = [];
@@ -1151,12 +1148,30 @@ export class RouterView extends Component {
           "routerWaySource": routerWaySource,
           "routerHintSource": routerHintSource
         });
-      }
-      else if (this.props.mapController.data.router_api_selection == '3' || routeResponse.routeType == '3') { //Graphhopper
-        total_distance = routeResponse.paths[0].distance;
-        total_time = routeResponse.paths[0].time / 1000 ;
-      }
-      else if (this.props.mapController.data.router_api_selection == '4' || routeResponse.routeType == '4') { //Valhalla
+      } else if (this.props.mapController.data.router_api_selection == '3' || routeResponse.routeType == '3') { //Graphhopper
+        total_distance = routeResponse.paths[routeNumber].distance;
+        total_time = routeResponse.paths[routeNumber].time / 1000 ;
+
+        let instructions = [];
+        let segments = routeResponse.paths[routeNumber].instructions;
+        for (let i = 0; i < segments.length; i++) {
+          let currentInstruction = segments[i];
+          currentInstruction.length = currentInstruction.distance / 1000;
+          currentInstruction.instruction = currentInstruction.text;
+          currentInstruction.type = currentInstruction.sign;
+          instructions.push(currentInstruction);
+        }
+        this.routeInstructions[routeNumber] = {
+          time: total_time,
+          distance: total_distance,
+          instructions: instructions
+        };
+        this.setState({
+          routerInstructions: this.routeInstructions[routeNumber],
+          "routerWaySource": routerWaySource,
+          "routerHintSource": routerHintSource
+        });
+      } else if (this.props.mapController.data.router_api_selection == '4' || routeResponse.routeType == '4') { //Valhalla
         total_distance = routeResponse.trip.summary.length *1000;
         total_time = routeResponse.trip.summary.time ;
         this.routeInstructions[routeNumber] = {
@@ -1172,10 +1187,10 @@ export class RouterView extends Component {
       }
 
       if (route_name_0 && route_name_1) {
-        routerInstructionsHeader.innerHTML = '<label>' + this.props.langConstants.ROUTER_VIEW_LABEL_ROUTE + '</label> <em>' + route_name_0 + ' &#8594; ' + route_name_1 + '</em><br>' + '<label>' + this.props.langConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + this.props.langConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
+        routerInstructionsHeader.innerHTML = '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_ROUTE + '</label> <em>' + route_name_0 + ' &#8594; ' + route_name_1 + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
       }
       else if (this.routeProfile && this.routeProfile.active) {
-        routerInstructionsHeader.innerHTML = '<label>' + this.props.langConstants.ROUTER_VIEW_LABEL_PROFILE + '</label> <em>' + this.props.mapController.data.router_profiles[this.routeProfile.active] + '</em><br>' + '<label>' + this.props.langConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + this.props.langConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
+        routerInstructionsHeader.innerHTML = '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_PROFILE + '</label> <em>' + this.props.mapController.data.router_profiles[this.routeProfile.active] + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
       }
 
       routerInstruction = document.createElement('div');
@@ -1538,7 +1553,7 @@ export class RouterView extends Component {
           scope.response = response;
           if (response) {
             if (response.error) {
-              let errorDiv = scope.showRouterError(this.props.langConstants[response.error]);
+              let errorDiv = scope.showRouterError(this.languageConstants[response.error]);
               jQuery(scope.fromInput).parent()[0].appendChild(errorDiv);
             } else {
               scope.showRouteLayer(response);
