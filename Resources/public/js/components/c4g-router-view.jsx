@@ -1128,9 +1128,29 @@ export class RouterView extends Component {
 
 
       }
-      else if (this.props.mapController.data.router_api_selection == '2' || routeResponse.routeType == '2') {//OSR-API
+      else if (this.props.mapController.data.router_api_selection == '2' || routeResponse.routeType == '2') {//ORS-API
         total_time = (routeResponse.routes[routeNumber].summary.duration);
         total_distance = (routeResponse.routes[routeNumber].summary.distance);
+        let instructions = [];
+        let segments = routeResponse.routes[routeNumber].segments;
+        for (let i = 0; i < segments.length; i++) {
+          let currentSegment = segments[i];
+          for (let j = 0; j < currentSegment.steps.length; j++) {
+            let currentStep = currentSegment.steps[j];
+            currentStep.length = currentStep.distance / 1000;
+            instructions.push(currentStep);
+          }
+        }
+        this.routeInstructions[routeNumber] = {
+          time: total_time,
+          distance: total_distance,
+          instructions: instructions
+        };
+        this.setState({
+          routerInstructions: this.routeInstructions[routeNumber],
+          "routerWaySource": routerWaySource,
+          "routerHintSource": routerHintSource
+        });
       }
       else if (this.props.mapController.data.router_api_selection == '3' || routeResponse.routeType == '3') { //Graphhopper
         total_distance = routeResponse.paths[0].distance;
@@ -1147,7 +1167,8 @@ export class RouterView extends Component {
         this.setState({
           routerInstructions: this.routeInstructions[routeNumber],
           "routerWaySource": routerWaySource,
-          "routerHintSource": routerHintSource});
+          "routerHintSource": routerHintSource
+        });
       }
 
       if (route_name_0 && route_name_1) {
