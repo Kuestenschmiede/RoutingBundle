@@ -323,14 +323,12 @@ export class RouterView extends Component {
       }
     }
     if (prevState.open === true && this.state.open === false) {
-      this.state.routerWaySource.clear();
-      this.state.routerHintSource.clear();
-      this.state.featureSource.clear();
-      this.locationsSource.clear();
+      this.routerLayerGroup.setVisible(false);
       jQuery(this.props.mapController.routerContainer).removeClass("c4g-open").addClass("c4g-close");
     }
     if (this.state.open) {
       this.props.mapController.hideOtherComponents(this);
+      this.routerLayerGroup.setVisible(true);
       jQuery(this.props.mapController.routerContainer).addClass("c4g-open").removeClass("c4g-close");
       if (!this.state.openSettings && !this.state.openResults) {
         this.setState({openSettings: true});
@@ -1970,7 +1968,7 @@ export class RouterView extends Component {
 
     fnItemClick = function (element) {
       self.routerHintSource.clear();
-      feature = self.routerWaySource.getFeatures()[0];
+      let feature = self.routerWaySource.getFeatures()[0];
       let coordinates = feature.getGeometry().getCoordinates();
       var coordLonLat = element.data('pos');
       if (coordLonLat) {
@@ -1980,7 +1978,7 @@ export class RouterView extends Component {
         var newCoord = fromLonLat(stringlonlat);
         var currentHintFeature = new Feature({
           geometry: new Point(newCoord)
-        })
+        });
         self.routerHintSource.addFeature(currentHintFeature);
         self.options.mapController.map.getView().setCenter(newCoord);
       }
@@ -1988,10 +1986,10 @@ export class RouterView extends Component {
         let start = element.data('start');
         let end = element.data('end');
         if (start, end) {
-          let geom = new LineString(coordinates.slice(start, end))
+          let geom = new LineString(coordinates.slice(start, end));
           var currentHintFeature = new Feature({
             geometry: geom
-          })
+          });
           currentHintFeature.setStyle(
             new Style({
               stroke: new Stroke({
@@ -2004,7 +2002,7 @@ export class RouterView extends Component {
           self.routerHintSource.addFeature(currentHintFeature);
           self.options.mapController.map.getView().fit(geom);
           let afterZoom = self.options.mapController.map.getView().getZoom();
-          let endZoom = Math.round((currentZoom + afterZoom)/2)
+          let endZoom = Math.round((currentZoom + afterZoom)/2);
           endZoom = (endZoom > afterZoom) ? afterZoom : endZoom;
           self.options.mapController.map.getView().setZoom(endZoom);
         }
