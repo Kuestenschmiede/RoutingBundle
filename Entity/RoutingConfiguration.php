@@ -173,12 +173,6 @@ class RoutingConfiguration extends BaseEntity
     protected $clickLocstyle = 0;
     
     /**
-     * @var string
-     * @ORM\Column(type="string", length=1)
-     */
-    protected $openRouter = '';
-    
-    /**
      * @var int
      * @ORM\Column(type="integer")
      */
@@ -673,22 +667,6 @@ class RoutingConfiguration extends BaseEntity
     public function setClickLocstyle(int $clickLocstyle): void
     {
         $this->clickLocstyle = $clickLocstyle;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getOpenRouter(): string
-    {
-        return $this->openRouter;
-    }
-    
-    /**
-     * @param string $openRouter
-     */
-    public function setOpenRouter(string $openRouter): void
-    {
-        $this->openRouter = $openRouter;
     }
     
     /**
