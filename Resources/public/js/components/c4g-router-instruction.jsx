@@ -122,6 +122,7 @@ export class RouterInstruction extends Component {
   getInstructionIcon(intType) {
     let routerEngine = this.props.mapController.data.router_api_selection;
     switch (routerEngine) {
+      case '5':
       case '4':
         return this.getInstructionIconValhalla(intType);
       case '3':
