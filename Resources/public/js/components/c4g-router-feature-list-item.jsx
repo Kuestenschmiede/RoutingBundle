@@ -32,7 +32,7 @@ export class RouterFeatureListItem extends Component {
   clickFeature (event) {
     const scope = this;
     scope.props.setActiveId(scope.props.feature.id);
-    scope.props.featureSource.forEachFeature(function (tmpFeature) {
+    scope.props.featureSource.forEachFeature((tmpFeature) => {
       let layer = undefined;
       let routerLayers = scope.props.mapController.data.routerLayers;
       if (scope.props.routeMode === "area") {
@@ -117,7 +117,7 @@ export class RouterFeatureListItem extends Component {
       }
       let element = {__html: featureEntryContent + "<br>"};
       return (
-        <li dangerouslySetInnerHTML={element} className={this.props.active ? "route-features-list-element c4g-active": "route-features-list-element c4g-inactive"} onMouseUp={this.clickFeature}/>
+        <li ref={this.props.refProp} dangerouslySetInnerHTML={element} className={this.props.active ? "route-features-list-element c4g-active": "route-features-list-element c4g-inactive"} onMouseUp={this.clickFeature}/>
       );
     }
     return null;
