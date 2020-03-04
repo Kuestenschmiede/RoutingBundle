@@ -111,7 +111,6 @@ class LoadMapDataListener
                     'max' => $routerConfig->getMaxDetourRoute(),
                     'initial' => $routerConfig->getInitialDetourRoute(),
                 ];
-                $mapData['router_open'] = $routerConfig->getOpenRouter();
                 $mapData['areaCenterLocstyle'] = $routerConfig->getAreaCenterLocstyle();
                 $mapData['enableOverPoints'] = $routerConfig->getEnableOverPoints();
                 $mapData['enableTargetSwitch'] = $routerConfig->getEnableTargetSwitch();
