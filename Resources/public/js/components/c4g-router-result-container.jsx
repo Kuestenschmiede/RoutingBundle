@@ -59,6 +59,16 @@ export class RouterResultContainer extends Component {
 
     let routerHeaderContent = "";
     if ((time && distance) && this.props.mode === "route") {
+      let printFunction = () => {
+        let prtContent = document.querySelector('.c4g-route-instructions-wrapper').cloneNode(true);
+        prtContent.querySelector('.c4g-router-print').remove();
+        let WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+        WinPrint.document.write(prtContent.innerHTML);
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        WinPrint.close();
+      };
       routerHeaderContent = (
         <div className="c4g-router-instructions-header">
           <div className="c4g-router-route-time">
@@ -69,6 +79,7 @@ export class RouterResultContainer extends Component {
             <label>{this.props.lang.ROUTER_VIEW_LABEL_DISTANCE}</label>
             <em>{distance}</em>
           </div>
+          <button className={"c4g-router-print"} onMouseUp={()=>{printFunction()}}/>
         </div>
       );
     } else if ((detour && featureCount) && this.props.mode === "area") {
