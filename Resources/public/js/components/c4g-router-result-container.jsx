@@ -60,7 +60,8 @@ export class RouterResultContainer extends Component {
     let routerHeaderContent = "";
     if ((time && distance) && this.props.mode === "route") {
       let printFunction = () => {
-        let prtContent = document.querySelector('.c4g-route-instructions-wrapper').cloneNode(true);
+        let querySelector = this.props.resultMode === "instr" ? '.c4g-route-instructions-wrapper' : '.c4g-route-feature-wrapper';
+        let prtContent = document.querySelector(querySelector).cloneNode(true);
         prtContent.querySelector('.c4g-router-print').remove();
         let WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
         WinPrint.document.write(prtContent.innerHTML);
