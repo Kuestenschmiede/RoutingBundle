@@ -327,7 +327,7 @@ export class RouterView extends Component {
       this.modWayInteraction.setActive(false);
       jQuery(this.props.mapController.routerContainer).removeClass("c4g-open").addClass("c4g-close");
     }
-    if (this.state.open) {
+    if (this.state.open && !prevState.open) {
       this.props.mapController.hideOtherComponents(this);
       this.routerLayerGroup.setVisible(true);
       this.modWayInteraction.setActive(true);
