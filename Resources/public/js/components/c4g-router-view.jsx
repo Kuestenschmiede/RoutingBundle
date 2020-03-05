@@ -1320,17 +1320,9 @@ export class RouterView extends Component {
           let coords = [parseFloat(response[0].lon), parseFloat(response[0].lat)];
           let point = new Point(coords);
           if (value === "fromValue") {
-            scope.setState({fromPoint: point, fromAddress: $input.val()});
-            scope.routerFeaturesSource.addFeature(new Feature({
-              geometry: point,
-              style: scope.props.mapController.proxy.locationStyleController.arrLocStyles[scope.props.mapController.data.router_from_locstyle].style
-            }));
+            scope.setState({fromPoint: point, fromAddress: $input.val()}, () => scope.updateRouteLayersAndPoints());
           } else if (value === "toValue") {
-            scope.setState({toPoint: point, toAddress: $input.val()});
-            scope.routerFeaturesSource.addFeature(new Feature({
-              geometry: point,
-              style: scope.props.mapController.proxy.locationStyleController.arrLocStyles[scope.props.mapController.data.router_to_locstyle].style
-            }));
+            scope.setState({toPoint: point, toAddress: $input.val()}, () => scope.updateRouteLayersAndPoints());
           }
 
           // TODO wieder einbauen
