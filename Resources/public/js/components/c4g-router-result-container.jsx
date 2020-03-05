@@ -39,6 +39,20 @@ export class RouterResultContainer extends Component {
       12: "scooter",
       13: "scooter"
     };
+    window.c4gMapsHooks.hook_map_click = window.c4gMapsHooks.hook_map_click || [];
+    let scrolltoElement = (clickEvent) => {
+      let feature = this.props.mapController.map.forEachFeatureAtPixel(clickEvent.pixel,
+          function (feature, layer) {
+            return feature;
+          }
+      );
+      if (feature && feature.get('tid')) {
+        let zoomToId = feature.get('tid');
+        this.props.setResultFeat(clickEvent);
+        this.props.setActiveId(zoomToId);
+      }
+    };
+    window.c4gMapsHooks.hook_map_click.push(scrolltoElement);
   }
 
 
@@ -58,7 +72,19 @@ export class RouterResultContainer extends Component {
     }
 
     let routerHeaderContent = "";
+    let printFunction = () => {
+      let querySelector = this.props.resultMode === "instr" ? '.c4g-route-instructions-wrapper' : '.c4g-route-feature-wrapper';
+      let prtContent = document.querySelector(querySelector).cloneNode(true);
+      prtContent.querySelector('.c4g-router-print').remove();
+      let WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+      WinPrint.document.write(prtContent.innerHTML);
+      WinPrint.document.close();
+      WinPrint.focus();
+      WinPrint.print();
+      WinPrint.close();
+    };
     if ((time && distance) && this.props.mode === "route") {
+
       routerHeaderContent = (
         <div className="c4g-router-instructions-header">
           <div className="c4g-router-route-time">
@@ -69,9 +95,11 @@ export class RouterResultContainer extends Component {
             <label>{this.props.lang.ROUTER_VIEW_LABEL_DISTANCE}</label>
             <em>{distance}</em>
           </div>
+          <button className={"c4g-router-print"} onMouseUp={()=>{printFunction()}}/>
         </div>
       );
     } else if ((detour && featureCount) && this.props.mode === "area") {
+
       routerHeaderContent = (
         <div className="c4g-router-instructions-header">
           <div className="c4g-router-area-detour">
@@ -82,6 +110,7 @@ export class RouterResultContainer extends Component {
             <label>{this.props.lang.AREA_FEATURECOUNT}:</label>
             <em>{featureCount}</em>
           </div>
+          <button className={"c4g-router-print"} onMouseUp={()=>{printFunction()}}/>
         </div>
       );
     }

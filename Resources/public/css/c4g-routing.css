@@ -878,3 +878,25 @@ button.c4g-sideboard-hide:after {
     bottom: 6px;
     right: 6px;
 }
+
+.c4g-router-instructions-header {
+    width: 100%;
+    position: relative;
+}
+
+button.c4g-router-print {
+    width: 32px;
+    height: 32px;
+    border: none;
+    outline: none;
+    background: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+button.c4g-router-print:active {
+ background-color: var(--font-color);
+    color: var(--main-color)!important;
+}

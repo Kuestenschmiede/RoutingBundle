@@ -19,6 +19,7 @@ export class RouterFeatureList extends Component {
   constructor(props) {
     super(props);
     this.setActiveId = this.setActiveId.bind(this);
+    this.features = {};
   }
 
   setActiveId(activeId) {
@@ -40,7 +41,8 @@ export class RouterFeatureList extends Component {
         {this.props.switcher}
         <ul>
           {sortedFeatures.map((feature, index) => {
-            return <RouterFeatureListItem feature={feature} type={this.props.featureList.type} active={this.props.activeId == feature.id}
+            this.features[feature.id] = React.createRef();
+            return <RouterFeatureListItem feature={feature} refProp={this.features[feature.id]} type={this.props.featureList.type} active={this.props.activeId === feature.id}
                                           setActiveId={this.props.setActiveId} routeMode={this.props.routeMode} mapController={this.props.mapController}
                                           layerRoute={this.props.layerRoute} layerArea={this.props.layerArea} featureSource={this.props.featureSource}
                                           key={index} layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea}/>
@@ -48,6 +50,16 @@ export class RouterFeatureList extends Component {
         </ul>
       </div>
     );
+  }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.activeId !== this.props.activeId) {
+      if (this.props.activeId) {
+        const ref = this.features[this.props.activeId];
+        // ref.current.scrollIntoView({behavior: 'smooth', block: 'start'});
+        let scrollElement = document.querySelector(".c4g-router-result-container");
+        scrollElement.scrollTo(0, ref.current.offsetTop);
+      }
+    }
   }
 
   sortFeatures() {
