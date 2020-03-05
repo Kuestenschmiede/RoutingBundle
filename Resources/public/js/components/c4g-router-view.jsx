@@ -1319,11 +1319,20 @@ export class RouterView extends Component {
         else {
           let coords = [parseFloat(response[0].lon), parseFloat(response[0].lat)];
           let point = new Point(coords);
-          if (value === "fromPoint") {
-            scope.setState({fromValue: point});
-          } else if (value === "toPoint") {
-            scope.setState({toValue: point});
+          if (value === "fromValue") {
+            scope.setState({fromPoint: point, fromAddress: $input.val()});
+            scope.routerFeaturesSource.addFeature(new Feature({
+              geometry: point,
+              style: scope.props.mapController.proxy.locationStyleController.arrLocStyles[scope.props.mapController.data.router_from_locstyle].style
+            }));
+          } else if (value === "toValue") {
+            scope.setState({toPoint: point, toAddress: $input.val()});
+            scope.routerFeaturesSource.addFeature(new Feature({
+              geometry: point,
+              style: scope.props.mapController.proxy.locationStyleController.arrLocStyles[scope.props.mapController.data.router_to_locstyle].style
+            }));
           }
+
           // TODO wieder einbauen
           // switch(value) {
           //   case "fromValue":
