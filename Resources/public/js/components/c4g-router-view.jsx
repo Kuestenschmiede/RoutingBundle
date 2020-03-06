@@ -128,7 +128,7 @@ export class RouterView extends Component {
       fromPoint: null,
       toPoint: null,
       overPoints: [],
-      profiles: arrProfiles,
+      profiles: arrProfiles ? arrProfiles : [],
       currentProfile: 0,
       open: (props.mapController.data.initial_open_comp === "routing") || false, //ToDO
       openSettings: (props.mapController.data.initial_open_comp === "routing") || false, //ToDO
