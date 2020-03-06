@@ -14,9 +14,8 @@
     width:100%;
 }
 
-.route-features-list-element {
+.route-features-list-element > div {
     border-top: 1px solid;
-    padding: 0 10px;
 }
 
 .c4g-routing-toggle{
@@ -162,7 +161,7 @@ button#c4g-router-button-instructions:before {
     font-weight: bold;
 }
 
-.route-features-list-element.c4g-active {
+.route-features-list-element.c4g-active > div{
     background-color: rgba(0,155,222,.5);
     background-color: var(--shadow-color);
 }
@@ -543,8 +542,7 @@ button.c4g-popup-route-to:before {
     font-size: inherit;
 }
 .route-features-list-element > div {
-    padding: 10px 0px 15px;
-    border: 0 10px;
+    padding: 10px 10px 15px;
 }
 .c4g-router-input-wrapper > label {
     width: 30%;
@@ -873,4 +871,9 @@ button.c4g-router-print {
 button.c4g-router-print:active {
  background-color: var(--font-color);
     color: var(--main-color)!important;
+}
+
+.route-features-list-element:not(:first-child)  {
+    padding-top: 70px;
+    margin-top: -92px;
 }
