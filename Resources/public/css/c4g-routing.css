@@ -357,7 +357,7 @@ select.c4g-router-layer-selection + div{
 
 .c4g-router-switcher button.c4g-active {
     color: var(--font-color);
-    background-color: transparent;
+    background-color: var(--shadow-color);
 }
 
 .c4g-router-profile-wrapper .c4g-active ul {
