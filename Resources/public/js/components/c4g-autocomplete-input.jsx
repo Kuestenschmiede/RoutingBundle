@@ -108,6 +108,9 @@ export class AutocompleteInput extends Component {
   autocompleteAddress(input, cssClass) {
     const scope = this;
     const settings = scope.props.objSettings;
+    if (!settings.proxyUrl || !settings.keyAutocomplete) {
+      return;
+    }
     let center;
     if (settings.center) {
       if (typeof settings.center === "function") {

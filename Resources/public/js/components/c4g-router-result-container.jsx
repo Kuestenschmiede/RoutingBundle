@@ -39,6 +39,20 @@ export class RouterResultContainer extends Component {
       12: "scooter",
       13: "scooter"
     };
+    window.c4gMapsHooks.hook_map_click = window.c4gMapsHooks.hook_map_click || [];
+    let scrolltoElement = (clickEvent) => {
+      let feature = this.props.mapController.map.forEachFeatureAtPixel(clickEvent.pixel,
+          function (feature, layer) {
+            return feature;
+          }
+      );
+      if (feature && feature.get('tid')) {
+        let zoomToId = feature.get('tid');
+        this.props.setResultFeat(clickEvent);
+        this.props.setActiveId(zoomToId);
+      }
+    };
+    window.c4gMapsHooks.hook_map_click.push(scrolltoElement);
   }
 
 

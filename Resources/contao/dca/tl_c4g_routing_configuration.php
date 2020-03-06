@@ -96,7 +96,7 @@ $GLOBALS['TL_DCA'][$strName] = array
     (
         '__selector__'                => array('router_api_selection', 'areaSearch'),
         'default'                     => '{general_legend},name,router_api_selection,router_viaroute_url,router_from_locstyle,router_to_locstyle,router_point_locstyle;'
-                                        .'{extended_legend:hide},routerHeadline,router_attribution,router_interim_locstyle,openRouter,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel;'
+                                        .'{extended_legend:hide},routerHeadline,router_attribution,router_interim_locstyle,router_alternative,enableOverPoints,enableTargetSwitch,routeStartButton,closeAfterSearch,showInstructions,instructionLabel;'
                                         .'{search_legend:hide},areaSearch,showFeatures,featureLabel,initialMode,initialResultMode,routerLayers,hideFeaturesWithoutLabel,minDetourArea,maxDetourArea,initialDetourArea,minDetourRoute,maxDetourRoute,initialDetourRoute,clickLocstyle,areaCenterLocstyle,priorityFeatures,priorityLocstyle,usePermalink;'
     ),
     
@@ -159,7 +159,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'exclude'                 => true,
             'default'                 => '',
             'inputType'               => 'checkbox',
-            'eval'                    => ['submitOnChange' => true],
+            'eval'                    => ['tl_class'=>'clr','submitOnChange' => true],
         ],
         'router_api_key' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_api_key'],
@@ -297,12 +297,6 @@ $GLOBALS['TL_DCA'][$strName] = array
             'options_callback'        => [$callbackClass,'getLocStyles'],
             'eval'                    => ['tl_class'=>'clr', 'chosen' => true, 'includeBlankOption'=>true],
             'xlabel'                  => [['tl_c4g_routing_configuration', 'locstylesLink']]
-        ],
-        'openRouter' => [
-            'label'                   => &$GLOBALS['TL_LANG'][$strName]['openRouter'],
-            'exclude'                 => true,
-            'default'                 => false,
-            'inputType'               => 'checkbox',
         ],
         'areaCenterLocstyle' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['areaCenterLocstyle'],

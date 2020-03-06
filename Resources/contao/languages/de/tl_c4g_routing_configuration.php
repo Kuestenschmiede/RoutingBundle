@@ -37,7 +37,6 @@ $GLOBALS['TL_LANG'][$strName]['customProfile']['showName'] = ['Anzeigename','Nam
 $GLOBALS['TL_LANG'][$strName]['customProfile']['fontAwesome'] = ['Fontawesome Unicode','Fontawesome Unicode für die Darstellung im Frontend.'];
 
 $GLOBALS['TL_LANG'][$strName]['hideFeaturesWithoutLabel'] = ['Features ohne Label verstecken','Kreuzen Sie diese Checkbox an, um Features an der Route ohne Label zu verstecken.'];
-$GLOBALS['TL_LANG'][$strName]['openRouter'] = ['Router initial öffnen', 'Aktivieren Sie diese Checkbox, um den Router initial zu öffnen.'];
 $GLOBALS['TL_LANG'][$strName]['router_alternative'] = ['Alternativroute','Sollen Alternativrouten dargestellt werden?'];
 $GLOBALS['TL_LANG'][$strName]['enableOverPoints'] = ['Zwischenziele', 'Aktivieren Sie diese Checkbox, um die Möglichkeit von Zwischenzielen im Router zu aktivieren.'];
 $GLOBALS['TL_LANG'][$strName]['enableTargetSwitch'] = ['Start und Ziel tauschen', 'Aktivieren Sie diese Checkbox, um das Vertauschen von Start und Ziel im Router zu aktivieren.'];

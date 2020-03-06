@@ -243,7 +243,7 @@ export class RouterView extends Component {
           toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} target={this.props.target}
         />
         <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          mode={this.state.mode} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
+          mode={this.state.mode} setResultFeat={this.setResultFeat} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
           layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea} resultMode={this.state.resultMode} router={this}
            layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
           activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
@@ -494,7 +494,7 @@ export class RouterView extends Component {
         containerAddresses: containerAddresses
       });
     };
-    objSettings.swapFunction = this.swapPoints;
+    objSettings.swapPoints = this.swapPoints;
     objSettings.objFunctions = {};
     for (let i = 0; i < this.state.overPtCtr; i++) {
       objSettings.objFunctions[i] = this.createAutocompleteFunctionsForOverField(i);
@@ -1199,7 +1199,7 @@ export class RouterView extends Component {
       if (route_name_0 && route_name_1) {
         routerInstructionsHeader.innerHTML = '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_ROUTE + '</label> <em>' + route_name_0 + ' &#8594; ' + route_name_1 + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
       }
-      else if (this.routeProfile && this.routeProfile.active) {
+      else if (this.routeProfile && this.routeProfile.active && Array.isArray(this.routeProfile.active)) {
         routerInstructionsHeader.innerHTML = '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_PROFILE + '</label> <em>' + this.props.mapController.data.router_profiles[this.routeProfile.active] + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
       }
 
@@ -1319,11 +1319,12 @@ export class RouterView extends Component {
         else {
           let coords = [parseFloat(response[0].lon), parseFloat(response[0].lat)];
           let point = new Point(coords);
-          if (value === "fromPoint") {
-            scope.setState({fromValue: point});
-          } else if (value === "toPoint") {
-            scope.setState({toValue: point});
+          if (value === "fromValue") {
+            scope.setState({fromPoint: point, fromAddress: $input.val()}, () => scope.updateRouteLayersAndPoints());
+          } else if (value === "toValue") {
+            scope.setState({toPoint: point, toAddress: $input.val()}, () => scope.updateRouteLayersAndPoints());
           }
+
           // TODO wieder einbauen
           // switch(value) {
           //   case "fromValue":

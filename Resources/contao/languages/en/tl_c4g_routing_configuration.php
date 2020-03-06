@@ -36,7 +36,6 @@ $GLOBALS['TL_LANG'][$strName]['customProfile']['showName'] = ['Display name','Na
 $GLOBALS['TL_LANG'][$strName]['customProfile']['fontAwesome'] = ['Fontawesome Unicode','Fontawesome Unicode for the display in the frontend.'];
 
 $GLOBALS['TL_LANG'][$strName]['hideFeaturesWithoutLabel'] = ['Hide features without label','Check this to hide features that have no label.'];
-$GLOBALS['TL_LANG'][$strName]['openRouter'] = ['Router initially opened', 'Check this to open the router initially.'];
 $GLOBALS['TL_LANG'][$strName]['router_alternative'] = ['Alternative Routes', 'Should alternative routes be displayed?'];
 $GLOBALS['TL_LANG'][$strName]['enableOverPoints'] = ['Interim Targets', 'Check this to enable the possibility to create interim targets.'];
 $GLOBALS['TL_LANG'][$strName]['enableTargetSwitch'] = ['Swap Start and Target', 'Check this to enable swapping of start and target.'];
