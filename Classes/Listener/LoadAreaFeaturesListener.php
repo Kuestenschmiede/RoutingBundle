@@ -88,10 +88,16 @@ class LoadAreaFeaturesListener
                         $locations[] = [$pTemp->getLng(), $pTemp->getLat()];
                     }
                 }
-                //ToDo check performMatrix result
-                $requestData = \GuzzleHttp\json_decode($this->areaService->performMatrix($objMapsProfile, $profile, $locations), true);
-                $type = $requestData['responseType'] ?: $type;
-                $finalResponseFeatures = [];
+
+                $performMatrix = $this->areaService->performMatrix($objMapsProfile, $profile, $locations);
+                if ($performMatrix) {
+                    $requestData = \GuzzleHttp\json_decode($performMatrix, true);
+                    $type = $requestData['responseType'] ?: $type;
+                } else {
+                    $requestData = [];
+                }
+
+//                $finalResponseFeatures = [];
 //                for($i = 1; $i < count($requestData['distances'][0]); $i++) {
 //                    if ($routerConfig->getRouterApiSelection() == "1") {
 //                        if($requestData['distances'][0][$i] < $distance){
