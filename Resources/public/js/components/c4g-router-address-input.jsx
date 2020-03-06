@@ -39,7 +39,7 @@ export class RouterAddressInput extends Component {
     let overForm = "";
     if (this.props.enableOverPoints && this.props.mode === "route") {
       overForm = Object.keys(this.props.overSettings.overPoints).map((item) => {
-          return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label="Zwischenziel"
+          return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label={this.langConstants.ROUTER_Label_Interim}
                                      cssId={"routingOver-" + item} objFunctions={this.props.overSettings.objFunctions} objSettings={this.props.objSettings}
                                      containerAddresses={this.props.containerAddresses} value={this.props.overSettings.overAddresses[item]}
                                      router={this.props.router} key={item} index={item} clearInput={() => {this.props.overSettings.objFunctions[item].deleteFunction();}}/>
@@ -74,14 +74,14 @@ export class RouterAddressInput extends Component {
     let idx = this.props.overSettings.overPoints.length + 1;
 
     input = <React.Fragment>
-      <RouterAddressField className={"c4g-router-input-from" + fromClsAddition} name="routingFrom" label="Start" key={idx}
+      <RouterAddressField className={"c4g-router-input-from" + fromClsAddition} name="routingFrom" label={this.langConstants.ROUTER_FROM} key={idx}
                           cssId="routingFrom" objFunctions={this.props.objFunctions.fromFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.from}
                           containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.fromAddress} router={this.props.router}/>
       {overForm}
-      <RouterAddressField className={"c4g-router-input-to" + toClsAddition} name="routingTo" label="Ziel" key={idx + 1}
+      <RouterAddressField className={"c4g-router-input-to" + toClsAddition} name="routingTo" label={this.langConstants.ROUTER_TO} key={idx + 1}
                           cssId="routingTo" objFunctions={this.props.objFunctions.toFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.to}
                           containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.toAddress} router={this.props.router}/>
-      <RouterAddressField className={"c4g-router-input-area" + areaClsAddition} name="areaFrom" label="Zentrum" key={idx + 2}
+      <RouterAddressField className={"c4g-router-input-area" + areaClsAddition} name="areaFrom" label={this.langConstants.ROUTER_CENTER} key={idx + 2}
                           cssId="areaInput" objFunctions={this.props.objFunctions.areaFunctions} objSettings={this.props.objSettings} clearInput={this.props.resetFunctions.area}
                           containerAddresses={this.props.containerAddresses} withPosition={this.props.withPosition} value={this.props.areaAddress} router={this.props.router}/>
     </React.Fragment>;

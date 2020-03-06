@@ -102,6 +102,7 @@ export var routingConstantsGerman = {
 
   ROUTER_FROM: 'Start',
   ROUTER_TO: 'Ziel',
+  ROUTER_CENTER: 'Zentrum',
   ROUTER_FIND_ROUTE: 'Route finden',
   ROUTER_LOC_ROUTE_TO: 'Route hierhin',
   ROUTER_ROUTEDESC: 'Routenbeschreibung',

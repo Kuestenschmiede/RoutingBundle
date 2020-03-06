@@ -101,6 +101,7 @@ export  var routingConstantsEnglish = {
 
   ROUTER_FROM: 'Start',
   ROUTER_TO: 'End',
+  ROUTER_CENTER: 'Center',
   ROUTER_FIND_ROUTE: 'Find route',
   ROUTER_LOC_ROUTE_TO: 'Route to here',
   ROUTER_ROUTEDESC: 'Description',
