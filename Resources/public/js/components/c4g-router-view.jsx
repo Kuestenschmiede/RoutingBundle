@@ -494,7 +494,7 @@ export class RouterView extends Component {
         containerAddresses: containerAddresses
       });
     };
-    objSettings.swapFunction = this.swapPoints;
+    objSettings.swapPoints = this.swapPoints;
     objSettings.objFunctions = {};
     for (let i = 0; i < this.state.overPtCtr; i++) {
       objSettings.objFunctions[i] = this.createAutocompleteFunctionsForOverField(i);
@@ -1199,7 +1199,7 @@ export class RouterView extends Component {
       if (route_name_0 && route_name_1) {
         routerInstructionsHeader.innerHTML = '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_ROUTE + '</label> <em>' + route_name_0 + ' &#8594; ' + route_name_1 + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
       }
-      else if (this.routeProfile && this.routeProfile.active) {
+      else if (this.routeProfile && this.routeProfile.active && Array.isArray(this.routeProfile.active)) {
         routerInstructionsHeader.innerHTML = '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_PROFILE + '</label> <em>' + this.props.mapController.data.router_profiles[this.routeProfile.active] + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_DISTANCE + '</label> <em>' + total_distance + '</em><br>' + '<label>' + this.languageConstants.ROUTER_VIEW_LABEL_TIME + '</label> <em>' + total_time + '</em><br>';
       }
 
