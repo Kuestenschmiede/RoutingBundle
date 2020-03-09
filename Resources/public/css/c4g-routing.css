@@ -877,3 +877,6 @@ button.c4g-router-print:active {
     padding-top: 70px;
     margin-top: -92px;
 }
+.c4g-popup-header.c4g-routing {
+    padding-bottom: 35px;
+}
