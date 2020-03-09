@@ -917,3 +917,7 @@ button.c4g-icon.c4g-popup-route-from {
     font-family: "Font Awesome 5 Free";
     margin: 0 30px;
 }
+
+.c4g-sideboard > div > div[class*=header].c4g-routing button[class*=route]:hover {
+    border: 1px solid var(--shadow-color);
+}
