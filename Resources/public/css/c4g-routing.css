@@ -873,10 +873,34 @@ button.c4g-router-print:active {
     color: var(--main-color)!important;
 }
 
-.route-features-list-element:not(:first-child)  {
+.route-features-list-element:not(:first-child) {
     padding-top: 70px;
     margin-top: -92px;
 }
-.c4g-popup-header.c4g-routing {
-    padding-bottom: 35px;
+
+.c4g-sideboard > div > div[class*=header].c4g-routing {
+    height: calc((32px + .4em) * 2);
+}
+
+.c4g-sideboard > div[class*=wrapper] > div[class*=header].c4g-routing + div[class*=content] {
+    max-height: calc((var(--map-height) - .4em) - ((32px + .4em)*2) - .4em);
+}
+}
+
+.c4g-sideboard > div > div[class*=header].c4g-routing button[class*=route] {
+    width: 32px;
+    height: 32px;
+    border: none;
+    outline: none;
+    vertical-align: top;
+    background: none;
+    cursor: pointer;
+}
+
+button.c4g-icon.c4g-popup-route-to {
+    float: right;
+}
+
+.c4g-popup-header.c4g-routing .c4g-titlebar-close + div {
+    padding: 0 .2em;
 }
