@@ -33,6 +33,7 @@ import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx";
 import {utils} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
+import {RouterPopupButtons} from "./c4g-router-popup-buttons.jsx";
 
 const osmtogeojson = require('osmtogeojson');
 
@@ -829,7 +830,11 @@ export class RouterView extends Component {
           let routeButtonWrapper = createPopupWrapper(objPopup);
           window.c4gMapsPopup.$content.append(routeButtonWrapper);
         } else {
-          params.comp.setRouteButtons(createPopupWrapper(objPopup));
+          let config = {
+            feature: objPopup.feature,
+            router: scope
+          };
+          params.comp.setAddButtons(RouterPopupButtons, config);
         }
       }
     });
