@@ -892,16 +892,18 @@ button.c4g-router-print:active {
     border: none;
     outline: none;
     vertical-align: top;
-    background: none;
+    background: var(--font-color);
+    color: var(--main-color);
     cursor: pointer;
+    position: absolute;
 }
 
 button.c4g-icon.c4g-popup-route-to {
-    float: right;
+    right: .2em;
 }
 
 button.c4g-icon.c4g-popup-route-from {
-    float: left;
+    left: .2em;
 }
 
 .c4g-popup-header.c4g-routing .c4g-titlebar-close + div {
