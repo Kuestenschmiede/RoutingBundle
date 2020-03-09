@@ -16,6 +16,8 @@ import { RouterAddressField } from "./c4g-router-address-field.jsx";
 import { RouterProfileSelection } from "./c4g-router-profile-selection.jsx";
 import { RouterLayerSelection } from "./c4g-router-layer-selection.jsx";
 import { RouterDetourSlider } from "./c4g-router-detour-slider.jsx";
+import {routingConstantsGerman} from "../routing-constant-i18n-de";
+import {routingConstantsEnglish} from "../routing-constant-i18n-en";
 
 export class RouterAddressInput extends Component {
 
@@ -29,7 +31,14 @@ export class RouterAddressInput extends Component {
     this.state = {
       router: props.router,
     };
-
+    if (typeof props.router.props.mapController.data !== 'undefined') {
+      if (props.router.props.mapController.data.lang === "de") {
+        this.langConstants = routingConstantsGerman;
+      } else {
+        // fallback
+        this.langConstants = routingConstantsEnglish;
+      }
+    }
   }
 
   render() {
