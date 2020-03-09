@@ -98,7 +98,12 @@ export class RouterFeatureListItem extends Component {
     if (currentFeature) {
       if (this.props.type === "overpass") {
         if (currentFeature.getStyle()) {
-          featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, currentFeature.getStyle());
+          let styleSrc = '';
+          if (currentFeature.getStyle().id && currentFeature.getStyle().id > 0) {
+            let locstyleArr = this.props.mapController.proxy.locationStyleController.arrLocStyles[currentFeature.getStyle().id].locStyleArr;
+            styleSrc = locstyleArr.icon_src ? locstyleArr.icon_src : locstyleArr.svgSrc ? locstyleArr.svgSrc : "";
+          }
+          featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, styleSrc);
         }
       } else if (this.props.type === "notOverpass") {
 
