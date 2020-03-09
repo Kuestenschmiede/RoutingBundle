@@ -40,6 +40,7 @@ export class RouterPopupButtons extends Component {
         };
         return <div>
             <button className={"c4g-icon c4g-popup-route-from"} onMouseUp={()=>{routeFrom()}}/>
+            <span className={"c4g-route-title"}>Routing</span>
             <button className={"c4g-icon c4g-popup-route-to"} onMouseUp={()=>{routeTo()}}/>
         </div>
     }

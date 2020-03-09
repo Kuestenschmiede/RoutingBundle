@@ -885,7 +885,6 @@ button.c4g-router-print:active {
 .c4g-sideboard > div[class*=wrapper] > div[class*=header].c4g-routing + div[class*=content] {
     max-height: calc((var(--map-height) - .4em) - ((32px + .4em)*2) - .4em);
 }
-}
 
 .c4g-sideboard > div > div[class*=header].c4g-routing button[class*=route] {
     width: 32px;
@@ -901,6 +900,18 @@ button.c4g-icon.c4g-popup-route-to {
     float: right;
 }
 
+button.c4g-icon.c4g-popup-route-from {
+    float: left;
+}
+
 .c4g-popup-header.c4g-routing .c4g-titlebar-close + div {
     padding: 0 .2em;
+    text-align: center;
+}
+
+.c4g-sideboard > div > div[class*=header].c4g-routing span.c4g-route-title:before, .c4g-sideboard > div > div[class*=header].c4g-routing span.c4g-route-title:after {
+    content: "\f30b";
+    font-weight: bold;
+    font-family: "Font Awesome 5 Free";
+    margin: 0 30px;
 }
