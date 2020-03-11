@@ -97,12 +97,12 @@ export class RouterFeatureListItem extends Component {
     let objHook = null;
     if (currentFeature) {
       if (this.props.type === "overpass") {
-        if (currentFeature.getStyle()) {
+        if (currentFeature.get('locstyle')) {
+          let styleId = currentFeature.get('locstyle');
           let styleSrc = '';
-          let styl0r = currentFeature.getStyle();
-          let styleImage = styl0r.getImage && typeof styl0r.getImage === "function" && styl0r.getImage() ? styl0r.getImage(): null;
-          if (styleImage && styleImage.getSrc()) {
-            styleSrc = styleImage.getSrc();
+          let locstyle = this.props.mapController.proxy.locationStyleController.arrLocStyles[styleId];
+          if (locstyle && locstyle.locStyleArr) {
+            styleSrc = locstyle.locStyleArr.styletype === "cust_icon" ? locstyle.locStyleArr.icon_src : locstyle.locStyleArr.styletype === "cust_icon_svg" ? locstyle.locStyleArr.svgSrc : "";
           }
           featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, styleSrc);
         }

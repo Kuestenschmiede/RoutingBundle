@@ -1696,6 +1696,7 @@ export class RouterView extends Component {
           contentFeature = new Feature(point);
           contentFeature.setId(feature.id);
           contentFeature.set('loc_linkurl', layer.loc_linkurl);
+          contentFeature.set('locstyle', layer.locstyle);
           contentFeature.set('hover_location', layer.hover_location);
           contentFeature.set('hover_style', layer.hover_style);
           contentFeature.set('zoom_onclick', layer.zoom_onclick);
@@ -1769,6 +1770,7 @@ export class RouterView extends Component {
       for (let id in contentFeatures) {
         if (contentFeatures.hasOwnProperty(id)) {
           contentFeatures[id].set('loc_linkurl', layer.loc_linkurl);
+          contentFeatures[id].set('locstyle', layer.locstyle);
           contentFeatures[id].set('hover_location', layer.hover_location);
           contentFeatures[id].set('hover_style', layer.hover_style);
           contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
