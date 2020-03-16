@@ -898,6 +898,17 @@ button.c4g-router-print:active {
     position: absolute;
 }
 
+.c4g-popup-route-wrapper button[class*=route]{
+    width: 32px;
+    height: 32px;
+    border: none;
+    outline: none;
+    vertical-align: top;
+    background: var(--font-color);
+    color: var(--main-color)!important;
+    cursor: pointer;
+}
+
 button.c4g-icon.c4g-popup-route-to {
     right: .2em;
 }
@@ -919,5 +930,9 @@ button.c4g-icon.c4g-popup-route-from {
 }
 
 .c4g-sideboard > div > div[class*=header].c4g-routing button[class*=route]:hover {
+    border: 1px solid var(--shadow-color);
+}
+
+.c4g-popup-route-wrapper button[class*=route]:hover {
     border: 1px solid var(--shadow-color);
 }
