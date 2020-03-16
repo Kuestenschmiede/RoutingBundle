@@ -119,8 +119,9 @@ class LoadAreaFeaturesListener
                 $event->setReturnData([$requestData, $responseFeatures, $type, 'notOverpass']);
             } elseif ($objLayer->location_type == 'overpass') {
                 $url = $objMapsProfile->overpass_url ? $objMapsProfile->overpass_url : 'http://overpass-api.de/api/interpreter';
-                $strBBox = $bounds['lower']->getLat() . ',' . $bounds['left']->getLng() . ',' . $bounds['upper']->getLat() . ',' . $bounds['right']->getLng();
                 $query = $objLayer->ovp_request;
+                $strBBox = strrpos($query, '(bbox)') ? '<bbox-query s="' . $bounds['lower']->getLat() . '" n="' . $bounds['upper']->getLat() . '" w="' . $bounds['left']->getLng() . '" e="' . $bounds['lower']->getLng() . '"/>'
+                    : $bounds['lower']->getLat() . ',' . $bounds['left']->getLng() . ',' . $bounds['upper']->getLat() . ',' . $bounds['right']->getLng();
                 $strSearch = strrpos($query, '(bbox)') ? '(bbox)' : '{{bbox}}';
                 $query = str_replace($strSearch, $strBBox, $query);
                 $REQUEST = new \Request();
@@ -130,6 +131,10 @@ class LoadAreaFeaturesListener
                 }
                 if ($_SERVER['HTTP_USER_AGENT']) {
                     $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+                }
+                if (!strpos($query, 'json')) {
+                    $event->setReturnData([]);
+                    return null;
                 }
                 $REQUEST->send($url, $query);
                 //ToDo check response
