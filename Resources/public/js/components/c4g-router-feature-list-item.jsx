@@ -107,7 +107,9 @@ export class RouterFeatureListItem extends Component {
           featureEntryContent = this.popupFunctions.fnStandardInfoPopup(currentFeature, styleSrc);
         }
       } else if (this.props.type === "notOverpass") {
-
+        if (this.props.feature && this.props.feature.popup) {
+          featureEntryContent = this.props.feature.popup;
+        }
       } else {
         let layerValue = this.props.routeMode === "route" ? this.props.layerValueRoute : this.props.layerValueArea;
         objHook =  {
