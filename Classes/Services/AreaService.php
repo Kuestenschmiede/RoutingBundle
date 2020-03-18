@@ -76,10 +76,10 @@ class AreaService
 
                     break;
                 case 4:
-                    for ($i = 1; $i < count($matrixResponse['sources_to_targets'][0]); $i++) {
+                    for ($i = 0; $i < count($matrixResponse['sources_to_targets'][0]); $i++) {
                         if ($matrixResponse['sources_to_targets'][0][$i]['distance'] < $distance) {
-                            $requestData[$i - 1]['distance'] = $matrixResponse['distances'][0][$i];
-                            $features[] = $requestData[$i - 1];
+                            $requestData[$i]['distance'] = $matrixResponse['sources_to_targets'][0][$i]['distance'];
+                            $features[] = $requestData[$i];
                         }
                     }
 
@@ -257,7 +257,7 @@ class AreaService
             }
 
             $startlocation = [$latLonLocations[0]];
-            array_splice($latLonLocations, 1, 1);
+            array_splice($latLonLocations, 0, 1);
             $matrixData = [
                 'sources' => $startlocation,
                 'targets' => $latLonLocations,
