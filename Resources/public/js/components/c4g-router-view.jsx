@@ -1574,7 +1574,7 @@ export class RouterView extends Component {
             } else {
               scope.showRouteLayer(response);
               scope.showRouteInstructions(response, 0, scope.routerWaySource, scope.routerHintSource);
-              if (response.features && response.features.elements) {
+              if (response.features && (response.features.elements || response.features.length > 0)) {
                 let sortedFeatures = scope.showFeatures(response.features, response.type, "router");
                 scope.setState({
                   "featureList": {
