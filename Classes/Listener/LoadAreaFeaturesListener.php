@@ -134,6 +134,7 @@ class LoadAreaFeaturesListener
                 }
                 if (!strpos($query, 'json')) {
                     $event->setReturnData([]);
+
                     return null;
                 }
                 $REQUEST->send($url, $query);
