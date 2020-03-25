@@ -28,7 +28,7 @@ class AreaService
      * AreaService constructor.
      * @param $eventDispatcher
      */
-    public function __construct($eventDispatcher)
+    public function __construct($eventDispatcher = null)
     {
         $this->eventDispatcher = $eventDispatcher;
     }
