@@ -33,7 +33,7 @@
   "dependencies": {
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-react": "^6.24.1",
-    "ol": "^6.2.0",
+    "ol": "^6.3.0",
     "osmtogeojson": "^3.0.0-beta.4",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
