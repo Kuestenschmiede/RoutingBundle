@@ -25,6 +25,9 @@ export class RouterAddressField extends Component {
 
     this.getPosition = this.getPosition.bind(this);
     this.removeContent = this.removeContent.bind(this);
+    if (props.router.mapData.initialPosition && (props.name === "routingFrom" || props.name === "areaFrom")) {
+      this.getPosition();
+    }
   }
 
   render() {
