@@ -219,7 +219,13 @@ class RoutingConfiguration extends BaseEntity
      * @ORM\Column(type="string", length=1)
      */
     protected $routeStartButton = '';
-    
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=1)
+     */
+    protected $initialPosition = '';
+
     /**
      * @var string
      * @ORM\Column(type="string", length=1)
@@ -715,6 +721,22 @@ class RoutingConfiguration extends BaseEntity
     public function setEnableTargetSwitch(string $enableTargetSwitch): void
     {
         $this->enableTargetSwitch = $enableTargetSwitch;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInitialPosition(): string
+    {
+        return $this->initialPosition;
+    }
+
+    /**
+     * @param string $initialPosition
+     */
+    public function setInitialPosition(string $initialPosition): void
+    {
+        $this->initialPosition = $initialPosition;
     }
     
     /**

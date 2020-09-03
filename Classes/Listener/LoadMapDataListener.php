@@ -128,6 +128,7 @@ class LoadMapDataListener
                 $mapData['initialMode'] = $routerConfig->getInitialMode();
                 $mapData['initialResultMode'] = $routerConfig->getInitialResultMode();
                 $mapData['routeStartButton'] = $routerConfig->getRouteStartButton();
+                $mapData['initialPosition'] = $routerConfig->getInitialPosition();
                 $mapData['usePermalink'] = $routerConfig->getUsePermalink();
                 $mapData['hideFeaturesWithoutLabel'] = $routerConfig->getHideFeaturesWithoutLabel();
                 $objSettings = C4gMapSettingsModel::findOnly();

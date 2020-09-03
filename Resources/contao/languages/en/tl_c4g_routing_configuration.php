@@ -50,6 +50,7 @@ $GLOBALS['TL_LANG'][$strName]['areaHeadline'] = ['Headline area search', 'Defaul
 $GLOBALS['TL_LANG'][$strName]['areaHeadlineDefault'] = "Area search";
 $GLOBALS['TL_LANG'][$strName]['featureLabel'] = ['Result list button caption', 'Enter a caption for the result list button.'];
 $GLOBALS['TL_LANG'][$strName]['initialMode'] = ['Initial view', 'Choose the initial view in the router.'];
+$GLOBALS['TL_LANG'][$strName]['initialPosition'] = ['Initial position', 'The starting point is set to the users position'];
 $GLOBALS['TL_LANG'][$strName]['initialResultMode'] = ['Initial result view', 'Choose the initial view in the router results (feature list or route instructions).'];
 $GLOBALS['TL_LANG'][$strName]['minDetourArea'] = ['Minimum Radius Area Search (km)', 'The minimum radius to search.'];
 $GLOBALS['TL_LANG'][$strName]['maxDetourArea'] = ['Maximum Radius Area Search (km)', 'The maximum radius to search.'];
