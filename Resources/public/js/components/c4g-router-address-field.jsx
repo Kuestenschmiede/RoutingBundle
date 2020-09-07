@@ -15,6 +15,7 @@ import React, { Component } from "react";
 import {AutocompleteInput} from "./c4g-autocomplete-input.jsx";
 import {Point} from "ol/geom";
 import {getLanguage} from "./../routing-constant-i18n";
+import {transform} from "ol/proj";
 
 export class RouterAddressField extends Component {
 
@@ -27,6 +28,18 @@ export class RouterAddressField extends Component {
     this.removeContent = this.removeContent.bind(this);
     if (props.router.mapData.initialPosition && (props.name === "routingFrom" || props.name === "areaFrom")) {
       this.getPosition();
+    }
+    else if (props.router.mapData.initialDestination && props.name === "routingTo") {
+      let setToCenter = (data)=> {
+        let center = props.router.props.mapController.map.getView().getCenter();
+        let coordinates = {};
+        coordinates.coords = {};
+        coordinates.coords.longitude = transform(center, "EPSG:3857", "EPSG:4326")[0];
+        coordinates.coords.latitude = transform(center, "EPSG:3857", "EPSG:4326")[1];
+        this.handlePosition(coordinates);
+      }
+      window.c4gMapsHooks.layer_loaded = window.c4gMapsHooks.layer_loaded || [];
+      window.c4gMapsHooks.layer_loaded.push(setToCenter);
     }
   }
 

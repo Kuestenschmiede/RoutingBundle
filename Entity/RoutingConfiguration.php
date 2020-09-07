@@ -230,6 +230,28 @@ class RoutingConfiguration extends BaseEntity
      * @var string
      * @ORM\Column(type="string", length=1)
      */
+    protected $initialDestination = '';
+
+    /**
+     * @return string
+     */
+    public function getInitialDestination(): string
+    {
+        return $this->initialDestination;
+    }
+
+    /**
+     * @param string $initialDestination
+     */
+    public function setInitialDestination(string $initialDestination): void
+    {
+        $this->initialDestination = $initialDestination;
+    }
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=1)
+     */
     protected $showFeatures = '';
     
     /**
