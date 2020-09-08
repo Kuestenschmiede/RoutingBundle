@@ -1388,23 +1388,15 @@ export class RouterView extends Component {
         if (response) {
           var value = "";
           if (response.address) {
-            if (response.address.city) {
-              value = response.address.city;
-              if (response.address.road) {
-                value = ', ' + value;
-              }
-            }
-            if (response.address.town) {
-              value = response.address.town;
-              if (response.address.road) {
-                value = ', ' + value;
-              }
-            }
-            if (response.address.road) {
+            if (response.address.road || response.address.path || response.address.pedestrian) {
+              value += response.address.road || response.address.path || response.address.pedestrian;
               if (response.address.house_number) {
-                value = ' ' + response.address.house_number + value;
+                value += " " + response.address.house_number;
               }
-              value = response.address.road + value;
+            }
+            if (response.address.city || response.address.town) {
+              value += value ? ", ": "";
+              value += response.address.city || response.address.town;
             }
           }
           if (value === "") {
