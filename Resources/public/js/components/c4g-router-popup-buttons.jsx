@@ -39,9 +39,8 @@ export class RouterPopupButtons extends Component {
             this.props.config.router.setRouteTo(toCoords[0], toCoords[1]);
         };
         return <div>
-            <button className={"c4g-icon c4g-popup-route-from"} onMouseUp={()=>{routeFrom()}}/>
-            <span className={"c4g-route-title"}>Routing</span>
-            <button className={"c4g-icon c4g-popup-route-to"} onMouseUp={()=>{routeTo()}}/>
+            <button className={"c4g-icon c4g-popup-route-from"} title={this.props.config.router.languageConstants.POPUP_ROUTE_FROM} onMouseUp={()=>{routeFrom()}}/>
+            <button className={"c4g-icon c4g-popup-route-to"} title={this.props.config.router.languageConstants.POPUP_ROUTE_TO} onMouseUp={()=>{routeTo()}}/>
         </div>
     }
 }
