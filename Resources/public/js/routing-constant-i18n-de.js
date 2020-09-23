@@ -131,10 +131,15 @@ export var routingConstantsGerman = {
 
   CAR:                  'Auto',
   BIKE:                 'Fahrrad',
+  ROADBIKE:             'Rennrad',
+  MOUNTAINBIKE:         'Mountainbike',
+  ELECTRICBIKE:         'E-Bike',
   TRUCK:                'Lastkraftwagen',
-  WALK:                 'Fußgänger',
+  WALK:                 'FußgängerIn',
+  WANDER:               'WandererIn',
   WHEEL:                'Rollstuhl',
   SCOOT:                'Roller',
+  MOTORBIKE:            'Motorrad',
 
   CLOSE: 'Schließen',
 

@@ -450,7 +450,24 @@ button.c4g-router-profile-bike:before {
     font-weight: 900;
     font-size: inherit;
 }
+button.c4g-router-profile-mountainbike:before {
+    content: "\f206";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-profile-roadbike:before {
+    content: "\f206";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
 button.c4g-router-profile-foot:before {
+    content: "\f554";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}button.c4g-router-profile-wander:before {
     content: "\f554";
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
@@ -463,6 +480,12 @@ button.c4g-router-profile-wheelchair:before {
     font-size: inherit;
 }
 button.c4g-router-profile-scooter:before {
+    content: "\f21c";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: inherit;
+}
+button.c4g-router-profile-motorbike:before {
     content: "\f21c";
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;

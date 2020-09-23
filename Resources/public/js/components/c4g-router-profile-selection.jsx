@@ -25,17 +25,17 @@ export class RouterProfileSelection extends Component {
       0: "car",
       1: "hgv",
       2: "bike",
-      3: "bike",
+      3: "roadbike",
       4: "bike",
-      5: "bike",
+      5: "mountainbike",
       6: "bike",
-      7: "bike",
+      7: "electricbike",
       8: "foot",
-      9: "foot",
+      9: "wander",
       10: "wheelchair",
       11: "hgv",
       12: "scooter",
-      13: "scooter"
+      13: "motorbike"
     };
 
     this.languageConstants = getLanguage(props.router.props.mapController.data);
@@ -44,9 +44,14 @@ export class RouterProfileSelection extends Component {
       "car": this.languageConstants.CAR,
       "hgv": this.languageConstants.TRUCK,
       "bike": this.languageConstants.BIKE,
+      "roadbike": this.languageConstants.ROADBIKE,
+      "mountainbike": this.languageConstants.MOUNTAINBIKE,
+      "electricbike": this.languageConstants.ELECTRICBIKE,
       "foot": this.languageConstants.WALK,
+      "wander": this.languageConstants.WANDER,
       "wheelchair": this.languageConstants.WHEEL,
-      "scooter": this.languageConstants.SCOOT
+      "scooter": this.languageConstants.SCOOT,
+      "motorbike": this.languageConstants.MOTORBIKE
     };
 
     this.state = {

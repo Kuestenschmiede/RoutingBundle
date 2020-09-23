@@ -131,10 +131,15 @@ export  var routingConstantsEnglish = {
 
   CAR:                  'Car',
   BIKE:                 'Bike',
+  ROADBIKE:             'Road bike',
+  MOUNTAINBIKE:         'Mountain bike',
+  ELECTRICBIKE:         'E-Bike',
   TRUCK:                'Truck',
   WALK:                 'Pedestrian',
+  WANDER:               'Wanderer',
   WHEEL:                'Wheelchair',
   SCOOT:                'Router',
+  MOTORBIKE:            'Motorbike',
 
   CLOSE: 'Close',
 
