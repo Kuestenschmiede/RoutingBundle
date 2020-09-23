@@ -50,7 +50,7 @@ export class RouterProfileSelection extends Component {
     };
 
     this.state = {
-      showPopup: false
+      showPopup: !!props.router.mapData.router_profiles_initial
     }
   }
 

@@ -23,6 +23,7 @@ $GLOBALS['TL_LANG'][$strName]['router_to_locstyle'] = ['Location Style for Targe
 $GLOBALS['TL_LANG'][$strName]['router_point_locstyle'] = ['Location Style for on-the-fly hints', 'Choose a location style for the on-the-fly hints.'];
 $GLOBALS['TL_LANG'][$strName]['router_interim_locstyle'] = ['Location Style for interim targets', 'Choose a location style for interim targets.'];
 $GLOBALS['TL_LANG'][$strName]['router_profiles'] = ['Router Profile', 'Determines the OpenRouteService or Graphhopper profiles.'];
+$GLOBALS['TL_LANG'][$strName]['router_profiles_initial'] = ['Open router-profile', 'Open router-selection initial.'];
 $GLOBALS['TL_LANG'][$strName]['routerLayers'] = ['Layer for routes', 'Enter the layers to show on the route or in a perimeter (default: Overpass & Table).'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['layers'] = ['Layer','Layer to be evaluated for the router or area search.'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['key'] = ['Key','Key for the evaluation.'];

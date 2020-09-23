@@ -111,6 +111,11 @@ class RoutingConfiguration extends BaseEntity
      */
     protected $routerProfiles = [];
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", name="router_profiles_initial", length=1)
+     */
+    protected $routerProfilesInitial = '';
 
     /**
      * @var array
@@ -1016,5 +1021,20 @@ class RoutingConfiguration extends BaseEntity
     {
         $this->areaSearchOnly = $areaSearchOnly;
     }
-    
+
+    /**
+     * @return string
+     */
+    public function getRouterProfilesInitial(): string
+    {
+        return $this->routerProfilesInitial;
+    }
+
+    /**
+     * @param string $routerProfilesInitial
+     */
+    public function setRouterProfilesInitial(string $routerProfilesInitial): void
+    {
+        $this->routerProfilesInitial = $routerProfilesInitial;
+    }
 }

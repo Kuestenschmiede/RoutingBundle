@@ -105,10 +105,10 @@ $GLOBALS['TL_DCA'][$strName] = array
     'subpalettes' => array
     (
         'router_api_selection_1' => 'customProfiles',
-        'router_api_selection_2' => 'router_api_key,router_profiles',
-        'router_api_selection_3' => 'router_api_key,router_profiles',
-        'router_api_selection_4' => 'router_api_key,router_profiles,pirate',
-        'router_api_selection_5' => 'router_profiles',
+        'router_api_selection_2' => 'router_api_key,router_profiles,router_profiles_initial',
+        'router_api_selection_3' => 'router_api_key,router_profiles,router_profiles_initial',
+        'router_api_selection_4' => 'router_api_key,router_profiles,router_profiles_initial,pirate',
+        'router_api_selection_5' => 'router_profiles,router_profiles_initial',
         'areaSearch'             => 'areaHeadline,areaSearchOnly'
     ),
     
@@ -212,6 +212,12 @@ $GLOBALS['TL_DCA'][$strName] = array
             'options_callback'        => [$callbackClass, 'getRouterProfiles'],
             'reference'               => &$GLOBALS['TL_LANG'][$strName]['references_router_profiles'],
             'eval'                    => ['mandatory'=>false, 'multiple'=>true,'chosen'=>true, 'tl_class' => 'clr m12'],
+        ],
+        'router_profiles_initial' => [
+            'label'                   => &$GLOBALS['TL_LANG'][$strName]['router_profiles_initial'],
+            'exclude'                 => true,
+            'default'                 => false,
+            'inputType'               => 'checkbox',
         ],
         'pirate' => [
             'label'                   => &$GLOBALS['TL_LANG'][$strName]['pirate'],

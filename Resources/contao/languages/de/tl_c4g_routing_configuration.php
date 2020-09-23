@@ -23,6 +23,7 @@ $GLOBALS['TL_LANG'][$strName]['router_to_locstyle'] = ['Lokationstil für Zielpu
 $GLOBALS['TL_LANG'][$strName]['router_point_locstyle'] = ['Lokationstil für Unterwegs-Hinweise', 'Wählen Sie einen Lokationstil für Unterwegs-Hinweise aus.'];
 $GLOBALS['TL_LANG'][$strName]['router_interim_locstyle'] = ['Lokationstil für Zwischenziele', 'Wählen Sie einen Lokationstil für Zwischenziele aus.'];
 $GLOBALS['TL_LANG'][$strName]['router_profiles'] = ['Router-Profile', 'Legt die OpenRouteService und Graphhopper-Profile fest.'];
+$GLOBALS['TL_LANG'][$strName]['router_profiles_initial'] = ['Router-Profile öffnen', 'Auswahl der Router-Profile initial öffnen.'];
 
 $GLOBALS['TL_LANG'][$strName]['routerLayers'] = ['Kartenstrukturelemente an der Route', 'Geben Sie hier die Strukturelemente an, die an der Route durchsucht werden sollen ("Anfrage an Overpass API (nur QL)", "Aus anderer Tabelle").'];
 $GLOBALS['TL_LANG'][$strName]['routerLayer']['layers'] = ['Strukturelement','Strukturelement welches an der Route- und/oder für die Umkreissuche ausgewertet werden soll.'];

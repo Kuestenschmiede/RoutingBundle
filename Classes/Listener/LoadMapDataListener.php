@@ -82,6 +82,7 @@ class LoadMapDataListener
                     }
                     $mapData['router_profiles'] = $router_profiles;
                 }
+                $mapData['router_profiles_initial'] = $routerConfig->getRouterProfilesInitial();
                 if ($routerConfig->getCustomProfiles()) {
                     $mapData['customProfiles'] = $routerConfig->getCustomProfiles();
                 }
