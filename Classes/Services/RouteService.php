@@ -410,13 +410,11 @@ class RouteService extends \Frontend
         if ($routerConfig instanceof RoutingConfiguration) {
             $valuesProfile = ['driving-car', 'driving-hgv', 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain', 'cycling-tour', 'cycling-electric', 'foot-walking', 'foot-hiking', 'wheelchair'];
             $strRoutingUrl = $routerConfig->getRouterViarouteUrl() ? $routerConfig->getRouterViarouteUrl() : 'https://api.openrouteservice.org/';
-            $strRoutingUrl .= 'directions?';
-            $apiKey = 'api_key=' . $routerConfig->getRouterApiKey();
-            $coordinates = '&coordinates=';
+            $strRoutingUrl .= 'v2/directions/';
+            $coordinates = [];
             for ($i = 0; $i < sizeof($arrInput); $i++) {
-                $coordinates .= explode(',', $arrInput[$i])[1] . ',' . explode(',', $arrInput[$i])[0] . '|';
+                $coordinates[] = [explode(',', $arrInput[$i])[1] , explode(',', $arrInput[$i])[0]];
             }
-            $coordinates = substr($coordinates, 0, strlen($coordinates) - 1);
             if (!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr', $language)) {
                 $language = $GLOBALS['TL_LANGUAGE'];
                 if (!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr', $language)) {
@@ -425,10 +423,19 @@ class RouteService extends \Frontend
             }
             $profile = $valuesProfile[$profile] ? $valuesProfile[$profile] : 'driving-car';
 
-            $profile = '&profile=' . $profile . '&format=json&language=' . $language . '&geometry_format=encodedpolyline&maneuvers=true&preference=recommended';
-            $url = $strRoutingUrl . $apiKey . $coordinates . $profile;
+//            $profile = '&profile=' . $profile . '&format=json&language=' . $language . '&geometry_format=encodedpolyline&maneuvers=true&preference=recommended';
+            $body = [
+                "coordinates" => $coordinates,
+                "maneuvers" => true,
+                "preference" => "recommended"
+            ];
+            $url = $strRoutingUrl . $profile;
             $request = $this->createRequest();
-            $request->send(str_replace('|', '%7C', $url));
+            $request->method = "POST";
+            $data = \GuzzleHttp\json_encode($body);
+            $request->setHeader('Authorization', $routerConfig->getRouterApiKey());
+            $request->setHeader('Content-Type', "application/json");
+            $request->send($url, $data);
             $response = $request->response;
 
             try {
@@ -456,8 +463,13 @@ class RouteService extends \Frontend
 
             if ($routerConfig->getRouterAlternative() == '1') {
                 $request = $this->createRequest();
+                $request->method = "POST";
+                $body['preference'] = 'shortest';
+                $data = \GuzzleHttp\json_encode($body);
+                $request->setHeader('Authorization', $routerConfig->getRouterApiKey());
+                $request->setHeader('Content-Type', "application/json");
                 $url = str_replace('preference=recommended', 'preference=shortest', $url);
-                $request->send($url);
+                $request->send($url, $data);
                 if ($request->response) {
                     $response['routes'][1] = \GuzzleHttp\json_decode($request->response, true)['routes'][0];
                 }
