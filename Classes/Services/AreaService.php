@@ -143,16 +143,18 @@ class AreaService
             $valuesProfile = ['driving-car', 'driving-hgv', 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain', 'cycling-tour', 'cycling-electric', 'foot-walking', 'foot-hiking', 'wheelchair'];
             $routingProfile = $valuesProfile[$routingProfile] ? $valuesProfile[$routingProfile] : 'driving-car';
             $matrixUrl = $routerConfig->getRouterViaRouteUrl() ? $routerConfig->getRouterViaRouteUrl() : 'https://api.openrouteservice.org/';
-            $matrixUrl = $matrixUrl . 'matrix?api_key=' . $routerConfig->getRouterApiKey() . '&profile=' . $routingProfile;
+            $matrixUrl .= 'v2/matrix/' . $routingProfile;
             $matrixData = [
-                'profile' => $routingProfile,
                 'locations' => $locations,
-                'sources' => '0',
-                'metrics' => 'distance',
+                'sources' => [0],
+                'metrics' => ['distance'],
                 'units' => 'km',
             ];
 
             $REQUEST = new \Request();
+            $REQUEST->setHeader('Authorization', $routerConfig->getRouterApiKey());
+            $REQUEST->setHeader('Content-Type', "application/json");
+
             if ($_SERVER['HTTP_REFERER']) {
                 $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
             }
