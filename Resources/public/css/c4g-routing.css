@@ -921,6 +921,11 @@ button.c4g-router-print:active {
     position: absolute;
 }
 
+.c4g-sideboard > div div[class*=header] button[class*=route] * {
+    color: var(--main-color);
+    vertical-align: baseline;
+}
+
 .c4g-popup-route-wrapper button[class*=route]{
     width: 32px;
     height: 32px;
