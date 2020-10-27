@@ -427,7 +427,8 @@ class RouteService extends \Frontend
             $body = [
                 "coordinates" => $coordinates,
                 "maneuvers" => true,
-                "preference" => "recommended"
+                "preference" => "recommended",
+                "language" => $language
             ];
             $url = $strRoutingUrl . $profile;
             $request = $this->createRequest();
