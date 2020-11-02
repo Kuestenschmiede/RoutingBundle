@@ -27,16 +27,16 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "echo-loader": "0.0.1",
-    "webpack": "^4.44.0",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-react": "^6.24.1",
-    "ol": "^6.4.0",
+    "ol": "^6.4.3",
     "osmtogeojson": "^3.0.0-beta.4",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "react-popup": "^0.10.0"
   }
 }
