@@ -75,6 +75,31 @@ export class RouterResultContainer extends Component {
     let printFunction = () => {
       let querySelector = this.props.resultMode === "instr" ? '.c4g-route-instructions-wrapper' : '.c4g-route-feature-wrapper';
       let prtContent = document.querySelector(querySelector).cloneNode(true);
+      if (this.props.resultMode === "instr") {
+        let fromAddress = this.props.router.state.fromAddress;
+        let divFromAddress = document.createElement('div');
+        let labelFromAddress = document.createElement('label');
+        labelFromAddress.innerHTML = this.props.lang.ROUTER_FROM + ": ";
+        let emFromAddress = document.createElement('em');
+        emFromAddress.innerHTML = fromAddress;
+        divFromAddress.appendChild(labelFromAddress);
+        divFromAddress.appendChild(emFromAddress);
+        divFromAddress.appendChild(document.createElement('em'));
+
+        let toAddress = this.props.router.state.toAddress;
+        let divToAddress = document.createElement('div');
+        let labelToAddress = document.createElement('label');
+        labelToAddress.innerHTML = this.props.lang.ROUTER_FROM + ": ";
+        let emToAddress = document.createElement('em');
+        emToAddress.innerHTML = toAddress;
+        divToAddress.appendChild(labelToAddress);
+        divToAddress.appendChild(emToAddress);
+        divToAddress.appendChild(document.createElement('em'));
+
+        prtContent.querySelector('.c4g-router-instructions-header').appendChild(divFromAddress);
+        prtContent.querySelector('.c4g-router-instructions-header').appendChild(divToAddress);
+      }
+
       prtContent.querySelector('.c4g-router-print').remove();
       let WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
       WinPrint.document.write(prtContent.innerHTML);
