@@ -491,8 +491,7 @@ button.c4g-router-profile-motorbike:before {
     font-weight: 900;
     font-size: inherit;
 }
-span.c4g-active ul,
-span ul{
+span.c4g-active ul {
     display: none;
     position: absolute;
     z-index: 1;
@@ -500,26 +499,6 @@ span ul{
 span.c4g-active:hover ul {
     display: inline;
 }
-/*button.c4g-popup-route-from,*/
-/*button.c4g-popup-route-to,*/
-/*.c4g_brick_popup_button a {*/
-/*    color: rgba(24, 61, 93,.8);*/
-/*    color: var(--main-color);*/
-/*    background-color: rgba(255,255,255,.9);*/
-/*    background-color: var(--font-color);*/
-/*    border-color: rgba(255,255,255,.9);*/
-/*    border-color: var(--font-color);*/
-/*}*/
-/*button.c4g-popup-route-from:hover,*/
-/*button.c4g-popup-route-to:hover,*/
-/*.c4g_brick_popup_button a:hover {*/
-/*    background-color: rgba(255,255,255,.9);*/
-/*    background-color: var(--font-color);*/
-/*}*/
-/*.c4g-popup-route-from,.c4g-popup-route-to, .c4g_brick_popup_button a {*/
-/*    color: rgba(24, 61, 93,.8);*/
-/*    color: var(--main-color);*/
-/*}*/
 
 button.c4g-router-hide-form-button:before {
     content: "\f085";
