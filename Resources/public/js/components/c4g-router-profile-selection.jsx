@@ -61,7 +61,9 @@ export class RouterProfileSelection extends Component {
 
   setProfile(profile) {
     this.props.router.setProfile(parseInt(profile.id, 10));
-    this.setState({showPopup: false});
+    if (!props.router.mapData.router_profiles_initial) {
+      this.setState({showPopup: false});
+    }
   }
 
   render() {
