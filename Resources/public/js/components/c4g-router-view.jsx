@@ -577,6 +577,14 @@ export class RouterView extends Component {
         if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
           tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
         }
+        else {
+          let doneFunction = () => {
+            tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+          }
+          this.props.mapController.proxy.locationStyleController.loadLocationStyles([this.props.mapController.data.router_from_locstyle], {
+            "done": doneFunction
+          })
+        }
         this.locationsSource.addFeature(tmpFeature);
       }
       if (this.state.toPoint) {
@@ -585,6 +593,14 @@ export class RouterView extends Component {
         });
         if (this.props.mapController.data.router_from_locstyle && this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle]) {
           tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+        }
+        else {
+          let doneFunction = () => {
+            tmpFeature.setStyle(this.props.mapController.proxy.locationStyleController.arrLocStyles[this.props.mapController.data.router_from_locstyle].style);
+          }
+          this.props.mapController.proxy.locationStyleController.loadLocationStyles([this.props.mapController.data.router_from_locstyle], {
+            "done": doneFunction
+          })
         }
         this.locationsSource.addFeature(tmpFeature);
       }
