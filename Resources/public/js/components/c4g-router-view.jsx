@@ -218,9 +218,12 @@ export class RouterView extends Component {
     }
     if (switcherButtons.length > 0) {
       resultSwitcher = (
-        <div className="c4g-router-mode-switch">
-          {switcherButtons}
-        </div>
+        <React.Fragment>
+          <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}} title={this.languageConstants.ROUTER_SETTINGS}/>
+          <div className="c4g-router-mode-switch">
+            {switcherButtons}
+          </div>
+        </React.Fragment>
       );
     }
 
@@ -231,7 +234,6 @@ export class RouterView extends Component {
                        detailBtnClass={"c4g-router-extended-options"} hideContainer={".c4g-router-container-right"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close} closeBtnTitle={this.languageConstants.CLOSE}/>
           <div className={"c4g-router-switcher"}>
             <div>
-            <button className={"c4g-router-hide-form-button " + (this.state.openSettings ? "c4g-active" : "c4g-inactive")} onMouseUp={() => {this.setState({openSettings: !this.state.openSettings})}} title={this.languageConstants.ROUTER_SETTINGS}/>
               {resultSwitcher}
             </div>
             <RouterProfileSelection profiles={this.state.profiles} router={this} currentProfile={this.state.currentProfile}/>
