@@ -28,6 +28,7 @@ export  var routingConstantsEnglish = {
   ROUTER_SWITCH:'Switch between Start and End',
   ROUTER_OVER:'Add interim goal',
   ROUTER_PRINT:'Print route description',
+  ROUTER_DOWNLOAD:'Download route as GPX',
 
   POPUP_ROUTE_FROM: 'Route from here',
   POPUP_ROUTE_TO: 'Route to here',

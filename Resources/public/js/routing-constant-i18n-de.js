@@ -29,6 +29,7 @@ export var routingConstantsGerman = {
   ROUTER_SWITCH:'Wechsel von Start und Ziel',
   ROUTER_OVER:'Zwischenziel hinzufügen',
   ROUTER_PRINT:'Routenbeschreibung drucken',
+  ROUTER_DOWNLOAD:'Route als GPX herunterladen',
 
   ROUTER_VIEW_LABEL_ROUTE: 'Route:',
   ROUTER_VIEW_LABEL_DISTANCE: 'Entfernung:',

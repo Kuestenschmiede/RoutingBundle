@@ -14,6 +14,7 @@
 import React, { Component } from "react";
 import {RouterInstructionsContainer} from "./c4g-router-instructions-container.jsx";
 import {RouterFeatureList} from "./c4g-router-feature-list.jsx";
+import GPX from "ol/format/GPX";
 import {toHumanDistance, toHumanTime} from "../c4g-router-time-conversions";
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx";
 
@@ -120,7 +121,8 @@ export class RouterResultContainer extends Component {
             <label>{this.props.lang.ROUTER_VIEW_LABEL_DISTANCE}</label>
             <em>{distance}</em>
           </div>
-          <button className={"c4g-router-print"} onMouseUp={()=>{printFunction()}}/>
+          <button className={"c4g-router-download"} title={this.props.lang.ROUTER_PRINT} onMouseUp={()=>{this.exportGpx()}}/>
+          <button className={"c4g-router-print"} title={this.props.lang.ROUTER_DOWNLOAD} onMouseUp={()=>{printFunction()}}/>
         </div>
       );
     } else if ((detour && featureCount) && this.props.mode === "area") {
@@ -199,6 +201,28 @@ export class RouterResultContainer extends Component {
         this.close();
     } else {
         this.open();
+    }
+  }
+  exportGpx() {
+    let source = this.props.router.routerWaySource;
+    let format = new GPX();
+    if (source && source.getFeatures && source.getFeatures()) {
+      let strExport = format.writeFeatures(source.getFeatures(), {
+        featureProjection: "EPSG:3857",
+        dataProjection: "EPSG:4326",
+        decimals: 3
+      });
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(strExport));
+      element.setAttribute('download', "route.gpx");
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+      console.log(strExport);
     }
   }
 
