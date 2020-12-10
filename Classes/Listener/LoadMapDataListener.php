@@ -59,7 +59,7 @@ class LoadMapDataListener
         $enabled = array_key_exists('routing', $buttons) ? $buttons['routing'] + 1 : 0;
         $externalComponents = unserialize($profile->external_elements);
         $externalClasses = ExternalMapElement::$arrClasses;
-        if (in_array('routing', $externalComponents)) {
+        if ($externalComponents && in_array('routing', $externalComponents)) {
             $mapData['router_div'] = $externalClasses['routing'];
         }
         if ($enabled) {
