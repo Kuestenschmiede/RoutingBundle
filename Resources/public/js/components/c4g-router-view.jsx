@@ -55,6 +55,7 @@ export class RouterView extends Component {
     this.toggleResultDetails = this.toggleResultDetails.bind(this);
     this.setResultInstr = this.setResultInstr.bind(this);
     this.setResultFeat = this.setResultFeat.bind(this);
+    this.recalculateRoute = this.recalculateRoute.bind(this);
     const mapController = this.props.mapController;
     let arrProfiles = [];
     this.languageConstants = getLanguage(mapController.data);
@@ -620,7 +621,9 @@ export class RouterView extends Component {
           }
         }
       }
-      this.recalculateRoute();
+      if (!this.props.mapController.data.routeStartButton) {
+        this.recalculateRoute();
+      }
     } else if (this.state.mode === "area") {
       if (this.state.areaPoint) {
         let tmpFeature = new Feature({
@@ -1372,7 +1375,6 @@ export class RouterView extends Component {
       if (opt_callback && typeof opt_callback === "function") {
         opt_callback();
       }
-      scope.recalculateRoute();
     }).fail(function () {
       let alertHandler = new AlertHandler();
       alertHandler.showInfoDialog(scope.props.langConstants.ROUTER_VIEW_ALERT_ERROR, scope.props.langConstants.ROUTER_VIEW_ALERT_ADDRESS);

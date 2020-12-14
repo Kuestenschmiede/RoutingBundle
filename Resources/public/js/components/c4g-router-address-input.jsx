@@ -114,10 +114,15 @@ export class RouterAddressInput extends Component {
         {featureSearchControls}
       </div>;
     }
+    let startButton = null;
+    if (this.props.router.props.mapController.data.routeStartButton) {
+      startButton = <button className={"c4g-route-search-start"} onMouseUp={this.props.router.recalculateRoute}>{this.langConstants.START_ROUTE}</button>
+    }
 
     return (
       <div className={this.props.className}>
         {input}
+        {startButton}
         {/*{detailButton}*/}
         {details}
       </div>

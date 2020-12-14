@@ -57,7 +57,14 @@ export class AutocompleteInput extends Component {
           setTimeout(function() {
             if (scope.counter && scope.counter + 400 < Math.floor(Date.now())) {
               delete scope.counter;
-              scope.autocompleteAddress($("#" + scope.props.cssId).val(), "#" + scope.props.cssId);
+              if (!scope.props.objSettings.proxyUrl || !scope.props.objSettings.keyAutocomplete) {
+                let value = (scope.props.cssId.indexOf('From') !== -1) ? "fromValue" : "toValue";
+                let field = $("#" + scope.props.cssId);
+                scope.props.router.performSearch(field, value);
+              }
+              else {
+                scope.autocompleteAddress($("#" + scope.props.cssId).val(), "#" + scope.props.cssId);
+              }
             }
           },500);
         }
@@ -108,9 +115,6 @@ export class AutocompleteInput extends Component {
   autocompleteAddress(input, cssClass) {
     const scope = this;
     const settings = scope.props.objSettings;
-    if (!settings.proxyUrl || !settings.keyAutocomplete) {
-      return;
-    }
     let center;
     if (settings.center) {
       if (typeof settings.center === "function") {
