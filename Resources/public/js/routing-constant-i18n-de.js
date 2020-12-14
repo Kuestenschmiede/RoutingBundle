@@ -15,6 +15,7 @@
  *  constants
  */
 export var routingConstantsGerman = {
+  CTRL_ROUTER: 'Router öffnen/schließen',
   ROUTER_VIEW_ADDRESS_INPUT: 'Route finden',
   ROUTER_FROM_LABEL: 'Start',
   ROUTER_OVER_LABEL: 'Zwischenziel',
