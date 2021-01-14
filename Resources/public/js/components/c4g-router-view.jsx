@@ -1581,8 +1581,9 @@ export class RouterView extends Component {
           scope.response = response;
           if (response) {
             if (response.error) {
-              let errorDiv = scope.showRouterError(this.languageConstants[response.error]);
-              jQuery(scope.fromInput).parent()[0].appendChild(errorDiv);
+              // let errorDiv = scope.showRouterError(scope.languageConstants[response.error]);
+              let alertHandler = new AlertHandler();
+              alertHandler.showInfoDialog(scope.props.langConstants[response.error]);
             } else {
               scope.showRouteLayer(response);
               scope.showRouteInstructions(response, 0, scope.routerWaySource, scope.routerHintSource);
