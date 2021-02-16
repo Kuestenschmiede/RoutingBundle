@@ -14,7 +14,7 @@
 import React, { Component } from "react";
 import {getLanguage} from "./../routing-constant-i18n";
 
-export class RouterProfileSelection extends Component {
+export default class RouterProfileSelection extends Component {
 
   constructor(props) {
     super(props);

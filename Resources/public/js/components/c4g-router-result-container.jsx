@@ -11,12 +11,15 @@
  *
  */
 
-import React, { Component } from "react";
-import {RouterInstructionsContainer} from "./c4g-router-instructions-container.jsx";
-import {RouterFeatureList} from "./c4g-router-feature-list.jsx";
+import React, { Component, Suspense } from "react";
+// import {RouterInstructionsContainer} from "./c4g-router-instructions-container.jsx";
+// import {RouterFeatureList} from "./c4g-router-feature-list.jsx";
 import GPX from "ol/format/GPX";
 import {toHumanDistance, toHumanTime} from "../c4g-router-time-conversions";
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx";
+
+const RouterInstructionsContainer = React.lazy(() => import('./c4g-router-instructions-container.jsx'));
+const RouterFeatureList = React.lazy(() => import('./c4g-router-feature-list.jsx'));
 
 export class RouterResultContainer extends Component {
 
@@ -144,15 +147,18 @@ export class RouterResultContainer extends Component {
 
 
     if ((this.props.resultMode === "instr" && this.props.routerInstructions && this.props.mode === "route")) {
-      result = <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController}
-                                            routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource}
-                                            routerHintSource={this.props.routerHintSource} open={this.props.open} header={routerHeaderContent}/>
+      result = <Suspense fallback={<div>"loading.."</div>}>
+          <RouterInstructionsContainer className={"c4g-route-instructions-wrapper"} mapController={this.props.mapController}
+                                       routerInstructions={this.props.routerInstructions} routerWaySource={this.props.routerWaySource}
+                                       routerHintSource={this.props.routerHintSource} open={this.props.open} header={routerHeaderContent}/>
+        </Suspense>
     } else if (((this.props.resultMode === "feat" || this.props.mode === "area") || (!this.props.routerInstructions && this.props.featureList))) {
-      result = <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId}
+      result = <Suspense fallback={<div>"loading.."</div>}>
+          <RouterFeatureList className={"c4g-route-feature-wrapper"} activeId={this.props.activeId} setActiveId={this.props.setActiveId}
                                   routeMode={this.props.mode} layerRoute={this.props.layerRoute} layerArea={this.props.layerArea}
                                   featureList={this.props.featureList} mapController={this.props.mapController} featureSource={this.props.featureSource}
-                                  layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea} header={routerHeaderContent}
-      />
+                                  layerValueRoute={this.props.layerValueRoute} layerValueArea={this.props.layerValueArea} header={routerHeaderContent}/>
+        </Suspense>
     }
     if (this.props.open) {
       return (

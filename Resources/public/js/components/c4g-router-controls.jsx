@@ -18,7 +18,7 @@ import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx"
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 import {getLanguage} from "./../routing-constant-i18n";
 
-export class RouterControls extends HorizontalPanel {
+export default class RouterControls extends HorizontalPanel {
 
   constructor(props) {
     super(props);

@@ -15,7 +15,7 @@ import React, { Component } from "react";
 import {RouterInstruction} from "./c4g-router-instruction.jsx";
 import {toHumanDistance, toHumanTime} from "./../c4g-router-time-conversions";
 
-export class RouterInstructionsContainer extends Component {
+export default class RouterInstructionsContainer extends Component {
 
   constructor(props) {
     super(props);

@@ -14,7 +14,7 @@
 import React, { Component } from "react";
 import {RouterFeatureListItem} from "./c4g-router-feature-list-item.jsx";
 
-export class RouterFeatureList extends Component {
+export default class RouterFeatureList extends Component {
 
   constructor(props) {
     super(props);

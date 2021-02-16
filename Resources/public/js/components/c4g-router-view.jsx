@@ -11,8 +11,8 @@
  *
  */
 
-import React, { Component } from "react";
-import {RouterControls} from "./c4g-router-controls.jsx";
+import React, { Component,Suspense } from "react";
+// import {RouterControls} from "./c4g-router-controls.jsx";
 import {RouterResultContainer} from "./c4g-router-result-container.jsx";
 import {routingConstants} from "./../routing-constants";
 import {Feature} from "ol";
@@ -31,9 +31,14 @@ import {RoutingPermalink} from "./../c4g-routing-permalink";
 import {getLanguage} from "./../routing-constant-i18n";
 import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
-import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx";
+// import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx";
 import {utils} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
 import {RouterPopupButtons} from "./c4g-router-popup-buttons.jsx";
+
+const RouterControls = React.lazy(() => import('./c4g-router-controls.jsx'));
+// const RouterResultContainer = React.lazy(() => import('./c4g-router-result-container.jsx'));
+const RouterProfileSelection = React.lazy(() => import('./c4g-router-profile-selection.jsx'));
+// const RouterPopupButtons = React.lazy(() => import('./c4g-router-popup-buttons.jsx'))
 
 const osmtogeojson = require('osmtogeojson');
 
@@ -237,21 +242,27 @@ export class RouterView extends Component {
             <div>
               {resultSwitcher}
             </div>
-            <RouterProfileSelection profiles={this.state.profiles} router={this} currentProfile={this.state.currentProfile}/>
+            <Suspense fallback={<div>"loading..."</div>}>
+              <RouterProfileSelection profiles={this.state.profiles} router={this} currentProfile={this.state.currentProfile}/>
+            </Suspense>
           </div>
         </React.Fragment>
-        <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles} className={"c4g-router-panel"}
-          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={overSettings} enableOverPoints={this.props.mapController.data.enableOverPoints}
-          sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
-          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} switchTargets={this.props.mapController.data.enableTargetSwitch}
-          toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} title={this.languageConstants.CTRL_ROUTER} target={this.props.target}
-        />
-        <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
-          mode={this.state.mode} setResultFeat={this.setResultFeat} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
-          layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea} resultMode={this.state.resultMode} router={this}
-           layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
-          activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
-        />
+        <Suspense fallback={<div>"loading"</div>}>
+          <RouterControls router={this} open={this.state.open && this.state.openSettings} setOpen={this.openControls} profiles={this.state.profiles} className={"c4g-router-panel"}
+                          objSettings={this.state.objSettings} objFunctions={this.objFunctions} overSettings={overSettings} enableOverPoints={this.props.mapController.data.enableOverPoints}
+                          sources={sources} layers={this.props.mapController.data.routerLayers} containerAddresses={this.state.containerAddresses} resetFunctions={resetFunctions}
+                          mapController={this.props.mapController} currentProfile={this.state.currentProfile} fromAddress={this.state.fromAddress} switchTargets={this.props.mapController.data.enableTargetSwitch}
+                          toAddress={this.state.toAddress} areaAddress={this.state.areaAddress} mode={this.state.mode} sliderOptions={sliderOptions} title={this.languageConstants.CTRL_ROUTER} target={this.props.target}
+          />
+        </Suspense>
+        <Suspense fallback={<div>"loading"</div>}>
+          <RouterResultContainer visible={this.state.open} open={this.state.open && this.state.openResults} setOpen={this.setOpen} direction={"bottom"} className={"c4g-router-result-container"} mapController={this.props.mapController}
+                                 mode={this.state.mode} setResultFeat={this.setResultFeat} routerInstructions={this.state.routerInstructions} featureList={this.state.featureList} routerWaySource={this.state.routerWaySource} detour={this.state.detourArea}
+                                 layerRoute={this.state.layerRoute} layerValueRoute={this.state.layerValueRoute} layerArea={this.state.layerArea} resultMode={this.state.resultMode} router={this}
+                                 layerValueArea={this.state.layerValueArea} routerHintSource={this.state.routerHintSource} featureSource={this.state.featureSource} profile={this.state.currentProfile}
+                                 activeId={this.state.activeId} setActiveId={this.setActiveId} detailOpen={this.state.resultDetailOpen} toggleDetailOpen={this.toggleResultDetails} headline={"Router Ergebnisse"} lang={this.languageConstants}
+          />
+        </Suspense>
       </div>
     );
   }
