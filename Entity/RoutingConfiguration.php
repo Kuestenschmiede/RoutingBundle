@@ -531,7 +531,7 @@ class RoutingConfiguration extends BaseEntity
      */
     public function getRouterProfiles(): array
     {
-        return $this->routerProfiles;
+        return $this->routerProfiles ? $this->routerProfiles : [];
     }
     
     /**

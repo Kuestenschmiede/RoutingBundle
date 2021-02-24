@@ -413,7 +413,7 @@ class RouteService extends \Frontend
             $strRoutingUrl .= 'v2/directions/';
             $coordinates = [];
             for ($i = 0; $i < sizeof($arrInput); $i++) {
-                $coordinates[] = [explode(',', $arrInput[$i])[1] , explode(',', $arrInput[$i])[0]];
+                $coordinates[] = [explode(',', $arrInput[$i])[1], explode(',', $arrInput[$i])[0]];
             }
             if (!substr_count('cn, de, en, es, ru, dk, fr, it, nl, br, se, tr, gr', $language)) {
                 $language = $GLOBALS['TL_LANGUAGE'];
@@ -425,17 +425,17 @@ class RouteService extends \Frontend
 
 //            $profile = '&profile=' . $profile . '&format=json&language=' . $language . '&geometry_format=encodedpolyline&maneuvers=true&preference=recommended';
             $body = [
-                "coordinates" => $coordinates,
-                "maneuvers" => true,
-                "preference" => "recommended",
-                "language" => $language
+                'coordinates' => $coordinates,
+                'maneuvers' => true,
+                'preference' => 'recommended',
+                'language' => $language,
             ];
             $url = $strRoutingUrl . $profile;
             $request = $this->createRequest();
-            $request->method = "POST";
+            $request->method = 'POST';
             $data = \GuzzleHttp\json_encode($body);
             $request->setHeader('Authorization', $routerConfig->getRouterApiKey());
-            $request->setHeader('Content-Type', "application/json");
+            $request->setHeader('Content-Type', 'application/json');
             $request->send($url, $data);
             $response = $request->response;
 
@@ -464,11 +464,11 @@ class RouteService extends \Frontend
 
             if ($routerConfig->getRouterAlternative() == '1') {
                 $request = $this->createRequest();
-                $request->method = "POST";
+                $request->method = 'POST';
                 $body['preference'] = 'shortest';
                 $data = \GuzzleHttp\json_encode($body);
                 $request->setHeader('Authorization', $routerConfig->getRouterApiKey());
-                $request->setHeader('Content-Type', "application/json");
+                $request->setHeader('Content-Type', 'application/json');
                 $url = str_replace('preference=recommended', 'preference=shortest', $url);
                 $request->send($url, $data);
                 if ($request->response) {

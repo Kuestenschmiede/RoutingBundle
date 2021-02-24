@@ -153,7 +153,7 @@ class AreaService
 
             $REQUEST = new \Request();
             $REQUEST->setHeader('Authorization', $routerConfig->getRouterApiKey());
-            $REQUEST->setHeader('Content-Type', "application/json");
+            $REQUEST->setHeader('Content-Type', 'application/json');
 
             if ($_SERVER['HTTP_REFERER']) {
                 $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
