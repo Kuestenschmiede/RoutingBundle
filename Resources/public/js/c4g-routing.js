@@ -76,9 +76,17 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
         jQuery(".ol-overlaycontainer-stopevent").append(mapController.routerContainer);
       }
     }
-    let arrComponents = params.arrComps;
-    arrComponents.push(ReactDOM.createPortal(React.createElement(RouterView, routerControlProps), mapController.routerContainer));
-    params.arrComps = arrComponents;
+    if (RouterView && routerControlProps) {
+      let view = React.createElement(RouterView, routerControlProps);
+      if (view && mapController && mapController.routerContainer) {
+        let portal = ReactDOM.createPortal(view, mapController.routerContainer);
+        if (params && arrComponents && portal) {
+          var arrComponents = params && params.arrComps ? params.arrComps : []; //ToDo
+          arrComponents.push();
+          params.arrComps = arrComponents;
+        }
+      }
+    }
   }
 });
 
