@@ -1973,22 +1973,22 @@ export class RouterView extends Component {
         });
 
         // calculate padding
-        leftPadding = 0;
-        if (this.props.mapController.activePortside && this.props.mapController.activePortside.container) {
-          leftPadding = jQuery(this.props.mapController.activePortside.container).outerWidth();
-        }
 
-        rightPadding = 0;
-        if (this.props.mapController.activeStarboard && this.props.mapController.activeStarboard.container) {
-          rightPadding = jQuery(this.props.mapController.activeStarboard.container).outerWidth();
+        let width = jQuery(".c4g-starboard-container").css('width');
+        if (width) {
+          width = width.split(".");
+          width = Array.isArray(width) ? width[0] : width;
+          width = parseInt(width) +  50;
         }
-
+        else {
+          width = 50;
+        }
         // center on route
         mapView.fit(
           routeFeatures[0].getGeometry(),
           {
             size: this.props.mapController.map.getSize(),
-            padding: [0, rightPadding, 0, leftPadding]
+            padding: [50, width, 50, 50]
           }
         );
       }
