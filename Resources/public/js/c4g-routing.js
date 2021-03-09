@@ -80,9 +80,9 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       let view = React.createElement(RouterView, routerControlProps);
       if (view && mapController && mapController.routerContainer) {
         let portal = ReactDOM.createPortal(view, mapController.routerContainer);
-        if (params && arrComponents && portal) {
-          var arrComponents = params && params.arrComps ? params.arrComps : []; //ToDo
-          arrComponents.push();
+        if (params && portal) {
+          const arrComponents = params && params.arrComps ? params.arrComps : []; //ToDo
+          arrComponents.push(portal);
           params.arrComps = arrComponents;
         }
       }
