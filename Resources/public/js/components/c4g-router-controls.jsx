@@ -11,42 +11,17 @@
  *
  */
 
-import React, { Component, Suspense } from "react";
-// import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel.jsx";
-// import {RouterAddressInput} from "./c4g-router-address-input.jsx"
-// import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
+import React, { Component } from "react";
+import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel.jsx";
+import {RouterAddressInput} from "./c4g-router-address-input.jsx"
+import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx"
+import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 import {getLanguage} from "./../routing-constant-i18n";
-import {Control} from "ol/control";
 
-const RouterAddressInput = React.lazy(() => import("./c4g-router-address-input.jsx"));
-const Titlebar = React.lazy(() => import("./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"));
-// const HorizontalPanel = React.lazy(() => import("./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel.jsx"));
-
-export default class RouterControls extends Component {
+export default class RouterControls extends HorizontalPanel {
 
   constructor(props) {
     super(props);
-
-    const scope = this;
-    // create control to toggle the panel
-    let element = document.createElement('div');
-    let button = document.createElement('button');
-    element.className = (props.className || "c4g-horizontal-panel") + "-button-" + (props.direction || "top") + " ol-control " + "ol-unselectable";
-    element.appendChild(button);
-    button.title = props.title;
-    this.clickControl = this.clickControl.bind(this);
-    jQuery(button).on('click', this.clickControl);
-    let mapController = props.mapController;
-    let control = new Control({element: element, target: props.target});
-    mapController.map.addControl(control);
-    this.state = {
-      // either "top" or "bottom"
-      direction: props.direction || "top",
-      open: props.open || false,
-      className: props.className || "c4g-horizontal-panel",
-      childs: props.childs || [],
-      control: control
-    };
 
     this.state.router = this.props.router;
     this.state.showForm = true;
@@ -93,22 +68,18 @@ export default class RouterControls extends Component {
       return (
         <div className={className}>
           {modeSwitcher}
-          <Suspense fallback={<div>Loading...</div>}>
-            <RouterAddressInput className="c4g-router-input-content" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
-                                objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile} enableOverPoints={this.props.enableOverPoints}
-                                containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers} resetFunctions={this.props.resetFunctions}
-                                fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress} sliderOptions={this.props.sliderOptions}
-                                profiles={this.props.profiles} overSettings={this.props.overSettings}/>
-          </Suspense>
+          <RouterAddressInput className="c4g-router-input-content" router={this.props.router} withPosition={true} switchTargets={this.props.switchTargets}
+                              objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} currentProfile={this.props.currentProfile} enableOverPoints={this.props.enableOverPoints}
+                              containerAddresses={this.props.containerAddresses} mode={this.props.mode} open={open} layers={this.props.layers} resetFunctions={this.props.resetFunctions}
+                              fromAddress={this.props.fromAddress} toAddress={this.props.toAddress} areaAddress={this.props.areaAddress} sliderOptions={this.props.sliderOptions}
+                              profiles={this.props.profiles} overSettings={this.props.overSettings}/>
         </div>
       );
     } else {
       return (
         <div className={className}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
-                      detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
-          </Suspense>
+          <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
+                    detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
           <button className={"c4g-router-hide-form-button"} onMouseUp={() => {this.setState({showForm: !this.state.showForm})}}/>
         </div>
       );

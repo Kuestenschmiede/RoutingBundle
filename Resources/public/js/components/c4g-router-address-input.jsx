@@ -11,17 +11,15 @@
  *
  */
 
-import React, { Component, Suspense } from "react";
-// import { RouterAddressField } from "./c4g-router-address-field.jsx";
+import React, { Component } from "react";
+import { RouterAddressField } from "./c4g-router-address-field.jsx";
 import { RouterProfileSelection } from "./c4g-router-profile-selection.jsx";
 import { RouterLayerSelection } from "./c4g-router-layer-selection.jsx";
 import { RouterDetourSlider } from "./c4g-router-detour-slider.jsx";
 import {routingConstantsGerman} from "../routing-constant-i18n-de";
 import {routingConstantsEnglish} from "../routing-constant-i18n-en";
 
-const RouterAddressField = React.lazy(() => import("./c4g-router-address-field.jsx"))
-
-export default class RouterAddressInput extends Component {
+export class RouterAddressInput extends Component {
 
   constructor(props) {
     super(props);
@@ -50,12 +48,10 @@ export default class RouterAddressInput extends Component {
     let overForm = "";
     if (this.props.enableOverPoints && this.props.mode === "route") {
       overForm = Object.keys(this.props.overSettings.overPoints).map((item) => {
-          return <Suspense fallback={<div>Loading...</div>}>
-            <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label={this.langConstants.ROUTER_Label_Interim}
-                                cssId={"routingOver-" + item} objFunctions={this.props.overSettings.objFunctions} objSettings={this.props.objSettings}
-                                containerAddresses={this.props.containerAddresses} value={this.props.overSettings.overAddresses[item]}
-                                router={this.props.router} key={item} index={item} clearInput={() => {this.props.overSettings.objFunctions[item].deleteFunction();}}/>
-          </Suspense>
+          return <RouterAddressField className={"c4g-router-input-over-" + item} name={"overPoint-" + item} label={this.langConstants.ROUTER_Label_Interim}
+                                     cssId={"routingOver-" + item} objFunctions={this.props.overSettings.objFunctions} objSettings={this.props.objSettings}
+                                     containerAddresses={this.props.containerAddresses} value={this.props.overSettings.overAddresses[item]}
+                                     router={this.props.router} key={item} index={item} clearInput={() => {this.props.overSettings.objFunctions[item].deleteFunction();}}/>
         });
     }
 

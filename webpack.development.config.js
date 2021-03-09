@@ -23,12 +23,6 @@ var config = {
         ],
       }
     ]
-  },
-  optimization: {
-    sideEffects: false,
-    concatenateModules: false,
-    providedExports: false,
-    usedExports: false
   }
 };
 
