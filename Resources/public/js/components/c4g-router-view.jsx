@@ -33,12 +33,12 @@ import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-
 import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 // import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx";
 import {utils} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
-import {RouterPopupButtons} from "./c4g-router-popup-buttons.jsx";
+// import {RouterPopupButtons} from "./c4g-router-popup-buttons.jsx";
 
 const RouterControls = React.lazy(() => import('./c4g-router-controls.jsx'));
 // const RouterResultContainer = React.lazy(() => import('./c4g-router-result-container.jsx'));
 const RouterProfileSelection = React.lazy(() => import('./c4g-router-profile-selection.jsx'));
-// const RouterPopupButtons = React.lazy(() => import('./c4g-router-popup-buttons.jsx'))
+const RouterPopupButtons = React.lazy(() => import('./c4g-router-popup-buttons.jsx'))
 
 const osmtogeojson = require('osmtogeojson');
 
@@ -46,7 +46,7 @@ const osmtogeojson = require('osmtogeojson');
  * Main router component. It consists of the RouterControls and RouterResultContainer components, and holds the
  * connection to the router model, which is propagated down to the actually needing components.
  */
-export class RouterView extends Component {
+export default class RouterView extends Component {
 
   constructor(props) {
     super(props);

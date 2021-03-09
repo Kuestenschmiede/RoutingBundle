@@ -13,7 +13,7 @@
 
 import React, { Component } from "react";
 
-export class AutocompleteInput extends Component {
+export default class AutocompleteInput extends Component {
 
   constructor(props) {
     super(props);

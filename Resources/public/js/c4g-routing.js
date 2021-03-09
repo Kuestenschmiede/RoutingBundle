@@ -13,8 +13,9 @@
 import {routingConstantsEnglish} from "./routing-constant-i18n-en";
 import {routingConstantsGerman} from "./routing-constant-i18n-de";
 import ReactDOM from "react-dom";
-import React from "react";
-import {RouterView} from "./components/c4g-router-view.jsx";
+import React, {Suspense} from "react";
+
+const RouterView = React.lazy(() => import("./components/c4g-router-view.jsx"));
 
 'use strict';
 
@@ -77,8 +78,11 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
       }
     }
     if (RouterView && routerControlProps) {
-      let view = React.createElement(RouterView, routerControlProps);
-      if (view && mapController && mapController.routerContainer) {
+      let view = <Suspense fallback={<div>Loading...</div>}>
+        <RouterView {...routerControlProps}/>
+      </Suspense>
+      // let view = React.createElement(RouterView, routerControlProps);
+      if (false && view && mapController && mapController.routerContainer) {
         let portal = ReactDOM.createPortal(view, mapController.routerContainer);
         if (params && portal) {
           const arrComponents = params && params.arrComps ? params.arrComps : []; //ToDo

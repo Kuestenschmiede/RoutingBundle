@@ -11,13 +11,13 @@
  *
  */
 
-import React, { Component } from "react";
-import {AutocompleteInput} from "./c4g-autocomplete-input.jsx";
-import {Point} from "ol/geom";
-import {getLanguage} from "./../routing-constant-i18n";
+import React, { Component, Suspense } from "react";
+import {getLanguage} from "../routing-constant-i18n";
 import {transform} from "ol/proj";
 
-export class RouterAddressField extends Component {
+const AutocompleteInput = React.lazy(() => import("./c4g-autocomplete-input.jsx"));
+
+export default class RouterAddressField extends Component {
 
   constructor(props) {
     super(props);
@@ -51,9 +51,11 @@ export class RouterAddressField extends Component {
     return (
       <div className={this.props.className}>
         <label htmlFor={this.props.name}>{this.props.label}</label>
-        <AutocompleteInput type="search" className={this.props.class} name={this.props.name}
-                           cssId={this.props.cssId} objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} popup={this.props.popup}
-                           containerAddresses={this.props.containerAddresses} autoComplete="off" router={this.props.router} value={this.props.value} index={this.props.index}/>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AutocompleteInput type="search" className={this.props.class} name={this.props.name}
+                             cssId={this.props.cssId} objFunctions={this.props.objFunctions} objSettings={this.props.objSettings} popup={this.props.popup}
+                             containerAddresses={this.props.containerAddresses} autoComplete="off" router={this.props.router} value={this.props.value} index={this.props.index}/>
+        </Suspense>
         {positionButton}
         <button className={"c4g-router-input-clear"} onMouseUp={this.removeContent} title={this.languageConstants.REMOVE_ADDRESS}/>
       </div>
