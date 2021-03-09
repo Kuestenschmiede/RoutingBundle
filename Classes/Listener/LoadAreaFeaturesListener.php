@@ -77,7 +77,7 @@ class LoadAreaFeaturesListener
                 $sqlWhere = $objConfig->sqlwhere ? $objConfig->sqlwhere : '';
                 $sqlAnd = $sqlWhere ? ' AND ' : '';
                 $strQuery = 'SELECT ' . $sourceTable . '.id,' . $sqlSelect . ' FROM ' . $sourceTable . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
-                $pointFeatures = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
+                $pointFeatures = \Contao\Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
                 $responseFeatures = [];
                 $locations = [];
                 $locations[] = [$point->getLng(), $point->getLat()];
@@ -124,7 +124,7 @@ class LoadAreaFeaturesListener
                     : $bounds['lower']->getLat() . ',' . $bounds['left']->getLng() . ',' . $bounds['upper']->getLat() . ',' . $bounds['right']->getLng();
                 $strSearch = strrpos($query, '(bbox)') ? '(bbox)' : '{{bbox}}';
                 $query = str_replace($strSearch, $strBBox, $query);
-                $REQUEST = new \Request();
+                $REQUEST = new \Contao\Request();
                 $REQUEST->setHeader('Content-Type', 'POST');
                 if ($_SERVER['HTTP_REFERER']) {
                     $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);

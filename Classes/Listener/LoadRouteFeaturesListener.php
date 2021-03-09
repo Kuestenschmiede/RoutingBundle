@@ -20,8 +20,6 @@ use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
 use Contao\System;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-//include_once(System::getContainer()->getParameter('kernel.project_dir')."/vendor/phayes/geophp/geoPHP.inc");
-
 class LoadRouteFeaturesListener
 {
     public function onLoadRouteFeaturesGetFeatures(
@@ -58,7 +56,7 @@ class LoadRouteFeaturesListener
                 $sqlWhere = $objConfig->sqlwhere ? $objConfig->sqlwhere : '';
                 $sqlAnd = $sqlWhere ? ' AND ' : '';
                 $strQuery = 'SELECT ' . $objConfig->tableSource . '.id,' . $sqlSelect . ' FROM ' . $objConfig->tableSource . $onClause . $sqlLoc . $sqlAnd . $sqlWhere . $andbewhereclause ;
-                $featurePoint = \Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
+                $featurePoint = \Contao\Database::getInstance()->prepare($strQuery)->execute()->fetchAllAssoc();
                 if (!$this->checkIfArrayContainsFeature($featurePoint[0], $features)) {
                     $features = array_merge($features, $featurePoint);
                 }
@@ -77,7 +75,7 @@ class LoadRouteFeaturesListener
             $lineStringWKT .= ')';
             //,ST_Buffer_Strategy('end_flat'),ST_Buffer_Strategy('join_round', 10)
             $selectBuffer = "SELECT ST_AsText(ST_Buffer(ST_GeomFromText('" . $lineStringWKT . "')," . $detour / 113.139 . '))';
-            $db = \Database::getInstance();
+            $db = \Contao\Database::getInstance();
             $result = array_shift($db->prepare($selectBuffer)->execute()->fetchAssoc());
             $polygon = \geoPHP::load($result, 'wkt');
             $jsonPolygon = $polygon->out('json');
@@ -91,7 +89,7 @@ class LoadRouteFeaturesListener
                 $query = $objLayer->ovp_request;
                 $strSearch = strrpos($query, '(bbox)') ? '(bbox)' : '{{bbox}}';
                 $query = str_replace($strSearch, $strBBox, $query);
-                $REQUEST = new \Request();
+                $REQUEST = new \Contao\Request();
                 $REQUEST->setHeader('Content-Type', 'json');
                 if ($_SERVER['HTTP_REFERER']) {
                     $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);

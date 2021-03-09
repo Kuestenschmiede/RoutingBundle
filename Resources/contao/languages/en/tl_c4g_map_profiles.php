@@ -21,5 +21,5 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['routing_legend'] = 'Routing and Area
 
 /** references */
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['mapFunctions']['reference']['routing'] = ['Routing', ' Adds an additional button to activate routing functionality.'];
-
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['initial_open_comp']['refs']['routing'] = 'Routing';
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['element_type_refs']['routing'] = "Router";
