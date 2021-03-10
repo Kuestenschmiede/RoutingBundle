@@ -17,7 +17,6 @@ use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapTablesModel;
 use con4gis\RoutingBundle\Classes\Event\LoadRouteFeaturesEvent;
-use Contao\System;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class LoadRouteFeaturesListener
