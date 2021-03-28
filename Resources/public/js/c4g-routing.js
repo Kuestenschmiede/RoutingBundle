@@ -14,7 +14,8 @@ import {routingConstantsEnglish} from "./routing-constant-i18n-en";
 import {routingConstantsGerman} from "./routing-constant-i18n-de";
 import ReactDOM from "react-dom";
 import React from "react";
-import {RouterView} from "./components/c4g-router-view.jsx";
+const RouterView = React.lazy(() => import('./components/c4g-router-view.jsx'));
+//const MapController = React.lazy(() => import('../../../../MapsBundle/Resources/public/js/components/c4g-maps.jsx'));
 
 'use strict';
 

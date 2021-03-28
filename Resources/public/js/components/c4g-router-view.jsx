@@ -309,6 +309,11 @@ export class RouterView extends Component {
     }
   }
 
+  componentWillUnmount() {
+    document.removeEventListener('instr', this.setResultInstr);
+    document.removeEventListener('feat', this.setResultFeat);
+  }
+
   componentDidMount() {
     if (this.props.mapController.data.usePermalink) {
       this.permalink.handleInitialParams();
