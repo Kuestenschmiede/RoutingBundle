@@ -85,6 +85,7 @@ window.c4gMapsHooks.mapController_addControls.push(function(params){
           const arrComponents = params && params.arrComps ? params.arrComps : []; //ToDo
           arrComponents.push(portal);
           params.arrComps = arrComponents;
+          params.module = "./Resources/public/js/components/c4g-router-view.jsx";
         }
       }
     }

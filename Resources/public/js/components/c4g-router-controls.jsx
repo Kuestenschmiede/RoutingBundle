@@ -11,12 +11,13 @@
  *
  */
 
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 import {HorizontalPanel} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-horizontal-panel.jsx";
 import {RouterAddressInput} from "./c4g-router-address-input.jsx"
 import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx"
-import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
+// import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 import {getLanguage} from "./../routing-constant-i18n";
+const Titlebar = React.lazy(() => import('./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx'));
 
 export default class RouterControls extends HorizontalPanel {
 
@@ -78,8 +79,10 @@ export default class RouterControls extends HorizontalPanel {
     } else {
       return (
         <div className={className}>
-          <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
-                    detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
+                      detailBtnClass={"c4g-router-extended-options"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close}/>
+          </Suspense>
           <button className={"c4g-router-hide-form-button"} onMouseUp={() => {this.setState({showForm: !this.state.showForm})}}/>
         </div>
       );
