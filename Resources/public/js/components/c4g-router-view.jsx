@@ -30,11 +30,10 @@ import {AlertHandler} from "./../../../../../CoreBundle/Resources/public/js/Aler
 import {RoutingPermalink} from "./../c4g-routing-permalink";
 import {getLanguage} from "./../routing-constant-i18n";
 import {cssConstants} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-constant";
-// import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
+import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx"
 // import {RouterProfileSelection} from "./c4g-router-profile-selection.jsx";
 import {utils} from "./../../../../../MapsBundle/Resources/public/js/c4g-maps-utils";
 import {RouterPopupButtons} from "./c4g-router-popup-buttons.jsx";
-const Titlebar = React.lazy(() => import('./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx'));
 
 const RouterControls = React.lazy(() => import('./c4g-router-controls.jsx'));
 // const RouterResultContainer = React.lazy(() => import('./c4g-router-result-container.jsx'));
@@ -47,7 +46,7 @@ const osmtogeojson = require('osmtogeojson');
  * Main router component. It consists of the RouterControls and RouterResultContainer components, and holds the
  * connection to the router model, which is propagated down to the actually needing components.
  */
-export default class RouterView extends Component {
+export class RouterView extends Component {
 
   constructor(props) {
     super(props);
@@ -237,10 +236,8 @@ export default class RouterView extends Component {
     return (
       <div className={"c4g-router-wrapper"}>
         <React.Fragment>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
-                      detailBtnClass={"c4g-router-extended-options"} hideContainer={".c4g-router-container-right"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close} closeBtnTitle={this.languageConstants.CLOSE}/>
-          </Suspense>
+          <Titlebar wrapperClass={"c4g-router-header"} header={headline} headerClass={"c4g-router-headline"}
+                       detailBtnClass={"c4g-router-extended-options"} hideContainer={".c4g-router-container-right"} detailBtnCb={this.toggleDetails} closeBtnClass={"c4g-router-close"} closeBtnCb={this.close} closeBtnTitle={this.languageConstants.CLOSE}/>
           <div className={"c4g-router-switcher"}>
             <div>
               {resultSwitcher}

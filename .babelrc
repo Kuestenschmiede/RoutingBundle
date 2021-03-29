@@ -2,9 +2,6 @@
   "presets": [
     "babel-preset-react",
     [
-      "react"
-    ],
-    [
       "env", {
         "modules": "commonjs"
       }

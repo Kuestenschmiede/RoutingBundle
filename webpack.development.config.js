@@ -8,11 +8,6 @@ var config = {
     chunkFilename: '[name].bundle.js',
     publicPath: "bundles/con4gisrouting/build/"
   },
-  devtool: "inline-source-map",
-  resolve: {
-    modules: ['node_modules', 'Resources/public/js'],
-    extensions: ['.jsx', '.js']
-  },
   module: {
     rules: [
       {
