@@ -16,7 +16,6 @@ import React, { Component, Suspense } from "react";
 // import {RouterFeatureList} from "./c4g-router-feature-list.jsx";
 import GPX from "ol/format/GPX";
 import {toHumanDistance, toHumanTime} from "../c4g-router-time-conversions";
-import {Titlebar} from "./../../../../../MapsBundle/Resources/public/js/components/c4g-titlebar.jsx";
 
 const RouterInstructionsContainer = React.lazy(() => import('./c4g-router-instructions-container.jsx'));
 const RouterFeatureList = React.lazy(() => import('./c4g-router-feature-list.jsx'));
