@@ -1808,7 +1808,9 @@ export default class RouterView extends Component {
           contentFeatures[id].set('zoom_onclick', layer.zoom_onclick);
           contentFeatures[id].set('tid', parseInt(contentFeatures[id].get('id').split('/')[1]));
           contentFeatures[id].set('label', contentFeatures[id].get(labelKey));
-          contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
+          if (self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle]) {
+            contentFeatures[id].setStyle(self.props.mapController.proxy.locationStyleController.arrLocStyles[layer.locstyle].style);
+          }
         }
       }
     }
