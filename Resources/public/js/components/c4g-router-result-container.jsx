@@ -123,8 +123,8 @@ export class RouterResultContainer extends Component {
             <label>{this.props.lang.ROUTER_VIEW_LABEL_DISTANCE}</label>
             <em>{distance}</em>
           </div>
-          <button className={"c4g-router-download"} title={this.props.lang.ROUTER_PRINT} onMouseUp={()=>{this.exportGpx()}}/>
-          <button className={"c4g-router-print"} title={this.props.lang.ROUTER_DOWNLOAD} onMouseUp={()=>{printFunction()}}/>
+          <button className={"c4g-router-download"} title={this.props.lang.ROUTER_DOWNLOAD} onMouseUp={()=>{this.exportGpx()}}/>
+          <button className={"c4g-router-print"} title={this.props.lang.ROUTER_PRINT} onMouseUp={()=>{printFunction()}}/>
         </div>
       );
     } else if ((detour && featureCount) && this.props.mode === "area") {
