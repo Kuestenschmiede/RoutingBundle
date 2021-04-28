@@ -91,8 +91,8 @@ export class RouterView extends Component {
     this.state = {
       router: props.router,
       objSettings: {
-        "proxyUrl": mapController.data.proxyUrl,
-        "keyAutocomplete": mapController.data.autocomplete,
+        "proxyUrl": mapController && mapController.data ? mapController.data.proxyUrl : '',
+        "keyAutocomplete": mapController && mapController.data ? mapController.data.autocomplete : '',
         "center" : function () {
           let center = mapController.map.getView().getCenter();
           center = transform(center, "EPSG:3857","EPSG:4326");
