@@ -817,6 +817,7 @@ button.c4g-router-over, button.c4g-router-switch {
 
 .c4g-router-instruction img{
     background: white;
+    height: 32px;
 }
 
 
