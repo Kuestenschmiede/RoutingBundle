@@ -12,9 +12,9 @@
 
 import {routingConstantsEnglish} from "./routing-constant-i18n-en";
 import {routingConstantsGerman} from "./routing-constant-i18n-de";
+import {RouterView} from "./components/c4g-router-view.jsx";
 import ReactDOM from "react-dom";
 import React from "react";
-import {RouterView} from "./components/c4g-router-view.jsx";
 
 'use strict';
 

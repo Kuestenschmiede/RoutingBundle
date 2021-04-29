@@ -25,7 +25,7 @@ class LoadMapResourcesListener
     ) {
         $mapData = $event->getMapData();
         if ($mapData['router_enable']) {
-            ResourceLoader::loadJavaScriptDeferred('c4g-routing', '/bundles/con4gisrouting/build/c4g-routing.js');
+//            ResourceLoader::loadJavaScriptDeferred('c4g-routing', '/bundles/con4gisrouting/build/c4g-routing.js');
             ResourceLoader::loadJavaScriptDeferred('jquery-ui', '/bundles/con4giscore/vendor/jQuery/jquery-ui-1.12.1.custom/jquery-ui.js');
 
             ResourceLoader::loadCssRessource('jquery-ui-css', '/bundles/con4giscore/vendor/jQuery/jquery-ui-1.12.1.custom/jquery-ui.css');
