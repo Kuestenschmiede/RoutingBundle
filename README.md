@@ -1,4 +1,8 @@
 # con4gis-RoutingBundle
+
+## Attention!
+With con4gis 8 you do not need this bundle anymore. Please install new bundle versions of [con4gis/maps](https://github.com/Kuestenschmiede/MapsBundle/releases).
+
 ## Overview
 The routing brick of the Contao GIS-kit **con4gis**. Extends con4gis MapsBundle.
 
